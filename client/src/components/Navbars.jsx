@@ -1,7 +1,17 @@
-import {Navbar,DropdownItem,Dropdown,DropdownTrigger,DropdownMenu,Avatar, NavbarBrand,NavbarMenu,NavbarMenuItem,NavbarMenuToggle, NavbarContent, NavbarItem, Link, Button} from "@nextui-org/react";
+import {Navbar,DropdownItem,Dropdown,DropdownTrigger,DropdownMenu,Avatar, NavbarBrand,NavbarMenu,NavbarMenuItem,NavbarMenuToggle, NavbarContent, NavbarItem, Button} from "@nextui-org/react";
 // import {AcmeLogo} from "./AcmeLogo.jsx";
-
+import { Link } from "react-router-dom";
+// import { useAuth } from "../context/authContext";
+import './navbars.css'
+import { useAuth } from "../context/authContext";
 export default function App() {
+
+  // const { isAuthenticated, logout, user } = useAuth();
+  // console.log(isAuthenticated, user)
+
+  const { isAuthenticated, logout, user } = useAuth();
+  console.log(isAuthenticated, user)
+
   const menuItems = [
     "Profile"
   ];
@@ -15,14 +25,14 @@ export default function App() {
       <NavbarContent className="sm:hidden pr-3" justify="center">
         <NavbarBrand>
           {/* <AcmeLogo /> */}
-          <p className="font-bold text-inherit">ACME</p>
+          <Link to={isAuthenticated ? "/tasks" : "/"}>MEQO</Link>
         </NavbarBrand>
       </NavbarContent>
 
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarBrand>
           {/* <AcmeLogo /> */}
-          <p className="font-bold text-inherit">ACME</p>
+          <Link to={isAuthenticated ? "/home" : "/"}>MEQO</Link>
         </NavbarBrand>
         <Dropdown>
           <NavbarItem>
@@ -34,7 +44,7 @@ export default function App() {
                 radius="sm"
                 variant="light"
               >
-                Features
+                Hotel
               </Button>
             </DropdownTrigger>
           </NavbarItem>
@@ -47,35 +57,37 @@ export default function App() {
           >
             <DropdownItem
               key="autoscaling"
-              description="ACME scales apps to meet user demand, automagically, based on load."
-            //   startContent={icons.scale}
             >
-              Pasadia
+            <Link className="link_nav" to='/pasadia'>
+            Pasadia
+            </Link>
             </DropdownItem>
             <DropdownItem
               key="production_ready"
-              description="ACME runs on ACME, join us and others serving requests at web scale."
             //   startContent={icons.flash}
             >
-              Cabañas
+              <Link className="link_nav" to='/cabanias'>
+            Cabañas
+            </Link>
             </DropdownItem>
             <DropdownItem
               key="99_uptime"
-              description="Applications stay on the grid with high availability and high uptime guarantees."
             //   startContent={icons.server}
             >
-              Inventario
+              <Link className="link_nav" to='/inventario'>
+            Inventario
+            </Link>
             </DropdownItem>
           </DropdownMenu>
         </Dropdown>
         <NavbarItem isActive>
           <Link href="#" aria-current="page" color="warning">
-            Customers
+            Finca
           </Link>
         </NavbarItem>
         <NavbarItem>
           <Link color="foreground" href="#">
-            Integrations
+            Energia Renovable
           </Link>
         </NavbarItem>
       </NavbarContent>
@@ -95,17 +107,12 @@ export default function App() {
           </DropdownTrigger>
           <DropdownMenu aria-label="Profile Actions" variant="flat">
             <DropdownItem key="profile" className="h-14 gap-2">
-              <p className="font-semibold">Signed in as</p>
-              <p className="font-semibold">zoey@example.com</p>
+              <p className="font-semibold"> Welcome {user.username}</p>
             </DropdownItem>
-            <DropdownItem key="settings">My Settings</DropdownItem>
-            <DropdownItem key="team_settings">Team Settings</DropdownItem>
-            <DropdownItem key="analytics">Analytics</DropdownItem>
-            <DropdownItem key="system">System</DropdownItem>
-            <DropdownItem key="configurations">Configurations</DropdownItem>
-            <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
             <DropdownItem key="logout" color="danger">
-              Log Out
+            <Link to="/" onClick={() => logout()}>
+                Logout
+              </Link>
             </DropdownItem>
           </DropdownMenu>
         </Dropdown>

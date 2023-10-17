@@ -9,6 +9,9 @@ import { LoginPage } from "./pages/LoginPage";
 // import { TasksPage } from "./pages/TasksPage";
 import { TaskProvider } from "./context/tasksContext";
 import { Home } from "./pages/Home";
+import Pasadia from "./pages/Pasadia";
+import Cabanias from "./pages/Cabanias";
+import Inventario from "./pages/inventario";
 
 function App() {
   return (
@@ -23,6 +26,9 @@ function App() {
               <Route path="/login" element={<LoginPage />}/>
               <Route element={<ProtectedRoute/>}>
                 <Route path="/home" element={<Home/>}/>
+                <Route path="/Pasadia" element={<Pasadia/>} />
+                <Route path="/cabanias" element={<Cabanias/>} />
+                <Route path="/inventario" element={<Inventario/>}/>
                 {/* <Route path="/tasks" element={<TasksPage />} />
                 <Route path="/add-task" element={<TaskFormPage />} />
                 <Route path="/tasks/:id" element={<TaskFormPage />} />
