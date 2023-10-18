@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Table, TableHeader,Button, TableColumn, TableBody, TableRow, TableCell } from "@nextui-org/react";
 import axios from "axios";
-import CardDesplegable from './CardDesplegable.jsx'
+import CardDesplegable from './CardBebidas.jsx'
+import CardAlimentos from './CardAlimentos.jsx'
 
 export default function App() {
   const [users, setUsers] = useState([]);
@@ -21,7 +22,14 @@ export default function App() {
 
   return (
     <div>
-        <CardDesplegable/>
+        <div className='flex my-5'>
+            <div className='mr-5'>
+        <CardDesplegable />
+
+            </div>
+        <CardAlimentos/>
+
+        </div>
     <Table aria-label="Lista de Usuarios">
       <TableHeader>
         <TableColumn>NAME</TableColumn>
@@ -31,7 +39,7 @@ export default function App() {
       <TableBody emptyContent="No hay filas para mostrar.">
         {users.map((user) => ( 
           <TableRow key={user.id}>
-            <TableCell> {user.username}</TableCell>
+            <TableCell className="border-r-3 border-blue-600"> {user.username}</TableCell>
             <TableCell>{user.email}</TableCell>
             {/* Agrega más TableCell según tus datos */}
           </TableRow>

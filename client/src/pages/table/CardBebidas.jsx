@@ -1,6 +1,6 @@
 import React from "react";
 import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure} from "@nextui-org/react";
-import Formulariodes from './Formulario.jsx'
+import Formulariodes from './FormBebidas.jsx'
 
 export default function App() {
   const {isOpen, onOpen, onClose} = useDisclosure();
@@ -24,7 +24,7 @@ export default function App() {
             onPress={() => handleOpen(b)}
             className="capitalize"
           >
-           {b}
+          Agregar bebida
           </Button>
         ))}  
       </div>
@@ -32,7 +32,7 @@ export default function App() {
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">Registrar cliente</ModalHeader>
+              <ModalHeader className="flex flex-col gap-1">Registrar Bebidas</ModalHeader>
               <ModalBody>
                 <Formulariodes/>
 
