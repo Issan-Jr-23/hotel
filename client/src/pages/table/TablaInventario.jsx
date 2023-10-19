@@ -25,27 +25,27 @@ export default function App() {
         <div className='flex my-5'>
             <div className='mr-5'>
         <CardDesplegable />
-
             </div>
         <CardAlimentos/>
-
         </div>
-    <Table aria-label="Lista de Usuarios">
-      <TableHeader>
-        <TableColumn>NAME</TableColumn>
-        <TableColumn>EMAIL</TableColumn>
-        {/* Agrega más columnas según tus datos */}
-      </TableHeader>
-      <TableBody emptyContent="No hay filas para mostrar.">
-        {users.map((user) => ( 
-          <TableRow key={user.id}>
-            <TableCell className="border-r-3 border-blue-600"> {user.username}</TableCell>
-            <TableCell>{user.email}</TableCell>
-            {/* Agrega más TableCell según tus datos */}
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        <section className="flex coluns-2 ">
+          <Table className="mx-5 text-center" aria-label="Lista de Usuarios">
+            <TableHeader className="text-center">
+              <TableColumn className="text-center">NAME</TableColumn>
+              <TableColumn className="text-center">EMAIL</TableColumn>
+              {/* Agrega más columnas según tus datos */}
+            </TableHeader>
+            <TableBody emptyContent="No hay filas para mostrar.">
+              {users.map((user) => ( 
+                <TableRow key={user.id}>
+                  <TableCell className="border-r-3 border-blue-600"> {user.username}</TableCell>
+                  <TableCell>{user.email}</TableCell>
+                  {/* Agrega más TableCell según tus datos */}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </section>
     </div>
   );
 }

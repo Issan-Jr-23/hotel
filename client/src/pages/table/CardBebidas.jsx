@@ -1,48 +1,139 @@
-import React from "react";
-import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure} from "@nextui-org/react";
-import Formulariodes from './FormBebidas.jsx'
+import { useState, useEffect, useRef } from "react";
+import axios from "axios";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+  useDisclosure,
+} from "@nextui-org/react";
+import { Input } from "@nextui-org/react";
+import "./formulario.css";
+import { Select, SelectItem } from "@nextui-org/react";
 
-export default function App() {
-  const {isOpen, onOpen, onClose} = useDisclosure();
-  const [backdrop, setBackdrop] = React.useState('opaque') 
 
-  const backdrops = [ "blur"];
+export default function FormBebidas() {
+  const options = ["pequeño", "mediano", "grande", "mega"];
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [backdrop, setBackdrop] = useState("blur");
+  const [formData, setFormData] = useState({
+    nombre: "",
+    tamaño: "",
+    cantidad: "",
+    fechaCaducidad: "",
+    precioVenta: "",
+  });
 
-  const handleOpen = (backdrop) => {
-    setBackdrop(backdrop)
-    onOpen();
-  }
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleTamañoChange = (selectedSize) => {
+    setFormData({
+      ...formData,
+      tamaño: selectedSize,
+    });
+  };
+
+
+  const handleFormSubmit = () => {
+    axios.post("http://127.0.0.1:3000/api/bebidas", formData) // Reemplaza 'URL_DEL_SERVIDOR' con la URL real de tu servidor
+      .then((response) => {
+        onClose();
+      })
+      .catch((error) => {
+      });
+  };
 
   return (
     <>
       <div className="flex flex-wrap gap-3">
-        {backdrops.map((b) => (
-          <Button  
-            key={b}
-            variant="flat" 
-            color="primary" 
-            onPress={() => handleOpen(b)}
-            className="capitalize"
-          >
+        <Button
+          variant="flat"
+          color="primary"
+          onClick={() => {
+            setBackdrop("blur");
+            onOpen();
+          }}
+          className="capitalize"
+        >
           Agregar bebida
-          </Button>
-        ))}  
+        </Button>
       </div>
       <Modal backdrop={backdrop} isOpen={isOpen} onClose={onClose}>
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">Registrar Bebidas</ModalHeader>
+              <ModalHeader className="flex flex-col gap-1">
+                Registrar Bebidas
+              </ModalHeader>
               <ModalBody>
-                <Formulariodes/>
+                <Input
+                  name="nombre"
+                  className="input_form"
+                  type="text"
+                  variant="flat"
+                  label="Nombre del producto"
+                  onChange={handleInputChange}
+                />
+                <select
+          id="tamaño"
+          name="tamaño"
+          value={formData.tamaño}
+          onChange={(event) => handleTamañoChange(event.target.value)}
+        >
+          <option value="">Seleccione un tamaño</option>
+          {options.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+                <Input
+                  name="cantidad"
+                  className="input_form"
+                  type="number"
+                  variant="flat"
+                  label="Cantidad"
+                  onChange= {
+                    handleInputChange}
+                />
+                <Input
+                  name="fechaCaducidad"
+                  className="input_form"
+                  type="date"
+                  variant="flat"
+                  label="Fecha de caducidad"
+                  placeholder="fecha"
+                  onChange={handleInputChange}
+                />
+                
 
+
+                <Input
+                  name="precioVenta"
+                  className="input_form"
+                  type="Number"
+                  variant="flat"
+                  label="Precio de venta"
+                  // value={numero}
+                  onChange={
+                    handleInputChange
+                  }
+                />
               </ModalBody>
               <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
-                  Close
+                <Button color="danger" variant="light" onClick={onClose}>
+                  Cerrar
                 </Button>
-                <Button color="primary" onPress={onClose}>
-                  Action
+                <Button color="primary" onClick={handleFormSubmit}>
+                  Guardar
                 </Button>
               </ModalFooter>
             </>

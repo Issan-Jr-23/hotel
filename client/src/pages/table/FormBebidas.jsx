@@ -2,7 +2,7 @@
 import {Input} from "@nextui-org/react";
 import './formulario.css'
 import {Select, SelectItem} from "@nextui-org/react";
-
+import { useState } from 'react';
 
 export default function App() {
   const variants = ["flat"];
@@ -10,6 +10,26 @@ export default function App() {
   const placements = [
     "inside",
   ];
+
+
+
+  const [numero, setNumero] = useState('');
+
+  const handleInputChange = (event) => {
+    // Obtén el valor del campo de entrada
+    let inputValue = event.target.value;
+
+    // Remueve cualquier carácter que no sea número
+    inputValue = inputValue.replace(/[^\d]/g, '');
+
+    // Formatea el número con puntos separando los miles
+    inputValue = inputValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+    // Actualiza el estado con el nuevo valor formateado
+    setNumero(inputValue);
+  };
+
+
 
   return (
     <div className="w-full flex flex-col gap-4 form_exp">
@@ -20,7 +40,7 @@ export default function App() {
           <Select
           label="Tamaño"
           placeholder="seleccione si o no"
-          className="max-w-xs input_form"
+          className="w-full"
           >
 
           <SelectItem>Pequeño</SelectItem>
@@ -35,14 +55,20 @@ export default function App() {
             <Input
               key={placement}
               type="date"
-              label="Email"
+              label="Fecha de caducidad"
               labelPlacement={placement}
               placeholder="Enter your email"
               description={placement}
             />
           ))}
 
-          <Input className='input_form' placeholder="0.00" type="Number" variant={variant} label="Precio de venta" startContent={
+          <Input className='input_form' 
+          placeholder="0.00" 
+          type="text" 
+          value={numero}
+          label="Precio de venta" 
+          onChange={handleInputChange}
+          startContent={
             <div className="pointer-events-none flex items-center">
               <span className="text-default-400 text-small">$</span>
             </div>

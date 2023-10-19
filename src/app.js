@@ -4,6 +4,7 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import clientRoutes from "./routes/client.routes.js"
 import authRoutes from "./routes/auth.routes.js";
+import bebidasRoutes from "./routes/bebidas.routes.js";
 // import taksRoutes from "./routes/tasks.routes.js";
 import { FRONTEND_URL } from "./config.js";
 
@@ -22,6 +23,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 // app.use("/api", taksRoutes);
 app.use("/api", clientRoutes);
+app.use("/api", bebidasRoutes);
 
 if (process.env.NODE_ENV === "production") {
   const path = await import("path");
