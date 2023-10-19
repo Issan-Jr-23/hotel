@@ -1,13 +1,16 @@
 import Navbar from '../components/Navbars.jsx'
-import TablePrueba from './table/TablePrueba.jsx'
+import TableClient from './tableHotel/TableClient.jsx'
+
+
 
 const Pasadia = () => {
   return (
-    <div>
+    <div className=''>
         <Navbar />
-        <TablePrueba/>
+        <TableClient/>
     </div>
   )
 }
 
 export default Pasadia
+

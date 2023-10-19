@@ -7,6 +7,3 @@ body {
   color: rgb(0, 0, 0);
 }
 
-.content-container {
-  height: calc(100vh - theme("spacing.20"));
-}

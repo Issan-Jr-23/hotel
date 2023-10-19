@@ -1,25 +1,20 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-// import { Navbar } from "./components/Navbar";
-import { AuthProvider } from "./context/authContext";
+import { AuthProvider } from "./context/authContext.jsx";
 import { ProtectedRoute } from "./routes";
-
-import RegisterPage from "./pages/RegisterPage";
-// import { TaskFormPage } from "./pages/TaskFormPage";
 import { LoginPage } from "./pages/LoginPage";
-// import { TasksPage } from "./pages/TasksPage";
 import { TaskProvider } from "./context/tasksContext";
 import { Home } from "./pages/Home";
 import Pasadia from "./pages/Pasadia";
 import Cabanias from "./pages/Cabanias";
-import Inventario from "./pages/inventario";
-
+import InvBebidas from "./pages/InventarioBebidas.jsx";
+import InvAlimentos from "./pages/InventarioAlimentos.jsx";
 function App() {
+  
   return (
     <AuthProvider>
       <TaskProvider>
         <BrowserRouter>
-          <main className="container content-container mx-auto px-10 md:px-0">
-            {/* <Navbar /> */}
+          <main className="px-10 md:px-0">
             <Routes>
               
               <Route path="/" element={<LoginPage />}/>
@@ -28,11 +23,8 @@ function App() {
                 <Route path="/home" element={<Home/>}/>
                 <Route path="/Pasadia" element={<Pasadia/>} />
                 <Route path="/cabanias" element={<Cabanias/>} />
-                <Route path="/inventario" element={<Inventario/>}/>
-                {/* <Route path="/tasks" element={<TasksPage />} />
-                <Route path="/add-task" element={<TaskFormPage />} />
-                <Route path="/tasks/:id" element={<TaskFormPage />} />
-                <Route path="/profile" element={<h1>Profile</h1>} /> */}
+                <Route path="/bebidas" element={<InvBebidas/>}/>
+                <Route path="/alimentos" element={<InvAlimentos/>}/>
               </Route>
             </Routes>
           </main>

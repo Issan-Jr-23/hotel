@@ -8,4 +8,4 @@ const bebidaSchema = new mongoose.Schema({
   precioVenta: Number,
 });
 
-export default mongoose.model("Bebidas", bebidaSchema);
+export default mongoose.model("Alimentos", bebidaSchema);

@@ -26,7 +26,7 @@ function Register() {
   }, [isAuthenticated]);
 
   return (
-    <div className="h-[calc(100vh-100px)] flex items-center justify-center">
+    <div className=" flex items-center justify-center">
       <Card>
         {registerErrors.map((error, i) => (
           <Message message={error} key={i} />

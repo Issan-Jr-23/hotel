@@ -17,6 +17,7 @@ export default function App() {
         <div key={variant} className="flex w-full flex-wrap md:flex-nowrap mb-6 md:mb-0 gap-4 div_formulario" >
 
           <Input className='input_form' type="Text" variant={variant} label="Nombre del producto" />
+          
           <Select
           label="Tamaño"
           placeholder="seleccione si o no"
@@ -30,6 +31,7 @@ export default function App() {
 
           {/* {(animal) => <SelectItem key={animal.value}>{animal.label}</SelectItem>} */}
           </Select>
+
           <Input className='input_form' type="Number" variant={variant} label="Cantidad"/>
           {placements.map((placement) => (
             <Input

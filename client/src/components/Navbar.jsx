@@ -2,7 +2,7 @@
 // import { useAuth } from "../context/authContext";
 // import { ButtonLink } from "./ui/ButtonLink";
 
-// export function Navbar() {
+// function Navbar() {
 //   const { isAuthenticated, logout, user } = useAuth();
 //   console.log(isAuthenticated, user)
 
@@ -40,3 +40,5 @@
 //     </nav>
 //   );
 // }
+
+// export default Navbar

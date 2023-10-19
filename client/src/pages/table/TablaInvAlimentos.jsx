@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Table, TableHeader,Button, TableColumn, TableBody, TableRow, TableCell } from "@nextui-org/react";
 import axios from "axios";
-import CardDesplegable from './CardBebidas.jsx'
+import CardDesplegable from './CardAlimentos.jsx'
 
 export default function App() {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = async (newFoodData) => {
       try {
-        const response = await axios.get("http://127.0.0.1:3000/api/obtener-bebidas");
+        const response = await axios.get("http://127.0.0.1:3000/api/obtener-alimentos", newFoodData);
         setUsers(response.data);
       } catch (error) {
         console.error("Error al obtener datos del servidor:", error);
@@ -33,7 +33,7 @@ export default function App() {
               <TableColumn className="text-center">Tamaño</TableColumn>
               <TableColumn className="text-center">Cantidad</TableColumn>
               <TableColumn className="text-center">Fecha de caducidad</TableColumn>
-              <TableColumn className="text-center">PrecioL</TableColumn>
+              <TableColumn className="text-center">Precio de venta</TableColumn>
             </TableHeader>
             <TableBody emptyContent="No hay filas para mostrar.">
               {users.map((user) => ( 

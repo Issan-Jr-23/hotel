@@ -10,8 +10,6 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import { Input } from "@nextui-org/react";
-import "./formulario.css";
-import { Select, SelectItem } from "@nextui-org/react";
 
 
 export default function FormBebidas() {
@@ -43,7 +41,7 @@ export default function FormBebidas() {
 
 
   const handleFormSubmit = () => {
-    axios.post("http://127.0.0.1:3000/api/alimentos", formData) // Reemplaza 'URL_DEL_SERVIDOR' con la URL real de tu servidor
+    axios.post("http://127.0.0.1:3000/api/alimentos", formData)
       .then((response) => {
         onClose();
       })
@@ -63,7 +61,7 @@ export default function FormBebidas() {
           }}
           className="capitalize"
         >
-          Agregar Mekatos
+          Agregar +
         </Button>
       </div>
       <Modal backdrop={backdrop} isOpen={isOpen} onClose={onClose}>

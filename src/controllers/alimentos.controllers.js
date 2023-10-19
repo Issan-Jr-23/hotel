@@ -1,8 +1,8 @@
-import Bebida from "../models/bebidas.model.js";
+import Alimento from "../models/alimentos.model.js";
 
-export const crearBebida = async (req, res) => {
+export const crearAlimentos = async (req, res) => {
   try {
-    const nuevaBebida = new Bebida(req.body);
+    const nuevaBebida = new Alimento(req.body);
     const bebidaGuardada = await nuevaBebida.save();
     res.status(201).json(bebidaGuardada);
   } catch (error) {
@@ -12,10 +12,10 @@ export const crearBebida = async (req, res) => {
 };
 
 
-export const obtenerBebidas = async (req, res) => {
+export const obtenerAlimentos = async (req, res) => {
   try {
-    const bebidas = await Bebida.find();
-    res.status(200).json(bebidas);
+    const Alimentos = await Alimento.find();
+    res.status(200).json(Alimentos);
   } catch (error) {
     console.error(error);
     res.status(500).send("Error al obtener las bebidas desde la base de datos");

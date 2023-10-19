@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 // import { useAuth } from "../context/authContext";
 import './navbars.css'
 import { useAuth } from "../context/authContext";
-export default function App() {
+export default function Menu() {
 
   // const { isAuthenticated, logout, user } = useAuth();
   // console.log(isAuthenticated, user)
@@ -17,7 +17,7 @@ export default function App() {
   ];
 
   return (
-    <Navbar disableAnimation isBordered>
+    <Navbar disableAnimation isBordered >
       <NavbarContent className="sm:hidden" justify="start">
         <NavbarMenuToggle />
       </NavbarContent>
@@ -25,7 +25,7 @@ export default function App() {
       <NavbarContent className="sm:hidden pr-3" justify="center">
         <NavbarBrand>
           {/* <AcmeLogo /> */}
-          <Link to={isAuthenticated ? "/tasks" : "/"}>MEQO</Link>
+          <Link to={isAuthenticated ? "/home" : "/"}>MEQO</Link>
         </NavbarBrand>
       </NavbarContent>
 
@@ -74,8 +74,16 @@ export default function App() {
               key="99_uptime"
             //   startContent={icons.server}
             >
-              <Link className="link_nav" to='/inventario'>
-            Inventario
+              <Link className="link_nav" to='/bebidas'>
+            Bebidas
+            </Link>
+            </DropdownItem>
+            <DropdownItem
+              key="99_uptime"
+            //   startContent={icons.server}
+            >
+              <Link className="link_nav" to='/alimentos'>
+            Alimentos
             </Link>
             </DropdownItem>
           </DropdownMenu>
