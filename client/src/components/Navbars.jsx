@@ -1,13 +1,9 @@
 import {Navbar,DropdownItem,Dropdown,DropdownTrigger,DropdownMenu,Avatar, NavbarBrand,NavbarMenu,NavbarMenuItem,NavbarMenuToggle, NavbarContent, NavbarItem, Button} from "@nextui-org/react";
-// import {AcmeLogo} from "./AcmeLogo.jsx";
 import { Link } from "react-router-dom";
-// import { useAuth } from "../context/authContext";
 import './navbars.css'
 import { useAuth } from "../context/authContext";
 export default function Menu() {
 
-  // const { isAuthenticated, logout, user } = useAuth();
-  // console.log(isAuthenticated, user)
 
   const { isAuthenticated, logout, user } = useAuth();
   console.log(isAuthenticated, user)
@@ -17,30 +13,27 @@ export default function Menu() {
   ];
 
   return (
-    <Navbar disableAnimation isBordered >
+    <Navbar disableAnimation isBordered className="bg-blue-200">
       <NavbarContent className="sm:hidden" justify="start">
         <NavbarMenuToggle />
       </NavbarContent>
 
       <NavbarContent className="sm:hidden pr-3" justify="center">
         <NavbarBrand>
-          {/* <AcmeLogo /> */}
-          <Link to={isAuthenticated ? "/home" : "/"}>MEQO</Link>
+          <Link to={isAuthenticated ? "/home" : "/"}>Obraix</Link>
         </NavbarBrand>
       </NavbarContent>
 
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarBrand>
-          {/* <AcmeLogo /> */}
-          <Link to={isAuthenticated ? "/home" : "/"}>MEQO</Link>
+          <Link to={isAuthenticated ? "/home" : "/"}>OBRAIX</Link>
         </NavbarBrand>
         <Dropdown>
           <NavbarItem>
             <DropdownTrigger>
               <Button
                 disableRipple
-                className="p-0 bg-transparent data-[hover=true]:bg-transparent"
-                // endContent={icons.chevron}
+                className="text-blue-700 font-medium text-base p-0 bg-transparent data-[hover=true]:bg-transparent"
                 radius="sm"
                 variant="light"
               >
@@ -89,12 +82,12 @@ export default function Menu() {
           </DropdownMenu>
         </Dropdown>
         <NavbarItem isActive>
-          <Link href="#" aria-current="page" color="warning">
+          <Link className="text-blue-700 font-medium text-base" href="#" aria-current="page" color="warning">
             Finca
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link color="foreground" href="#">
+          <Link className="text-blue-700 font-medium text-base" color="foreground" href="#">
             Energia Renovable
           </Link>
         </NavbarItem>
