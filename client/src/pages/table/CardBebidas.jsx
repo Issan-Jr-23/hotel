@@ -10,8 +10,7 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import { Input } from "@nextui-org/react";
-import "./formulario.css";
-import { Select, SelectItem } from "@nextui-org/react";
+import "./formulario.css"; 
 
 
 export default function FormBebidas() {

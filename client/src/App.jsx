@@ -8,13 +8,20 @@ import Pasadia from "./pages/Pasadia";
 import Cabanias from "./pages/Cabanias";
 import InvBebidas from "./pages/InventarioBebidas.jsx";
 import InvAlimentos from "./pages/InventarioAlimentos.jsx";
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faCheckSquare} from '@fortawesome/free-solid-svg-icons'
+
+library.add( faCheckSquare)
+
+
+
 function App() {
   
   return (
     <AuthProvider>
       <TaskProvider>
         <BrowserRouter>
-          <main className="px-10 md:px-0">
+          <main className="max-w-full">
             <Routes>
               
               <Route path="/" element={<LoginPage />}/>

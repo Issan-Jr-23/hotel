@@ -13,7 +13,7 @@ export default function Menu() {
   ];
 
   return (
-    <Navbar disableAnimation isBordered className="bg-blue-200">
+    <Navbar disableAnimation isBordered className="bg-blue-200 justify-beetween">
       <NavbarContent className="sm:hidden" justify="start">
         <NavbarMenuToggle />
       </NavbarContent>
@@ -93,7 +93,7 @@ export default function Menu() {
         </NavbarItem>
       </NavbarContent>
 
-      <NavbarContent as="div" className="items-center" justify="end">
+      <NavbarContent as="div" className="items-center" justify="">
         <Dropdown placement="bottom-end">
           <DropdownTrigger>
             <Avatar

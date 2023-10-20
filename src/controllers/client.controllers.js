@@ -1,15 +1,39 @@
-import Datos from "../models/datos.model.js";
+import Cliente from "../models/client.model.js";
 
-
-export const dataUser = async (req, res) => {
+export const obtenerClientes = async (req, res) => {
   try {
-    const datos = await Datos.find({}, 'username email'); // Solo selecciona las propiedades 'nombre' y 'correo'
-
-    res.json(datos);
+    const clienteObtenido = await Cliente.find();
+    res.status(200).json(clienteObtenido);
   } catch (error) {
-    console.error('Error al obtener datos desde la base de datos:', error);
-    res.status(500).json({ error: 'Error al obtener datos desde la base de datos' });
+    console.error(error);
+    res.status(500).send("Error al obtener las bebidas desde la base de datos");
+  }
+}; 
+
+
+
+export const crearCliente = async (req, res) => {
+  try {
+    const nuevoCliente = new Cliente(req.body);
+    const clienteGuardado = await nuevoCliente.save();
+    res.status(201).json(clienteGuardado);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error al guardar la bebida en la base de datos");
   }
 };
+
+export const crearAlimentos = async (req, res) => {
+  try {
+    const nuevaBebida = new Alimento(req.body);
+    const bebidaGuardada = await nuevaBebida.save();
+    res.status(201).json(bebidaGuardada);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error al guardar la bebida en la base de datos");
+  }
+};
+
+
 
 

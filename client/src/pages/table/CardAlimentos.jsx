@@ -43,7 +43,7 @@ export default function FormBebidas() {
 
 
   const handleFormSubmit = () => {
-    axios.post("http://127.0.0.1:3000/api/alimentos", formData) // Reemplaza 'URL_DEL_SERVIDOR' con la URL real de tu servidor
+    axios.post("http://127.0.0.1:3000/api/alimentos", formData)
       .then((response) => {
         onClose();
       })

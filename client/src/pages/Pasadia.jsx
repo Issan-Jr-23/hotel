@@ -1,5 +1,5 @@
 import Navbar from '../components/Navbars.jsx'
-import TableClient from './tableHotel/TableClient.jsx'
+import TableClient from './tableHotel/TableClientPasadia.jsx'
 
 
 

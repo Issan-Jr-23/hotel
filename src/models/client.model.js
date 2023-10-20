@@ -1,38 +1,36 @@
 import mongoose from "mongoose";
+import moment from "moment-timezone";
 
+const clienteSchema = new mongoose.Schema({ 
+  identificacion: {
+    type: Number,
+    required: true
+  },
+  nombre: {
+    type: String,
+    required: true
+  },
+  reserva: {
+    type:String,
+    require: true
 
-const clienteSchema = new mongoose.Schema({
-            
-    nombre: {
-        type: String,
-        required: true
-    },
-    reserva: {
-        type: Boolean,
-        default: false
-    },
-    pago_pendiente: {
-        type: Number,
-        default: 0
-    },
-    total_del_paquete: {
-        type: Number,
-        default: 0
-    },
-    bar: {
-        type: Number,
-        default: 0
-    },
-    restaurante: {
-        type: Number,
-        default: 0
-    },
-    total_consumido: {
-        type: Number,
-        default: 0
-    }
-
+  },
+  pagoPendienteTotal:{
+    type:Number,
+    require: true
+  } ,
+  fechaDeRegistro: { 
+    type: Date,
+    default: () => moment.tz("America/Bogota").toDate()
+  },
+  bebidas: String,
+  restaurante: String,
+  totalConsumido: String
 });
 
+export default mongoose.model('Clientes', clienteSchema);
 
-const Cliente = mongoose.model('Cliente', clienteSchema);
+
+
+
+
