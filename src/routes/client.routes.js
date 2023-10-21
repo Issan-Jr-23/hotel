@@ -1,10 +1,12 @@
 import { Router } from "express";
 import {obtenerClientes} from "../controllers/client.controllers.js";
 import {crearCliente} from "../controllers/client.controllers.js";
+import {deleteClient} from "../controllers/client.controllers.js";
 
 const router = Router();
 
 router.get("/pasadia-clientes", obtenerClientes);
 router.post("/pasadia-registrar-cliente", crearCliente);
+router.delete("/pasadia/:identificacion", deleteClient);
 
 export default router;

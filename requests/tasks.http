@@ -1,4 +1,4 @@
-@api = http://localhost:4000/api/meqo_db
+@api = http://localhost:3000/api/meqo_db
 @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzZjI1MDcyODM1ZWFkMTQ2MTJjOWE3OCIsInVzZXJuYW1lIjoicnlhbiIsImlhdCI6MTY3NjgyNDY5MCwiZXhwIjoxNjc2OTExMDkwfQ.Pvldt1v-iUPgnGKtZKb2RUtFohoVmOUsEENtdJi_NSc
 
 ### GET /tasks - Auth required

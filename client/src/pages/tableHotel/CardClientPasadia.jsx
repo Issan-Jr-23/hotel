@@ -16,8 +16,9 @@ import { Input } from "@nextui-org/react";
 
 export default function FormBebidas() {
   const options = ["Si", "No"];
-  const optionBebidas = ["Corona" , "Aguila"];
+  const optionBebidas = ["Corona", "Aguila"];
   const optionBocado = ["Boliqueso", "Chetos"];
+  // const optionRol = ["user", "admin", "editor"];
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [backdrop, setBackdrop] = useState("blur");
   const [formData, setFormData] = useState({
@@ -27,7 +28,7 @@ export default function FormBebidas() {
     pagoPendienteTotal:"",
     bebidas:"",
     restaurante:"",
-    TotalConsumido: ""
+    // roles: ""
   });
 
   const handleInputChange = (event) => {
@@ -58,6 +59,13 @@ export default function FormBebidas() {
       bebidas: selectedSize,
     });
   };
+
+  // const handleRolChange = (selectedSize) => {
+  //   setFormData({
+  //     ...formData,
+  //     roleses: selectedSize,
+  //   });
+  // };
 
 
   const handleFormSubmit = () => {
@@ -175,6 +183,20 @@ export default function FormBebidas() {
                    onChange= {
                      handleInputChange}
                  />
+
+                {/* <Select 
+                   name="roles"
+                   label="Seleccionar rol" 
+                   className="max-w-full w-full" 
+                   value={formData.roles}
+                     onChange={(event) => handleRolChange(event.target.value)}
+                 >
+                   {optionRol.map((rol) => (
+                     <SelectItem key={rol} value={rol}>
+                       {rol}
+                     </SelectItem>
+                   ))}
+                 </Select> */}
         
 
                </ModalBody>

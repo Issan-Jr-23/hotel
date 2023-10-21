@@ -1,16 +1,13 @@
 import Cliente from "../models/client.model.js";
-
 export const obtenerClientes = async (req, res) => {
   try {
-    const clienteObtenido = await Cliente.find();
-    res.status(200).json(clienteObtenido);
+    const clientesObtenidos = await Cliente.find();
+    res.status(200).json(clientesObtenidos);
   } catch (error) {
     console.error(error);
-    res.status(500).send("Error al obtener las bebidas desde la base de datos");
+    res.status(500).send("Error al obtener los clientes desde la base de datos");
   }
-}; 
-
-
+};
 
 export const crearCliente = async (req, res) => {
   try {
@@ -19,20 +16,28 @@ export const crearCliente = async (req, res) => {
     res.status(201).json(clienteGuardado);
   } catch (error) {
     console.error(error);
-    res.status(500).send("Error al guardar la bebida en la base de datos");
+    res.status(500).send("Error al guardar el cliente en la base de datos");
   }
 };
 
-export const crearAlimentos = async (req, res) => {
+
+export const deleteClient = async (req, res) => {
+  const identificacion = parseInt(req.params.identificacion); // Parsea el parámetro como número
+
   try {
-    const nuevaBebida = new Alimento(req.body);
-    const bebidaGuardada = await nuevaBebida.save();
-    res.status(201).json(bebidaGuardada);
+    const resultado = await Cliente.deleteOne({ identificacion: identificacion }); // Cambiar el nombre del campo
+    if (resultado.deletedCount > 0) {
+      res.status(200).json({ message: `Usuario con identificación "${identificacion}" eliminado con éxito.` });
+    } else {
+      res.status(404).json({ message: `No se encontró un usuario con la identificación "${identificacion}".` });
+    }
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Error al guardar la bebida en la base de datos");
+    console.error('Error al eliminar el usuario:', error);
+    res.status(500).json({ message: 'Error interno del servidor.' });
+
+    funtio
   }
-};
+}
 
 
 

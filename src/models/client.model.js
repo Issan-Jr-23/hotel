@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import moment from "moment-timezone";
 
-const clienteSchema = new mongoose.Schema({ 
+const clienteSchema = new mongoose.Schema({  
   identificacion: {
     type: Number,
     required: true
@@ -12,12 +12,12 @@ const clienteSchema = new mongoose.Schema({
   },
   reserva: {
     type:String,
-    require: true
+    required: true
 
   },
   pagoPendienteTotal:{
     type:Number,
-    require: true
+    required: true
   } ,
   fechaDeRegistro: { 
     type: Date,
@@ -25,7 +25,7 @@ const clienteSchema = new mongoose.Schema({
   },
   bebidas: String,
   restaurante: String,
-  totalConsumido: String
+  totalConsumido: String,
 });
 
 export default mongoose.model('Clientes', clienteSchema);
