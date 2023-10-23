@@ -36,13 +36,13 @@ export default function App() {
               <TableColumn className="text-center">Precio de venta</TableColumn>
             </TableHeader>
             <TableBody emptyContent="No hay filas para mostrar.">
-              {users.map((user) => ( 
-                <TableRow key={user.id}>
-                  <TableCell className="border-r-3 border-blue-600"> {user.nombre}</TableCell>
-                  <TableCell>{user.tamaño}</TableCell>
-                  <TableCell>{user.cantidad}</TableCell>
-                  <TableCell>{user.fechaCaducidad}</TableCell>
-                  <TableCell>{user.precioVenta}</TableCell>
+              {users.map((mekatos) => ( 
+                <TableRow key={mekatos.id}>
+                  <TableCell className="border-r-3 border-blue-600"> {mekatos.nombre}</TableCell>
+                  <TableCell>{mekatos.tamaño}</TableCell>
+                  <TableCell>{mekatos.cantidad}</TableCell>
+                  <TableCell>{mekatos.fechaCaducidad}</TableCell>
+                  <TableCell>{mekatos.precioVenta}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

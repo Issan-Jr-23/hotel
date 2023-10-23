@@ -12,6 +12,8 @@ import {
   SelectItem
 } from "@nextui-org/react";
 import { Input } from "@nextui-org/react"; 
+import toast, {Toaster} from 'react-hot-toast';
+
 
 
 export default function FormBebidas() {
@@ -60,25 +62,22 @@ export default function FormBebidas() {
     });
   };
 
-  // const handleRolChange = (selectedSize) => {
-  //   setFormData({
-  //     ...formData,
-  //     roleses: selectedSize,
-  //   });
-  // };
 
 
-  const handleFormSubmit = () => {
-    axios.post("http://127.0.0.1:3000/api/pasadia-registrar-cliente", formData)
-      .then((response) => {
-        onClose();
-      })
-      .catch((error) => {
-      });
+  const handleFormSubmit = async () => {
+    try {
+      await axios.post("http://127.0.0.1:3000/api/pasadia-registrar-cliente", formData);
+      onClose();
+      toast.success('Cliente agregado exitosamente!');
+    } catch (error) {
+      toast.error('Ocurrió un error al agregar el cliente.');
+    }
+
   };
 
   return (
     <>
+    <Toaster/>
       <div className="flex flex-wrap gap-3">
         <Button
           variant="flat"
@@ -116,25 +115,20 @@ export default function FormBebidas() {
                    label="Nombre de usuario"
                    onChange={handleInputChange}
                  />
-                
-
-
-
-     <Select 
-     required
-         name="reserva"
-         label="¿La reserva fue realizada?" 
-         className="max-w-full w-full" 
-         value={formData.reserva}
-         onChange={(event) => handleReservaChange(event.target.value)}
-       >
-         {options.map((option) => (
-           <SelectItem key={option} value={option}>
-             {option}
-           </SelectItem>
-         ))}
-       </Select>
-
+                <Select 
+                required
+                    name="reserva"
+                    label="¿La reserva fue realizada?" 
+                    className="max-w-full w-full" 
+                    value={formData.reserva}
+                    onChange={(event) => handleReservaChange(event.target.value)}
+                  >
+                    {options.map((option) => (
+                      <SelectItem key={option} value={option}>
+                        {option}
+                      </SelectItem>
+                    ))}
+                  </Select>
 
                  <Input
                  required

@@ -1,4 +1,5 @@
 import Cliente from "../models/client.model.js";
+
 export const obtenerClientes = async (req, res) => {
   try {
     const clientesObtenidos = await Cliente.find();
@@ -34,10 +35,37 @@ export const deleteClient = async (req, res) => {
   } catch (error) {
     console.error('Error al eliminar el usuario:', error);
     res.status(500).json({ message: 'Error interno del servidor.' });
-
-    funtio
   }
 }
+
+
+
+
+export const updateClient = async (req, res) => {
+  const identificacion = req.params.identificacion;
+  const { nombre } = req.body;
+
+  try {
+    const usuarioActualizado = await Cliente.findOneAndUpdate(
+      { identificacion },
+      { nombre },
+      { new: true }
+    );
+
+    if (!usuarioActualizado) {
+      return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+    }
+
+    res.json({ mensaje: 'Usuario actualizado correctamente', usuarioActualizado });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ mensaje: 'Error interno del servidor' });
+  }
+};
+
+
+
+      
 
 
 

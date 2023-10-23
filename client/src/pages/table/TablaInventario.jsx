@@ -36,13 +36,13 @@ export default function App() {
               <TableColumn className="text-center">PrecioL</TableColumn>
             </TableHeader>
             <TableBody emptyContent="No hay filas para mostrar.">
-              {users.map((user) => ( 
-                <TableRow key={user.id}>
-                  <TableCell className="border-r-3 border-blue-600"> {user.nombre}</TableCell>
-                  <TableCell>{user.tamaño}</TableCell>
-                  <TableCell>{user.cantidad}</TableCell>
-                  <TableCell>{user.fechaCaducidad}</TableCell>
-                  <TableCell>{user.precioVenta}</TableCell>
+              {users.map((bebidas) => ( 
+                <TableRow key={bebidas.id}>
+                  <TableCell className="border-r-3 border-blue-600"> {bebidas.nombre}</TableCell>
+                  <TableCell>{bebidas.tamaño}</TableCell>
+                  <TableCell>{bebidas.cantidad}</TableCell>
+                  <TableCell>{bebidas.fechaCaducidad}</TableCell>
+                  <TableCell>{bebidas.precioVenta}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
