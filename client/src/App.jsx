@@ -5,8 +5,8 @@ import { ProtectedRoute } from "./routes";
 import { LoginPage } from "./pages/LoginPage";
 import { TaskProvider } from "./context/tasksContext";
 import { Home } from "./pages/Home";
-import Pasadia from "./pages/Pasadia";
-import Cabanias from "./pages/Cabanias";
+import Pasadia from "./pages/Pasadia.jsx";
+import Cabanias from "./pages/Cabanias.jsx";
 import InvBebidas from "./pages/InventarioBebidas.jsx";
 import InvAlimentos from "./pages/InventarioAlimentos.jsx";
 import { library } from '@fortawesome/fontawesome-svg-core'

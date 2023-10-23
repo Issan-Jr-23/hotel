@@ -1,5 +1,5 @@
 import Navbar from '../components/Navbars.jsx'
-import TableClient from './tableHotel/TableClientPasadia.jsx'
+import TableClientPasadia from './tablePasadia/TableClientPasadia.jsx'
 
 
 
@@ -7,7 +7,8 @@ const Pasadia = () => {
   return (
     <div className=''>
         <Navbar />
-        <TableClient/>
+      <h1>PASADIA</h1>
+        <TableClientPasadia/>
     </div>
   )
 }

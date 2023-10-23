@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Table, TableHeader,Button, TableColumn, TableBody, TableRow, TableCell } from "@nextui-org/react";
 import axios from "axios";
 import CardDesplegable from './CardAlimentos.jsx'
+import editar from "../../images/boligrafo.png";
+import borrar from "../../images/borrar.png";
+import download from "../../images/download.png";
 
 export default function App() {
   const [users, setUsers] = useState([]);
@@ -33,7 +36,9 @@ export default function App() {
               <TableColumn className="text-center">Tamaño</TableColumn>
               <TableColumn className="text-center">Cantidad</TableColumn>
               <TableColumn className="text-center">Fecha de caducidad</TableColumn>
+              <TableColumn className="text-center">Alert</TableColumn>
               <TableColumn className="text-center">Precio de venta</TableColumn>
+              <TableColumn className="text-center">Accion</TableColumn>
             </TableHeader>
             <TableBody emptyContent="No hay filas para mostrar.">
               {users.map((mekatos) => ( 
@@ -42,7 +47,18 @@ export default function App() {
                   <TableCell>{mekatos.tamaño}</TableCell>
                   <TableCell>{mekatos.cantidad}</TableCell>
                   <TableCell>{mekatos.fechaCaducidad}</TableCell>
+                  <TableCell></TableCell>
                   <TableCell>{mekatos.precioVenta}</TableCell>
+                  <TableCell className="flex justify-center align-center"> <img
+                    className="w-8 h-8 mr-4 cursor-pointer"
+                    src={editar}
+                    alt="Edit"
+                  />
+                  <img
+                    className="w-8 h-8 cursor-pointer"
+                    src={borrar}
+                    alt="Delete"
+                  /></TableCell>
                 </TableRow>
               ))}
             </TableBody>

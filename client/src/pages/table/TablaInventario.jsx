@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Table, TableHeader,Button, TableColumn, TableBody, TableRow, TableCell } from "@nextui-org/react";
 import axios from "axios";
-import CardDesplegable from './CardBebidas.jsx'
+import CardDesplegable from './CardBebidas.jsx';
+import editar from "../../images/boligrafo.png";
+import borrar from "../../images/borrar.png";
+import download from "../../images/download.png";
 
 export default function App() {
   const [users, setUsers] = useState([]);
@@ -20,11 +23,19 @@ export default function App() {
   }, []);
 
   return (
-    <div>
-        <div className='flex my-5'>
-            <div className='mr-5'>
+    <div >
+        <div className='flex my-5 justify-between border-2'>
+            <div className='mr-5 '>
         <CardDesplegable />
             </div>
+            
+        <img
+          className="w-9 h-9 mr-4 cursor-pointer"
+          src={download}
+          alt="Edit"
+          />
+
+            
         </div>
         <section className="flex coluns-2 ">
           <Table className="mx-5 text-center" aria-label="Lista de Usuarios">
@@ -33,7 +44,8 @@ export default function App() {
               <TableColumn className="text-center">Tamaño</TableColumn>
               <TableColumn className="text-center">Cantidad</TableColumn>
               <TableColumn className="text-center">Fecha de caducidad</TableColumn>
-              <TableColumn className="text-center">PrecioL</TableColumn>
+              <TableColumn className="text-center">Precio de venta</TableColumn>
+              <TableColumn className="text-center">Acción</TableColumn>
             </TableHeader>
             <TableBody emptyContent="No hay filas para mostrar.">
               {users.map((bebidas) => ( 
@@ -43,6 +55,17 @@ export default function App() {
                   <TableCell>{bebidas.cantidad}</TableCell>
                   <TableCell>{bebidas.fechaCaducidad}</TableCell>
                   <TableCell>{bebidas.precioVenta}</TableCell>
+                  <TableCell className="flex justify-center align-center"> 
+                  <img
+                    className="w-8 h-8 mr-4 cursor-pointer"
+                    src={editar}
+                    alt="Edit"
+                  />
+                  <img
+                    className="w-8 h-8 cursor-pointer"
+                    src={borrar}
+                    alt="Delete"
+                  /></TableCell>
                 </TableRow>
               ))}
             </TableBody>

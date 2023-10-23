@@ -1,4 +1,4 @@
-import Cliente from "../models/client.model.js";
+import Cliente from "../models/client.cabania.model.js";
 
 export const obtenerClientes = async (req, res) => {
   try {
@@ -23,10 +23,10 @@ export const crearCliente = async (req, res) => {
 
 
 export const deleteClient = async (req, res) => {
-  const identificacion = parseInt(req.params.identificacion); // Parsea el parámetro como número
+  const identificacion = parseInt(req.params.identificacion);
 
   try {
-    const resultado = await Cliente.deleteOne({ identificacion: identificacion }); // Cambiar el nombre del campo
+    const resultado = await Cliente.deleteOne({ identificacion: identificacion });
     if (resultado.deletedCount > 0) {
       res.status(200).json({ message: `Usuario con identificación "${identificacion}" eliminado con éxito.` });
     } else {
@@ -43,13 +43,13 @@ export const deleteClient = async (req, res) => {
 
 export const updateClient = async (req, res) => {
   const identificacion = req.params.identificacion;
-  const { nombre, pagoPendienteTotal } = req.body;
+  const { nombre } = req.body;
 
   try {
     const usuarioActualizado = await Cliente.findOneAndUpdate(
       { identificacion },
       { nombre },
-      { pagoPendienteTotal},
+      { pagoPendienteTotal },
       { new: true }
     );
 
