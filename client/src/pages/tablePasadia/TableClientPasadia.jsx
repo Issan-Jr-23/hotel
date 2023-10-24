@@ -30,11 +30,8 @@ export default function App() {
   const [snacks, setSnacks] = useState([]);
   const [editedName, setEditedName] = useState("");
   const [editPago, setEditPago] = useState("");
-  const [bebidaSeleccionada, setBebidaSelecionada] = useState("");
   const [editedUserId, setEditedUserId] = useState(null);
   const options = ["Si", "No"];
-  const optionBebidas = ["Corona", "Aguila"];
-  const optionBocado = ["Boliqueso", "Chetos"];
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [backdrop, setBackdrop] = useState("blur");
   const [formData, setFormData] = useState({
@@ -62,29 +59,32 @@ export default function App() {
     });
   };
 
-  const handleRestauranteChange = (selectedIndex) => {
-    const selectedSnack = snacks[selectedIndex];
-    
-    console.log(selectedSnack);
-    
-    setFormData({
-      ...formData,
-      restaurante: selectedSnack,
-    });
-    console.log(formData)
-  };
+
+
 
   const handleBebidasChange = (selectedIndex) => {
     const selectedDrink = drinks[selectedIndex];
-    
     console.log(selectedDrink);
-    
     setFormData({
       ...formData,
       bebidas: selectedDrink,
     });
     console.log(formData)
   };  
+
+
+  const handleRestauranteChange = (selectedIndex) => {
+    const selectedSnack = snacks[selectedIndex];
+    console.log(selectedSnack);
+    setFormData({
+      ...formData,
+      restaurante: selectedSnack,
+    });
+    console.log(formData)
+  };  
+
+
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -112,7 +112,7 @@ export default function App() {
         restaurante: "",
         totalConsumo: "",
       });
-      const response = await axios.get("http://127.0.0.1:3000/api/cabanias-clientes");
+      const response = await axios.get("http://127.0.0.1:3000/api/pasadia-clientes");
       setUsers(response.data);
     } catch (error) {
       toast.error('Ocurrió un error al agregar el cliente.');
@@ -268,17 +268,19 @@ export default function App() {
                     </Select>
                     <Select
                       name="restaurantes"
-                      label="Seleccionar bocado"
+                      label="Seleccionar Comida"
                       className="max-w-full w-full"
+                      type="text"
                       value={snacks.indexOf(formData.restaurante)}
                       onChange={(e) => handleRestauranteChange(e.target.value)}
                     >
-                      {snacks.map((bocado) => (
-                        <SelectItem key={drinks.indexOf(bocado)}>
-                          {bocado.nombre}
+                      {snacks.map((comidas) => (
+                        <SelectItem key={snacks.indexOf(comidas)}>
+                          {comidas.nombre}
                         </SelectItem>
                       ))}
                     </Select>
+                    
                     <Input
                       name="totalConsumo"
                       className=""
@@ -359,7 +361,7 @@ export default function App() {
                 <TableCell>{cliente.reserva}</TableCell>
                 <TableCell>{cliente.fechaDeRegistro}</TableCell>
                 <TableCell>{cliente?.bebidas?.nombre || "No tiene bebidas"}</TableCell>
-                <TableCell>{cliente.restaurante}</TableCell>
+                <TableCell>{cliente?.restaurante?.nombre || "Por defidir"}</TableCell>
                 <TableCell>{cliente.totalConsumo}</TableCell>
                 <TableCell className="flex justify-center align-center pr-5">
                   {cliente.identificacion === editedUserId && (

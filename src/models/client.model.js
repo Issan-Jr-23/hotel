@@ -28,7 +28,11 @@ const clienteSchema = new mongoose.Schema({
     required: false,
     default: {}
   },
-  restaurante: String,
+  restaurante:{
+    type: Object,
+    required: false,
+    default:{}
+  } ,
   totalConsumido: String,
 });
 
