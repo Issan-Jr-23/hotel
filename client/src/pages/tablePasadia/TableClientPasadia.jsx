@@ -30,6 +30,8 @@ export default function App() {
   const [snacks, setSnacks] = useState([]);
   const [editedName, setEditedName] = useState("");
   const [editPago, setEditPago] = useState("");
+  const [editReserva, setEditReserva] = useState("");
+  const [editBebidas, setEditBebidas] = useState("");
   const [editedUserId, setEditedUserId] = useState(null);
   const options = ["Si", "No"];
   const optionBebidas = ["Corona", "Aguila"];
@@ -114,17 +116,25 @@ export default function App() {
         `http://127.0.0.1:3000/api/pasadia/edit/${editedUserId}`,
         {
           nombre: editedName,
-          pagoPendienteTotal: editPago
+          pagoPendienteTotal: editPago,
+          reserva: editReserva,
+          bebidas: editBebidas,
+
         }
       );
       // Actualiza la lista de usuarios después de la edición
       const updatedUsers = users.map((user) =>
-        user.identificacion === editedUserId ? { ...user, nombre: editedName, pagoPendienteTotal: editPago } : user
+        user.identificacion === editedUserId ? { ...user, 
+          nombre: editedName, 
+          pagoPendienteTotal: editPago, 
+          reserva: editReserva,
+          bebidas: editBebidas, } : user
       );
       setUsers(updatedUsers);
       setEditedName("");
-      setUsers(updatedUsers);
       setEditPago("");
+      setEditReserva("");
+      setEditBebidas("");
       setEditedUserId(null);
       toast.success('Cliente actualizado exitosamente!');
     } catch (error) {
@@ -325,6 +335,7 @@ export default function App() {
                   {cliente.identificacion === editedUserId ? (
                     <div className="flex">
                       <Input
+                      className="w-56"
                         value={editedName}
                         onChange={(e) => setEditedName(e.target.value)}
                       />
@@ -334,9 +345,30 @@ export default function App() {
                   )}
                 </TableCell>
                 <TableCell>
+                {cliente.identificacion === editedUserId ? (
+                  <div className="flex">
+                    <Select
+                    className=" w-52"
+                    label="selecciona una opcion"
+                      value={editReserva}
+                      onChange={(e) => setEditReserva(e.target.value)}
+                    >
+                      {options.map((opcion) => (
+                        <SelectItem key={opcion} value={opcion}>
+                          {opcion}
+                        </SelectItem>
+                      ))}
+                    </Select>
+                  </div>
+                ) : (
+                  cliente.reserva
+                )}
+              </TableCell>
+                <TableCell>
                   {cliente.identificacion === editedUserId ? (
                     <div className="flex">
                       <Input
+                      className="w-56"
                         type="number"
                         value={editPago}
                         onChange={(e) => setEditPago(e.target.value)}
@@ -346,9 +378,27 @@ export default function App() {
                     cliente.pagoPendienteTotal
                   )}
                 </TableCell>
-                <TableCell>{cliente.reserva}</TableCell>
+                
                 <TableCell>{cliente.fechaDeRegistro}</TableCell>
-                <TableCell>{cliente.bebidas}</TableCell>
+                <TableCell>      {cliente.identificacion === editedUserId ? (
+        <div className="flex">
+          <Select
+            name="bebidas"
+            label="Seleccionar bebida"
+            className="max-w-full w-full"
+            value={editBebidas} // Usa el estado editBebidas para preseleccionar el valor
+            onChange={(event) => setEditBebidas(event.target.value)}
+          >
+            {drinks.map((bebida) => (
+              <SelectItem key={bebida.id} value={bebida.nombre}>
+                {bebida.nombre}
+              </SelectItem>
+            ))}
+          </Select>
+        </div>
+      ) : (
+        cliente.bebidas
+      )}</TableCell>
                 <TableCell>{cliente.restaurante}</TableCell>
                 <TableCell>{cliente.totalConsumo}</TableCell>
                 <TableCell className="flex justify-center align-center pr-5">
@@ -370,6 +420,8 @@ export default function App() {
                       setEditedUserId(cliente.identificacion);
                       setEditPago(cliente.pagoPendienteTotal);
                       setEditedName(cliente.nombre);
+                      setEditBebidas(cliente.bebidas);
+                      setEditReserva(cliente.reserva);
                     }}
                   />
                   <img

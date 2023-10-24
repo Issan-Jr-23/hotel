@@ -43,13 +43,12 @@ export const deleteClient = async (req, res) => {
 
 export const updateClient = async (req, res) => {
   const identificacion = req.params.identificacion;
-  const { nombre, pagoPendienteTotal } = req.body;
+  const { nombre, pagoPendienteTotal, reserva, bebidas } = req.body;
 
   try {
     const usuarioActualizado = await Cliente.findOneAndUpdate(
       { identificacion },
-      { nombre },
-      { pagoPendienteTotal},
+      { nombre, pagoPendienteTotal, reserva, bebidas },
       { new: true }
     );
 
