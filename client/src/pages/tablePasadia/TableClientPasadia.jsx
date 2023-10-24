@@ -15,13 +15,15 @@ import {
   ModalFooter,
   useDisclosure,
   Select,
-  SelectItem
+  SelectItem,
+  table
 } from "@nextui-org/react";
 
 import axios from "axios";
 import editar from "../../images/boligrafo.png";
 import borrar from "../../images/borrar.png";
 import download from "../../images/download.png";
+import chevron from "../../images/right.png";
 import toast, { Toaster } from 'react-hot-toast';
 
 export default function App() {
@@ -43,6 +45,7 @@ export default function App() {
     restaurante: "",
     totalConsumo: "",
   });
+
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -186,6 +189,22 @@ export default function App() {
     fetchData();
   }, []);
 
+
+    const [size, setSize] = React.useState('md')
+
+  const sizes = [ "5xl"];
+
+
+  const handleOpen = (size) => {
+    setSize(size)
+    onOpen();
+  }
+
+
+  const { isOpen: isFirstModalOpen, onOpen: openFirstModal, onClose: closeFirstModal } = useDisclosure();
+
+
+
   return (
     <div className="max-w-full w-98 mx-auto">
       <Toaster />
@@ -315,6 +334,7 @@ export default function App() {
       <section className="flex coluns-2 border-2">
         <Table className=" text-center" aria-label="Lista de Usuarios">
           <TableHeader className="text-center">
+            <TableColumn className="text-center">+</TableColumn>
             <TableColumn className="text-center">Id</TableColumn>
             <TableColumn className="text-center">Nombre</TableColumn>
             <TableColumn className="text-center">Reserva</TableColumn>
@@ -327,9 +347,53 @@ export default function App() {
             <TableColumn className="text-center">Consumo total</TableColumn>
             <TableColumn className="text-center">Acción</TableColumn>
           </TableHeader>
+
+
+
           <TableBody emptyContent="No hay filas para mostrar.">
             {users.map((cliente) => (
+              
               <TableRow key={cliente.identificacion}>
+                
+                <TableCell>
+                
+                <div className="flex flex-wrap gap-3">
+        {sizes.map((size) => (
+          <Button className="bg-white " key={size} onPress={() => { setSize(size); openFirstModal(); }}>
+            <img className="w-4 h-4" src={chevron} alt="" />
+          </Button>
+        ))}
+      </div>
+      <Modal
+        size={size}
+        isOpen={isFirstModalOpen}
+        onClose={closeFirstModal}
+      >
+        <ModalContent>
+          <>
+            <ModalHeader className="border-2 text-3xl">
+              <div>
+              History
+              </div>
+              <div className="border-5">
+                {cliente.nombre}
+              </div>
+              </ModalHeader>
+            <ModalBody>
+              
+            </ModalBody>
+            <ModalFooter>
+              <Button color="danger" variant="light" onPress={closeFirstModal}>
+                Close
+              </Button>
+            </ModalFooter>
+          </>
+        </ModalContent>
+      </Modal>
+
+                
+
+                </TableCell>
                 <TableCell className="border-r-3 border-blue-600">
                   {cliente.identificacion}
                 </TableCell>
@@ -391,7 +455,12 @@ export default function App() {
                     onClick={() => handleDeleteUser(cliente.identificacion)}
                   />
                 </TableCell>
+                
               </TableRow>
+
+              
+              
+              
             ))}
           </TableBody>
         </Table>
