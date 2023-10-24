@@ -19,7 +19,7 @@ export default function FormBebidas() {
   const [backdrop, setBackdrop] = useState("blur");
   const [formData, setFormData] = useState({
     nombre: "",
-    tamaño: "",
+    tamanio: "",
     cantidad: "",
     fechaCaducidad: "",
     precioVenta: "",
@@ -36,7 +36,7 @@ export default function FormBebidas() {
   const handleTamañoChange = (selectedSize) => {
     setFormData({
       ...formData,
-      tamaño: selectedSize,
+      tamanio: selectedSize,
     });
   };
 
@@ -84,12 +84,12 @@ export default function FormBebidas() {
                 <select
           id="tamaño"
           name="tamaño"
-          value={formData.tamaño}
+          value={formData.tamanio}
           onChange={(event) => handleTamañoChange(event.target.value)}
         >
           <option value="">Seleccione un tamaño</option>
           {options.map((option) => (
-            <option key={option} value={option}>
+            <option key={option}>
               {option}
             </option>
           ))}

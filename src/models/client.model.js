@@ -23,7 +23,11 @@ const clienteSchema = new mongoose.Schema({
     type: Date,
     default: () => moment.tz("America/Bogota").toDate()
   },
-  bebidas: String,
+  bebidas: {
+    type: Object,
+    required: false,
+    default: {}
+  },
   restaurante: String,
   totalConsumido: String,
 });

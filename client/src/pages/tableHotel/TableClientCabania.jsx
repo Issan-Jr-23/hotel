@@ -258,7 +258,7 @@ export default function App() {
                  >
                    {drinks.map((bebidas) => (
                      <SelectItem key={bebidas.id}>
-                       {bebidas.nombre}   -   {bebidas.precioVenta}
+                       {bebidas.nombre}
                      </SelectItem>
                    ))}
                  </Select>
@@ -272,7 +272,7 @@ export default function App() {
                  >
                    {snacks.map((bocados) => (
                      <SelectItem key={bocados.id}>
-                       {bocados.nombre}  -  {bocados.precioVenta}
+                       {bocados.nombre}
                      </SelectItem>
                    ))}
                  </Select>

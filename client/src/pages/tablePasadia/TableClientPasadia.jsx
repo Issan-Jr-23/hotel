@@ -30,8 +30,7 @@ export default function App() {
   const [snacks, setSnacks] = useState([]);
   const [editedName, setEditedName] = useState("");
   const [editPago, setEditPago] = useState("");
-  const [editReserva, setEditReserva] = useState("");
-  const [editBebidas, setEditBebidas] = useState("");
+  const [bebidaSeleccionada, setBebidaSelecionada] = useState("");
   const [editedUserId, setEditedUserId] = useState(null);
   const options = ["Si", "No"];
   const optionBebidas = ["Corona", "Aguila"];
@@ -63,19 +62,29 @@ export default function App() {
     });
   };
 
-  const handleRestauranteChange = (selectedSize) => {
+  const handleRestauranteChange = (selectedIndex) => {
+    const selectedSnack = snacks[selectedIndex];
+    
+    console.log(selectedSnack);
+    
     setFormData({
       ...formData,
-      restaurante: selectedSize,
+      restaurante: selectedSnack,
     });
+    console.log(formData)
   };
 
-  const handleBebidasChange = (selectedSize) => {
+  const handleBebidasChange = (selectedIndex) => {
+    const selectedDrink = drinks[selectedIndex];
+    
+    console.log(selectedDrink);
+    
     setFormData({
       ...formData,
-      bebidas: selectedSize,
+      bebidas: selectedDrink,
     });
-  };
+    console.log(formData)
+  };  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -116,25 +125,15 @@ export default function App() {
         `http://127.0.0.1:3000/api/pasadia/edit/${editedUserId}`,
         {
           nombre: editedName,
-          pagoPendienteTotal: editPago,
-          reserva: editReserva,
-          bebidas: editBebidas,
-
+          pagoPendienteTotal: editPago
         }
       );
-      // Actualiza la lista de usuarios después de la edición
       const updatedUsers = users.map((user) =>
-        user.identificacion === editedUserId ? { ...user, 
-          nombre: editedName, 
-          pagoPendienteTotal: editPago, 
-          reserva: editReserva,
-          bebidas: editBebidas, } : user
+        user.identificacion === editedUserId ? { ...user, nombre: editedName, pagoPendienteTotal: editPago } : user
       );
       setUsers(updatedUsers);
       setEditedName("");
       setEditPago("");
-      setEditReserva("");
-      setEditBebidas("");
       setEditedUserId(null);
       toast.success('Cliente actualizado exitosamente!');
     } catch (error) {
@@ -257,11 +256,12 @@ export default function App() {
                       name="bebidas"
                       label="Seleccionar bebida"
                       className="max-w-full w-full"
-                      value={formData.bebidas}
-                      onChange={(event) => handleBebidasChange(event.target.value)}
+                      type="text"
+                      value={drinks.indexOf(formData.bebidas)}
+                      onChange={(e) => handleBebidasChange(e.target.value)}
                     >
                       {drinks.map((bebida) => (
-                        <SelectItem key={bebida.id} value={bebida.nombre}>
+                        <SelectItem key={drinks.indexOf(bebida)}>
                           {bebida.nombre}
                         </SelectItem>
                       ))}
@@ -270,12 +270,12 @@ export default function App() {
                       name="restaurantes"
                       label="Seleccionar bocado"
                       className="max-w-full w-full"
-                      value={formData.restaurante}
-                      onChange={(event) => handleRestauranteChange(event.target.value)}
+                      value={snacks.indexOf(formData.restaurante)}
+                      onChange={(e) => handleRestauranteChange(e.target.value)}
                     >
                       {snacks.map((bocado) => (
-                        <SelectItem key={bocado.id} value={bocado.nombre}>
-                          {bocado.nombre}, {bocado.precio}
+                        <SelectItem key={drinks.indexOf(bocado)}>
+                          {bocado.nombre}
                         </SelectItem>
                       ))}
                     </Select>
@@ -335,7 +335,6 @@ export default function App() {
                   {cliente.identificacion === editedUserId ? (
                     <div className="flex">
                       <Input
-                      className="w-56"
                         value={editedName}
                         onChange={(e) => setEditedName(e.target.value)}
                       />
@@ -345,30 +344,9 @@ export default function App() {
                   )}
                 </TableCell>
                 <TableCell>
-                {cliente.identificacion === editedUserId ? (
-                  <div className="flex">
-                    <Select
-                    className=" w-52"
-                    label="selecciona una opcion"
-                      value={editReserva}
-                      onChange={(e) => setEditReserva(e.target.value)}
-                    >
-                      {options.map((opcion) => (
-                        <SelectItem key={opcion} value={opcion}>
-                          {opcion}
-                        </SelectItem>
-                      ))}
-                    </Select>
-                  </div>
-                ) : (
-                  cliente.reserva
-                )}
-              </TableCell>
-                <TableCell>
                   {cliente.identificacion === editedUserId ? (
                     <div className="flex">
                       <Input
-                      className="w-56"
                         type="number"
                         value={editPago}
                         onChange={(e) => setEditPago(e.target.value)}
@@ -378,27 +356,9 @@ export default function App() {
                     cliente.pagoPendienteTotal
                   )}
                 </TableCell>
-                
+                <TableCell>{cliente.reserva}</TableCell>
                 <TableCell>{cliente.fechaDeRegistro}</TableCell>
-                <TableCell>      {cliente.identificacion === editedUserId ? (
-        <div className="flex">
-          <Select
-            name="bebidas"
-            label="Seleccionar bebida"
-            className="max-w-full w-full"
-            value={editBebidas} // Usa el estado editBebidas para preseleccionar el valor
-            onChange={(event) => setEditBebidas(event.target.value)}
-          >
-            {drinks.map((bebida) => (
-              <SelectItem key={bebida.id} value={bebida.nombre}>
-                {bebida.nombre}
-              </SelectItem>
-            ))}
-          </Select>
-        </div>
-      ) : (
-        cliente.bebidas
-      )}</TableCell>
+                <TableCell>{cliente?.bebidas?.nombre || "No tiene bebidas"}</TableCell>
                 <TableCell>{cliente.restaurante}</TableCell>
                 <TableCell>{cliente.totalConsumo}</TableCell>
                 <TableCell className="flex justify-center align-center pr-5">
@@ -420,8 +380,6 @@ export default function App() {
                       setEditedUserId(cliente.identificacion);
                       setEditPago(cliente.pagoPendienteTotal);
                       setEditedName(cliente.nombre);
-                      setEditBebidas(cliente.bebidas);
-                      setEditReserva(cliente.reserva);
                     }}
                   />
                   <img

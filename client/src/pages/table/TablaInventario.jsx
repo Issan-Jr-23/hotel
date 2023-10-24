@@ -49,9 +49,9 @@ export default function App() {
             </TableHeader>
             <TableBody emptyContent="No hay filas para mostrar.">
               {users.map((bebidas) => ( 
-                <TableRow key={bebidas.id}>
+                <TableRow key={bebidas._id}>
                   <TableCell className="border-r-3 border-blue-600"> {bebidas.nombre}</TableCell>
-                  <TableCell>{bebidas.tamaño}</TableCell>
+                  <TableCell>{bebidas.tamanio}</TableCell>
                   <TableCell>{bebidas.cantidad}</TableCell>
                   <TableCell>{bebidas.fechaCaducidad}</TableCell>
                   <TableCell>{bebidas.precioVenta}</TableCell>
