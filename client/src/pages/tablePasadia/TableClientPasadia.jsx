@@ -16,7 +16,7 @@ import {
   useDisclosure,
   Select,
   SelectItem,
-  table
+  CircularProgress
 } from "@nextui-org/react";
 
 import axios from "axios";
@@ -24,6 +24,8 @@ import editar from "../../images/boligrafo.png";
 import borrar from "../../images/borrar.png";
 import download from "../../images/download.png";
 import chevron from "../../images/right.png";
+import plus from "../../images/plus.png";
+import plusb from "../../images/plus_blue.png";
 import toast, { Toaster } from 'react-hot-toast';
 
 export default function App() {
@@ -45,6 +47,8 @@ export default function App() {
     restaurante: "",
     totalConsumo: "",
   });
+
+
 
 
   const handleInputChange = (event) => {
@@ -114,6 +118,21 @@ export default function App() {
         bebidas: "",
         restaurante: "",
         totalConsumo: "",
+      });
+      const response = await axios.get("http://127.0.0.1:3000/api/pasadia-clientes");
+      setUsers(response.data);
+    } catch (error) {
+      toast.error('Ocurrió un error al agregar el cliente.');
+    }
+  };
+
+  const handleFormSubmitB = async () => {
+    try {
+      await axios.post("http://127.0.0.1:3000/api/pasadia-registrar-cliente", formData);
+      onClose();
+      toast.success('bebida agregada exitosamente');
+      setFormData({
+        bebidas: ""
       });
       const response = await axios.get("http://127.0.0.1:3000/api/pasadia-clientes");
       setUsers(response.data);
@@ -212,6 +231,40 @@ export default function App() {
     setModalOpen(false);
     setSelectedUser(null);
   };
+
+  const [size, setSize] = React.useState('md')
+
+  const sizess = [ "5xl",];
+
+  const handleOpenM = (size) => {
+    setSize(size)
+  }
+
+
+
+  const {isOpen: isModalOpenM, onOpen: openModalM, onClose: closeModalM} = useDisclosure();
+  
+
+  const sizesm = ["xs"];
+
+  const handleOpenm = (size) => {
+    setSize(size)
+    openModalM();
+  }
+
+
+  const {isOpen: isModalOpenMc, onOpen: openModalMc, onClose: closeModalMc} = useDisclosure();
+  
+
+  const sizesmc = ["xs"];
+
+  const handleOpenmc = (size) => {
+    setSize(size)
+    openModalMc();
+  }
+
+ 
+
 
 
   return (
@@ -323,7 +376,7 @@ export default function App() {
                     <Button color="danger" variant="light" onClick={onClose}>
                       Cerrar
                     </Button>
-                    <Button color="primary" onClick={handleFormSubmit}>
+                    <Button color="primary" onClick={handleFormSubmitB}>
                       Guardar
                     </Button>
                   </ModalFooter>
@@ -340,7 +393,7 @@ export default function App() {
           />
         </div>
       </div>
-      <section className="flex coluns-2 border-2">
+      <section className="flex coluns-2 border-3 mt-5 mx-5 rounded-xl border-blue-300">
         <Table className=" text-center" aria-label="Lista de Usuarios">
           <TableHeader className="text-center">
             <TableColumn className="text-center">+</TableColumn>
@@ -359,7 +412,9 @@ export default function App() {
 
 
 
-          <TableBody emptyContent="No hay filas para mostrar.">
+
+
+          <TableBody emptyContent="No hay elementos por mostrar" className="">
             {users.map((cliente) => (
               
               <TableRow key={cliente.identificacion}>
@@ -373,27 +428,99 @@ export default function App() {
 
 
                   
+                {sizess.map((size) => (
+                <Button key={size} onPress={() => handleOpenM(size)} onClick={() => handleOpenModal(cliente)}>Open {size}</Button>
+                  ))}
 
-
-                <Button onClick={() => handleOpenModal(cliente)}>Ver Detalles</Button>
                 
                 {selectedUser && (
-        <Modal isOpen={isModalOpen} onClose={closeModal} className="">
-          <ModalContent>
-            <ModalHeader className="border-2 text-3xl">
-              <div>History - {selectedUser.nombre}</div>
+        <Modal size={size}  isOpen={isModalOpen} onClose={closeModal} className="w-8/12">
+          <ModalContent >
+            <ModalHeader className="border-b-3 border-blue-500 text-3xl flex  justify-between">
+              <div className="mb-0.5">History</div>
+              <div className="uppercase"> {selectedUser.nombre} - {selectedUser.identificacion}</div>
             </ModalHeader>
-            <ModalBody>
-              <p>Reserva: {selectedUser.reserva}</p>
-              <h4>Bebidas seleccionadas:</h4>
-              <ul>
+            <ModalBody className="uppercase flex">
+              {/* <p>Reserva: {selectedUser.reserva}</p> */}
+              <div className="flex w-full">
+
+              <section className="flex justify-between  w-6/12 flex-wrap">
+              <div className="mx-5 my-1">
+              <h4 className="text-green-600">Bebidas</h4>
+              <ul className="flex flex-col">
                 {selectedUser.bebidas.map((bebida, index) => (
                   <li key={index}>
-                    {bebida.nombre} - 
-                    {bebida.precioVenta}
+                    
+                    {bebida.nombre}
                   </li>
                 ))}
               </ul>
+
+              </div>
+              <div className="mx-5 my-1">
+              <h4 className="text-green-600">Cantidad</h4>
+              <ul className="flex flex-col">
+                {selectedUser.bebidas.map((cantidad, index) => (
+                  <li key={index}>
+                    
+                   {cantidad.cantidad}
+                  </li>
+                ))}
+              </ul>
+
+              </div>
+              <div className="mx-5 my-1">
+              <h4 className="text-green-600">Precio</h4>
+              <ul className="flex flex-col">
+                {selectedUser.bebidas.map((precio, index) => (
+                  <li key={index}>
+                    
+                   {precio.precioVenta}
+                  </li>
+                ))}
+              </ul>
+
+              </div>
+              </section>
+
+              <div className="border-2 border-red-400 mx-3"></div>
+
+              <section className="flex justify-between  w-6/12 flex-wrap">
+              <div className="mx-5 my-1">
+              <h4 className="text-blue-600">Comidas</h4>
+              <ul>
+                {selectedUser.restaurante.map((restaurante, index) => (
+                  <li key={index}>
+                    {restaurante.nombre}
+                  </li>
+                ))}
+              </ul>
+              </div>
+              <div className="mx-5 my-1">
+              <h4 className="text-blue-600">Cantidad</h4>
+              <ul>
+                {selectedUser.restaurante.map((cantidad, index) => (
+                  <li key={index}>
+                    {cantidad.cantidad}
+                  </li>
+                ))}
+              </ul>
+              </div>
+              <div className="mx-5 my-1">
+              <h4 className="text-blue-600">Precio</h4>
+              <ul>
+                {selectedUser.restaurante.map((precio, index) => (
+                  <li key={index}>
+                    {precio.precioVenta}
+                  </li>
+                ))}
+              </ul>
+              </div>
+                
+              </section>
+
+              </div>
+
             </ModalBody>
             <ModalFooter>
               <Button color="danger" variant="light" onClick={closeModal}>
@@ -444,6 +571,7 @@ export default function App() {
                     cliente.nombre
                   )}
                 </TableCell>
+                <TableCell>{cliente.reserva}</TableCell>
                 <TableCell>
                   {cliente.identificacion === editedUserId ? (
                     <div className="flex">
@@ -457,14 +585,132 @@ export default function App() {
                     cliente.pagoPendienteTotal
                   )}
                 </TableCell>
-                <TableCell>{cliente.reserva}</TableCell>
                 <TableCell>{cliente.fechaDeRegistro}</TableCell>
-                {cliente.bebidas.map((bebida, index) => (
+
+
+
+
+
+
+
+
+
+
+
+                <TableCell className=" ">
+                <div className=" flex justify-center">
+                <div className="flex flex-wrap gap-3">
+                    {sizesm.map((size) => (
+                      <Button className="bg-white-100" key={size} onPress={() => handleOpenm(size)}>
+                        <img className="w-7 h-7" src={plus} alt="" />
+                      </Button>
+                    ))}  
+                  </div>
+                  <Modal 
+                    size={size} 
+                    isOpen={isModalOpenM} 
+                    onClose={closeModalM} 
+                  >
+                    {/* const {isOpen: isModalOpenM, onOpen: openModalM, onClose: closeModalM} = useDisclosure(); */}
+                    <ModalContent>
+                      {(closeModalM) => (
+                        <>
+                          <ModalHeader className="flex flex-col gap-1">BEBIDAS</ModalHeader>
+                          <ModalBody>
+                          <Select
+                                  name="bebidas"
+                                  label="Seleccionar bebida"
+                                  className="max-w-full w-full"
+                                  type="text"
+                                  value={drinks.indexOf(formData.bebidas)}
+                                  onChange={(e) => handleBebidasChange(e.target.value)}
+                                >
+                                  {drinks.map((bebida) => (
+                                    <SelectItem key={drinks.indexOf(bebida)}>
+                                      {bebida.nombre}
+                                    </SelectItem>
+                                  ))}
+                                </Select>
+                          </ModalBody>
+                          <ModalFooter>
+                            <Button color="danger" variant="light" onPress={closeModalM}>
+                              Close
+                            </Button>
+                            <Button color="primary" onPress={closeModalM}>
+                              Action
+                            </Button>
+                          </ModalFooter>
+                        </>
+                      )}
+                    </ModalContent>
+                  </Modal>
+                   
+                </div>
+                   </TableCell>
+
+
+
+
+
+
+
+                <TableCell className="">
+                <div className=" flex justify-center">
+                <div className="flex flex-wrap gap-3">
+        {sizesmc.map((size) => (
+          <Button className="bg-white-100" key={size} onPress={() => handleOpenmc(size)}>
+            <img className="w-7 h-7" src={plusb} alt="" />
+          </Button>
+        ))}  
+      </div>
+      <Modal 
+        size={size} 
+        isOpen={isModalOpenMc} 
+        onClose={closeModalMc} 
+      >
+        {/* const {isOpen: isModalOpenM, onOpen: openModalM, onClose: closeModalM} = useDisclosure(); */}
+        <ModalContent>
+          {(closeModalMc) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">COMIDAS</ModalHeader>
+              <ModalBody>
+              <Select
+                      name="restaurantes"
+                      label="Seleccionar Comida"
+                      className="max-w-full w-full"
+                      type="text"
+                      value={snacks.indexOf(formData.restaurante)}
+                      onChange={(e) => handleRestauranteChange(e.target.value)}
+                    >
+                      {snacks.map((comidas) => (
+                        <SelectItem key={snacks.indexOf(comidas)}>
+                          {comidas.nombre}
+                        </SelectItem>
+                      ))}
+                    </Select>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={closeModal}>
+                  Close
+                </Button>
+                <Button color="primary" onClick={handleFormSubmit} >
+                  Action
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+                </div>
+                  </TableCell>
+                
+                {/* {cliente.bebidas.map((bebida, index) => (
                   <TableCell key={index}>{bebida?.nombre || "aun no hay bebidas"}</TableCell>
-                ))}
-                {cliente.restaurante.map((food, index) => (
+                ))} */}
+                {/* {cliente.restaurante.map((food, index) => (
                   <TableCell key={index}>{food?.nombre || "aun no hay bebidas"}</TableCell>
-                ))}
+                ))} */}
+                
                 <TableCell>{cliente.totalConsumo}</TableCell>
                 <TableCell className="flex justify-center align-center pr-5">
                   {cliente.identificacion === editedUserId && (
