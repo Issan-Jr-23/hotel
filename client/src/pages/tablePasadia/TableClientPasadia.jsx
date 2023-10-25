@@ -41,7 +41,7 @@ export default function App() {
     nombre: "",
     reserva: "",
     pagoPendienteTotal: "",
-    bebidas: "",
+    bebidas: [],
     restaurante: "",
     totalConsumo: "",
   });
@@ -70,7 +70,7 @@ export default function App() {
     console.log(selectedDrink);
     setFormData({
       ...formData,
-      bebidas: selectedDrink,
+      bebidas: [selectedDrink],
     });
     console.log(formData)
   };  
@@ -190,19 +190,28 @@ export default function App() {
   }, []);
 
 
-    const [size, setSize] = React.useState('md')
-
-  const sizes = [ "5xl"];
-
-
-  const handleOpen = (size) => {
-    setSize(size)
-    onOpen();
-  }
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
 
 
   const { isOpen: isFirstModalOpen, onOpen: openFirstModal, onClose: closeFirstModal } = useDisclosure();
+  const sizes = ['4xl']; // Define tus tamaños aquí
+  const [selectedSize, setSelectedSize] = React.useState('');
 
+  const handleOpen = (size) => {
+    setSelectedSize(size);
+    openFirstModal();
+  };
+
+  const handleOpenModal = (user) => {
+    setSelectedUser(user);
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+    setSelectedUser(null);
+  };
 
 
   return (
@@ -356,42 +365,68 @@ export default function App() {
               <TableRow key={cliente.identificacion}>
                 
                 <TableCell>
+
+
+
+
+
+
+
+                  
+
+
+                <Button onClick={() => handleOpenModal(cliente)}>Ver Detalles</Button>
                 
-                <div className="flex flex-wrap gap-3">
-        {sizes.map((size) => (
-          <Button className="bg-white " key={size} onPress={() => { setSize(size); openFirstModal(); }}>
-            <img className="w-4 h-4" src={chevron} alt="" />
-          </Button>
-        ))}
-      </div>
-      <Modal
-        size={size}
-        isOpen={isFirstModalOpen}
-        onClose={closeFirstModal}
-      >
-        <ModalContent>
-          <>
+                {selectedUser && (
+        <Modal isOpen={isModalOpen} onClose={closeModal} className="">
+          <ModalContent>
             <ModalHeader className="border-2 text-3xl">
-              <div>
-              History
-              </div>
-              <div className="border-5">
-                {cliente.nombre}
-              </div>
-              </ModalHeader>
+              <div>History - {selectedUser.nombre}</div>
+            </ModalHeader>
             <ModalBody>
-              
+              <p>Reserva: {selectedUser.reserva}</p>
+              <h4>Bebidas seleccionadas:</h4>
+              <ul>
+                {selectedUser.bebidas.map((bebida, index) => (
+                  <li key={index}>
+                    {bebida.nombre} - 
+                    {bebida.precioVenta}
+                  </li>
+                ))}
+              </ul>
             </ModalBody>
             <ModalFooter>
-              <Button color="danger" variant="light" onPress={closeFirstModal}>
-                Close
+              <Button color="danger" variant="light" onClick={closeModal}>
+                Cerrar
               </Button>
             </ModalFooter>
-          </>
-        </ModalContent>
-      </Modal>
+          </ModalContent>
+        </Modal>
+      )}
 
-                
+                  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                 </TableCell>
                 <TableCell className="border-r-3 border-blue-600">
@@ -424,8 +459,12 @@ export default function App() {
                 </TableCell>
                 <TableCell>{cliente.reserva}</TableCell>
                 <TableCell>{cliente.fechaDeRegistro}</TableCell>
-                <TableCell>{cliente?.bebidas?.nombre || "No tiene bebidas"}</TableCell>
-                <TableCell>{cliente?.restaurante?.nombre || "Por defidir"}</TableCell>
+                {cliente.bebidas.map((bebida, index) => (
+                  <TableCell key={index}>{bebida?.nombre || "aun no hay bebidas"}</TableCell>
+                ))}
+                {cliente.restaurante.map((food, index) => (
+                  <TableCell key={index}>{food?.nombre || "aun no hay bebidas"}</TableCell>
+                ))}
                 <TableCell>{cliente.totalConsumo}</TableCell>
                 <TableCell className="flex justify-center align-center pr-5">
                   {cliente.identificacion === editedUserId && (
@@ -455,12 +494,7 @@ export default function App() {
                     onClick={() => handleDeleteUser(cliente.identificacion)}
                   />
                 </TableCell>
-                
               </TableRow>
-
-              
-              
-              
             ))}
           </TableBody>
         </Table>

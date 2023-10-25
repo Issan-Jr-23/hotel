@@ -24,12 +24,12 @@ const clienteSchema = new mongoose.Schema({
     default: () => moment.tz("America/Bogota").toDate()
   },
   bebidas: {
-    type: Object,
+    type: Array,
     required: false,
     default: {}
   },
   restaurante:{
-    type: Object,
+    type: Array,
     required: false,
     default:{}
   } ,
