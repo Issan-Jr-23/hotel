@@ -22,6 +22,27 @@ export const obtenerBebidas = async (req, res) => {
   }
 };
 
+export const actualizarBebida = async (req, res) => {
+  const { id, cantidadARestar } = req.body;
+
+  try {
+    const bebida = await Bebida.findById(id);
+
+    if (!bebida) {
+      return res.status(404).json({ mensaje: 'Bebida no encontrada' });
+    }
+
+    bebida.cantidad -= cantidadARestar;
+
+    await bebida.save();
+
+    return res.status(200).json({ mensaje: 'Cantidad de bebida actualizada correctamente' });
+  } catch (error) {
+    console.error('Error al actualizar la bebida:', error);
+    return res.status(500).json({ mensaje: 'Error interno del servidor' });
+  }
+};
+
 
 
 

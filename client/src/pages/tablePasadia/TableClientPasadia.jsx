@@ -37,7 +37,7 @@ export default function App() {
   const [cantidadBebida, setCantidadBebida] = useState(1);
   const [bebidaSeleccionada, setBebidaSeleccionada] = useState('');
   const [precioBebidaSeleccionada, setPrecioBebidaSeleccionada] = useState(0);
-  
+
   const [editedUserId, setEditedUserId] = useState(null);
   const options = ["Si", "No"];
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -81,7 +81,7 @@ export default function App() {
       bebidas: [selectedDrink],
     });
     console.log(formData)
-  };  
+  };
 
 
   const handleRestauranteChange = (selectedIndex) => {
@@ -92,30 +92,47 @@ export default function App() {
       restaurante: selectedSnack,
     });
     console.log(formData)
-  };  
+  };
 
 
-  
+
+
+
+
+  const actualizarCantidadBebida = (bebidaSeleccionada, cantidadDeseada) => {
+    axios.put('http://localhost:3000/api/update-bebidas', {
+      bebida: bebidaSeleccionada,
+      cantidad: cantidadDeseada,
+    })
+    .then(response => {
+      console.log('Cantidad de bebida actualizada con éxito:', response.data);
+    })
+    .catch(error => {
+      console.error('Error al actualizar la cantidad de bebida:', error);
+    });
+  };
+
+
+
+
+
+
   const handleGuardarBebida = async () => {
     try {
       if (selectedClientId && bebidaSeleccionada) {
-        // Encuentra la bebida seleccionada en el array de bebidas
         const bebidaSeleccionadaInfo = drinks.find(bebida => bebida.nombre === bebidaSeleccionada);
-  
+
         if (bebidaSeleccionadaInfo) {
-          // Obtiene el precio de la bebida seleccionada
           const precioBebida = bebidaSeleccionadaInfo.precioVenta;
-  
-          // Realiza una solicitud POST para guardar la bebida en la colección del cliente
           await axios.post('http://127.0.0.1:3000/api/pasadia-agregar-bebida', {
             identificacionCliente: selectedClientId,
             bebida: {
               nombre: bebidaSeleccionada,
               cantidad: cantidadBebida,
-              precio: precioBebida, // Usa el precio obtenido
+              precio: precioBebida,
             },
           });
-  
+
           onClose();
           console.log('Bebida agregada correctamente al cliente.');
         } else {
@@ -128,13 +145,13 @@ export default function App() {
       console.error('Error al guardar la bebida en el cliente:', error);
     }
   };
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
 
 
   useEffect(() => {
@@ -287,7 +304,7 @@ export default function App() {
 
 
   const {isOpen: isModalOpenM, onOpen: openModalM, onClose: closeModalM} = useDisclosure();
-  
+
 
   const sizesm = ["xs"];
 
@@ -298,7 +315,7 @@ export default function App() {
 
 
   const {isOpen: isModalOpenMc, onOpen: openModalMc, onClose: closeModalMc} = useDisclosure();
-  
+
 
   const sizesmc = ["xs"];
 
@@ -315,7 +332,7 @@ export default function App() {
     setModalOpen(true);
   };
 
- 
+
 
 
   return (
@@ -412,7 +429,7 @@ export default function App() {
                         </SelectItem>
                       ))}
                     </Select>
-                    
+
                     <Input
                       name="totalConsumo"
                       className=""
@@ -465,149 +482,103 @@ export default function App() {
 
 
 
+
+
+
           <TableBody emptyContent="No hay elementos por mostrar" className="">
             {users.map((cliente) => (
               
               <TableRow key={cliente.identificacion}>
-                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                {/* -------------------MODAL DE PRODUCTOS SELECCIONADOS*/}
+
+
+
+
                 <TableCell>
-
-
-
-
-
-
-
-                  
                 {sizess.map((size) => (
                 <Button key={size} onPress={() => handleOpenM(size)} onClick={() => handleOpenModal(cliente)}>Open {size}</Button>
                   ))}
-
-                
                 {selectedUser && (
-        <Modal size={size}  isOpen={isModalOpen} onClose={closeModal} className="w-8/12">
-          <ModalContent >
-            <ModalHeader className="border-b-3 border-blue-500 text-3xl flex  justify-between">
-              <div className="mb-0.5">History</div>
-              <div className="uppercase"> {selectedUser.nombre} - {selectedUser.identificacion}</div>
-            </ModalHeader>
-            <ModalBody className="uppercase flex">
-              {/* <p>Reserva: {selectedUser.reserva}</p> */}
-              <div className="flex w-full">
-
-              <section className="flex justify-between  w-6/12 flex-wrap">
-              <div className="mx-5 my-1">
-              <h4 className="text-green-600">Bebidas</h4>
-              {selectedUser && selectedUser.bebidas && Array.isArray(selectedUser.bebidas) && (
-                <ul className="flex flex-col">
-                  {selectedUser.bebidas.map((bebida, index) => (
-                    <li key={index}>
-                      {bebida.nombre} {bebida.cantidad} 
-                    </li>
-                  ))}
-                </ul>
+                <Modal size={size}  isOpen={isModalOpen} onClose={closeModal} className="w-8/12">
+                  <ModalContent >
+                    <ModalHeader className="border-b-3 border-blue-500 text-3xl flex  justify-between">
+                      <div className="mb-0.5">History</div>
+                      <div className="uppercase"> {selectedUser.nombre} - {selectedUser.identificacion}</div>
+                    </ModalHeader>
+                    <ModalBody className="uppercase flex">
+                      <div className="flex w-full">
+                      <section className="flex justify-between  w-full flex-wrap border-3">
+                      <div className="mx-5 my-1 border-2 w-full">
+                      <h4 className="text-green-600">Bebidas</h4>
+                      {selectedUser.bebidas && Array.isArray(selectedUser.bebidas) && selectedUser.bebidas.length > 0 ? (
+                  <table className="min-w-full">
+                    <thead>
+                      <tr>
+                        <th>Nombre</th>
+                        <th>Cantidad</th>
+                        <th>Precio</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {selectedUser.bebidas.map((bebida, index) => (
+                        <tr key={index}>
+                          <td>{bebida.nombre}</td>
+                          <td>{bebida.cantidad}</td>
+                          <td>{bebida.precio}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                ) : (
+                  <p className="border-4 w-full text-center">No hay productos que mostrar😔</p>
+                )}
+                      </div>
+                      </section>
+                      </div>
+                    </ModalBody>
+                    <ModalFooter>
+                      <Button color="danger" variant="light" onClick={closeModal}>
+                        Cerrar
+                      </Button>
+                    </ModalFooter>
+                  </ModalContent>
+                </Modal>
               )}
-
-              </div>
-              {/* <div className="mx-5 my-1">
-              <h4 className="text-green-600">Cantidad</h4>
-              <ul className="flex flex-col">
-                {selectedUser.bebidas.map((cantidad, index) => (
-                  <li key={index}>
-                    
-                   {cantidad.cantidad}
-                  </li>
-                ))}
-              </ul>
-
-              </div> */}
-              <div className="mx-5 my-1">
-              <h4 className="text-green-600">Precio</h4>
-              <ul className="flex flex-col">
-                {selectedUser.bebidas.map((precio, index) => (
-                  <li key={index}>
-                    
-                   {precio.precioVenta}
-                  </li>
-                ))}
-              </ul>
-
-              </div>
-              </section>
-
-              <div className="border-2 border-red-400 mx-3"></div>
-
-              <section className="flex justify-between  w-6/12 flex-wrap">
-              <div className="mx-5 my-1">
-              <h4 className="text-blue-600">Comidas</h4>
-              <ul>
-                {selectedUser.restaurante.map((restaurante, index) => (
-                  <li key={index}>
-                    {restaurante.nombre}
-                  </li>
-                ))}
-              </ul>
-              </div>
-              <div className="mx-5 my-1">
-              <h4 className="text-blue-600">Cantidad</h4>
-              <ul>
-                {selectedUser.restaurante.map((cantidad, index) => (
-                  <li key={index}>
-                    {cantidad.cantidad}
-                  </li>
-                ))}
-              </ul>
-              </div>
-              <div className="mx-5 my-1">
-              <h4 className="text-blue-600">Precio</h4>
-              <ul>
-                {selectedUser.restaurante.map((precio, index) => (
-                  <li key={index}>
-                    {precio.precioVenta}
-                  </li>
-                ))}
-              </ul>
-              </div>
-                
-              </section>
-
-              </div>
-
-            </ModalBody>
-            <ModalFooter>
-              <Button color="danger" variant="light" onClick={closeModal}>
-                Cerrar
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-      )}
-
-                  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                 </TableCell>
+
+              {/* --------------------FIN DEL MODAL */}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 <TableCell className="border-r-3 border-blue-600">
                   {cliente.identificacion}
                 </TableCell>
@@ -656,14 +627,13 @@ export default function App() {
                       <Button className="bg-white-100" key={size} onPress={() => handleOpenm(size) || handleOpenModalBca(cliente)}>
                         <img className="w-7 h-7" src={plus} alt="" />
                       </Button>
-                    ))}  
+                    ))}
                   </div>
-                  <Modal 
-                    size={size} 
-                    isOpen={isModalOpenM} 
-                    onClose={closeModalM} 
+                  <Modal
+                    size={size}
+                    isOpen={isModalOpenM}
+                    onClose={closeModalM}
                   >
-                    {/* const {isOpen: isModalOpenM, onOpen: openModalM, onClose: closeModalM} = useDisclosure(); */}
                     <ModalContent>
                       {(closeModalM) => (
                         <>
@@ -675,18 +645,13 @@ export default function App() {
                                 value={cantidadBebida}
                                 onChange={(e) => setCantidadBebida(parseInt(e.target.value, 10))}
                               />
-                              <Input  
-                                name="obtener valor de la bebida cuando la seleccione"
-                              > 
-                              
-                              </Input>
                               <Select
                               name="Seleccionar bebida"
                               label="Seleccionar bebida"
                               value={bebidaSeleccionada}
                               onChange={(e) => {
                                 setBebidaSeleccionada(e.target.value);
-                                // Encuentra la información de la bebida seleccionada y actualiza el precio
+                                
                                 const bebidaSeleccionadaInfo = drinks.find(bebida => bebida.nombre === e.target.value);
                                 if (bebidaSeleccionadaInfo) {
                                   setPrecioBebidaSeleccionada(bebidaSeleccionadaInfo.precioVenta);
@@ -712,9 +677,9 @@ export default function App() {
                       )}
                     </ModalContent>
                   </Modal>
-                   
+
                 </div>
-                   </TableCell>
+                </TableCell>
 
 
 
@@ -729,12 +694,12 @@ export default function App() {
           <Button className="bg-white-100" key={size} onPress={() => handleOpenmc(size)}>
             <img className="w-7 h-7" src={plusb} alt="" />
           </Button>
-        ))}  
+        ))}
       </div>
-      <Modal 
-        size={size} 
-        isOpen={isModalOpenMc} 
-        onClose={closeModalMc} 
+      <Modal
+        size={size}
+        isOpen={isModalOpenMc}
+        onClose={closeModalMc}
       >
         {/* const {isOpen: isModalOpenM, onOpen: openModalM, onClose: closeModalM} = useDisclosure(); */}
         <ModalContent>
@@ -771,14 +736,14 @@ export default function App() {
       </Modal>
                 </div>
                   </TableCell>
-                
+
                 {/* {cliente.bebidas.map((bebida, index) => (
                   <TableCell key={index}>{bebida?.nombre || "aun no hay bebidas"}</TableCell>
                 ))} */}
                 {/* {cliente.restaurante.map((food, index) => (
                   <TableCell key={index}>{food?.nombre || "aun no hay bebidas"}</TableCell>
                 ))} */}
-                
+
                 <TableCell>{cliente.totalConsumo}</TableCell>
                 <TableCell className="flex justify-center align-center pr-5">
                   {cliente.identificacion === editedUserId && (
