@@ -1,6 +1,6 @@
-import Bebida from "../models/bebidas.model.js";
+import Bebida from "../models/inventario.model.js";
 
-export const crearBebida = async (req, res) => {
+export const crearProducto = async (req, res) => {
   try {
     const nuevaBebida = new Bebida(req.body);
     const bebidaGuardada = await nuevaBebida.save();

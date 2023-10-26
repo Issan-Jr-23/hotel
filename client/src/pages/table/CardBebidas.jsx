@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import {
   Modal,
@@ -10,19 +10,17 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import { Input } from "@nextui-org/react";
-import "./formulario.css"; 
-
+import "./formulario.css";
 
 export default function FormBebidas() {
-  const options = ["pequeño", "mediano", "grande", "mega"];
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [backdrop, setBackdrop] = useState("blur");
   const [formData, setFormData] = useState({
-    nombre: "",
-    tamanio: "",
-    cantidad: "",
-    fechaCaducidad: "",
-    precioVenta: "",
+    Descripcion: "",
+    tipo: "",
+    Caducidad: "",
+    CantidadInicial: "",
+    ValorUnitario: "",
   });
 
   const handleInputChange = (event) => {
@@ -33,21 +31,15 @@ export default function FormBebidas() {
     });
   };
 
-  const handleTamañoChange = (selectedSize) => {
-    setFormData({
-      ...formData,
-      tamanio: selectedSize,
-    });
-  };
-
-
-  const handleFormSubmit = () => {
-    axios.post("http://127.0.0.1:3000/api/bebidas", formData)
-      .then((response) => {
-        onClose();
-      })
-      .catch((error) => {
-      });
+  const handleFormSubmit = async () => {
+    try {
+      await axios.post("http://127.0.0.1:3000/api/inventario", formData);
+      onClose();
+      // Podrías también realizar alguna acción adicional, como recargar la lista de productos después de guardar.
+    } catch (error) {
+      console.error("Error al agregar el producto: ", error);
+      // Manejar el error, mostrar un mensaje al usuario, etc.
+    }
   };
 
   return (
@@ -62,7 +54,7 @@ export default function FormBebidas() {
           }}
           className="capitalize"
         >
-          Agregar bebida
+          Agregar producto
         </Button>
       </div>
       <Modal backdrop={backdrop} isOpen={isOpen} onClose={onClose}>
@@ -70,61 +62,43 @@ export default function FormBebidas() {
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Registrar Bebidas
+                Registrar Producto
               </ModalHeader>
               <ModalBody>
                 <Input
-                  name="nombre"
+                  name="Descripcion"
                   className="input_form"
                   type="text"
                   variant="flat"
-                  label="Nombre del producto"
+                  label="Descripción del producto"
                   onChange={handleInputChange}
                 />
                 <select
-          id="tamaño"
-          name="tamaño"
-          value={formData.tamanio}
-          onChange={(event) => handleTamañoChange(event.target.value)}
-        >
-          <option value="">Seleccione un tamaño</option>
-          {options.map((option) => (
-            <option key={option}>
-              {option}
-            </option>
-          ))}
-        </select>
+                  id="tipo"
+                  name="tipo"
+                  value={formData.tipo}
+                  onChange={(event) => handleInputChange(event)}
+                >
+                  <option value="">Seleccione un tipo</option>
+                  <option value="Bebidas">Bebidas</option>
+                  <option value="comidas">Comidas</option>
+                  <option value="mekatos">Mekatos</option>
+                </select>
                 <Input
-                  name="cantidad"
+                  name="CantidadInicial"
                   className="input_form"
                   type="number"
                   variant="flat"
-                  label="Cantidad"
-                  onChange= {
-                    handleInputChange}
-                />
-                <Input
-                  name="fechaCaducidad"
-                  className="input_form"
-                  type="date"
-                  variant="flat"
-                  label="Fecha de caducidad"
-                  placeholder="fecha"
+                  label="Cantidad inicial"
                   onChange={handleInputChange}
                 />
-                
-
-
                 <Input
-                  name="precioVenta"
+                  name="ValorUnitario"
                   className="input_form"
-                  type="Number"
+                  type="number"
                   variant="flat"
-                  label="Precio de venta"
-                  // value={numero}
-                  onChange={
-                    handleInputChange
-                  }
+                  label="Valor unitario"
+                  onChange={handleInputChange}
                 />
               </ModalBody>
               <ModalFooter>

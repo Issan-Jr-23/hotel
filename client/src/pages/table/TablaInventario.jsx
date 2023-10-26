@@ -40,21 +40,25 @@ export default function App() {
         <section className="flex coluns-2 ">
           <Table className="mx-5 text-center" aria-label="Lista de Usuarios">
             <TableHeader className="text-center">
-              <TableColumn className="text-center">Nombre</TableColumn>
-              <TableColumn className="text-center">Tamaño</TableColumn>
-              <TableColumn className="text-center">Cantidad</TableColumn>
-              <TableColumn className="text-center">Fecha de caducidad</TableColumn>
-              <TableColumn className="text-center">Precio de venta</TableColumn>
-              <TableColumn className="text-center">Acción</TableColumn>
+              <TableColumn className="text-center">descripcion del producto</TableColumn>
+              <TableColumn className="text-center">fecha de caducidad</TableColumn>
+              <TableColumn className="text-center">Valor unitario</TableColumn>
+              <TableColumn className="text-center">cantidad inicial</TableColumn>
+              <TableColumn className="text-center">valor total</TableColumn>
+              <TableColumn className="text-center">cantidad vendida</TableColumn>
+              <TableColumn className="text-center">total vendido</TableColumn>
+              <TableColumn className="text-center">accion</TableColumn>
             </TableHeader>
             <TableBody emptyContent="No hay filas para mostrar.">
               {users.map((bebidas) => ( 
                 <TableRow key={bebidas._id}>
-                  <TableCell className="border-r-3 border-blue-600"> {bebidas.nombre}</TableCell>
-                  <TableCell>{bebidas.tamanio}</TableCell>
-                  <TableCell>{bebidas.cantidad}</TableCell>
+                  <TableCell className="border-r-3 border-blue-600">{bebidas.nombre}</TableCell>
                   <TableCell>{bebidas.fechaCaducidad}</TableCell>
-                  <TableCell>{bebidas.precioVenta}</TableCell>
+                  <TableCell>{bebidas.valor}</TableCell>
+                  <TableCell>{bebidas.cantidad}</TableCell>
+                  <TableCell>{bebidas.valorTotal}</TableCell>
+                  <TableCell>{bebidas.cantidadVendida}</TableCell>
+                  <TableCell>{bebidas.totalVendido}</TableCell>
                   <TableCell className="flex justify-center align-center"> 
                   <img
                     className="w-8 h-8 mr-4 cursor-pointer"

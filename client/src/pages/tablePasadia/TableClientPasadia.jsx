@@ -36,6 +36,7 @@ export default function App() {
   const [editPago, setEditPago] = useState("");
   const [cantidadBebida, setCantidadBebida] = useState(1);
   const [bebidaSeleccionada, setBebidaSeleccionada] = useState('');
+  const [cantidadDeBebidas, setCantidadDeBebidas] = useState('');
   const [precioBebidaSeleccionada, setPrecioBebidaSeleccionada] = useState(0);
 
   const [editedUserId, setEditedUserId] = useState(null);
@@ -127,6 +128,7 @@ export default function App() {
           await axios.post('http://127.0.0.1:3000/api/pasadia-agregar-bebida', {
             identificacionCliente: selectedClientId,
             bebida: {
+              id: idBebida,
               nombre: bebidaSeleccionada,
               cantidad: cantidadBebida,
               precio: precioBebida,
@@ -250,6 +252,7 @@ export default function App() {
       try {
         const response = await axios.get("http://127.0.0.1:3000/api/obtener-bebidas");
         setDrinks(response.data);
+        setCantidadDeBebidas(response.data)
       } catch (error) {
         console.error("Error al obtener datos del servidor:", error);
       }
@@ -275,7 +278,7 @@ export default function App() {
 
 
   const { isOpen: isFirstModalOpen, onOpen: openFirstModal, onClose: closeFirstModal } = useDisclosure();
-  const sizes = ['4xl']; // Define tus tamaños aquí
+  const sizes = ['4xl'];
   const [selectedSize, setSelectedSize] = React.useState('');
 
   const handleOpen = (size) => {
@@ -639,20 +642,22 @@ export default function App() {
                         <>
                           <ModalHeader className="flex flex-col gap-1">BEBIDAS</ModalHeader>
                           <ModalBody>
-                                <Input
-                                label="Ingrese la cantidad"
-                                type="number"
-                                value={cantidadBebida}
-                                onChange={(e) => setCantidadBebida(parseInt(e.target.value, 10))}
-                              />
-                              <Select
+                            
+                            <Input
+                              label="Ingrese la cantidad"
+                              type="number"
+                              value={cantidadBebida}
+                              onChange={(e) => setCantidadBebida(parseInt(e.target.value, 10))}
+                            />
+                            <Select
                               name="Seleccionar bebida"
                               label="Seleccionar bebida"
                               value={bebidaSeleccionada}
                               onChange={(e) => {
-                                setBebidaSeleccionada(e.target.value);
-                                
-                                const bebidaSeleccionadaInfo = drinks.find(bebida => bebida.nombre === e.target.value);
+                                const selectedBebida = e.target.value;
+                                setBebidaSeleccionada(selectedBebida);
+
+                                const bebidaSeleccionadaInfo = drinks.find(bebida => bebida.nombre === selectedBebida);
                                 if (bebidaSeleccionadaInfo) {
                                   setPrecioBebidaSeleccionada(bebidaSeleccionadaInfo.precioVenta);
                                 }
@@ -660,11 +665,10 @@ export default function App() {
                             >
                               {drinks.map((bebida) => (
                                 <SelectItem key={bebida.nombre}>
-                                  {bebida.nombre}
+                                  {bebida.nombre} - {bebida.cantidad}
                                 </SelectItem>
                               ))}
                             </Select>
-
                           </ModalBody>
                           <ModalFooter>
                             <Button color="danger" variant="light" onPress={closeModalM}>
@@ -687,6 +691,8 @@ export default function App() {
 
 
 
+
+
                 <TableCell className="">
                 <div className=" flex justify-center">
                 <div className="flex flex-wrap gap-3">
@@ -701,7 +707,6 @@ export default function App() {
         isOpen={isModalOpenMc}
         onClose={closeModalMc}
       >
-        {/* const {isOpen: isModalOpenM, onOpen: openModalM, onClose: closeModalM} = useDisclosure(); */}
         <ModalContent>
           {(closeModalMc) => (
             <>

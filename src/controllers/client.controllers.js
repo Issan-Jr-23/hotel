@@ -23,10 +23,10 @@ export const crearCliente = async (req, res) => {
 
 
 export const deleteClient = async (req, res) => {
-  const identificacion = parseInt(req.params.identificacion); // Parsea el parámetro como número
+  const identificacion = parseInt(req.params.identificacion); 
 
   try {
-    const resultado = await Cliente.deleteOne({ identificacion: identificacion }); // Cambiar el nombre del campo
+    const resultado = await Cliente.deleteOne({ identificacion: identificacion }); 
     if (resultado.deletedCount > 0) {
       res.status(200).json({ message: `Usuario con identificación "${identificacion}" eliminado con éxito.` });
     } else {
