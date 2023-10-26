@@ -34,6 +34,10 @@ export default function App() {
   const [snacks, setSnacks] = useState([]);
   const [editedName, setEditedName] = useState("");
   const [editPago, setEditPago] = useState("");
+  const [cantidadBebida, setCantidadBebida] = useState(1);
+  const [bebidaSeleccionada, setBebidaSeleccionada] = useState('');
+  const [precioBebidaSeleccionada, setPrecioBebidaSeleccionada] = useState(0);
+  
   const [editedUserId, setEditedUserId] = useState(null);
   const options = ["Si", "No"];
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -92,6 +96,46 @@ export default function App() {
 
 
   
+  const handleGuardarBebida = async () => {
+    try {
+      if (selectedClientId && bebidaSeleccionada) {
+        // Encuentra la bebida seleccionada en el array de bebidas
+        const bebidaSeleccionadaInfo = drinks.find(bebida => bebida.nombre === bebidaSeleccionada);
+  
+        if (bebidaSeleccionadaInfo) {
+          // Obtiene el precio de la bebida seleccionada
+          const precioBebida = bebidaSeleccionadaInfo.precioVenta;
+  
+          // Realiza una solicitud POST para guardar la bebida en la colección del cliente
+          await axios.post('http://127.0.0.1:3000/api/pasadia-agregar-bebida', {
+            identificacionCliente: selectedClientId,
+            bebida: {
+              nombre: bebidaSeleccionada,
+              cantidad: cantidadBebida,
+              precio: precioBebida, // Usa el precio obtenido
+            },
+          });
+  
+          onClose();
+          console.log('Bebida agregada correctamente al cliente.');
+        } else {
+          console.error('Error: No se encontró la información de la bebida seleccionada.');
+        }
+      } else {
+        console.error('Error: No se ha seleccionado un cliente o una bebida.');
+      }
+    } catch (error) {
+      console.error('Error al guardar la bebida en el cliente:', error);
+    }
+  };
+  
+  
+  
+  
+  
+  
+  
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -263,8 +307,15 @@ export default function App() {
     openModalMc();
   }
 
- 
 
+  const [selectedClientId, setSelectedClientId] = useState(null);
+
+  const handleOpenModalBca = (cliente) => {
+    setSelectedClientId(cliente.identificacion);
+    setModalOpen(true);
+  };
+
+ 
 
 
   return (
@@ -447,17 +498,18 @@ export default function App() {
               <section className="flex justify-between  w-6/12 flex-wrap">
               <div className="mx-5 my-1">
               <h4 className="text-green-600">Bebidas</h4>
-              <ul className="flex flex-col">
-                {selectedUser.bebidas.map((bebida, index) => (
-                  <li key={index}>
-                    
-                    {bebida.nombre}
-                  </li>
-                ))}
-              </ul>
+              {selectedUser && selectedUser.bebidas && Array.isArray(selectedUser.bebidas) && (
+                <ul className="flex flex-col">
+                  {selectedUser.bebidas.map((bebida, index) => (
+                    <li key={index}>
+                      {bebida.nombre} {bebida.cantidad} 
+                    </li>
+                  ))}
+                </ul>
+              )}
 
               </div>
-              <div className="mx-5 my-1">
+              {/* <div className="mx-5 my-1">
               <h4 className="text-green-600">Cantidad</h4>
               <ul className="flex flex-col">
                 {selectedUser.bebidas.map((cantidad, index) => (
@@ -468,7 +520,7 @@ export default function App() {
                 ))}
               </ul>
 
-              </div>
+              </div> */}
               <div className="mx-5 my-1">
               <h4 className="text-green-600">Precio</h4>
               <ul className="flex flex-col">
@@ -601,7 +653,7 @@ export default function App() {
                 <div className=" flex justify-center">
                 <div className="flex flex-wrap gap-3">
                     {sizesm.map((size) => (
-                      <Button className="bg-white-100" key={size} onPress={() => handleOpenm(size)}>
+                      <Button className="bg-white-100" key={size} onPress={() => handleOpenm(size) || handleOpenModalBca(cliente)}>
                         <img className="w-7 h-7" src={plus} alt="" />
                       </Button>
                     ))}  
@@ -617,28 +669,44 @@ export default function App() {
                         <>
                           <ModalHeader className="flex flex-col gap-1">BEBIDAS</ModalHeader>
                           <ModalBody>
-                          <Select
-                                  name="bebidas"
-                                  label="Seleccionar bebida"
-                                  className="max-w-full w-full"
-                                  type="text"
-                                  value={drinks.indexOf(formData.bebidas)}
-                                  onChange={(e) => handleBebidasChange(e.target.value)}
-                                >
-                                  {drinks.map((bebida) => (
-                                    <SelectItem key={drinks.indexOf(bebida)}>
-                                      {bebida.nombre}
-                                    </SelectItem>
-                                  ))}
-                                </Select>
+                                <Input
+                                label="Ingrese la cantidad"
+                                type="number"
+                                value={cantidadBebida}
+                                onChange={(e) => setCantidadBebida(parseInt(e.target.value, 10))}
+                              />
+                              <Input  
+                                name="obtener valor de la bebida cuando la seleccione"
+                              > 
+                              
+                              </Input>
+                              <Select
+                              name="Seleccionar bebida"
+                              label="Seleccionar bebida"
+                              value={bebidaSeleccionada}
+                              onChange={(e) => {
+                                setBebidaSeleccionada(e.target.value);
+                                // Encuentra la información de la bebida seleccionada y actualiza el precio
+                                const bebidaSeleccionadaInfo = drinks.find(bebida => bebida.nombre === e.target.value);
+                                if (bebidaSeleccionadaInfo) {
+                                  setPrecioBebidaSeleccionada(bebidaSeleccionadaInfo.precioVenta);
+                                }
+                              }}
+                            >
+                              {drinks.map((bebida) => (
+                                <SelectItem key={bebida.nombre}>
+                                  {bebida.nombre}
+                                </SelectItem>
+                              ))}
+                            </Select>
+
                           </ModalBody>
                           <ModalFooter>
                             <Button color="danger" variant="light" onPress={closeModalM}>
                               Close
                             </Button>
-                            <Button color="primary" onPress={closeModalM}>
-                              Action
-                            </Button>
+                            <Button onClick={handleGuardarBebida}>
+                              Guardar Bebida</Button>
                           </ModalFooter>
                         </>
                       )}

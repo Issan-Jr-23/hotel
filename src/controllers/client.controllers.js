@@ -64,6 +64,28 @@ export const updateClient = async (req, res) => {
 };
 
 
+export const addBebida = async (req, res) => {
+  const { identificacionCliente, bebida } = req.body;
+
+  try {
+    const cliente = await Cliente.findOne({ identificacion: identificacionCliente });
+
+    if (cliente) {
+      cliente.bebidas.push(bebida);
+
+      await cliente.save();
+
+      res.status(200).json(cliente);
+    } else {
+      res.status(404).json({ message: 'Cliente no encontrado' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error al agregar la bebida al cliente' });
+  }
+};
+
+
 
       
 
