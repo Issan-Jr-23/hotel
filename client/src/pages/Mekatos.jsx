@@ -45,7 +45,6 @@ const MekatosTable = () => {
       <Navbars />
       <Table>
         <TableHeader>
-          <TableColumn>ID</TableColumn>
           <TableColumn>Descripción</TableColumn>
           <TableColumn>Cantidad</TableColumn>
           <TableColumn>Valor Unitario</TableColumn>
@@ -56,12 +55,11 @@ const MekatosTable = () => {
         <TableBody>
           {mekatos.map((mekato) => (
             <TableRow key={mekato._id}>
-              <TableCell>{mekato._id}</TableCell>
               <TableCell>{mekato.Descripcion}</TableCell>
               <TableCell>{mekato.CantidadInicial}</TableCell>
               <TableCell>{mekato.ValorUnitario}</TableCell>
-              <TableCell>5</TableCell>
-              <TableCell>30000</TableCell>
+              <TableCell>{mekato.productosVendidos}</TableCell>
+              <TableCell>{mekato.ValorTotal}</TableCell>
               <TableCell>
                 <Input
                   type="number"

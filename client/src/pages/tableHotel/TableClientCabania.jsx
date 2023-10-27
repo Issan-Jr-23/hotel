@@ -302,6 +302,10 @@ export default function App() {
     
         </div>
       </div>
+
+
+
+      
       <section className="flex coluns-2 border-2">
         <Table className=" text-center" aria-label="Lista de Usuarios">
           <TableHeader className="text-center">

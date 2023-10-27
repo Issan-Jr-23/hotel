@@ -45,7 +45,6 @@ const MekatosTable = () => {
       <Navbars />
       <Table>
         <TableHeader>
-          <TableColumn>ID</TableColumn>
           <TableColumn>Descripción</TableColumn>
           <TableColumn>Cantidad</TableColumn>
           <TableColumn>Valor Unitario</TableColumn>
@@ -53,24 +52,23 @@ const MekatosTable = () => {
           <TableColumn>Total</TableColumn>
           <TableColumn>Acción</TableColumn>
         </TableHeader>
-        <TableBody>
-          {mekatos.map((mekato) => (
-            <TableRow key={mekato._id}>
-              <TableCell>{mekato._id}</TableCell>
-              <TableCell>{mekato.Descripcion}</TableCell>
-              <TableCell>{mekato.CantidadInicial}</TableCell>
-              <TableCell>{mekato.ValorUnitario}</TableCell>
-              <TableCell>5</TableCell>
-              <TableCell>30000</TableCell>
+        <TableBody emptyContent="No hay filas para mostrar.">
+          {mekatos.map((food) => (
+            <TableRow key={food._id}>
+              <TableCell>{food.Descripcion}</TableCell>
+              <TableCell>{food.CantidadInicial}</TableCell>
+              <TableCell>{food.ValorUnitario}</TableCell>
+              <TableCell>{food.productosVendidos}</TableCell>
+              <TableCell>{food.ValorTotal}</TableCell>
               <TableCell>
                 <Input
                   type="number"
-                  value={additionalQuantities[mekato._id] }
+                  value={additionalQuantities[food._id] }
                   onChange={(e) => {
                     const value = parseInt(e.target.value);
                     setAdditionalQuantities((prev) => ({
                       ...prev,
-                      [mekato._id]: value,
+                      [food._id]: value,
                     }));
                   }}
                 />

@@ -1,6 +1,6 @@
 import mongoose from "mongoose"; 
-import moment from "moment-timezone";
-
+// import moment from "moment-timezone";
+  // default: () => moment.tz("America/Bogota").subtract(5, 'hours').toDate()
 
 const inventarioSchema = new mongoose.Schema({ 
   Descripcion: {
@@ -11,10 +11,9 @@ const inventarioSchema = new mongoose.Schema({
     type: String,
     enum: ['Bebidas', 'comidas', 'mekatos'],
     required: true,
-  },
+  }, 
   Caducidad: {
     type: Date,
-    default: () => moment.tz("America/Bogota").subtract(5, 'hours').toDate()
   },
   CantidadInicial:{
     type: Number,

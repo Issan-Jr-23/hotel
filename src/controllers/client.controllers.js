@@ -64,6 +64,7 @@ export const updateClient = async (req, res) => {
 };
 
 
+
 export const addBebida = async (req, res) => {
   const { identificacionCliente, bebida } = req.body;
 

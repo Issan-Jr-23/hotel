@@ -64,7 +64,7 @@ export default function Menu() {
             </Link>
             </DropdownItem>
             <DropdownItem
-              key="99_uptime"
+              key="99_uptime_inv"
             //   startContent={icons.server}
             >
               <Link className="link_nav" to='/inventario'>
@@ -72,7 +72,7 @@ export default function Menu() {
             </Link>
             </DropdownItem>
             <DropdownItem
-              key="production_ready"
+              key="production_ready_mk"
             //   startContent={icons.flash}
             >
               <Link className="link_nav" to='/mekatos'>
@@ -80,7 +80,7 @@ export default function Menu() {
             </Link>
             </DropdownItem>
             <DropdownItem
-              key="99_uptime"
+              key="99_uptime_be"
             //   startContent={icons.server}
             >
               <Link className="link_nav" to='/drinks'>
@@ -88,7 +88,7 @@ export default function Menu() {
             </Link>
             </DropdownItem>
             <DropdownItem
-              key="99_uptime"
+              key="99_uptime_al"
             //   startContent={icons.server}
             >
               <Link className="link_nav" to='/food'>

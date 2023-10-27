@@ -60,8 +60,8 @@ const MekatosTable = () => {
               <TableCell>{mekato.Descripcion}</TableCell>
               <TableCell>{mekato.CantidadInicial}</TableCell>
               <TableCell>{mekato.ValorUnitario}</TableCell>
-              <TableCell>5</TableCell>
-              <TableCell>30000</TableCell>
+              <TableCell>{mekato.productosVendidos}</TableCell>
+              <TableCell>{mekato.ValorTotal}</TableCell>
               <TableCell>
                 <Input
                   type="number"
