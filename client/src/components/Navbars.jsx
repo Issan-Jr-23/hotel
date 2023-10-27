@@ -67,7 +67,23 @@ export default function Menu() {
               key="99_uptime"
             //   startContent={icons.server}
             >
-              <Link className="link_nav" to='/bebidas'>
+              <Link className="link_nav" to='/inventario'>
+            Invnetario
+            </Link>
+            </DropdownItem>
+            <DropdownItem
+              key="production_ready"
+            //   startContent={icons.flash}
+            >
+              <Link className="link_nav" to='/mekatos'>
+                Mekatos
+            </Link>
+            </DropdownItem>
+            <DropdownItem
+              key="99_uptime"
+            //   startContent={icons.server}
+            >
+              <Link className="link_nav" to='/drinks'>
             Bebidas
             </Link>
             </DropdownItem>
@@ -75,7 +91,7 @@ export default function Menu() {
               key="99_uptime"
             //   startContent={icons.server}
             >
-              <Link className="link_nav" to='/alimentos'>
+              <Link className="link_nav" to='/food'>
             Alimentos
             </Link>
             </DropdownItem>

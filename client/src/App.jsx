@@ -9,6 +9,9 @@ import Pasadia from "./pages/Pasadia.jsx";
 import Cabanias from "./pages/Cabanias.jsx";
 import InvBebidas from "./pages/InventarioBebidas.jsx";
 import InvAlimentos from "./pages/InventarioAlimentos.jsx";
+import Mekatos from "./pages/Mekatos.jsx"
+import Food from "./pages/Food.jsx"
+import Bebidas from "./pages/Bebidas.jsx"
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCheckSquare} from '@fortawesome/free-solid-svg-icons'
 
@@ -31,8 +34,11 @@ function App() {
                 <Route path="/home" element={<Home/>}/>
                 <Route path="/Pasadia" element={<Pasadia/>} />
                 <Route path="/cabanias" element={<Cabanias/>} />
-                <Route path="/bebidas" element={<InvBebidas/>}/>
+                <Route path="/mekatos" element={<Mekatos/>} />
+                <Route path="/inventario" element={<InvBebidas/>}/>
                 <Route path="/alimentos" element={<InvAlimentos/>}/>
+                <Route path="/food" element={<Food/>}/>
+                <Route path="/drinks" element={<Bebidas/>}/>
               </Route>
             </Routes>
           </main>

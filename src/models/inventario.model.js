@@ -1,4 +1,6 @@
 import mongoose from "mongoose"; 
+import moment from "moment-timezone";
+
 
 const inventarioSchema = new mongoose.Schema({ 
   Descripcion: {
@@ -12,7 +14,7 @@ const inventarioSchema = new mongoose.Schema({
   },
   Caducidad: {
     type: Date,
-    default: Date.now
+    default: () => moment.tz("America/Bogota").subtract(5, 'hours').toDate()
   },
   CantidadInicial:{
     type: Number,
@@ -22,6 +24,14 @@ const inventarioSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  productosVendidos: {
+    type: Number,
+    default: 0
+  },
+  ValorTotal: {
+    type: Number,
+    default: 0
+  }
 
 });
 
