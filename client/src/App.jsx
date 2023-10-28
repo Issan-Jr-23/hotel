@@ -7,7 +7,7 @@ import { TaskProvider } from "./context/tasksContext";
 import { Home } from "./pages/Home";
 import Pasadia from "./pages/Pasadia.jsx";
 import Cabanias from "./pages/Cabanias.jsx";
-import InvBebidas from "./pages/InventarioBebidas.jsx";
+import InvBebidas from "./pages/Inventario.jsx";
 import InvAlimentos from "./pages/InventarioAlimentos.jsx";
 import Mekatos from "./pages/Mekatos.jsx"
 import Food from "./pages/Food.jsx"

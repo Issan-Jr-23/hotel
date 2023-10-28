@@ -111,40 +111,27 @@ export const deleteProducto = async (req, res) => {
 }
 
 
+export const updateProducto = async (req, res) => {
+  const identificacion = req.params.id;
+  const { Descripcion, tipo } = req.body;
 
+  try {
+    const productoActualizado = await Bebida.findOneAndUpdate(
+      { _id:identificacion },
+      {Descripcion, tipo},
+      { new: true }
+    );
 
+    if (!productoActualizado) {
+      return res.status(404).json({ mensaje: 'Producto no encontrado' });
+    }
 
-
-
-
-
-
-
-
-
-
-
-// export const updateClient = async (req, res) => {
-//   const identificacion = req.params.identificacion;
-//   const { nombre, pagoPendienteTotal, reserva, bebidas } = req.body;
-
-//   try {
-//     const usuarioActualizado = await Cliente.findOneAndUpdate(
-//       { identificacion },
-//       { nombre, pagoPendienteTotal, reserva, bebidas },
-//       { new: true }
-//     );
-
-//     if (!usuarioActualizado) {
-//       return res.status(404).json({ mensaje: 'Usuario no encontrado' });
-//     }
-
-//     res.json({ mensaje: 'Usuario actualizado correctamente', usuarioActualizado });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ mensaje: 'Error interno del servidor' });
-//   }
-// };
+    res.json({ mensaje: 'Producto actualizado correctamente', productoActualizado });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ mensaje: 'Error interno del servidor' });
+  }
+};
 
 
 

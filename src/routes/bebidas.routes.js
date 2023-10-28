@@ -1,5 +1,5 @@
 import {Router} from "express";
-import {crearProducto } from '../controllers/inventario.controllers.js'
+import {crearProducto, updateProducto } from '../controllers/inventario.controllers.js'
 import {obtenerInventario } from '../controllers/inventario.controllers.js'
 import {crearAlimentos } from '../controllers/alimentos.controllers.js'
 import {obtenerAlimentos } from '../controllers/alimentos.controllers.js'
@@ -20,5 +20,6 @@ router.get("/drinks", obtenerDrinks)
 router.get("/food", obtenerFood)
 router.post("/agregar-cantidad", addCv)
 router.delete("/eliminar-mekato/:id", deleteProducto)
+router.put("/update-producto/:id", updateProducto)
 
 export default router;

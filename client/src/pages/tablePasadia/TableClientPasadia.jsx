@@ -38,7 +38,8 @@ export default function App() {
   const [bebidaSeleccionada, setBebidaSeleccionada] = useState('');
   const [cantidadDeBebidas, setCantidadDeBebidas] = useState('');
   const [precioBebidaSeleccionada, setPrecioBebidaSeleccionada] = useState(0);
-
+  const [bebidaSeleccionadaId, setBebidaSeleccionadaId] = useState(null);
+  const [selectedClientId, setSelectedClientId] = useState(null);
   const [editedUserId, setEditedUserId] = useState(null);
   const options = ["Si", "No"];
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -120,21 +121,22 @@ export default function App() {
 
   const handleGuardarBebida = async () => {
     try {
-      if (selectedClientId && bebidaSeleccionada) {
-        const bebidaSeleccionadaInfo = drinks.find(bebida => bebida.nombre === bebidaSeleccionada);
-
+      if (selectedClientId && bebidaSeleccionadaId) {
+        const bebidaSeleccionadaInfo = drinks.find(bebida => bebida._id === bebidaSeleccionadaId);
+  
         if (bebidaSeleccionadaInfo) {
-          const precioBebida = bebidaSeleccionadaInfo.precioVenta;
+          const { _id, ValorUnitario: precioBebida } = bebidaSeleccionadaInfo;
+  
           await axios.post('http://127.0.0.1:3000/api/pasadia-agregar-bebida', {
             identificacionCliente: selectedClientId,
             bebida: {
-              id: idBebida,
+              id: _id,
               nombre: bebidaSeleccionada,
               cantidad: cantidadBebida,
               precio: precioBebida,
             },
           });
-
+  
           onClose();
           console.log('Bebida agregada correctamente al cliente.');
         } else {
@@ -147,6 +149,7 @@ export default function App() {
       console.error('Error al guardar la bebida en el cliente:', error);
     }
   };
+  
 
 
 
@@ -189,20 +192,20 @@ export default function App() {
     }
   };
 
-  const handleFormSubmitB = async () => {
-    try {
-      await axios.post("http://127.0.0.1:3000/api/pasadia-registrar-cliente", formData);
-      onClose();
-      toast.success('bebida agregada exitosamente');
-      setFormData({
-        bebidas: ""
-      });
-      const response = await axios.get("http://127.0.0.1:3000/api/pasadia-clientes");
-      setUsers(response.data);
-    } catch (error) {
-      toast.error('Ocurrió un error al agregar el cliente.');
-    }
-  };
+  // const handleFormSubmitB = async () => {
+  //   try {
+  //     await axios.post("http://127.0.0.1:3000/api/pasadia-registrar-cliente", formData);
+  //     onClose();
+  //     toast.success('bebida agregada exitosamente');
+  //     setFormData({
+  //       bebidas: ""
+  //     });
+  //     const response = await axios.get("http://127.0.0.1:3000/api/pasadia-clientes");
+  //     setUsers(response.data);
+  //   } catch (error) {
+  //     toast.error('Ocurrió un error al agregar el cliente.');
+  //   }
+  // };
 
   const handleEditUser = async () => {
     try {
@@ -250,7 +253,7 @@ export default function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:3000/api/obtener-bebidas");
+        const response = await axios.get("http://127.0.0.1:3000/api/drinks");
         setDrinks(response.data);
         setCantidadDeBebidas(response.data)
       } catch (error) {
@@ -263,7 +266,7 @@ export default function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:3000/api/obtener-alimentos");
+        const response = await axios.get("http://127.0.0.1:3000/api/food");
         setSnacks(response.data);
       } catch (error) {
         console.error("Error al obtener datos del servidor:", error);
@@ -328,7 +331,6 @@ export default function App() {
   }
 
 
-  const [selectedClientId, setSelectedClientId] = useState(null);
 
   const handleOpenModalBca = (cliente) => {
     setSelectedClientId(cliente.identificacion);
@@ -642,7 +644,6 @@ export default function App() {
                         <>
                           <ModalHeader className="flex flex-col gap-1">BEBIDAS</ModalHeader>
                           <ModalBody>
-                            
                             <Input
                               label="Ingrese la cantidad"
                               type="number"
@@ -657,15 +658,16 @@ export default function App() {
                                 const selectedBebida = e.target.value;
                                 setBebidaSeleccionada(selectedBebida);
 
-                                const bebidaSeleccionadaInfo = drinks.find(bebida => bebida.nombre === selectedBebida);
+                                const bebidaSeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida);
                                 if (bebidaSeleccionadaInfo) {
                                   setPrecioBebidaSeleccionada(bebidaSeleccionadaInfo.precioVenta);
+                                  setBebidaSeleccionadaId(bebidaSeleccionadaInfo._id);
                                 }
                               }}
                             >
                               {drinks.map((bebida) => (
-                                <SelectItem key={bebida.nombre}>
-                                  {bebida.nombre} - {bebida.cantidad}
+                                <SelectItem key={bebida._id} value={bebida.Descripcion}>
+                                  {bebida.Descripcion} - {bebida.CantidadInicial}
                                 </SelectItem>
                               ))}
                             </Select>

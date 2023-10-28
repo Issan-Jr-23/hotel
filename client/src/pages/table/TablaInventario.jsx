@@ -101,18 +101,19 @@ export default function App() {
   };
 
 
-  const handleEditUser = async () => {
+  const handleEditUser = async (id) => {
     try {
       await axios.put(
-        `http://127.0.0.1:3000/api/cabanias/edit/${id}`,
-        { nombre: editedName }
+        `http://127.0.0.1:3000/api/update-producto/${id}`,
+        { Descripcion: editedName, tipo: editedType }
       );
       // Actualiza la lista de usuarios después de la edición
-      const updatedUsers = users.map((user) =>
-        user.identificacion === editedUserId ? { ...user, nombre: editedName } : user
+      const updatedUsers = users.map((inventario) =>
+        inventario._id === editedUserId ? { ...inventario, Descripcion: editedName, tipo: editedType } : inventario
       );
       setUsers(updatedUsers);
       setEditedName(""); 
+      setEditedType("")
       setEditedUserId(null); 
       toast.success('Cliente actualizado exitosamente!');
     } catch (error) {
@@ -164,7 +165,7 @@ export default function App() {
                   id="tipo"
                   name="tipo"
                   value={formData.tipo}
-                  onChange={(event) => handleInputChange(event)}
+                  onChange={(event) => handleInputChange(event)} 
                 >
                   <option value="">Seleccione un tipo</option>
                   <option value="Bebidas">Bebidas</option>
@@ -276,7 +277,7 @@ export default function App() {
                     className="w-8 h-8 mr-4 cursor-pointer"
                     src={download}
                     alt="actualizar"
-                    onClick={handleEditUser}
+                    onClick={() => handleEditUser(inventario._id)}
                   />
                   )}
                   <img
