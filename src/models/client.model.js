@@ -38,11 +38,9 @@ const clienteSchema = new mongoose.Schema({
   cantidadPersonas: {
     adultos: {
       type: Number,
-      required: true,
     },
     ninios: {
       type: Number,
-      required: true,
       default: 0
     },
   },

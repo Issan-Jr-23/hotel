@@ -59,7 +59,7 @@ export default function App() {
     pagoAnticipado:"",
     mediosDePagoPendiente:"",
     pagoPendiente:"",
-    bebidas:""
+    bebidas:[]
     
   });
 
@@ -129,37 +129,18 @@ export default function App() {
 
 
 
-  const limpiarCampos = () => {
-    setCantidadBebida(0);
-    setBebidaSeleccionadaId(null);
-    setBebidaSeleccionada("");
-    setPrecioBebidaSeleccionada(0);
-    
-    setCantidadBebidaN(0);
-    setBebidaSeleccionadaIdN(null);
-    setBebidaSeleccionadaN("");
-    setPrecioBebidaSeleccionadaN(0);
-};
-
-
 
   const handleGuardarBebida = async () => {
+    console.log(" id del cliente " +selectedClientId)
     try {
-        if (!selectedClientId) {
-            console.error('Error: No se ha seleccionado un cliente.');
-            toast.error("No se ha seleccionado un cliente.");
-            return;
+        if (selectedClientId && bebidaSeleccionadaId) {
+            throw new Error('No se ha seleccionado un cliente.');
         }
 
-        const isAdultDrinkValid = cantidadBebida > 0 && bebidaSeleccionadaId && bebidaSeleccionada;
-        const isChildDrinkValid = cantidadBebidaN > 0 && bebidaSeleccionadaIdN && bebidaSeleccionadaN;
+        let isBebidaAdultoAdded = false;
+        let isBebidaNinoAdded = false;
 
-        if (!isAdultDrinkValid && !isChildDrinkValid) {
-            toast.error("Error al guardar bebida: Datos inválidos.");
-            return;
-        }
-
-        if (isAdultDrinkValid && selectedClientId) {
+        if (cantidadBebida > 0 && bebidaSeleccionadaId) {
             const bebidaAdultos = {
                 id: bebidaSeleccionadaId,
                 nombre: bebidaSeleccionada,
@@ -167,12 +148,11 @@ export default function App() {
                 precioA: precioBebidaSeleccionada,
             };
             await guardarBebida(bebidaAdultos);
-            toast.success('Bebida guardada exitosamente en adultos');
-            limpiarCampos();
-            
+            isBebidaAdultoAdded = true;
+            console.log("Adultos" + bebidaAdultos)
         }
 
-        if (isChildDrinkValid && selectedClientId) {
+        if (cantidadBebidaN > 0 && bebidaSeleccionadaIdN) {
             const bebidaNinos = {
                 id: bebidaSeleccionadaIdN,
                 nombre: bebidaSeleccionadaN,
@@ -180,35 +160,40 @@ export default function App() {
                 precioN: precioBebidaSeleccionadaN,
             };
             await guardarBebida(bebidaNinos);
-            toast.success('Bebida agregada exitosamente en niños');
-            limpiarCampos();
+            isBebidaNinoAdded = true;
         }
 
-        console.log('Bebidas agregadas correctamente al cliente.');
+        if (!isBebidaAdultoAdded) {
+            alert("No se ha agregado una bebida para adultos");
+        }
+
+        if (!isBebidaNinoAdded) {
+            alert("No se ha agregado una bebida para niños");
+        }
+
+        onClose();
     } catch (error) {
-        console.error('Error al guardar las bebidas en el cliente:', error);
+        console.error('Error al guardar las bebidas en el cliente:', error.message);
     }
 };
-  
-  const guardarBebida = async (bebida) => {
-    try {
-      const response = await axios.post('http://127.0.0.1:3000/api/pasadia-agregar-bebida', {
-        identificacion: selectedClientId,
-        bebida,
-      });
-      closeModalM();
-      if (response.data.status === 'updated') {
-        toast.success('Cantidad de bebida actualizada');
-    } else if (response.data.status === 'created') {
-        toast.success('Bebida agregada exitosamente');
-    }
-    } catch (error) {
-      console.error('Error al guardar la bebida en el cliente:', error);
-    }
-  };
 
-  
-  
+const guardarBebida = async (bebida) => {
+    try {
+        const response = await axios.post('http://127.0.0.1:3000/api/pasadia-agregar-bebida', {
+            identificacion: selectedClientId,
+            bebida,
+        });
+        console.log(selectedClientId)
+
+        if (response.status < 200 || response.status >= 300) {
+            throw new Error(`Error al agregar la bebida. Estado de la respuesta: ${response.status}`);
+        }
+    } catch (error) {
+        console.error('Error al guardar la bebida en el cliente:', error.message);
+        throw error;  // Re-throw para ser capturado en handleGuardarBebida
+    }
+};
+
 
 
 
@@ -409,10 +394,10 @@ export default function App() {
 
   const sizesm = ["xs"];
 
-  const handleOpenm = (size) => {
-    setSize(size)
-    openModalM();
-  }
+  const handleOpenm = (size, clientId) => {
+    setSelectedSize(size);
+    setSelectedClientId(clientId);
+};
 
 
   const {isOpen: isModalOpenMc, onOpen: openModalMc, onClose: closeModalMc} = useDisclosure();
@@ -428,7 +413,7 @@ export default function App() {
 
 
   const handleOpenModalBca = (cliente) => {
-    setSelectedClientId(cliente._id);
+    // setSelectedClientId(cliente._id);
     setModalOpen(true);
   };
 
@@ -465,6 +450,7 @@ export default function App() {
                       id="nombre"
                       name="nombre"
                       type="text"
+                      textValue="prueba"
                       variant="flat"
                       label="Nombre de usuario"
                       value={formData.nombre}
@@ -477,6 +463,7 @@ export default function App() {
                       name="reserva"
                       label="¿La reserva fue realizada?"
                       className="max-w-full w-full"
+                      textValue="prueba"
                       value={formData.reserva}
                       onChange={(event) => handleReservaChange(event.target.value)}
                     >
@@ -493,6 +480,7 @@ export default function App() {
                       type="number"
                       variant="flat"
                       label="Cantidad de Adultos"
+                      textValue="prueba"
                       value={formData.cantidadPersonas.adultos}
                       onChange={(event) => handleInputChange(event, "adultos")}
                     />
@@ -504,12 +492,14 @@ export default function App() {
                       type="number"
                       variant="flat"
                       label="Cantidad de Niños"
+                      textValue="prueba"
                       value={formData.cantidadPersonas.ninios}
                       onChange={(event) => handleInputChange(event, "ninios")}
                     />
                     <select
                       id="mediosDePago"
                       name="mediosDePago"
+                      textValue="prueba"
                       value={formData.mediosDePago}
                       onChange={(event) => handleInputChange(event)} 
                     >
@@ -529,12 +519,14 @@ export default function App() {
                       type="number"
                       variant="flat"
                       label="Pago anticipado"
+                      textValue="prueba"
                       value={formData.pagoAnticipado}
                       onChange={handleInputChange}
                     />
                     <select
                       id="mediosDePagoPendiente"
                       name="mediosDePagoPendiente"
+                      textValue="prueba"
                       value={formData.mediosDePagoPendiente}
                       onChange={(event) => handleInputChange(event)} 
                     >
@@ -554,6 +546,7 @@ export default function App() {
                       type="number"
                       variant="flat"
                       label="Pago anticipado"
+                      textValue="prueba"
                       value={formData.pagoPendiente}
                       onChange={handleInputChange}
                     />
@@ -668,47 +661,36 @@ export default function App() {
                   <ModalContent >
                     <ModalHeader className="border-b-3 border-blue-500 text-3xl flex  justify-between">
                       <div className="mb-0.5">History</div>
-                      <div className="uppercase"> {selectedUser.nombre} - {selectedUser.identificacion}</div>
+                      <div className="uppercase"> {selectedUser.nombre}</div>
                     </ModalHeader>
                     <ModalBody className="uppercase flex">
                       <div className="flex w-full">
-                      <section className="flex justify-between  w-full flex-wrap ">
-                      <div className="mx-5 my-1 w-full">
+                      <section className="flex justify-between  w-full flex-wrap border-3">
+                      <div className="mx-5 my-1 border-2 w-full">
                       <h4 className="text-green-600">Bebidas</h4>
                       {selectedUser.bebidas && Array.isArray(selectedUser.bebidas) && selectedUser.bebidas.length > 0 ? (
                   <table className="min-w-full">
-                    <thead className="text-center">
-                      <tr className="text-center">
+                    <thead>
+                      <tr>
                         <th>Nombre</th>
                         <th>Cantidad</th>
                         <th>Precio</th>
                       </tr>
                     </thead>
-                    <tbody className="text-center mb-2">
+                    <tbody>
                       {selectedUser.bebidas.map((bebida, index) => (
                         <tr key={index}>
                           <td>{bebida.nombre}</td>
                           <td>{bebida.cantidad}</td>
-                          <td>{bebida.precioA || bebida.precioN}</td>
+                          <td>{bebida.precio}</td>
                         </tr>
                       ))}
                     </tbody>
-                    <tfoot className="border-t-2 border-green-500 pt-2">
-                    <tr className="  ">
-                      <td >Total</td>
-                      <td>{
-                        selectedUser.bebidas.reduce((acc, bebida) => 
-                          acc + (bebida.cantidad * (bebida.precioA || bebida.precioN)), 0
-                        )
-                      }</td>
-                    </tr>
-                  </tfoot>
                   </table>
                 ) : (
                   <p className="border-4 w-full text-center">No hay productos que mostrar😔</p>
                 )}
                       </div>
-
                       </section>
                       </div>
                     </ModalBody>
@@ -772,161 +754,104 @@ export default function App() {
 
 
 
-
-
-
-
-
-
-
-
                 <TableCell className=" ">
+             
                 <div className=" flex justify-center">
                 <div className="flex flex-wrap gap-3">
                     {sizesm.map((size) => (
-                      <Button className="bg-white-100" key={size} onPress={() => handleOpenm(size)}>
+                      <Button className="bg-white-100" key={size} onPress={() => handleOpenm(size,cliente._id)}>
                         <img className="w-7 h-7" src={plus} alt="" />
                       </Button>
                     ))}
                   </div>
-                  {/* <Modal
-                    size={size}
-                    isOpen={isModalOpenM}
-                    onClose={closeModalM}
-                  >
-                    <ModalContent>
-                      {(closeModalM) => (
-                        <>
-                          <ModalHeader className="flex flex-col gap-1">BEBIDAS</ModalHeader>
-                          <ModalBody>
-                            <Input
-                              name="bebidas"
-                              label="Ingrese la cantidad"
-                              type="number"
-                              value={cantidadBebida}
-                              onChange={(e) => setCantidadBebida(parseInt(e.target.value, 10))}
-                            />
-                            <Select
-                              name="bebidas"
-                              label="Seleccionar bebida"
-                              value={bebidaSeleccionada}
-                              onChange={(e) => {
-                                const selectedBebida = e.target.value;
-                                setBebidaSeleccionada(selectedBebida);
 
-                                const bebidaSeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida);
-                                if (bebidaSeleccionadaInfo) {
-                                  setPrecioBebidaSeleccionada(bebidaSeleccionadaInfo.ValorAdultos);
-                                  setBebidaSeleccionadaId(bebidaSeleccionadaInfo._id);
-                                }
-                              }}
-                            >
-                              {drinks.map((bebida) => (
-                                <SelectItem key={bebida.Descripcion}>
-                                  {bebida.Descripcion}
-                                </SelectItem>
-                              ))}
-                            </Select>
-                          </ModalBody>
-                          <ModalFooter>
-                            <Button color="danger" variant="light" onPress={closeModalM}>
-                              Close
-                            </Button>
-                            <Button onClick={handleGuardarBebida}>
-                              Guardar Bebida</Button>
-                          </ModalFooter>
-                        </>
-                      )}
-                    </ModalContent>
-                  </Modal> */}
+              <Modal size={size} isOpen={isModalOpenM} onClose={closeModalM}>
+                <ModalContent>
+                  {(closeModalM) => (
+                    <>
+                      <ModalHeader className="flex flex-col gap-1">BEBIDAS</ModalHeader>
+                      <ModalBody>
+                        <Input
+                          name="bebidas"
+                          label="Ingrese la cantidad para adultos"
+                          type="number"
+                          value={isNaN(cantidadBebida) ? '' : cantidadBebida}
+                          onChange={(e) => {
+                            const value = parseInt(e.target.value, 10);
+                            setCantidadBebida(isNaN(value) ? 0 : value);
+                          }}
+                        />
+                        <Select
+                          name="bebidas"
+                          label="Seleccionar bebida para adultos"
+                          value={bebidaSeleccionada}
+                          onChange={(e) => {
+                            const selectedBebida = e.target.value;
+                            setBebidaSeleccionada(selectedBebida);
 
-                  <Modal size={size} isOpen={isModalOpenM} onClose={closeModalM}>
-                    <ModalContent>
-                      {(closeModalM) => (
-                        <>
-                          <ModalHeader className="flex flex-col gap-1">BEBIDAS</ModalHeader>
-                          <ModalBody>
-                            <Input
-                              name="bebidas"
-                              label="Ingrese la cantidad para adultos"
-                              type="number"
-                              value={isNaN(cantidadBebida) ? '' : cantidadBebida}
-                              onChange={(e) => {
-                                const value = parseInt(e.target.value, 10);
-                                setCantidadBebida(isNaN(value) ? "" : value);
-                              }}
-                            />
-                            <Select
-                              name="bebidas"
-                              label="Seleccionar bebida para adultos"
-                              value={bebidaSeleccionada}
-                              onChange={(e) => {
-                                const selectedBebida = e.target.value;
-                                setBebidaSeleccionada(selectedBebida);
+                            const bebidaSeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida);
+                            if (bebidaSeleccionadaInfo) {
+                              setPrecioBebidaSeleccionada(bebidaSeleccionadaInfo.ValorAdultos);
+                              setBebidaSeleccionadaId(bebidaSeleccionadaInfo._id);
+                            }
+                          }}
+                        >
+                          {drinks.map((bebida) => (
+                            <SelectItem key={bebida.Descripcion}>
+                              {bebida.Descripcion}
+                            </SelectItem>
+                          ))}
+                        </Select>
 
-                                const bebidaSeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida);
-                                if (bebidaSeleccionadaInfo) {
-                                  setPrecioBebidaSeleccionada(bebidaSeleccionadaInfo.ValorAdultos);
-                                  setBebidaSeleccionadaId(bebidaSeleccionadaInfo._id);
-                                }
-                              }}
-                            >
-                              {drinks.map((bebida) => (
-                                <SelectItem key={bebida.Descripcion}>
-                                  {bebida.Descripcion}
-                                </SelectItem>
-                              ))}
-                            </Select>
+                        <Input
+                          name="bebidas"
+                          label="Ingrese la cantidad para niños"
+                          type="number"
+                          value={isNaN(cantidadBebidaN) ? '' : cantidadBebidaN}
+                          onChange={(e) => {
+                            const value = parseInt(e.target.value, 10);
+                            setCantidadBebidaN(isNaN(value) ? 0 : value);
+                          }}
+                        />
+                        <Select
+                          name="bebidas"
+                          label="Seleccionar bebida para niños"
+                          value={bebidaSeleccionadaN}
+                          onChange={(e) => {
+                            const selectedBebidaN = e.target.value;
+                            setBebidaSeleccionadaN(selectedBebidaN);
 
-                            <Input
-                              name="bebidas"
-                              label="Ingrese la cantidad para niños"
-                              type="number"
-                              value={isNaN(cantidadBebidaN) ? '' : cantidadBebidaN}
-                              onChange={(e) => {
-                                const value = parseInt(e.target.value, 10);
-                                setCantidadBebidaN(isNaN(value) ? "" : value);
-                              }}
-                            />
-                            <Select
-                              name="bebidas"
-                              label="Seleccionar bebida para niños"
-                              value={bebidaSeleccionadaN}
-                              onChange={(e) => {
-                                const selectedBebidaN = e.target.value;
-                                setBebidaSeleccionadaN(selectedBebidaN);
-
-                                const bebidaSeleccionadaInfoN = drinks.find(bebida => bebida.Descripcion === selectedBebidaN);
-                                if (bebidaSeleccionadaInfoN) {
-                                  setPrecioBebidaSeleccionadaN(bebidaSeleccionadaInfoN.ValorNinios);
-                                  setBebidaSeleccionadaIdN(bebidaSeleccionadaInfoN._id);
-                                }
-                              }}
-                            >
-                              {drinks.map((bebida) => (
-                                <SelectItem key={bebida.Descripcion}>
-                                  {bebida.Descripcion}
-                                </SelectItem>
-                              ))}
-                            </Select>
-                          </ModalBody>
-                          <ModalFooter>
-                            <Button color="danger" variant="light" onPress={closeModalM}>
-                              Close
-                            </Button>
-                            <Button onClick={handleGuardarBebida }>
-                              Guardar Bebidas
-                            </Button>
-                          </ModalFooter>
-                        </>
-                      )}
-                    </ModalContent>
-                  </Modal>
+                            const bebidaSeleccionadaInfoN = drinks.find(bebida => bebida.Descripcion === selectedBebidaN);
+                            if (bebidaSeleccionadaInfoN) {
+                              setPrecioBebidaSeleccionadaN(bebidaSeleccionadaInfoN.ValorNinios);
+                              setBebidaSeleccionadaIdN(bebidaSeleccionadaInfoN._id);
+                            }
+                          }}
+                        >
+                          {drinks.map((bebida) => (
+                            <SelectItem key={bebida.Descripcion}>
+                              {bebida.Descripcion}
+                            </SelectItem>
+                          ))}
+                        </Select>
+                      </ModalBody>
+                      <ModalFooter>
+                        <Button color="danger" variant="light" onPress={closeModalM}>
+                          Close
+                        </Button>
+                        <Button onClick={handleGuardarBebida}>
+                          Guardar Bebidas
+                        </Button>
+                      </ModalFooter>
+                    </>
+                  )}
+                </ModalContent>
+              </Modal>
 
 
                 </div>
+           
                 </TableCell>
-
 
 
 
