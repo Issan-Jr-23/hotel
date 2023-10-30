@@ -3,7 +3,7 @@ import InventarioBebidas from './table/TablaInventario.jsx'
 
 const inventario = () => {
   return (
-    <div>
+    <div className="">
         <Navbar/>
         <InventarioBebidas/>
     </div>

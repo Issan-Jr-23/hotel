@@ -3,13 +3,15 @@ import mongoose from "mongoose";
   // default: () => moment.tz("America/Bogota").subtract(5, 'hours').toDate()
 
 const inventarioSchema = new mongoose.Schema({ 
+
+
   Descripcion: {
     type: String,
     required: true,
-  } ,
+  } , 
   tipo: {
     type: String,
-    enum: ['Bebidas', 'comidas', 'mekatos'],
+    enum: ['Bebida', 'comida', 'mekato'], 
     required: true,
   }, 
   Caducidad: {
@@ -19,11 +21,46 @@ const inventarioSchema = new mongoose.Schema({
     type: Number,
     required:true,
   },
-  ValorUnitario: {
+
+//-------------------------
+  ValorAdultos: {
     type: Number,
     required: true,
   },
-  productosVendidos: {
+  VentaAdultos: {
+    type: Number,
+    default: 0
+  },
+  TotalVentaAdultos: {
+    type: Number,
+    default: 0
+  },
+
+  //--------------------------------
+
+
+  //----------------------------
+  ValorNinios: {
+    type:Number,
+    required:true,
+    default:0
+  },
+
+  VentaNinios: {
+    type: Number,
+    required:true,
+    default: 0
+  },
+
+  TotalVentaNinios: {
+    type: Number,
+    default: 0
+  },
+
+  //-------------------------------
+
+
+  CantidadRestante: {
     type: Number,
     default: 0
   },

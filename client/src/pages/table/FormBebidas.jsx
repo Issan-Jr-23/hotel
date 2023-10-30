@@ -38,6 +38,7 @@ export default function App() {
 
           <Input className='input_form' type="Text" variant={variant} label="Nombre del producto" />
           <Select
+          id="tamaño"
           label="Tamaño"
           placeholder="seleccione si o no"
           className="w-full"
@@ -54,6 +55,7 @@ export default function App() {
           {placements.map((placement) => (
             <Input
               key={placement}
+              id="fechaDeCaducidad"
               type="date"
               label="Fecha de caducidad"
               labelPlacement={placement}
@@ -63,6 +65,7 @@ export default function App() {
           ))}
 
           <Input className='input_form' 
+          id="precioDeVenta"
           placeholder="0.00" 
           type="text" 
           value={numero}

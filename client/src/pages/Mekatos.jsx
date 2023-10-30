@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Table, TableBody, TableCell, TableColumn, Input, Button, TableHeader, TableRow } from "@nextui-org/react";
+import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
 import Navbars from '../components/Navbars';
 
 const MekatosTable = () => {
   const [mekatos, setMekatos] = useState([]);
-  const [additionalQuantity, setAdditionalQuantity] = useState(0);
-  const [additionalQuantities, setAdditionalQuantities] = useState({});
+ 
 
 
   useEffect(() => {
@@ -20,30 +19,11 @@ const MekatosTable = () => {
       });
   }, []);
 
-  const confirmAdditionalQuantity = async (mekatoId) => {
-    try {
-      const additionalQuantityForProduct = additionalQuantities[mekatoId] || 0;
-  
-      const response = await axios.post("http://127.0.0.1:3000/api/agregar-cantidad", {
-        mekatoId: mekatoId,
-        additionalQuantity: additionalQuantityForProduct,
-      });
-
-      
-      setAdditionalQuantities((prev) => ({
-        ...prev,
-        [mekatoId]: 0,
-      }));
-    } catch (error) {
-      console.error("Error al agregar cantidad vendida:", error);
-      // Manejar el error, mostrar mensajes al usuario, etc.
-    }
-  };
 
   return (
     <>
       <Navbars />
-      <Table>
+      <Table aria-label="Example static collection table">
         <TableHeader>
           <TableColumn>Descripción</TableColumn>
           <TableColumn>Cantidad</TableColumn>
@@ -57,23 +37,10 @@ const MekatosTable = () => {
             <TableRow key={mekato._id}>
               <TableCell>{mekato.Descripcion}</TableCell>
               <TableCell>{mekato.CantidadInicial}</TableCell>
-              <TableCell>{mekato.ValorUnitario}</TableCell>
-              <TableCell>{mekato.productosVendidos}</TableCell>
+              <TableCell>{mekato.ValorAdultos}</TableCell>
+              <TableCell>{mekato.VentaAdultos}</TableCell>
               <TableCell>{mekato.ValorTotal}</TableCell>
-              <TableCell>
-                <Input
-                  type="number"
-                  value={additionalQuantities[mekato._id] }
-                  onChange={(e) => {
-                    const value = parseInt(e.target.value);
-                    setAdditionalQuantities((prev) => ({
-                      ...prev,
-                      [mekato._id]: value,
-                    }));
-                  }}
-                />
-                <Button onClick={() => confirmAdditionalQuantity(mekato._id)}>Agregar Más</Button>
-              </TableCell>
+             
             </TableRow>
           ))}
         </TableBody>

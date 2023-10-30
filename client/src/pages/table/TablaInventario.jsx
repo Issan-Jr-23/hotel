@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell,Modal,
   ModalContent,
   ModalHeader,
@@ -24,7 +24,8 @@ export default function App() {
     Descripcion: "",
     tipo: "",
     CantidadInicial: "",
-    ValorUnitario: "",
+    ValorAdultos: "",
+    ValorNinios: "",
     Caducidad:""
     
   });
@@ -32,16 +33,16 @@ export default function App() {
   const handleInputChange = (event) => {
     const { name, value } = event.target;
 
-    let finalValue = value;
+    // let finalValue = value;
 
-    if (name === "Caducidad") {
-        const fecha = new Date(value);
-        finalValue = `${fecha.getFullYear()}-${fecha.getMonth() + 1}-${fecha.getDate()}`;
-    }
+    // if (name === "Caducidad") {
+    //     const fecha = new Date(value);
+    //     finalValue = `${fecha.getFullYear()}-${fecha.getMonth() + 1}-${fecha.getDate()}`;
+    // }
 
     setFormData({
       ...formData,
-      [name]: finalValue,
+      [name]: value,
     });
     console.log(name)
     console
@@ -126,10 +127,10 @@ export default function App() {
 
 
   return (
-    <div >
+    <div className="w-full ">
       <Toaster/>
-        <div className='flex my-5 justify-between border-2'>
-            <div className='mr-5 '>
+        <div className='flex  justify-between'>
+            <div className=' '>
         {/* <CardDesplegable /> */}
         <>
       <div className="flex flex-wrap gap-3">
@@ -162,15 +163,15 @@ export default function App() {
                   onChange={handleInputChange}
                 />
                 <select
-                  id="tipo"
+                  
                   name="tipo"
                   value={formData.tipo}
                   onChange={(event) => handleInputChange(event)} 
                 >
                   <option value="">Seleccione un tipo</option>
-                  <option value="Bebidas">Bebidas</option>
-                  <option value="comidas">Comidas</option>
-                  <option value="mekatos">Mekatos</option>
+                  <option value="Bebida">Bebidas</option>
+                  <option value="comida">Comidas</option>
+                  <option value="mekato">Mekatos</option>
                 </select>
                 <Input
                   name="Caducidad"
@@ -190,11 +191,19 @@ export default function App() {
                   onChange={handleInputChange}
                 />
                 <Input
-                  name="ValorUnitario"
+                  name="ValorAdultos"
                   className="input_form"
                   type="number"
                   variant="flat"
                   label="Valor unitario"
+                  onChange={handleInputChange}
+                />
+                <Input
+                  name="ValorNinios"
+                  className="input_form"
+                  type="number"
+                  variant="flat"
+                  label="Valor Niños"
                   onChange={handleInputChange}
                 />
               </ModalBody>
@@ -216,16 +225,25 @@ export default function App() {
         
             
         </div>
-        <section className="flex coluns-2 ">
-          <Table className="mx-5 text-center" aria-label="Lista de Usuarios">
+        <section className="flex coluns-2  mx-5">
+          <Table className=" text-center" aria-label="Lista de Usuarios">
             <TableHeader className="text-center">
               <TableColumn className="text-center">descripcion del producto</TableColumn>
               <TableColumn className="text-center">Tipo</TableColumn>
               <TableColumn className="text-center">fecha de caducidad</TableColumn>
               <TableColumn className="text-center">Cantidad</TableColumn>
-              <TableColumn className="text-center">Valor unitario</TableColumn>
-              <TableColumn className="text-center">Cantidad vendida</TableColumn>
-              <TableColumn className="text-center">Valor total</TableColumn>
+              {/* --------------------------------------------------------------- */}
+              <TableColumn className="text-center">Valor Adultos</TableColumn>
+              <TableColumn className="text-center">Cantidad vendida Adultos</TableColumn>
+              <TableColumn className="text-center">Total Venta Adultos</TableColumn>
+              {/* --------------------------------------------------------------- */}
+              <TableColumn className="text-center">Valor Niños</TableColumn>
+              <TableColumn className="text-center">Cantidad Vendida Niños</TableColumn>
+              <TableColumn className="text-center">Total Venta Niños</TableColumn>
+              {/* --------------------------------------------------------------- */}
+              <TableColumn className="text-center">Total de la venta</TableColumn>
+              <TableColumn className="text-center">Cantidad restante</TableColumn>
+
               <TableColumn className="text-center">accion</TableColumn>
             </TableHeader>
             <TableBody emptyContent="No hay filas para mostrar.">
@@ -268,9 +286,14 @@ export default function App() {
                   )}
                 </TableCell>
                   <TableCell>{inventario.CantidadInicial}</TableCell>
-                  <TableCell>{inventario.ValorUnitario}</TableCell>
-                  <TableCell>{inventario.productosVendidos}</TableCell>
+                  <TableCell>{inventario.ValorAdultos}</TableCell>
+                  <TableCell>{inventario.VentaAdultos}</TableCell>
+                  <TableCell>{inventario.TotalVentaAdultos}</TableCell>
+                  <TableCell>{inventario.ValorNinios}</TableCell>
+                  <TableCell>{inventario.VentaNinios}</TableCell>
+                  <TableCell>{inventario.TotalVentaNinios}</TableCell>
                   <TableCell>{inventario.ValorTotal}</TableCell>
+                  <TableCell>{inventario.CantidadRestante}</TableCell>
                   <TableCell className="flex justify-center align-center"> 
                   {inventario._id === editedUserId && (
                     <img

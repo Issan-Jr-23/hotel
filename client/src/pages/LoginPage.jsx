@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod"; 
 import { Card, Message, Button, Input, Label } from "../components/ui";
 import { loginSchema } from "../schemas/auth";
+import logo from "../images/logo.png"
 
 export function LoginPage() {
   const {
@@ -26,7 +27,12 @@ export function LoginPage() {
   }, [isAuthenticated]);
 
   return (
-    <div className="h-[calc(100vh-100px)] flex items-center justify-center">
+    <div className="w-full  min-h-screen flex items-center justify-center">
+      <div className="w-72 h-72 flex flex-col items-center justify-center">
+
+        <h3 className="text-4xl text-white font-medium font-sans">BIENVENIDO🥳</h3>
+        <img className="w-40 h-40" src={logo} alt="Logo del hotel MEQO" />
+      </div>
       <Card>
         {loginErrors.map((error, i) => (
           <Message message={error} key={i} />

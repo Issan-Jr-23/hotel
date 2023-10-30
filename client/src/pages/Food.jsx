@@ -43,7 +43,7 @@ const MekatosTable = () => {
   return (
     <>
       <Navbars />
-      <Table>
+      <Table aria-label="Example static collection table">
         <TableHeader>
           <TableColumn>Descripción</TableColumn>
           <TableColumn>Cantidad</TableColumn>

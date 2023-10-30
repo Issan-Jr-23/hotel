@@ -20,49 +20,48 @@ const MekatosTable = () => {
       });
   }, []);
 
-  const confirmAdditionalQuantity = async (mekatoId) => {
-    try {
-      const additionalQuantityForProduct = additionalQuantities[mekatoId] || 0;
+  // const confirmAdditionalQuantity = async (mekatoId) => {
+  //   try {
+  //     const additionalQuantityForProduct = additionalQuantities[mekatoId] || 0;
   
-      const response = await axios.post("http://127.0.0.1:3000/api/agregar-cantidad", {
-        mekatoId: mekatoId,
-        additionalQuantity: additionalQuantityForProduct,
-      });
+  //     const response = await axios.post("http://127.0.0.1:3000/api/agregar-cantidad", {
+  //       mekatoId: mekatoId,
+  //       additionalQuantity: additionalQuantityForProduct,
+  //     });
 
       
-      setAdditionalQuantities((prev) => ({
-        ...prev,
-        [mekatoId]: 0,
-      }));
-    } catch (error) {
-      console.error("Error al agregar cantidad vendida:", error);
-      // Manejar el error, mostrar mensajes al usuario, etc.
-    }
-  };
+  //     setAdditionalQuantities((prev) => ({
+  //       ...prev,
+  //       [mekatoId]: 0,
+  //     }));
+  //   } catch (error) {
+  //     console.error("Error al agregar cantidad vendida:", error);
+  //     // Manejar el error, mostrar mensajes al usuario, etc.
+  //   }
+  // };
 
   return (
     <>
       <Navbars />
-      <Table>
+      <h2 className="w-full h-16 flex justify-center items-center text-4xl text-white font-medium">BEBIDAS</h2>
+      <Table className="" aria-label="Example static collection table">
         <TableHeader>
-          <TableColumn>ID</TableColumn>
           <TableColumn>Descripción</TableColumn>
           <TableColumn>Cantidad</TableColumn>
-          <TableColumn>Valor Unitario</TableColumn>
-          <TableColumn>Cantidad Vendida</TableColumn>
+          <TableColumn>Valor Adultos</TableColumn>
+          <TableColumn>Valor Niños</TableColumn>
           <TableColumn>Total</TableColumn>
-          <TableColumn>Acción</TableColumn>
+          {/* <TableColumn>Acción</TableColumn> */}
         </TableHeader>
         <TableBody>
           {mekatos.map((mekato) => (
             <TableRow key={mekato._id}>
-              <TableCell>{mekato._id}</TableCell>
               <TableCell>{mekato.Descripcion}</TableCell>
               <TableCell>{mekato.CantidadInicial}</TableCell>
-              <TableCell>{mekato.ValorUnitario}</TableCell>
-              <TableCell>{mekato.productosVendidos}</TableCell>
+              <TableCell>{mekato.ValorAdultos}</TableCell>
+              <TableCell>{mekato.ValorNinios}</TableCell>
               <TableCell>{mekato.ValorTotal}</TableCell>
-              <TableCell>
+              {/* <TableCell>
                 <Input
                   type="number"
                   value={additionalQuantities[mekato._id] }
@@ -75,7 +74,7 @@ const MekatosTable = () => {
                   }}
                 />
                 <Button onClick={() => confirmAdditionalQuantity(mekato._id)}>Agregar Más</Button>
-              </TableCell>
+              </TableCell> */}
             </TableRow>
           ))}
         </TableBody>

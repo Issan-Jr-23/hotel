@@ -1,5 +1,6 @@
 import {Router} from "express";
-import {crearProducto, updateProducto } from '../controllers/inventario.controllers.js'
+import {crearProducto } from '../controllers/inventario.controllers.js'
+import {updateProducto } from '../controllers/inventario.controllers.js'
 import {obtenerInventario } from '../controllers/inventario.controllers.js'
 import {crearAlimentos } from '../controllers/alimentos.controllers.js'
 import {obtenerAlimentos } from '../controllers/alimentos.controllers.js'

@@ -1,42 +1,73 @@
 import mongoose from "mongoose";
 import moment from "moment-timezone";
 
-const clienteSchema = new mongoose.Schema({  
-  identificacion: {
-    type: Number,
-    required: true
-  },
+const clienteSchema = new mongoose.Schema({
   nombre: {
     type: String,
-    required: true
+    required: true,
   },
   reserva: {
-    type:String,
-    required: true
-
+    type: String,
+    required: true,
+    default: "si"
   },
-  pagoPendienteTotal:{
+  mediosDePago: {
+    type: String,
+    enum: ['efectivo','nequi', 'daviplata', 'pse','efecty', 'transferencia'],
+    required: true,
+  },
+  pagoAnticipado :{
+    type: Number,
+    Required: true,
+    default: 0
+  },
+  mediosDePagoPendiente: {
+    type: String,
+    enum: ['efectivo','nequi', 'daviplata', 'pse','efecty', 'transferencia'],
+    required: true,
+  },
+  pagoPendiente: {
+    type: Number,
+    required: true,
+    default: 0
+  },
+  totalReserva: {
     type:Number,
-    required: true
-  } ,
-  fechaDeRegistro: { 
+    default: 0
+  },
+  cantidadPersonas: {
+    adultos: {
+      type: Number,
+      required: true,
+    },
+    ninios: {
+      type: Number,
+      required: true,
+      default: 0
+    },
+  },
+  fechaDeRegistro: {
     type: Date,
-    default: () => moment.tz("America/Bogota").toDate()
+    default: () => moment.tz("America/Bogota").toDate(), 
   },
   bebidas: {
     type: Array,
     required: false,
-    default: {}
+    default: [],
   },
-  restaurante:{
+  restaurante: {
     type: Array,
     required: false,
-    default:{}
-  } ,
-  totalConsumido: String,
+    default: [],
+  },
+  consumoTotal: {
+    type: Number,
+    default: 0
+  }
 });
 
-export default mongoose.model('Clientes', clienteSchema);
+export default mongoose.model("Clientes", clienteSchema);
+
 
 
 

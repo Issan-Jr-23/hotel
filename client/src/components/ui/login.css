@@ -1,0 +1,4 @@
+.store{
+    backdrop-filter: blur(5px) saturate(90%) brightness(123%);
+    border-radius: 30px;
+}

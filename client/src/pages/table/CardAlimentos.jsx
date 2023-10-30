@@ -74,6 +74,7 @@ export default function FormBebidas() {
               </ModalHeader>
               <ModalBody>
                 <Input
+                id="nombre"
                   name="nombre"
                   className="input_form"
                   type="text"
@@ -87,7 +88,7 @@ export default function FormBebidas() {
           value={formData.tamaño}
           onChange={(event) => handleTamañoChange(event.target.value)}
         >
-          <option value="">Seleccione un tamaño</option>
+          <option >Seleccione un tamaño</option>
           {options.map((option) => (
             <option key={option} value={option}>
               {option}
@@ -95,6 +96,7 @@ export default function FormBebidas() {
           ))}
         </select>
                 <Input
+                id="cantidad"
                   name="cantidad"
                   className="input_form"
                   type="number"
@@ -104,6 +106,7 @@ export default function FormBebidas() {
                     handleInputChange}
                 />
                 <Input
+                id="fechaCaducidad"
                   name="fechaCaducidad"
                   className="input_form"
                   type="date"
@@ -116,6 +119,7 @@ export default function FormBebidas() {
 
 
                 <Input
+                id="precioVenta"
                   name="precioVenta"
                   className="input_form"
                   type="Number"

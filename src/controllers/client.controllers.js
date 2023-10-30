@@ -66,10 +66,10 @@ export const updateClient = async (req, res) => {
 
 
 export const addBebida = async (req, res) => {
-  const { identificacionCliente, bebida } = req.body;
+  const {id,bebida } = req.body;
 
   try {
-    const cliente = await Cliente.findOne({ identificacion: identificacionCliente });
+    const cliente = await Cliente.findOne({ identificacion: id });
 
     if (cliente) {
       cliente.bebidas.push(bebida);
