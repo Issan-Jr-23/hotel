@@ -9,7 +9,7 @@ const router = Router();
 
 router.get("/pasadia-clientes", obtenerClientes);
 router.post("/pasadia-registrar-cliente", crearCliente);
-router.delete("/pasadia/:identificacion", deleteClient);
+router.delete("/pasadia/:id", deleteClient);
 router.put("/pasadia/edit/:identificacion", updateClient);
 router.post("/pasadia-agregar-bebida", addBebida);
 

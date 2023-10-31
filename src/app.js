@@ -5,7 +5,7 @@ import cookieParser from "cookie-parser";
 import clientRoutes from "./routes/client.routes.js"
 import clientCabaniasRoutes from "./routes/client.cabania.routes.js"
 import authRoutes from "./routes/auth.routes.js";
-import bebidasRoutes from "./routes/bebidas.routes.js";
+import bebidasRoutes from "./routes/inventario.routes.js";
 // import taksRoutes from "./routes/tasks.routes.js";
 import { FRONTEND_URL } from "./config.js";
 

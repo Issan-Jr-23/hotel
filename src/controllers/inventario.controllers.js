@@ -137,6 +137,37 @@ export const updateProducto = async (req, res) => {
 
 
 
+export const updateBebidas = async (req, res) => {
+  const { bebidaId, VentaAdultos, VentaNinios } = req.body;
+
+  if (!bebidaId) {
+     return res.status(400).send({ error: 'ID de la bebida es requerido' });
+  }
+
+  try {
+     const updateData = {};
+     if (VentaAdultos) {
+        updateData.VentaAdultos = VentaAdultos;
+     }
+     if (VentaNinios) {
+        updateData.VentaNinios = VentaNinios;
+     }
+
+     const bebidaActualizada = await Inventario.findOneAndUpdate(
+        { _id: bebidaId },
+        { $inc: updateData },  
+        { new: true }  
+     );
+
+     if (!bebidaActualizada) {
+        return res.status(404).send({ error: 'Bebida no encontrada' });
+     }
+
+     res.send(bebidaActualizada);
+  } catch (error) {
+     res.status(500).send({ error: 'Error al actualizar el inventario' });
+  }
+};
 
 
 

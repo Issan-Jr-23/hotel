@@ -23,10 +23,10 @@ export const crearCliente = async (req, res) => {
 
 
 export const deleteClient = async (req, res) => {
-  const identificacion = parseInt(req.params.identificacion);
+  const identificacion = parseInt(req.params.identificacion); 
 
   try {
-    const resultado = await Cliente.deleteOne({ identificacion: identificacion });
+    const resultado = await Cliente.deleteOne({ identificacion: identificacion }); 
     if (resultado.deletedCount > 0) {
       res.status(200).json({ message: `Usuario con identificación "${identificacion}" eliminado con éxito.` });
     } else {
@@ -43,12 +43,12 @@ export const deleteClient = async (req, res) => {
 
 export const updateClient = async (req, res) => {
   const identificacion = req.params.identificacion;
-  const { nombre, pagoPendienteTotal } = req.body;
+  const { nombre, pagoPendienteTotal, reserva, bebidas } = req.body;
 
   try {
     const usuarioActualizado = await Cliente.findOneAndUpdate(
       { identificacion },
-      { nombre, pagoPendienteTotal },
+      { nombre, pagoPendienteTotal, reserva, bebidas },
       { new: true }
     );
 
@@ -60,6 +60,29 @@ export const updateClient = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ mensaje: 'Error interno del servidor' });
+  }
+};
+
+
+
+export const addBebida = async (req, res) => {
+  const {id,bebida } = req.body;
+
+  try {
+    const cliente = await Cliente.findById( id );
+
+    if (cliente) {
+      cliente.bebidas.push(bebida);
+
+      await cliente.save();
+
+      res.status(200).json(cliente);
+    } else {
+      res.status(404).json({ message: 'Cliente no encontrado' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error al agregar la bebida al cliente' });
   }
 };
 

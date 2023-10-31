@@ -6,6 +6,7 @@ const clienteSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  
   reserva: {
     type: String,
     required: true,
@@ -63,6 +64,8 @@ const clienteSchema = new mongoose.Schema({
     default: 0
   }
 });
+
+
 
 export default mongoose.model("Clientes", clienteSchema);
 
