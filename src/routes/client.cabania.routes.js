@@ -9,7 +9,7 @@ const router = Router();
 
 router.get("/cabania-clientes", obtenerClientes);
 router.post("/cabania-registrar-cliente", crearCliente);
-router.delete("/cabania/:identificacion", deleteClient);
+router.delete("/cabania/:id", deleteClient);
 router.put("/cabania/edit/:identificacion", updateClient);
 router.post("/cabania-agregar-bebida", addBebida);
 

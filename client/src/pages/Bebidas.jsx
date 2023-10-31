@@ -4,7 +4,7 @@ import { Table, TableBody, TableCell, TableColumn, Input, Button, TableHeader, T
 import Navbars from '../components/Navbars';
 
 const MekatosTable = () => {
-  const [mekatos, setMekatos] = useState([]);
+  const [bebidas, setBebidas] = useState([]);
   const [additionalQuantity, setAdditionalQuantity] = useState(0);
   const [additionalQuantities, setAdditionalQuantities] = useState({});
 
@@ -12,7 +12,7 @@ const MekatosTable = () => {
   useEffect(() => {
     axios.get("http://127.0.0.1:3000/api/drinks")
       .then((response) => {
-        setMekatos(response.data);
+        setBebidas(response.data);
         console.log(response);
       })
       .catch((error) => {
@@ -48,19 +48,19 @@ const MekatosTable = () => {
         <TableHeader>
           <TableColumn>Descripción</TableColumn>
           <TableColumn>Cantidad</TableColumn>
-          <TableColumn>Valor Adultos</TableColumn>
-          <TableColumn>Valor Niños</TableColumn>
+          <TableColumn>Valor Unitario</TableColumn>
+          <TableColumn>Productos vendidos</TableColumn>
           <TableColumn>Total</TableColumn>
           {/* <TableColumn>Acción</TableColumn> */}
         </TableHeader>
         <TableBody>
-          {mekatos.map((mekato) => (
-            <TableRow key={mekato._id}>
-              <TableCell>{mekato.Descripcion}</TableCell>
-              <TableCell>{mekato.CantidadInicial}</TableCell>
-              <TableCell>{mekato.ValorAdultos}</TableCell>
-              <TableCell>{mekato.ValorNinios}</TableCell>
-              <TableCell>{mekato.ValorTotal}</TableCell>
+          {bebidas.map((bebidas) => (
+            <TableRow key={bebidas._id}>
+              <TableCell>{bebidas.Descripcion}</TableCell>
+              <TableCell>{bebidas.CantidadInicial}</TableCell>
+              <TableCell>{bebidas.ValorUnitario}</TableCell>
+              <TableCell>{bebidas.ProductosVendidos}</TableCell>
+              <TableCell>{bebidas.ValorTotal}</TableCell>
               {/* <TableCell>
                 <Input
                   type="number"

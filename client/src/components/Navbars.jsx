@@ -100,6 +100,11 @@ export default function Navbars() {
             Energia Renovable
           </Link>
         </NavbarItem>
+        <NavbarItem >
+          <Link to="/Register" className="text-blue-700 font-medium text-base" color="foreground">
+            Registrar
+          </Link>
+        </NavbarItem>
       </NavbarContent>
 
       <NavbarContent as="div" className="items-center" justify="">

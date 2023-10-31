@@ -23,48 +23,22 @@ const inventarioSchema = new mongoose.Schema({
   },
 
 //-------------------------
-  ValorAdultos: {
+  ValorUnitario: {
     type: Number,
     required: true,
-  },
-  VentaAdultos: {
-    type: Number,
-    default: 0
-  },
-  TotalVentaAdultos: {
-    type: Number,
-    default: 0
-  },
-
-  //--------------------------------
-
-
-  //----------------------------
-  ValorNinios: {
-    type:Number,
-    required:true,
     default:0
   },
+ 
 
-  VentaNinios: {
-    type: Number,
-    required:true,
-    default: 0
-  },
-
-  TotalVentaNinios: {
-    type: Number,
-    default: 0
-  },
-
-  //-------------------------------
-
-
-  CantidadRestante: {
+  ProductosVendidos: {
     type: Number,
     default: 0
   },
   ValorTotal: {
+    type: Number,
+    default: 0
+  },
+  Restante: {
     type: Number,
     default: 0
   }

@@ -23,7 +23,7 @@ export const crearCliente = async (req, res) => {
 
 
 export const deleteClient = async (req, res) => {
-  const identificacion = parseInt(req.params.id);  
+  const identificacion = req.params.id; 
 
   try {
     const resultado = await Cliente.deleteOne({ _id: identificacion }); 
@@ -39,22 +39,24 @@ export const deleteClient = async (req, res) => {
 }
 
 
-export const deleteProducto = async (req, res) => {
-  const identificacion = req.params.id; 
-  console.log(identificacion)
 
-  try {
-    const resultado = await Bebida.deleteOne({ _id: identificacion }); 
-    if (resultado.deletedCount > 0) {
-      res.status(200).json({ message: `Usuario con identificación "${identificacion}" eliminado con éxito.` });
-    } else {
-      res.status(404).json({ message: `No se encontró un usuario con la identificación "${identificacion}".` });
-    }
-  } catch (error) {
-    console.error('Error al eliminar el usuario:', error);
-    res.status(500).json({ message: 'Error interno del servidor.' });
-  }
-}
+
+// export const deleteProducto = async (req, res) => {
+//   const identificacion = req.params.id; 
+//   console.log("delete registro: "+identificacion)
+
+//   try {
+//     const resultado = await Cliente.deleteOne({ _id: identificacion }); 
+//     if (resultado.deletedCount > 0) {
+//       res.status(200).json({ message: `Usuario con identificación "${identificacion}" eliminado con éxito.` });
+//     } else {
+//       res.status(404).json({ message: `No se encontró un usuario con la identificación "${identificacion}".` });
+//     }
+//   } catch (error) {
+//     console.error('Error al eliminar el usuario:', error);
+//     res.status(500).json({ message: 'Error interno del servidor.' });
+//   }
+// }
 
 
 

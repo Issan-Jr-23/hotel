@@ -16,11 +16,10 @@ import {
   useDisclosure,
   Select,
   SelectItem,
-  CircularProgress
 } from "@nextui-org/react";
 
 import axios from "axios";
-import editar from "../../images/boligrafo.png";
+// import editar from "../../images/boligrafo.png";
 import borrar from "../../images/borrar.png";
 import download from "../../images/download.png";
 import chevron from "../../images/right.png";
@@ -59,14 +58,9 @@ export default function App() {
     pagoAnticipado:"",
     mediosDePagoPendiente:"",
     pagoPendiente:"",
-    bebidas:""
+    bebidas:[]
     
   });
-
-  
-
-
-
 
   const handleInputChange = (event, fieldName) => {
     const { name, value } = event.target;
@@ -87,35 +81,6 @@ export default function App() {
     });
   };
 
-
-
-
-  const handleBebidasChange = (selectedIndex) => {
-    const selectedDrink = drinks[selectedIndex];
-    console.log(selectedDrink);
-    setFormData({
-      ...formData,
-      bebidas: [selectedDrink],
-    });
-    console.log(formData)
-  };
-
-
-  const handleRestauranteChange = (selectedIndex) => {
-    const selectedSnack = snacks[selectedIndex];
-    console.log(selectedSnack);
-    setFormData({
-      ...formData,
-      restaurante: selectedSnack,
-    });
-    console.log(formData)
-  };
-
-
-
-
-
-
   const actualizarCantidadBebida = (bebidaSeleccionada, cantidadDeseada) => {
     axios.put('http://localhost:3000/api/update-bebidas', {
       bebida: bebidaSeleccionada,
@@ -128,9 +93,6 @@ export default function App() {
       console.error('Error al actualizar la cantidad de bebida:', error);
     });
   };
-
-
-
 
   const handleGuardarBebida = async () => {
     console.log(" id del cliente " +selectedClientId);
@@ -180,7 +142,6 @@ export default function App() {
     }
 };
 
-
 const guardarBebida = async (bebida) => {
     try {
         const response = await axios.post('http://127.0.0.1:3000/api/cabania-agregar-bebida', {
@@ -197,31 +158,6 @@ const guardarBebida = async (bebida) => {
         throw error;  // Re-throw para ser capturado en handleGuardarBebida
     }
 };
-
-
-
-
- 
-
-
-
-
-
-
-
-
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get("http://127.0.0.1:3000/api/cabania-clientes");
-        setUsers(response.data);
-      } catch (error) {
-        console.error("Error al obtener datos del servidor:", error);
-      }
-    };
-    fetchData();
-  }, []);
 
   const handleFormSubmit = async () => {
     try {
@@ -282,26 +218,38 @@ const guardarBebida = async (bebida) => {
     }
   };
 
-  const handleDeleteUser = async (identificacion) => {
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("http://127.0.0.1:3000/api/cabania-clientes");
+      setUsers(response.data);
+    } catch (error) {
+      console.error("Error al obtener datos del servidor:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleDelete = async (id) => {
     const confirmDelete = window.confirm(
       "¿Estás seguro de que deseas eliminar este usuario?"
     );
 
     if (!confirmDelete) {
-      return;
+      return; 
     }
 
     try {
-      await axios.delete(`http://127.0.0.1:3000/api/cabania/${identificacion}`);
-      const updatedUsers = users.filter((user) => user.identificacion !== identificacion);
-      setUsers(updatedUsers);
+      await axios.delete(`http://127.0.0.1:3000/api/cabania/${id}`);
+      window.location.reload(); 
       toast.success('Successfully toasted!')
     } catch (error) {
       console.error("Error al eliminar usuario:", error);
       alert("Error al eliminar usuario. Por favor, inténtalo de nuevo más tarde.");
     }
   };
-
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -359,10 +307,7 @@ const guardarBebida = async (bebida) => {
     setSize(size)
   }
 
-
-
   const {isOpen: isModalOpenM, onOpen: openModalM, onClose: closeModalM} = useDisclosure();
-
 
   const sizesm = ["xs"];
 
@@ -372,9 +317,7 @@ const guardarBebida = async (bebida) => {
     openModalM();
 };
 
-
   const {isOpen: isModalOpenMc, onOpen: openModalMc, onClose: closeModalMc} = useDisclosure();
-
 
   const sizesmc = ["xs"];
 
@@ -382,8 +325,6 @@ const guardarBebida = async (bebida) => {
     setSize(size)
     openModalMc();
   }
-
-
 
   const handleOpenModalBca = (cliente) => {
     // setSelectedClientId(cliente._id);
@@ -516,34 +457,7 @@ const guardarBebida = async (bebida) => {
                       value={formData.pagoPendiente}
                       onChange={handleInputChange}
                     />
-                    {/* <Select
-                      name="bebidas"
-                      label="Seleccionar bebida"
-                      className="max-w-full w-full"
-                      type="text"
-                      value={drinks.indexOf(formData.bebidas)}
-                      onChange={(e) => handleBebidasChange(e.target.value)}
-                    >
-                      {drinks.map((bebida) => (
-                        <SelectItem key={drinks.indexOf(bebida)}>
-                          {bebida.nombre}
-                        </SelectItem>
-                      ))}
-                    </Select> */}
-                    {/* <Select
-                      name="restaurantes"
-                      label="Seleccionar Comida"
-                      className="max-w-full w-full"
-                      type="text"
-                      value={snacks.indexOf(formData.restaurante)}
-                      onChange={(e) => handleRestauranteChange(e.target.value)}
-                    >
-                      {snacks.map((comidas) => (
-                        <SelectItem key={snacks.indexOf(comidas)}>
-                          {comidas.nombre}
-                        </SelectItem>
-                      ))}
-                    </Select> */}
+                    
                   </ModalBody>
                   <ModalFooter>
                     <Button color="danger" variant="light" onClick={onClose}>
@@ -618,7 +532,7 @@ const guardarBebida = async (bebida) => {
 
                 <TableCell>
                 {sizess.map((size) => (
-                <Button className="bg-white" key={size} onPress={() => handleOpenM(size)} onClick={() => handleOpenModal(cliente)}>
+                <Button className="bg-white" key={size} onPress={() => handleOpenM(size)} >
                   <img className="w-4" src={chevron} alt="" />
                 </Button>
                   ))}
@@ -644,8 +558,8 @@ const guardarBebida = async (bebida) => {
                       </tr>
                   </thead>
                   <tbody>
-                      {selectedUser.bebidas.map((bebida, index) => (
-                          <tr key={index}>
+                      {selectedUser.bebidas.map((bebida) => (
+                          <tr key={bebida.id}>
                               <td>{bebida.nombre}</td>
                               <td>{bebida.cantidad}</td>
                               <td>{bebida.precioA || bebida.precioN}</td>
@@ -682,48 +596,32 @@ const guardarBebida = async (bebida) => {
                 </TableCell>
 
               {/* --------------------FIN DEL MODAL */}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                 
                 <TableCell>
-                  {cliente._id === editedUserId ? (
-                    <div className="flex">
-                      <Input
-                        value={editedName}
-                        onChange={(e) => setEditedName(e.target.value)}
-                      />
-                    </div>
-                  ) : (
-                    cliente.nombre
-                  )}
+                {cliente._id === editedUserId ? (
+                <div className="flex">
+                <Input
+                value={editedName}
+                onChange={(e) => setEditedName(e.target.value)}
+                />
+                </div>
+                ) : (
+                cliente.nombre
+                )}
                 </TableCell>
                 <TableCell>{cliente.reserva}</TableCell>
                 <TableCell>
-                  {cliente._id === editedUserId ? (
-                    <div className="flex">
-                      <Input
-                        type="number"
-                        value={editPago}
-                        onChange={(e) => setEditPago(e.target.value)}
-                      />
-                    </div>
-                  ) : (
-                    cliente.cantidadPersonas.adultos
-                  )}
+                {cliente._id === editedUserId ? (
+                <div className="flex">
+                <Input
+                type="number"
+                value={editPago}
+                onChange={(e) => setEditPago(e.target.value)}
+                />
+                </div>
+                ) : (
+                cliente.cantidadPersonas.adultos
+                )}
                 </TableCell>
                 <TableCell>{cliente.cantidadPersonas.ninios}</TableCell>
                 <TableCell>{cliente.fechaDeRegistro}</TableCell>
@@ -858,20 +756,7 @@ const guardarBebida = async (bebida) => {
             <>
               <ModalHeader className="flex flex-col gap-1">COMIDAS</ModalHeader>
               <ModalBody>
-              <Select
-                      name="restaurantes"
-                      label="Seleccionar Comida"
-                      className="max-w-full w-full"
-                      type="text"
-                      value={snacks.indexOf(formData.restaurante)}
-                      onChange={(e) => handleRestauranteChange(e.target.value)}
-                    >
-                      {snacks.map((comidas) => (
-                        <SelectItem key={snacks.indexOf(comidas)}>
-                          {comidas.nombre}
-                        </SelectItem>
-                      ))}
-                    </Select>
+              
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="light" onPress={closeModal}>
@@ -888,16 +773,11 @@ const guardarBebida = async (bebida) => {
                 </div>
                   </TableCell>
 
-                {/* {cliente.bebidas.map((bebida, index) => (
-                  <TableCell key={index}>{bebida?.nombre || "aun no hay bebidas"}</TableCell>
-                ))} */}
-                {/* {cliente.restaurante.map((food, index) => (
-                  <TableCell key={index}>{food?.nombre || "aun no hay bebidas"}</TableCell>
-                ))} */}
+                
 
                 <TableCell>{cliente.totalConsumo}</TableCell>
                 <TableCell className="flex justify-center align-center pr-5 w-60">
-                  {cliente.identificacion === editedUserId && (
+                  {/* {cliente.identificacion === editedUserId && (
                     <div className="flex">
                       <img
                         className="w-8 h-8 mr-4 cursor-pointer"
@@ -906,26 +786,27 @@ const guardarBebida = async (bebida) => {
                         onClick={handleEditUser}
                       />
                     </div>
-                  )}
-                  <img
+                  )} */}
+                  {/* <img
                     className="w-8 h-8 mr-4 cursor-pointer"
                     src={editar}
                     alt="Edit"
                     onClick={() => {
                       setEditedUserId(cliente._id);
                     }}
-                  />
+                  /> */}
                   <img
                     className="w-8 h-8 cursor-pointer"
                     src={borrar}
                     alt="Delete"
-                    onClick={() => handleDeleteUser(cliente._id)}
+                    onClick={() => handleDelete(cliente._id)}
                   />
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
-        </Table>
+          
+        </Table >
       </section>
     </div>
   );

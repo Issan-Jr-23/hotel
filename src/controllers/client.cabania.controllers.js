@@ -1,8 +1,8 @@
-import Cliente from "../models/client.cabania.model.js";
+import Cabania from "../models/client.cabania.model.js";
 
 export const obtenerClientes = async (req, res) => {
   try {
-    const clientesObtenidos = await Cliente.find();
+    const clientesObtenidos = await Cabania.find();
     res.status(200).json(clientesObtenidos);
   } catch (error) {
     console.error(error);
@@ -12,7 +12,7 @@ export const obtenerClientes = async (req, res) => {
 
 export const crearCliente = async (req, res) => {
   try {
-    const nuevoCliente = new Cliente(req.body);
+    const nuevoCliente = new Cabania(req.body);
     const clienteGuardado = await nuevoCliente.save();
     res.status(201).json(clienteGuardado);
   } catch (error) {
@@ -23,10 +23,10 @@ export const crearCliente = async (req, res) => {
 
 
 export const deleteClient = async (req, res) => {
-  const identificacion = parseInt(req.params.identificacion); 
+  const identificacion = req.params.id; 
 
   try {
-    const resultado = await Cliente.deleteOne({ identificacion: identificacion }); 
+    const resultado = await Cabania.deleteOne({ _id: identificacion }); 
     if (resultado.deletedCount > 0) {
       res.status(200).json({ message: `Usuario con identificación "${identificacion}" eliminado con éxito.` });
     } else {
@@ -46,7 +46,7 @@ export const updateClient = async (req, res) => {
   const { nombre, pagoPendienteTotal, reserva, bebidas } = req.body;
 
   try {
-    const usuarioActualizado = await Cliente.findOneAndUpdate(
+    const usuarioActualizado = await Cabania.findOneAndUpdate(
       { identificacion },
       { nombre, pagoPendienteTotal, reserva, bebidas },
       { new: true }
@@ -69,7 +69,7 @@ export const addBebida = async (req, res) => {
   const {id,bebida } = req.body;
 
   try {
-    const cliente = await Cliente.findById( id );
+    const cliente = await Cabania.findById( id );
 
     if (cliente) {
       cliente.bebidas.push(bebida);

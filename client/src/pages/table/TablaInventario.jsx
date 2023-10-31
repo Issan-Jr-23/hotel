@@ -5,7 +5,7 @@ import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell,Modal,
   ModalBody,
   ModalFooter,
   Button,
-  useDisclosure,Input } from "@nextui-org/react";
+  useDisclosure,Input,Select, SelectItem } from "@nextui-org/react";
 import axios from "axios";
 import editar from "../../images/boligrafo.png";
 import borrar from "../../images/borrar.png";
@@ -18,15 +18,16 @@ export default function App() {
   const [editedName, setEditedName] = useState("");
   const [editedType, setEditedType] = useState("");
   const [editedDate, setEditedDate] = useState("");
+  const [editedCantidad, setEditedCantidad] = useState("");
+  const [editedValorUnitario, setEditedValorUnitario] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [backdrop, setBackdrop] = useState("blur");
   const [formData, setFormData] = useState({
     Descripcion: "",
     tipo: "",
     CantidadInicial: "",
-    ValorAdultos: "",
-    ValorNinios: "",
-    Caducidad:""
+    Caducidad:"",
+    ValorUnitario:""
     
   });
 
@@ -106,15 +107,17 @@ export default function App() {
     try {
       await axios.put(
         `http://127.0.0.1:3000/api/update-producto/${id}`,
-        { Descripcion: editedName, tipo: editedType }
+        { Descripcion: editedName, tipo: editedType, Caducidad: editedDate, CantidadInicial: editedCantidad, ValorUnitario: editedValorUnitario }
       );
-      // Actualiza la lista de usuarios después de la edición
       const updatedUsers = users.map((inventario) =>
-        inventario._id === editedUserId ? { ...inventario, Descripcion: editedName, tipo: editedType } : inventario
+        inventario._id === editedUserId ? { ...inventario, Descripcion: editedName, tipo: editedType, Caducidad: editedDate, CantidadInicial: editedCantidad, ValorUnitario: editedValorUnitario } : inventario
       );
       setUsers(updatedUsers);
       setEditedName(""); 
       setEditedType("")
+      setEditedDate("")
+      setEditedCantidad("")
+      setEditedValorUnitario("")
       setEditedUserId(null); 
       toast.success('Cliente actualizado exitosamente!');
     } catch (error) {
@@ -124,7 +127,16 @@ export default function App() {
   };
 
 
+  const [searchTerm, setSearchTerm] = useState("");
 
+  const [selectedType, setSelectedType] = useState(""); 
+
+  const filteredProducts = users
+  .filter(product => !selectedType || product.tipo === selectedType) // Si no hay tipo seleccionado, no filtra por tipo
+  .filter(product => product.Descripcion.toLowerCase().includes(searchTerm.toLowerCase())); // Filtra por término de búsqueda
+
+
+  
 
   return (
     <div className="w-full ">
@@ -133,10 +145,11 @@ export default function App() {
             <div className=' '>
         {/* <CardDesplegable /> */}
         <>
-      <div className="flex flex-wrap gap-3">
+      <div className="flex justify-between gap-3">
         <Button
           variant="flat"
           color="primary"
+          
           onClick={() => {
             setBackdrop("blur");
             onOpen();
@@ -145,6 +158,36 @@ export default function App() {
         >
           Agregar producto
         </Button>
+
+        {/* <Select
+          value={selectedType} 
+          onChange={(value) => setSelectedType(value)}
+          label="Filtrar el tipo"
+        >
+          <SelectItem value="Bebida">Bebidas</SelectItem>
+          <SelectItem value="comida">Comidas</SelectItem>
+          <SelectItem value="mekato">Mekatos</SelectItem>
+        </Select> */}
+
+        <Input
+        type="search"
+        label="busca el producto"
+        value={searchTerm}
+    onChange={(e) => setSearchTerm(e.target.value)}
+        >
+        </Input>
+       
+        <select className="outline-0 w-32 rounded-2xl" value={selectedType} onChange={(e) => setSelectedType(e.target.value)}>
+
+        <option className="flex w-32" value="">Todos</option>
+        <option value="Bebida">Tipo 1</option>
+        <option value="comida">Tipo 2</option>
+        <option value="mekato">Tipo 2</option>
+
+      </select>
+
+
+
       </div>
       <Modal backdrop={backdrop} isOpen={isOpen} onClose={onClose}>
         <ModalContent>
@@ -191,19 +234,11 @@ export default function App() {
                   onChange={handleInputChange}
                 />
                 <Input
-                  name="ValorAdultos"
+                  name="ValorUnitario"
                   className="input_form"
                   type="number"
                   variant="flat"
                   label="Valor unitario"
-                  onChange={handleInputChange}
-                />
-                <Input
-                  name="ValorNinios"
-                  className="input_form"
-                  type="number"
-                  variant="flat"
-                  label="Valor Niños"
                   onChange={handleInputChange}
                 />
               </ModalBody>
@@ -233,21 +268,15 @@ export default function App() {
               <TableColumn className="text-center">fecha de caducidad</TableColumn>
               <TableColumn className="text-center">Cantidad</TableColumn>
               {/* --------------------------------------------------------------- */}
-              <TableColumn className="text-center">Valor Adultos</TableColumn>
-              <TableColumn className="text-center">Cantidad vendida Adultos</TableColumn>
-              <TableColumn className="text-center">Total Venta Adultos</TableColumn>
-              {/* --------------------------------------------------------------- */}
-              <TableColumn className="text-center">Valor Niños</TableColumn>
-              <TableColumn className="text-center">Cantidad Vendida Niños</TableColumn>
-              <TableColumn className="text-center">Total Venta Niños</TableColumn>
+              <TableColumn className="text-center">Valor Unitario</TableColumn>
+              <TableColumn className="text-center">Productos Vendidos</TableColumn>
               {/* --------------------------------------------------------------- */}
               <TableColumn className="text-center">Total de la venta</TableColumn>
               <TableColumn className="text-center">Cantidad restante</TableColumn>
-
               <TableColumn className="text-center">accion</TableColumn>
             </TableHeader>
             <TableBody emptyContent="No hay filas para mostrar.">
-              {users.map((inventario) => ( 
+              {filteredProducts.map((inventario) => ( 
                 <TableRow key={inventario._id}>
                   <TableCell>
                   {inventario._id === editedUserId ? (
@@ -261,6 +290,7 @@ export default function App() {
                     inventario.Descripcion
                   )}
                 </TableCell>
+                
                   <TableCell>
                   {inventario._id === editedUserId ? (
                     <div className="flex">
@@ -285,15 +315,34 @@ export default function App() {
                     inventario.Caducidad
                   )}
                 </TableCell>
-                  <TableCell>{inventario.CantidadInicial}</TableCell>
-                  <TableCell>{inventario.ValorAdultos}</TableCell>
-                  <TableCell>{inventario.VentaAdultos}</TableCell>
-                  <TableCell>{inventario.TotalVentaAdultos}</TableCell>
-                  <TableCell>{inventario.ValorNinios}</TableCell>
-                  <TableCell>{inventario.VentaNinios}</TableCell>
-                  <TableCell>{inventario.TotalVentaNinios}</TableCell>
-                  <TableCell>{inventario.ValorTotal}</TableCell>
-                  <TableCell>{inventario.CantidadRestante}</TableCell>
+                  <TableCell>
+                  {inventario._id === editedUserId ? (
+                    <div className="flex">
+                      <Input
+                        value={editedCantidad}
+                        onChange={(e) => setEditedCantidad(e.target.value)}
+                      />
+                    </div>
+                  ) : (
+                    inventario.CantidadInicial
+                  )}
+                </TableCell>
+                  <TableCell>
+                  {inventario._id === editedUserId ? (
+                    <div className="flex">
+                      <Input
+                        value={editedValorUnitario}
+                        onChange={(e) => setEditedValorUnitario(e.target.value)}
+                      />
+                    </div>
+                  ) : (
+                    inventario.ValorUnitario
+                  )}
+                </TableCell>
+                  
+                  <TableCell>{inventario.ProductosVendidos}</TableCell>
+                  <TableCell>{inventario.ProductosVendidos * inventario.ValorUnitario}</TableCell>
+                  <TableCell>{ inventario.CantidadInicial - inventario.ProductosVendidos}</TableCell>
                   <TableCell className="flex justify-center align-center"> 
                   {inventario._id === editedUserId && (
                     <img
@@ -311,6 +360,8 @@ export default function App() {
                       setEditedName(inventario.Descripcion);
                       setEditedType(inventario.tipo);
                       setEditedDate(inventario.Caducidad);
+                      setEditedCantidad(inventario.CantidadInicial);
+                      setEditedValorUnitario(inventario.ValorUnitario);
                       setEditedUserId(inventario._id)
                     }}
                   />

@@ -690,20 +690,16 @@ const guardarBebida = async (bebida) => {
                   <tbody>
                       {selectedUser.bebidas.map((bebida, index) => (
                           <tr key={index}>
+                            {}
                               <td>{bebida.nombre}</td>
                               <td>{bebida.cantidad}</td>
-                              <td>{bebida.precioA || bebida.precioN}</td>
+                              <td>{bebida.ValorUnitario}</td>
                           </tr>
                       ))}
                   </tbody>
                   <tfoot className="border-t-2 border-green-500 pt-2">
                     <tr className="  ">
                       <td >Total</td>
-                      <td>{
-                        selectedUser.bebidas.reduce((acc, bebida) => 
-                          acc + (bebida.cantidad * (bebida.precioA || bebida.precioN)), 0
-                        )
-                      }</td>
                     </tr>
                   </tfoot>
               </table>

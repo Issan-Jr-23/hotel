@@ -113,12 +113,12 @@ export const deleteProducto = async (req, res) => {
 
 export const updateProducto = async (req, res) => {
   const identificacion = req.params.id;
-  const { Descripcion, tipo } = req.body;
+  const { Descripcion, tipo, Caducidad, CantidadInicial, ValorUnitario  } = req.body;
 
   try {
     const productoActualizado = await Bebida.findOneAndUpdate(
       { _id:identificacion },
-      {Descripcion, tipo},
+      {Descripcion, tipo, Caducidad, CantidadInicial, ValorUnitario},
       { new: true }
     );
 
@@ -163,14 +163,18 @@ export const updateBebidas = async (req, res) => {
         return res.status(404).send({ error: 'Bebida no encontrada' });
      }
 
-     res.send(bebidaActualizada);
+     res.send(bebidaActualizada); 
   } catch (error) {
      res.status(500).send({ error: 'Error al actualizar el inventario' });
   }
 };
 
 
-
+export const filType = async (req, res) => {
+  const { tipo } = req.query;
+  const items = await Bebida.find(tipo ? { tipo } : {});
+  res.json(items);
+};
 
 
 
