@@ -33,10 +33,10 @@ export default function App() {
   const [snacks, setSnacks] = useState([]);
 
   const [cantidadBebida, setCantidadBebida] = useState(1);
-  const [bebidaSeleccionada, setBebidaSeleccionada] = useState('');
-  const [precioBebidaSeleccionada, setPrecioBebidaSeleccionada] = useState(0);
-  const [bebidaSeleccionadaId, setBebidaSeleccionadaId] = useState(null);
-
+    const [bebidaSeleccionada, setBebidaSeleccionada] = useState('');
+    const [precioBebidaSeleccionada, setPrecioBebidaSeleccionada] = useState(0);
+    const [bebidaSeleccionadaId, setBebidaSeleccionadaId] = useState(null);
+  
 
   const [cantidadFood, setCantidadFood] = useState(1);
   const [foodSeleccionada, setFoodSeleccionada] = useState('');
@@ -175,7 +175,7 @@ const actualizarInventarioBebida = async (bebidaId, cantidad) => {
   }
 };
 
-const handleGuardarBebida = async () => {
+ const handleGuardarBebida = async () => {
   console.log(" id del cliente " + selectedClientId);
   
   try {
@@ -240,6 +240,132 @@ const guardarBebida = async (bebida) => {
       throw error;  // Re-throw para ser capturado en handleGuardarBebida
   }
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+////////////////////////////////////---guardar comidas-----/////////////////
+
+
+const actualizarInventarioFood = async (bebidaId, cantidad) => {
+  try {
+      const response = await axios.post('http://127.0.0.1:3000/api/actualizar-inventario-food', {
+          id: bebidaId,
+          cantidad,
+      });
+
+      if (response.status < 200 || response.status >= 300) {
+          throw new Error(`Error al actualizar el inventario. Estado de la respuesta: ${response.status}`);
+      }
+  } catch (error) {
+      console.error('Error al actualizar el inventario de bebidas:', error.message);
+      throw error;  // Re-throw para ser capturado en handleGuardarBebida
+  }
+};
+
+
+
+const handleGuardarFood = async () => {
+  console.log(" id del cliente " + selectedClientId);
+  
+  try {
+      if (!selectedClientId || !foodSeleccionadaId) {
+          throw new Error('No se ha seleccionado un cliente o una bebida.');
+      }
+
+      // Verifica la disponibilidad de la bebida antes de proceder
+      const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad/${foodSeleccionadaId}`);
+      const cantidadRestante = response.data.cantidadRestante;
+      const cantidadInicial = response.data.CantidadInicial
+      if(cantidadFood > cantidadInicial){
+        alert("La bebida no tiene suficiente stock");
+      }else if (cantidadFood > cantidadRestante) {
+          alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
+          return;  // Termina la función aquí, no procedas con el proceso de guardar
+      }
+
+      let isFoodAdultoAdded = false;
+
+      if (cantidadFood > 0 && foodSeleccionadaId && selectedClientId) {
+          const foodAdultos = {
+              id: foodSeleccionadaId,
+              nombre: foodSeleccionada,
+              cantidad: cantidadFood,
+              precio: precioFoodSeleccionada,
+          };
+
+          await guardarFood(foodAdultos);
+
+          // Actualizar el inventario después de guardar la bebida para el cliente
+          await actualizarInventarioFood(foodSeleccionadaId, cantidadFood);
+
+          isFoodAdultoAdded = true;
+          console.log("Adultos" + foodAdultos);
+      }
+
+      if (!isFoodAdultoAdded) {
+          alert("No se ha agregado una bebida para adultos");
+      }
+
+      onClose();
+  } catch (error) {
+      console.error('Error al guardar las bebidas en el cliente:', error.message);
+  }
+};
+
+
+
+
+// Función para hacer la petición de guardar la bebida en el cliente.
+const guardarFood = async (food) => {
+  try {
+      const response = await axios.post('http://127.0.0.1:3000/api/pasadia-agregar-food', {
+          id: selectedClientId,
+          food,
+      });
+      console.log("peticion: ", selectedClientId);
+      onClose();
+      if (response.status < 200 || response.status >= 300) {
+          throw new Error(`Error al agregar la bebida. Estado de la respuesta: ${response.status}`);
+      }
+  } catch (error) {
+      console.error('Error al guardar la bebida en el cliente:', error.message);
+      throw error;  // Re-throw para ser capturado en handleGuardarBebida
+  }
+};
+
+
+////////////////////////////////////---fin  guardar comidas-----/////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //////////////////////////////////////////////////////////////////
 
@@ -924,22 +1050,22 @@ const guardarFood = async (food) => {
 
 
 
-                  <TableCell key={cliente.id} className="">
-                        <div className="flex flex-wrap gap-3">
-                          {sizesm.map((size) => (
-                            <Button className="bg-white-100" key={size} onPress={() => handleOpenmf(size,cliente._id)}>
-                              <img className="w-7 h-7" src={plus} alt="" />
-                            </Button>
-                          ))}
-                        </div>
-
+<TableCell key={cliente.id} className="">
+                                <div className="flex flex-wrap gap-3">
+        {sizesm.map((size) => (
+          <Button className="bg-white-100" key={size} onPress={() => handleOpenmf(size,cliente._id)}>
+            <img className="w-7 h-7" src={plus} alt="" />
+          </Button>
+        ))}
+      </div>
+      
                         <Modal size={size} isOpen={isModalOpenF} onClose={closeModalF}>
-                      <ModalContent>
-                        {(closeModalF) => (
-                          <>
-                            <ModalHeader className="flex flex-col gap-1">COMIDAS</ModalHeader>
-                            <ModalBody>
-                              <Input
+        <ModalContent>
+          {(closeModalF) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">COMIDAS</ModalHeader>
+              <ModalBody>
+<Input
                                 name="restaurante"
                                 label="Ingrese la cantidad para adultos"
                                 type="number"
@@ -949,9 +1075,9 @@ const guardarFood = async (food) => {
                                   setCantidadBebida(isNaN(value) ? 0 : value);
                                 }}
                               />
-                              <Select
-                                name="bebidas"
-                                label="Seleccionar bebida para adultos"
+              <Select
+                      name="bebidas"
+                      label="Seleccionar bebida para adultos"
                                 value={foodSeleccionada}
                                 onChange={(e) => {
                                   const selectedFood = e.target.value;
@@ -964,26 +1090,26 @@ const guardarFood = async (food) => {
                                   }
                                 }}
                               >
-                                {snacks.map((food) => (
-                                  <SelectItem key={food.Descripcion}>
-                                    {food.Descripcion}
-                                  </SelectItem>
-                                ))}
-                              </Select>
-                            </ModalBody>
-                            <ModalFooter>
-                              <Button color="danger" variant="light" onPress={closeModalF}>
-                                Close
-                              </Button>
-                              <Button onClick={handleGuardarFood}>
+                      {snacks.map((food) => (
+                        <SelectItem key={food.Descripcion}>
+                          {food.Descripcion}
+                        </SelectItem>
+                      ))}
+                    </Select>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={closeModalF}>
+                  Close
+                </Button>
+                <Button onClick={handleGuardarFood}>
                                 Guardar Bebidas
-                              </Button>
-                            </ModalFooter>
-                          </>
-                        )}
-                      </ModalContent>
-                    </Modal>
-
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+                
                   </TableCell>
 
 
