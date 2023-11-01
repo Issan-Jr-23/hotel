@@ -11,6 +11,11 @@ import editar from "../../images/boligrafo.png";
 import borrar from "../../images/borrar.png";
 import download from "../../images/download.png";
 import toast, {Toaster} from 'react-hot-toast';
+import {html2pdf} from 'html2pdf.js';
+import * as XLSX from 'xlsx';
+
+
+import "./table.css"
 
 export default function App() {
 
@@ -136,16 +141,49 @@ export default function App() {
   .filter(product => product.Descripcion.toLowerCase().includes(searchTerm.toLowerCase())); // Filtra por término de búsqueda
 
 
+  function exportToExcel(data) {
+    // Crear un libro de trabajo
+    const wb = XLSX.utils.book_new();
+  
+    // Convertir los datos en un formato que xlsx pueda entender
+    const formattedData = data.map(item => ({
+      'Descripción del Producto': item.Descripcion,
+      'Tipo': item.tipo,
+      'Fecha de Caducidad': item.Caducidad,
+      'Cantidad': item.CantidadInicial,
+      'Valor Unitario': item.ValorUnitario,
+      'Productos Vendidos': item.ProductosVendidos,
+      'Total de la Venta': item.ProductosVendidos * item.ValorUnitario,
+      'Cantidad Restante': item.CantidadInicial - item.ProductosVendidos
+    }));
+  
+    // Crear una hoja de trabajo a partir de los datos formateados
+    const ws = XLSX.utils.json_to_sheet(formattedData);
+    
+    // Añadir la hoja de trabajo al libro de trabajo
+    XLSX.utils.book_append_sheet(wb, ws, "ListaVista");
+  
+    // Guardar como archivo Excel
+    XLSX.writeFile(wb, "ListaVista.xlsx");
+  }
+  
+
+
   
 
   return (
     <div className="w-full ">
       <Toaster/>
-        <div className='flex  justify-between'>
-            <div className=' '>
+        <div className='flex  justify-between mt-5 mb-5'>
+            <div className='w-full '>
         {/* <CardDesplegable /> */}
         <>
-      <div className="flex justify-between gap-3">
+      <div className="flex justify-between w-12/12 gap-3">
+      <button onClick={() => exportToExcel(filteredProducts)}>Descargar Excel</button>
+
+
+
+
         <Button
           variant="flat"
           color="primary"
@@ -154,7 +192,7 @@ export default function App() {
             setBackdrop("blur");
             onOpen();
           }}
-          className="capitalize"
+          className="capitalize ml-5 text-white bg-gradient-to-r from-emerald-400 to-cyan-500"
         >
           Agregar producto
         </Button>
@@ -168,21 +206,25 @@ export default function App() {
           <SelectItem value="comida">Comidas</SelectItem>
           <SelectItem value="mekato">Mekatos</SelectItem>
         </Select> */}
-
-        <Input
+  <div className=" w-52 flex justify-center">
+        <input
+        id="s"
         type="search"
         label="busca el producto"
         value={searchTerm}
     onChange={(e) => setSearchTerm(e.target.value)}
+    className="w-52 h-10 "
         >
-        </Input>
+          
+      </input>
+      </div>
        
-        <select className="outline-0 w-32 rounded-2xl" value={selectedType} onChange={(e) => setSelectedType(e.target.value)}>
+        <select className="outline-0 h-10 w-32 px-2 rounded-2xl mr-5  text-white bg-gradient-to-r from-emerald-400 to-cyan-500" value={selectedType} onChange={(e) => setSelectedType(e.target.value)}>
 
-        <option className="flex w-32" value="">Todos</option>
-        <option value="Bebida">Tipo 1</option>
-        <option value="comida">Tipo 2</option>
-        <option value="mekato">Tipo 2</option>
+        <option id="p" className="w-52 text-white bg-emerald-400  "  value="">Todos</option>
+        <option className="w-52 text-white bg-emerald-400  " value="Bebida">Bebidas</option>
+        <option className="w-52 text-white bg-emerald-400  "  value="comida">Comidas</option>
+        <option className="w-52 text-white bg-emerald-400  "  value="mekato">MeKatos</option>
 
       </select>
 
@@ -261,8 +303,8 @@ export default function App() {
             
         </div>
         <section className="flex coluns-2  mx-5">
-          <Table className=" text-center" aria-label="Lista de Usuarios">
-            <TableHeader className="text-center">
+          <Table id="myTable" className=" text-center uppercase" aria-label="Lista de Usuarios">
+            <TableHeader className="text-center bg-blue-500">
               <TableColumn className="text-center">descripcion del producto</TableColumn>
               <TableColumn className="text-center">Tipo</TableColumn>
               <TableColumn className="text-center">fecha de caducidad</TableColumn>
@@ -377,6 +419,8 @@ export default function App() {
             </TableBody>
           </Table>
         </section>
+        
+
     </div>
   );
 }

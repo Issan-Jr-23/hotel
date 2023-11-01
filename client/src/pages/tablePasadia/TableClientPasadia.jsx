@@ -143,72 +143,90 @@ export default function App() {
 
 
 
-  const handleGuardarBebida = async () => {
-    console.log(" id del cliente " +selectedClientId);
-    
-    try {
-        if (!selectedClientId || !bebidaSeleccionadaId) {
-            throw new Error('No se ha seleccionado un cliente o una bebida.');
-        }
+// Función para actualizar el inventario de bebidas en el servidor.
+const actualizarInventarioBebida = async (bebidaId, cantidad) => {
+  try {
+      const response = await axios.post('http://127.0.0.1:3000/api/actualizar-inventario-bebida', {
+          id: bebidaId,
+          cantidad,
+      });
 
-        let isBebidaAdultoAdded = false;
-        let isBebidaNinoAdded = false;
+      if (response.status < 200 || response.status >= 300) {
+          throw new Error(`Error al actualizar el inventario. Estado de la respuesta: ${response.status}`);
+      }
+  } catch (error) {
+      console.error('Error al actualizar el inventario de bebidas:', error.message);
+      throw error;  // Re-throw para ser capturado en handleGuardarBebida
+  }
+};
 
-        if (cantidadBebida > 0 && bebidaSeleccionadaId && selectedClientId) {
-            const bebidaAdultos = {
-                id: bebidaSeleccionadaId,
-                nombre: bebidaSeleccionada,
-                cantidad: cantidadBebida,
-                precioA: precioBebidaSeleccionada,
-            };
-            await guardarBebida(bebidaAdultos);
-            isBebidaAdultoAdded = true;
-            console.log("Adultos" + bebidaAdultos);
-        }
+const handleGuardarBebida = async () => {
+  console.log(" id del cliente " + selectedClientId);
+  
+  try {
+      if (!selectedClientId || !bebidaSeleccionadaId) {
+          throw new Error('No se ha seleccionado un cliente o una bebida.');
+      }
 
-        if (cantidadBebidaN > 0 && bebidaSeleccionadaIdN && selectedClientId) {
-            const bebidaNinos = {
-                id: bebidaSeleccionadaIdN,
-                nombre: bebidaSeleccionadaN,
-                cantidad: cantidadBebidaN,
-                precioN: precioBebidaSeleccionadaN,
-            };
-            await guardarBebida(bebidaNinos);
-            isBebidaNinoAdded = true;
-            
-        }
+      // Verifica la disponibilidad de la bebida antes de proceder
+      const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad/${bebidaSeleccionadaId}`);
+      const cantidadRestante = response.data.cantidadRestante;
 
-        if (!isBebidaAdultoAdded) {
-            alert("No se ha agregado una bebida para adultos");
-        }
+      if (cantidadBebida > cantidadRestante) {
+          alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
+          return;  // Termina la función aquí, no procedas con el proceso de guardar
+      }
 
-        if (!isBebidaNinoAdded) {
-            alert("No se ha agregado una bebida para niños");
-        }
+      let isBebidaAdultoAdded = false;
 
-        onClose();
-    } catch (error) {
-        console.error('Error al guardar las bebidas en el cliente:', error.message);
-    }
+      if (cantidadBebida > 0 && bebidaSeleccionadaId && selectedClientId) {
+          const bebidaAdultos = {
+              id: bebidaSeleccionadaId,
+              nombre: bebidaSeleccionada,
+              cantidad: cantidadBebida,
+              precioA: precioBebidaSeleccionada,
+          };
+
+          await guardarBebida(bebidaAdultos);
+
+          // Actualizar el inventario después de guardar la bebida para el cliente
+          await actualizarInventarioBebida(bebidaSeleccionadaId, cantidadBebida);
+
+          isBebidaAdultoAdded = true;
+          console.log("Adultos" + bebidaAdultos);
+      }
+
+      if (!isBebidaAdultoAdded) {
+          alert("No se ha agregado una bebida para adultos");
+      }
+
+      onClose();
+  } catch (error) {
+      console.error('Error al guardar las bebidas en el cliente:', error.message);
+  }
 };
 
 
+
+
+// Función para hacer la petición de guardar la bebida en el cliente.
 const guardarBebida = async (bebida) => {
-    try {
-        const response = await axios.post('http://127.0.0.1:3000/api/pasadia-agregar-bebida', {
-            id: selectedClientId,
-            bebida,
-        });
-        console.log("peticion: "+selectedClientId)
-
-        if (response.status < 200 || response.status >= 300) {
-            throw new Error(`Error al agregar la bebida. Estado de la respuesta: ${response.status}`);
-        }
-    } catch (error) {
-        console.error('Error al guardar la bebida en el cliente:', error.message);
-        throw error;  // Re-throw para ser capturado en handleGuardarBebida
-    }
+  try {
+      const response = await axios.post('http://127.0.0.1:3000/api/pasadia-agregar-bebida', {
+          id: selectedClientId,
+          bebida,
+      });
+      console.log("peticion: ", selectedClientId);
+      onClose();
+      if (response.status < 200 || response.status >= 300) {
+          throw new Error(`Error al agregar la bebida. Estado de la respuesta: ${response.status}`);
+      }
+  } catch (error) {
+      console.error('Error al guardar la bebida en el cliente:', error.message);
+      throw error;  // Re-throw para ser capturado en handleGuardarBebida
+  }
 };
+
 
 
 
@@ -766,7 +784,7 @@ const guardarBebida = async (bebida) => {
                   )}
                 </TableCell>
                 <TableCell>{cliente.cantidadPersonas.ninios}</TableCell>
-                <TableCell>{cliente.fechaDeRegistro}</TableCell>
+                <TableCell></TableCell>
                 <TableCell>{cliente.fechaDeRegistro}</TableCell>
 
                    
@@ -810,38 +828,6 @@ const guardarBebida = async (bebida) => {
                                   if (bebidaSeleccionadaInfo) {
                                     setPrecioBebidaSeleccionada(bebidaSeleccionadaInfo.ValorAdultos);
                                     setBebidaSeleccionadaId(bebidaSeleccionadaInfo._id);
-                                  }
-                                }}
-                              >
-                                {drinks.map((bebida) => (
-                                  <SelectItem key={bebida.Descripcion}>
-                                    {bebida.Descripcion}
-                                  </SelectItem>
-                                ))}
-                              </Select>
-
-                              <Input
-                                name="bebidas"
-                                label="Ingrese la cantidad para niños"
-                                type="number"
-                                value={isNaN(cantidadBebidaN) ? '' : cantidadBebidaN}
-                                onChange={(e) => {
-                                  const value = parseInt(e.target.value, 10);
-                                  setCantidadBebidaN(isNaN(value) ? 0 : value);
-                                }}
-                              />
-                              <Select
-                                name="bebidas"
-                                label="Seleccionar bebida para niños"
-                                value={bebidaSeleccionadaN}
-                                onChange={(e) => {
-                                  const selectedBebidaN = e.target.value;
-                                  setBebidaSeleccionadaN(selectedBebidaN);
-
-                                  const bebidaSeleccionadaInfoN = drinks.find(bebida => bebida.Descripcion === selectedBebidaN);
-                                  if (bebidaSeleccionadaInfoN) {
-                                    setPrecioBebidaSeleccionadaN(bebidaSeleccionadaInfoN.ValorNinios);
-                                    setBebidaSeleccionadaIdN(bebidaSeleccionadaInfoN._id);
                                   }
                                 }}
                               >
