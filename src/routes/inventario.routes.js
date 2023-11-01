@@ -1,5 +1,5 @@
 import {Router} from "express";
-import {crearProducto, filType, updateBebidas, updateCB, validCB } from '../controllers/inventario.controllers.js'
+import {crearProducto, filType, updateBebidas, updateCB, updateCF, validCB, validCF } from '../controllers/inventario.controllers.js'
 import {updateProducto } from '../controllers/inventario.controllers.js'
 import {obtenerInventario } from '../controllers/inventario.controllers.js'
 import {crearAlimentos } from '../controllers/alimentos.controllers.js'
@@ -23,8 +23,11 @@ router.post("/agregar-cantidad", addCv)
 router.delete("/eliminar-mekato/:id", deleteProducto)
 router.put("/update-producto/:id", updateProducto)
 router.post('actualizar-inventario',updateBebidas)
-router.get('/fill-type', filType)
+// router.get('/fill-type', filType)
 router.post('/actualizar-inventario-bebida',updateCB)
 router.get('/verificar-disponibilidad/:id',validCB)
+router.get('/fill-type', filType)
+router.post('/actualizar-inventario-food',updateCF)
+router.get('/verificar-disponibilidad-food/:id',validCF)
 
 export default router;

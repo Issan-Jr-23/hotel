@@ -46,7 +46,7 @@ export const obtenerDrinks = (req, res) => {
 };
 
 export const obtenerFood = (req, res) => {
-  Bebida.find({ tipo: "comidas" })
+  Bebida.find({ tipo: "comida" })
     .then((mekatos) => {
       res.json(mekatos);
       console.log(mekatos)
@@ -225,10 +225,9 @@ export const updateCB = async (req, res) => {
         return res.status(400).send({ error: `Solo quedan ${cantidadRestante} unidades de ${bebida.Descripcion} disponibles en el inventario.` });
     }
 
-    // Actualiza la cantidad de bebidas vendidas
     bebida.ProductosVendidos += cantidad;
 
-    await bebida.save();  // Guarda la bebida actualizada en la base de datos
+    await bebida.save();  
 
     res.status(200).send({ message: 'Inventario actualizado con éxito.' });
 } catch (error) {
@@ -254,6 +253,59 @@ export const validCB = async (req, res) => {
 };
 
 
+
+
+
+
+
+
+// food-----------------------
+
+export const updateCF = async (req, res) => {
+  try {
+    const { id, cantidad } = req.body;
+
+    // Busca la bebida por ID
+    const bebida = await Bebida.findById(id);
+    if (!bebida) {
+        return res.status(404).send({ error: 'Bebida no encontrada.' });
+    }
+
+    // Calcula la cantidad restante en el inventario
+    const cantidadRestante = bebida.CantidadInicial - bebida.ProductosVendidos;
+
+    // Verifica si hay suficiente cantidad en el inventario
+    if (cantidad > cantidadRestante) {
+        return res.status(400).send({ error: `Solo quedan ${cantidadRestante} unidades de ${bebida.Descripcion} disponibles en el inventario.` });
+    }
+
+    // Actualiza la cantidad de bebidas vendidas
+    bebida.ProductosVendidos += cantidad;
+
+    await bebida.save();  // Guarda la bebida actualizada en la base de datos
+
+    res.status(200).send({ message: 'Inventario actualizado con éxito.' });
+} catch (error) {
+    console.error('Error al actualizar el inventario de bebidas:', error);
+    res.status(500).send({ error: 'Error interno del servidor.' });
+}
+};
+
+
+export const validCF = async (req, res) => {
+  try {
+      const bebida = await Bebida.findById(req.params.id);
+      if (!bebida) {
+          return res.status(404).send({ error: 'Bebida no encontrada.' });
+      }
+
+      const cantidadRestante = bebida.CantidadInicial - bebida.ProductosVendidos;
+      res.status(200).send({ cantidadRestante });
+  } catch (error) {
+      console.error('Error al verificar la disponibilidad:', error);
+      res.status(500).send({ error: 'Error interno del servidor.' });
+  }
+};
 
 
 
