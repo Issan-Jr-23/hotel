@@ -171,8 +171,10 @@ const handleGuardarBebida = async () => {
       // Verifica la disponibilidad de la bebida antes de proceder
       const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad/${bebidaSeleccionadaId}`);
       const cantidadRestante = response.data.cantidadRestante;
-
-      if (cantidadBebida > cantidadRestante) {
+      const cantidadInicial = response.data.CantidadInicial
+      if(cantidadBebida > cantidadInicial){
+        alert("La bebida no tiene suficiente stock");
+      }else if (cantidadBebida > cantidadRestante) {
           alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
           return;  // Termina la función aquí, no procedas con el proceso de guardar
       }
@@ -184,7 +186,7 @@ const handleGuardarBebida = async () => {
               id: bebidaSeleccionadaId,
               nombre: bebidaSeleccionada,
               cantidad: cantidadBebida,
-              precioA: precioBebidaSeleccionada,
+              precio: precioBebidaSeleccionada,
           };
 
           await guardarBebida(bebidaAdultos);
@@ -659,20 +661,6 @@ const guardarBebida = async (bebida) => {
               <TableRow key={cliente._id}>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                 {/* -------------------MODAL DE PRODUCTOS SELECCIONADOS*/}
 
 
@@ -697,31 +685,40 @@ const guardarBebida = async (bebida) => {
                       <div className="mx-5 my-1 border-2 w-full">
                       <h4 className="text-green-600">Bebidas</h4>
                       {selectedUser.bebidas && Array.isArray(selectedUser.bebidas) && selectedUser.bebidas.length > 0 ? (
-                  <table className="min-w-full">
+                  <table className=" w-full text-center">
                   <thead>
                       <tr>
                           <th>Nombre</th>
                           <th>Cantidad</th>
-                          <th>Precio</th>
+                          <th>Precio Unitario</th>
+                          <th>Total</th>
+
                       </tr>
                   </thead>
-                  <tbody>
+                  <tbody >
                       {selectedUser.bebidas.map((bebida, index) => (
                           <tr key={index}>
-                            {}
                               <td>{bebida.nombre}</td>
                               <td>{bebida.cantidad}</td>
-                              <td>{bebida.ValorUnitario}</td>
+                              <td>{bebida.precio}</td>
+                              <td>{bebida.cantidad * bebida.precio}</td>
                           </tr>
                       ))}
+                      
                   </tbody>
-                  <tfoot className="border-t-2 border-green-500 pt-2">
-                    <tr className="  ">
-                      <td >Total</td>
+                  <tfoot   className="border-t-3  border-green-500 pt-2">
+                    <tr className=" ">
+                      <td className="w-6/12 text-left"></td>
+                      <td></td>
+                      <td></td>
+                      <td style={{height:"60px" , paddingRight: "20px", width: "150px"}} className="text-right">Total: {
+                        selectedUser.bebidas.reduce((acc, bebida) => 
+                          acc + (bebida.cantidad * bebida.precio), 0
+                        )
+                      }</td>
                     </tr>
                   </tfoot>
-              </table>
-              
+                  </table>
                 ) : (
                   <p className="border-4 w-full text-center">No hay productos que mostrar😔</p>
                 )}
@@ -826,7 +823,7 @@ const guardarBebida = async (bebida) => {
 
                                   const bebidaSeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida);
                                   if (bebidaSeleccionadaInfo) {
-                                    setPrecioBebidaSeleccionada(bebidaSeleccionadaInfo.ValorAdultos);
+                                    setPrecioBebidaSeleccionada(bebidaSeleccionadaInfo.ValorUnitario);
                                     setBebidaSeleccionadaId(bebidaSeleccionadaInfo._id);
                                   }
                                 }}
