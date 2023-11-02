@@ -26,8 +26,12 @@ import chevron from "../../images/right.png";
 import plus from "../../images/plus.png";
 import plusb from "../../images/plus_blue.png";
 import toast, { Toaster } from 'react-hot-toast';
+import { useAuth } from "../../context/authContext.jsx";
 
 export default function App() {
+  
+  const { user } = useAuth(); 
+  const { isAdmin } = useAuth();
   const [users, setUsers] = useState([]);
   const [drinks, setDrinks] = useState([]);
   const [snacks, setSnacks] = useState([]);
@@ -49,6 +53,8 @@ export default function App() {
   const [editedUserId, setEditedUserId] = useState(null);
   const [editedName, setEditedName] = useState("");
   const [editPago, setEditPago] = useState("");
+
+  
 
   // const [cantidadBebidaN, setCantidadBebidaN] = useState(1);
   // const [bebidaSeleccionadaN, setBebidaSeleccionadaN] = useState('');
@@ -749,6 +755,7 @@ export default function App() {
       <section className="flex coluns-2 border-3 mt-5 mx-5 rounded-t-2xl border-blue-300">
         <Table className=" text-center uppercase" aria-label="Lista de Usuarios">
           <TableHeader className="text-center">
+          
             <TableColumn className="text-center">+</TableColumn>
             <TableColumn className="text-center max-w-xs">ID</TableColumn>
             <TableColumn className="text-center ">Nombre</TableColumn>
@@ -765,7 +772,19 @@ export default function App() {
             <TableColumn className="text-center">add bebida</TableColumn>
             <TableColumn className="text-center">add comida</TableColumn>
             <TableColumn className="text-center">Consumo total</TableColumn>
-            <TableColumn className="text-center">Acción</TableColumn>
+            
+              
+            <TableColumn className="text-center">Acción</TableColumn> 
+                      
+
+     
+
+            
+
+        
+         
+             
+                        
           </TableHeader>
 
 
@@ -1106,6 +1125,7 @@ export default function App() {
                   <TableCell key={index}>{food?.nombre || "aun no hay bebidas"}</TableCell>
                 ))} */}
                 <TableCell></TableCell>
+                {isAdmin & (
                 <TableCell className="flex justify-center align-center pr-5 w-60">
                   {cliente.identificacion === editedUserId && (
                     <div className="flex">
@@ -1132,6 +1152,9 @@ export default function App() {
                     onClick={() => handleDeleteUser(cliente._id)}
                   />
                 </TableCell>
+
+                )}
+             
               </TableRow>
             ))}
           </TableBody>
