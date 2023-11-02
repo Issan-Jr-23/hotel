@@ -25,7 +25,7 @@ export default function Navbars() {
 
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarBrand>
-          <Link to={isAuthenticated ? "/home" : "/"}><img className="w-14" src={logo} alt="" /> </Link>
+          <Link to={isAuthenticated ? "/home" : "/register"}><img className="w-14" src={logo} alt="" /> </Link>
         </NavbarBrand>
         <Dropdown>
           <NavbarItem >

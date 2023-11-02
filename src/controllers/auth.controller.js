@@ -6,14 +6,30 @@ import { createAccessToken } from "../libs/jwt.js";
 
 export const register = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { username, email, password, roles } = req.body;
 
     const userFound = await User.findOne({ email });
 
-    if (userFound)
+    if (userFound) {
       return res.status(400).json({
         message: ["The email is already in use"],
       });
+    }
+
+    // Validar roles
+    const allowedRoles = ["user", "editor", "admin"]; // Ejemplo de roles permitidos
+
+    if (Array.isArray(roles)) {
+      for (let role of roles) {
+        if (!allowedRoles.includes(role)) {
+          return res.status(400).json({ message: ["Invalid role provided"] });
+        }
+      }
+    } else {
+      if (!allowedRoles.includes(roles)) {
+        return res.status(400).json({ message: ["Invalid role provided"] });
+      }
+    }
 
     // hashing the password
     const passwordHash = await bcrypt.hash(password, 10);
@@ -23,6 +39,7 @@ export const register = async (req, res) => {
       username,
       email,
       password: passwordHash,
+      roles,
     });
 
     // saving the user in the database
@@ -43,6 +60,7 @@ export const register = async (req, res) => {
       id: userSaved._id,
       username: userSaved.username,
       email: userSaved.email,
+      roles: userSaved.roles,  // También podrías incluir roles en la respuesta
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -54,10 +72,11 @@ export const login = async (req, res) => {
     const { email, password } = req.body;
     const userFound = await User.findOne({ email });
 
-    if (!userFound)
+    if (!userFound) {
       return res.status(400).json({
         message: ["The email does not exist"],
       });
+    }
 
     const isMatch = await bcrypt.compare(password, userFound.password);
     if (!isMatch) {
@@ -81,6 +100,7 @@ export const login = async (req, res) => {
       id: userFound._id,
       username: userFound.username,
       email: userFound.email,
+      roles: userFound.roles,  // También puedes incluir roles en la respuesta del login
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -101,6 +121,7 @@ export const verifyToken = async (req, res) => {
       id: userFound._id,
       username: userFound.username,
       email: userFound.email,
+      roles: userFound.roles,  
     });
   });
 };

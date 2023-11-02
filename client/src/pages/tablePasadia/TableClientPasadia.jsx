@@ -33,10 +33,10 @@ export default function App() {
   const [snacks, setSnacks] = useState([]);
 
   const [cantidadBebida, setCantidadBebida] = useState(1);
-    const [bebidaSeleccionada, setBebidaSeleccionada] = useState('');
-    const [precioBebidaSeleccionada, setPrecioBebidaSeleccionada] = useState(0);
-    const [bebidaSeleccionadaId, setBebidaSeleccionadaId] = useState(null);
-  
+  const [bebidaSeleccionada, setBebidaSeleccionada] = useState('');
+  const [precioBebidaSeleccionada, setPrecioBebidaSeleccionada] = useState(0);
+  const [bebidaSeleccionadaId, setBebidaSeleccionadaId] = useState(null);
+
 
   const [cantidadFood, setCantidadFood] = useState(1);
   const [foodSeleccionada, setFoodSeleccionada] = useState('');
@@ -45,24 +45,21 @@ export default function App() {
 
   const [selectedClientId, setSelectedClientId] = useState(null);
   const [cantidadDeBebidas, setCantidadDeBebidas] = useState('');
-  const [cantidadDeFood, setCantidadDeFood] = useState('');
 
   const [editedUserId, setEditedUserId] = useState(null);
   const [editedName, setEditedName] = useState("");
   const [editPago, setEditPago] = useState("");
 
-  const [cantidadBebidaN, setCantidadBebidaN] = useState(1);
-  const [bebidaSeleccionadaN, setBebidaSeleccionadaN] = useState('');
-  const [precioBebidaSeleccionadaN, setPrecioBebidaSeleccionadaN] = useState(0);
-  const [bebidaSeleccionadaIdN, setBebidaSeleccionadaIdN] = useState(null);
-
-
-
+  // const [cantidadBebidaN, setCantidadBebidaN] = useState(1);
+  // const [bebidaSeleccionadaN, setBebidaSeleccionadaN] = useState('');
+  // const [precioBebidaSeleccionadaN, setPrecioBebidaSeleccionadaN] = useState(0);
+  // const [bebidaSeleccionadaIdN, setBebidaSeleccionadaIdN] = useState(null);
 
   const options = ["Si", "No"];
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [backdrop, setBackdrop] = useState("blur");
   const [formData, setFormData] = useState({
+    identificacion:"",
     nombre: "",
     reserva: "",
     cantidadPersonas: {
@@ -70,15 +67,16 @@ export default function App() {
       ninios: "",
     },
     mediosDePago: "",
-    pagoAnticipado:"",
-    mediosDePagoPendiente:"",
-    pagoPendiente:"",
-    bebidas:"",
-    restaurante:""
-    
+    pagoAnticipado: "",
+    mediosDePagoPendiente: "",
+    pagoPendiente: "",
+    bebidas: "",
+    restaurante: ""
+
   });
 
-  
+
+
 
 
 
@@ -102,19 +100,14 @@ export default function App() {
     });
   };
 
-
-
   const actualizarInventario = async (bebidaId, VentaAdultos, VentaNinios) => {
     const response = await axios.post('http://127.0.0.1:3000/api/actualizar-inventario', {
-       bebidaId,
-       VentaAdultos,
-       VentaNinios
+      bebidaId,
+      VentaAdultos,
+      VentaNinios
     });
     // Maneja la respuesta como lo necesites
- }
- 
-
-
+  }
 
   const handleBebidasChange = (selectedIndex) => {
     const selectedDrink = drinks[selectedIndex];
@@ -126,7 +119,6 @@ export default function App() {
     console.log(formData)
   };
 
-
   const handleRestauranteChange = (selectedIndex) => {
     const selectedSnack = snacks[selectedIndex];
     console.log(selectedSnack);
@@ -137,331 +129,278 @@ export default function App() {
     console.log(formData)
   };
 
+  // const actualizarCantidadBebida = (bebidaSeleccionada, cantidadDeseada) => {
+  //   axios.put('http://localhost:3000/api/update-bebidas', {
+  //     bebida: bebidaSeleccionada,
+  //     cantidad: cantidadDeseada,
+  //   })
+  //     .then(response => {
+  //       console.log('Cantidad de bebida actualizada con éxito:', response.data);
+  //     })
+  //     .catch(error => {
+  //       console.error('Error al actualizar la cantidad de bebida:', error);
+  //     });
+  // };
 
 
 
 
-
-  const actualizarCantidadBebida = (bebidaSeleccionada, cantidadDeseada) => {
-    axios.put('http://localhost:3000/api/update-bebidas', {
-      bebida: bebidaSeleccionada,
-      cantidad: cantidadDeseada,
-    })
-    .then(response => {
-      console.log('Cantidad de bebida actualizada con éxito:', response.data);
-    })
-    .catch(error => {
-      console.error('Error al actualizar la cantidad de bebida:', error);
-    });
-  };
-
-
-
-
-// Función para actualizar el inventario de bebidas en el servidor.
-const actualizarInventarioBebida = async (bebidaId, cantidad) => {
-  try {
+  // Función para actualizar el inventario de bebidas en el servidor.
+  const actualizarInventarioBebida = async (bebidaId, cantidad) => {
+    try {
       const response = await axios.post('http://127.0.0.1:3000/api/actualizar-inventario-bebida', {
-          id: bebidaId,
-          cantidad,
+        id: bebidaId,
+        cantidad,
       });
 
       if (response.status < 200 || response.status >= 300) {
-          throw new Error(`Error al actualizar el inventario. Estado de la respuesta: ${response.status}`);
+        throw new Error(`Error al actualizar el inventario. Estado de la respuesta: ${response.status}`);
       }
-  } catch (error) {
+    } catch (error) {
       console.error('Error al actualizar el inventario de bebidas:', error.message);
       throw error;  // Re-throw para ser capturado en handleGuardarBebida
-  }
-};
+    }
+  };
 
- const handleGuardarBebida = async () => {
-  console.log(" id del cliente " + selectedClientId);
-  
-  try {
+  const handleGuardarBebida = async () => {
+    console.log(" id del cliente " + selectedClientId);
+
+    try {
       if (!selectedClientId || !bebidaSeleccionadaId) {
-          throw new Error('No se ha seleccionado un cliente o una bebida.');
+        throw new Error('No se ha seleccionado un cliente o una bebida.');
       }
 
       // Verifica la disponibilidad de la bebida antes de proceder
       const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad/${bebidaSeleccionadaId}`);
-      const cantidadRestante = response.data.cantidadRestante;
       const cantidadInicial = response.data.CantidadInicial
-      if(cantidadBebida > cantidadInicial){
+      const cantidadRestante = response.data.cantidadRestante;
+      if (cantidadBebida > cantidadInicial) {
         alert("La bebida no tiene suficiente stock");
-      }else if (cantidadBebida > cantidadRestante) {
-          alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
-          return;  // Termina la función aquí, no procedas con el proceso de guardar
+        return;  // Termina la función aquí, no procedas con el proceso de guardar
+      } else if (cantidadBebida > cantidadRestante) {
+        alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
       }
 
       let isBebidaAdultoAdded = false;
 
       if (cantidadBebida > 0 && bebidaSeleccionadaId && selectedClientId) {
-          const bebidaAdultos = {
-              id: bebidaSeleccionadaId,
-              nombre: bebidaSeleccionada,
-              cantidad: cantidadBebida,
-              precio: precioBebidaSeleccionada,
-          };
+        const bebidaAdultos = {
+          id: bebidaSeleccionadaId,
+          nombre: bebidaSeleccionada,
+          cantidad: cantidadBebida,
+          precio: precioBebidaSeleccionada,
+        };
 
-          await guardarBebida(bebidaAdultos);
+        await guardarBebida(bebidaAdultos);
 
-          // Actualizar el inventario después de guardar la bebida para el cliente
-          await actualizarInventarioBebida(bebidaSeleccionadaId, cantidadBebida);
+        // Actualizar el inventario después de guardar la bebida para el cliente
+        await actualizarInventarioBebida(bebidaSeleccionadaId, cantidadBebida);
 
-          isBebidaAdultoAdded = true;
-          console.log("Adultos" + bebidaAdultos);
+        isBebidaAdultoAdded = true;
+        console.log("Adultos" + bebidaAdultos);
       }
 
       if (!isBebidaAdultoAdded) {
-          alert("No se ha agregado una bebida para adultos");
+        alert("No se ha agregado una bebida para adultos");
       }
 
       onClose();
-  } catch (error) {
+    } catch (error) {
       console.error('Error al guardar las bebidas en el cliente:', error.message);
-  }
-};
+    }
+  };
 
-// Función para hacer la petición de guardar la bebida en el cliente.
-const guardarBebida = async (bebida) => {
-  try {
+  // Función para hacer la petición de guardar la bebida en el cliente.
+  const guardarBebida = async (bebida) => {
+    try {
       const response = await axios.post('http://127.0.0.1:3000/api/pasadia-agregar-bebida', {
-          id: selectedClientId,
-          bebida,
+        id: selectedClientId,
+        bebida,
       });
       console.log("peticion: ", selectedClientId);
       onClose();
       if (response.status < 200 || response.status >= 300) {
-          throw new Error(`Error al agregar la bebida. Estado de la respuesta: ${response.status}`);
+        throw new Error(`Error al agregar la bebida. Estado de la respuesta: ${response.status}`);
       }
-  } catch (error) {
+    } catch (error) {
       console.error('Error al guardar la bebida en el cliente:', error.message);
       throw error;  // Re-throw para ser capturado en handleGuardarBebida
-  }
-};
+    }
+  };
+
+  ////////////////////////////////////---guardar comidas-----/////////////////
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-////////////////////////////////////---guardar comidas-----/////////////////
-
-
-const actualizarInventarioFood = async (bebidaId, cantidad) => {
-  try {
+  const actualizarInventarioFood = async (bebidaId, cantidad) => {
+    try {
       const response = await axios.post('http://127.0.0.1:3000/api/actualizar-inventario-food', {
-          id: bebidaId,
-          cantidad,
+        id: bebidaId,
+        cantidad,
       });
 
       if (response.status < 200 || response.status >= 300) {
-          throw new Error(`Error al actualizar el inventario. Estado de la respuesta: ${response.status}`);
+        throw new Error(`Error al actualizar el inventario. Estado de la respuesta: ${response.status}`);
       }
-  } catch (error) {
+    } catch (error) {
       console.error('Error al actualizar el inventario de bebidas:', error.message);
       throw error;  // Re-throw para ser capturado en handleGuardarBebida
-  }
-};
+    }
+  };
 
+  const handleGuardarFood = async () => {
+    console.log(" id del cliente " + selectedClientId);
 
-
-const handleGuardarFood = async () => {
-  console.log(" id del cliente " + selectedClientId);
-  
-  try {
+    try {
       if (!selectedClientId || !foodSeleccionadaId) {
-          throw new Error('No se ha seleccionado un cliente o una bebida.');
+        throw new Error('No se ha seleccionado un cliente o una bebida.');
       }
 
       // Verifica la disponibilidad de la bebida antes de proceder
       const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad/${foodSeleccionadaId}`);
       const cantidadRestante = response.data.cantidadRestante;
       const cantidadInicial = response.data.CantidadInicial
-      if(cantidadFood > cantidadInicial){
+      if (cantidadFood > cantidadInicial) {
         alert("La bebida no tiene suficiente stock");
-      }else if (cantidadFood > cantidadRestante) {
-          alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
-          return;  // Termina la función aquí, no procedas con el proceso de guardar
+      } else if (cantidadFood > cantidadRestante) {
+        alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
+        return;  // Termina la función aquí, no procedas con el proceso de guardar
       }
 
       let isFoodAdultoAdded = false;
 
       if (cantidadFood > 0 && foodSeleccionadaId && selectedClientId) {
-          const foodAdultos = {
-              id: foodSeleccionadaId,
-              nombre: foodSeleccionada,
-              cantidad: cantidadFood,
-              precio: precioFoodSeleccionada,
-          };
+        const foodAdultos = {
+          id: foodSeleccionadaId,
+          nombre: foodSeleccionada,
+          cantidad: cantidadFood,
+          precio: precioFoodSeleccionada,
+        };
 
-          await guardarFood(foodAdultos);
+        await guardarFood(foodAdultos);
 
-          // Actualizar el inventario después de guardar la bebida para el cliente
-          await actualizarInventarioFood(foodSeleccionadaId, cantidadFood);
+        // Actualizar el inventario después de guardar la bebida para el cliente
+        await actualizarInventarioFood(foodSeleccionadaId, cantidadFood);
 
-          isFoodAdultoAdded = true;
-          console.log("Adultos" + foodAdultos);
+        isFoodAdultoAdded = true;
+        console.log("Adultos" + foodAdultos);
       }
 
       if (!isFoodAdultoAdded) {
-          alert("No se ha agregado una bebida para adultos");
+        alert("No se ha agregado una bebida para adultos");
       }
 
       onClose();
-  } catch (error) {
+    } catch (error) {
       console.error('Error al guardar las bebidas en el cliente:', error.message);
-  }
-};
+    }
+  };
 
-
-
-
-// Función para hacer la petición de guardar la bebida en el cliente.
-const guardarFood = async (food) => {
-  try {
+  // Función para hacer la petición de guardar la bebida en el cliente.
+  const guardarFood = async (food) => {
+    try {
       const response = await axios.post('http://127.0.0.1:3000/api/pasadia-agregar-food', {
-          id: selectedClientId,
-          food,
+        id: selectedClientId,
+        food,
       });
       console.log("peticion: ", selectedClientId);
       onClose();
       if (response.status < 200 || response.status >= 300) {
-          throw new Error(`Error al agregar la bebida. Estado de la respuesta: ${response.status}`);
+        throw new Error(`Error al agregar la bebida. Estado de la respuesta: ${response.status}`);
       }
-  } catch (error) {
+    } catch (error) {
       console.error('Error al guardar la bebida en el cliente:', error.message);
       throw error;  // Re-throw para ser capturado en handleGuardarBebida
-  }
-};
+    }
+  };
 
+  ////////////////////////////////////---fin  guardar comidas-----/////////////////
 
-////////////////////////////////////---fin  guardar comidas-----/////////////////
-
-
-
-
+  //////////////////////////////////////////////////////////////////
 
 
 
+  // Función para actualizar el inventario de bebidas en el servidor.
+  // const actualizarInventariofood = async (foodId, cantidad) => {
+  //   try {
+  //     const response = await axios.post('http://127.0.0.1:3000/api/actualizar-inventario-food', {
+  //       id: foodId,
+  //       cantidad,
+  //     });
+
+  //     if (response.status < 200 || response.status >= 300) {
+  //       throw new Error(`Error al actualizar el inventario. Estado de la respuesta: ${response.status}`);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error al actualizar el inventario de bebidas:', error.message);
+  //     throw error;  // Re-throw para ser capturado en handleGuardarBebida
+  //   }
+  // };
+
+  // const handleGuardarFood = async () => {
+  //   console.log(" id del cliente " + selectedClientId);
+
+  //   try {
+  //       if (!selectedClientId || !foodSeleccionadaId) {
+  //           throw new Error('No se ha seleccionado un cliente o una bebida.');
+  //       }
+
+  //       // Verifica la disponibilidad de la bebida antes de proceder
+  //       const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad-food/${foodSeleccionadaId}`);
+  //       const cantidadRestante = response.data.cantidadRestante;
+  //       const cantidadInicial = response.data.CantidadInicial
+  //       if(cantidadFood > cantidadInicial){
+  //         alert("La bebida no tiene suficiente stock");
+  //       }else if (cantidadFood > cantidadRestante) {
+  //           alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
+  //           return;  // Termina la función aquí, no procedas con el proceso de guardar
+  //       }
+
+  //       let isFoodClientAdded = false;
+
+  //       if (cantidadFood > 0 && foodSeleccionadaId && selectedClientId) {
+  //           const foodclient = {
+  //               id: foodSeleccionadaId,
+  //               nombre: foodSeleccionada,
+  //               cantidad: cantidadFood,
+  //               precio: precioFoodSeleccionada,
+  //           };
+
+  //           await guardarFood(foodclient);
+
+  //           // Actualizar el inventario después de guardar la bebida para el cliente
+  //           await actualizarInventariofood(foodSeleccionadaId, cantidadFood);
+
+  //           isFoodClientAdded = true;
+  //           console.log("Adultos" + foodclient);
+  //       }
+
+  //       if (!isFoodClientAdded) {
+  //           alert("No se ha agregado una bebida para adultos");
+  //       }
 
 
+  //   } catch (error) {
+  //       console.error('Error al guardar las bebidas en el cliente:', error.message);
+  //   }
+  // };
 
-
-
-
-
-
-
-
-
-
-
-
-//////////////////////////////////////////////////////////////////
-
-
-
-// Función para actualizar el inventario de bebidas en el servidor.
-const actualizarInventariofood = async (foodId, cantidad) => {
-  try {
-      const response = await axios.post('http://127.0.0.1:3000/api/actualizar-inventario-food', {
-          id: foodId,
-          cantidad,
-      });
-
-      if (response.status < 200 || response.status >= 300) {
-          throw new Error(`Error al actualizar el inventario. Estado de la respuesta: ${response.status}`);
-      }
-  } catch (error) {
-      console.error('Error al actualizar el inventario de bebidas:', error.message);
-      throw error;  // Re-throw para ser capturado en handleGuardarBebida
-  }
-};
-
-const handleGuardarFood = async () => {
-  console.log(" id del cliente " + selectedClientId);
-  
-  try {
-      if (!selectedClientId || !foodSeleccionadaId) {
-          throw new Error('No se ha seleccionado un cliente o una bebida.');
-      }
-
-      // Verifica la disponibilidad de la bebida antes de proceder
-      const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad-food/${foodSeleccionadaId}`);
-      const cantidadRestante = response.data.cantidadRestante;
-      const cantidadInicial = response.data.CantidadInicial
-      if(cantidadFood > cantidadInicial){
-        alert("La bebida no tiene suficiente stock");
-      }else if (cantidadFood > cantidadRestante) {
-          alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
-          return;  // Termina la función aquí, no procedas con el proceso de guardar
-      }
-
-      let isFoodClientAdded = false;
-
-      if (cantidadFood > 0 && foodSeleccionadaId && selectedClientId) {
-          const foodclient = {
-              id: foodSeleccionadaId,
-              nombre: foodSeleccionada,
-              cantidad: cantidadFood,
-              precio: precioFoodSeleccionada,
-          };
-
-          await guardarFood(foodclient);
-
-          // Actualizar el inventario después de guardar la bebida para el cliente
-          await actualizarInventariofood(foodSeleccionadaId, cantidadFood);
-
-          isFoodClientAdded = true;
-          console.log("Adultos" + foodclient);
-      }
-
-      if (!isFoodClientAdded) {
-          alert("No se ha agregado una bebida para adultos");
-      }
-
-      
-  } catch (error) {
-      console.error('Error al guardar las bebidas en el cliente:', error.message);
-  }
-};
-
-// Función para hacer la petición de guardar la bebida en el cliente.
-const guardarFood = async (food) => {
-  try {
-      const response = await axios.post('http://127.0.0.1:3000/api/pasadia-agregar-food', {
-          id: selectedClientId,
-          food,
-      });
-      console.log("peticion: ", selectedClientId);
-      closeModalF()
-      if (response.status < 200 || response.status >= 300) {
-          throw new Error(`Error al agregar la bebida. Estado de la respuesta: ${response.status}`);
-      }
-  } catch (error) {
-      console.error('Error al guardar la bebida en el cliente:', error.message);
-      throw error;  // Re-throw para ser capturado en handleGuardarBebida
-  }
-};
-
-  
-
-
-
-
-
-
-
+  // // Función para hacer la petición de guardar la bebida en el cliente.
+  // const guardarFood = async (food) => {
+  //   try {
+  //       const response = await axios.post('http://127.0.0.1:3000/api/pasadia-agregar-food', {
+  //           id: selectedClientId,
+  //           food,
+  //       });
+  //       console.log("peticion: ", selectedClientId);
+  //       closeModalF()
+  //       if (response.status < 200 || response.status >= 300) {
+  //           throw new Error(`Error al agregar la bebida. Estado de la respuesta: ${response.status}`);
+  //       }
+  //   } catch (error) {
+  //       console.error('Error al guardar la bebida en el cliente:', error.message);
+  //       throw error;  // Re-throw para ser capturado en handleGuardarBebida
+  //   }
+  // };
 
 
   useEffect(() => {
@@ -606,34 +545,32 @@ const guardarFood = async (food) => {
 
   const [size, setSize] = React.useState('md')
 
-  const sizess = [ "5xl",];
+  const sizess = ["5xl",];
 
   const handleOpenM = (size) => {
     setSize(size)
   }
 
-
-
-  const {isOpen: isModalOpenM, onOpen: openModalM, onClose: closeModalM} = useDisclosure();
-  const {isOpen: isModalOpenF, onOpen: openModalF, onClose: closeModalF} = useDisclosure();
+  const { isOpen: isModalOpenM, onOpen: openModalM, onClose: closeModalM } = useDisclosure();
+  const { isOpen: isModalOpenF, onOpen: openModalF, onClose: closeModalF } = useDisclosure();
 
 
   const sizesm = ["xs"];
 
-  const handleOpenm = (size,userId) => {
+  const handleOpenm = (size, userId) => {
     setSelectedSize(size);
     setSelectedClientId(userId);
     openModalM();
-};
+  };
 
-  const handleOpenmf = (size,userId) => {
+  const handleOpenmf = (size, userId) => {
     setSelectedSize(size);
     setSelectedClientId(userId);
     openModalF();
-};
+  };
 
 
-  const {isOpen: isModalOpenMc, onOpen: openModalMc, onClose: closeModalMc} = useDisclosure();
+  const { isOpen: isModalOpenMc, onOpen: openModalMc, onClose: closeModalMc } = useDisclosure();
 
 
   const sizesmc = ["xs"];
@@ -643,15 +580,12 @@ const guardarFood = async (food) => {
     openModalMc();
   }
 
-
-
   const handleOpenModalBca = (cliente) => {
     // setSelectedClientId(cliente._id);
     setModalOpen(true);
   };
 
-
-
+ 
 
   return (
     <div className="max-w-full w-98 mx-auto">
@@ -661,7 +595,6 @@ const guardarFood = async (food) => {
           <div className="flex flex-wrap gap-3">
             <Button
               variant="flat"
-              
               onClick={() => {
                 setBackdrop("blur");
                 onOpen();
@@ -671,25 +604,37 @@ const guardarFood = async (food) => {
               Agregar Cliente
             </Button>
           </div>
+          
           <Modal backdrop={backdrop} isOpen={isOpen} onClose={onClose}>
             <ModalContent>
               {(onClose) => (
                 <>
                   <ModalHeader className="flex flex-col gap-1"></ModalHeader>
                   <ModalBody>
-                   
+
+                    <Input
+                      required
+                      id="identificacion"
+                      name="identificacion"
+                      type="number"
+
+                      variant="flat"
+                      label="Identificacòn del usuario"
+                      value={formData.identificacion}
+                      onChange={handleInputChange}
+                    />
                     <Input
                       required
                       id="nombre"
                       name="nombre"
                       type="text"
-                      
+
                       variant="flat"
                       label="Nombre de usuario"
                       value={formData.nombre}
                       onChange={handleInputChange}
                     />
-                     
+
                     <Select
                       required
                       id="reserva"
@@ -730,7 +675,7 @@ const guardarFood = async (food) => {
                       id="mediosDePago"
                       name="mediosDePago"
                       value={formData.mediosDePago}
-                      onChange={(event) => handleInputChange(event)} 
+                      onChange={(event) => handleInputChange(event)}
                     >
                       <option value="">Seleccione un tipo</option>
                       <option value="efectivo">Efectivo</option>
@@ -755,7 +700,7 @@ const guardarFood = async (food) => {
                       id="mediosDePagoPendiente"
                       name="mediosDePagoPendiente"
                       value={formData.mediosDePagoPendiente}
-                      onChange={(event) => handleInputChange(event)} 
+                      onChange={(event) => handleInputChange(event)}
                     >
                       <option value="">Seleccione un tipo</option>
                       <option value="efectivo">Efectivo</option>
@@ -802,23 +747,21 @@ const guardarFood = async (food) => {
 
 
       <section className="flex coluns-2 border-3 mt-5 mx-5 rounded-t-2xl border-blue-300">
-        <Table className=" text-center" aria-label="Lista de Usuarios">
+        <Table className=" text-center uppercase" aria-label="Lista de Usuarios">
           <TableHeader className="text-center">
-            <TableColumn  classNames={{
-        wrapper: "max-h-[382px]",
-      }}  className="text-center max-w-xs">+</TableColumn>
+            <TableColumn className="text-center">+</TableColumn>
             <TableColumn className="text-center max-w-xs">ID</TableColumn>
             <TableColumn className="text-center ">Nombre</TableColumn>
             <TableColumn className="text-center ">Reserva</TableColumn>
             <TableColumn className="text-center ">Adultos</TableColumn>
             <TableColumn className="text-center ">Niños</TableColumn>
-            <TableColumn className="text-center ">Niños</TableColumn>
+            <TableColumn className="text-center ">Metodo de pago</TableColumn>
             <TableColumn className="text-center ">
-              Pago pendiente o total
+              Anticipo
             </TableColumn>
             <TableColumn className="text-center">Fecha de registro</TableColumn>
-            <TableColumn className="text-center">add bebida</TableColumn>
-            <TableColumn className="text-center">add bebida</TableColumn>
+            <TableColumn className="text-center">Metodo de pago</TableColumn>
+            <TableColumn className="text-center">Pago pendiente o total</TableColumn>
             <TableColumn className="text-center">add bebida</TableColumn>
             <TableColumn className="text-center">add comida</TableColumn>
             <TableColumn className="text-center">Consumo total</TableColumn>
@@ -834,98 +777,98 @@ const guardarFood = async (food) => {
 
           <TableBody emptyContent="No hay elementos por mostrar" className="">
             {users.map((cliente) => (
-              
+
               <TableRow key={cliente._id}>
 
 
                 {/* -------------------MODAL DE PRODUCTOS SELECCIONADOS*/}
 
-               
+
 
 
                 <TableCell>
-                {sizess.map((size) => (
-                <Button className="bg-white" key={size} onPress={() => handleOpenM(size)} onClick={() => handleOpenModal(cliente)}>
-                  <img className="w-4" src={chevron} alt="" />
-                </Button>
+                  {sizess.map((size) => (
+                    <Button className="bg-white" key={size} onPress={() => handleOpenM(size)} onClick={() => handleOpenModal(cliente)}>
+                      <img className="w-4" src={chevron} alt="" />
+                    </Button>
                   ))}
-                {selectedUser && (
-                <Modal size={size}  isOpen={isModalOpen} onClose={closeModal} className="w-8/12">
-                  <ModalContent >
-                    <ModalHeader className="border-b-3 border-blue-500 text-3xl flex  justify-between">
-                      <div className="mb-0.5">History</div>
-                      <div className="uppercase"> {selectedUser.nombre}</div>
-                    </ModalHeader>
-                    <ModalBody className="uppercase flex">
-                      <div className="flex w-full">
-                        <section className="flex justify-between w-full flex-wrap border-3">
+                  {selectedUser && (
+                    <Modal size={size} isOpen={isModalOpen} onClose={closeModal} className="w-8/12">
+                      <ModalContent >
+                        <ModalHeader className="border-b-3 border-blue-500 text-3xl flex  justify-between">
+                          <div className="mb-0.5">History</div>
+                          <div className="uppercase"> {selectedUser.nombre}</div>
+                        </ModalHeader>
+                        <ModalBody className="uppercase flex">
+                          <div className="flex w-full">
+                            <section className="flex justify-between w-full flex-wrap border-3">
 
-                          {/* Sección de Productos (Bebidas + Comidas) */}
-                          <div className="mx-5 my-1 border-2 w-full">
-                            <h4 className="text-green-600">Productos (Bebidas y Comidas)</h4>
+                              {/* Sección de Productos (Bebidas + Comidas) */}
+                              <div className="mx-5 my-1 border-2 w-full">
+                                <h4 className="text-green-600">Productos (Bebidas y Comidas)</h4>
 
-                            {/* Combina ambos arrays (bebidas y comidas) y verifica si tiene elementos */}
-                            {selectedUser.bebidas && selectedUser.restaurante && 
-                            Array.isArray(selectedUser.bebidas) && Array.isArray(selectedUser.restaurante) &&
-                            [...selectedUser.bebidas, ...selectedUser.restaurante].length > 0 ? (
-                              <table className="w-full text-center">
-                                <thead>
-                                  <tr>
-                                      <th>Nombre</th>
-                                      <th>Cantidad</th>
-                                      <th>Precio Unitario</th>
-                                      <th>Total</th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                    {/* Muestra los productos (bebidas y comidas) */}
-                                    {[...selectedUser.bebidas, ...selectedUser.restaurante].map((producto, index) => (
+                                {/* Combina ambos arrays (bebidas y comidas) y verifica si tiene elementos */}
+                                {selectedUser.bebidas && selectedUser.restaurante &&
+                                  Array.isArray(selectedUser.bebidas) && Array.isArray(selectedUser.restaurante) &&
+                                  [...selectedUser.bebidas, ...selectedUser.restaurante].length > 0 ? (
+                                  <table className="w-full text-center">
+                                    <thead>
+                                      <tr>
+                                        <th>Nombre</th>
+                                        <th>Cantidad</th>
+                                        <th>Precio Unitario</th>
+                                        <th>Total</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      {/* Muestra los productos (bebidas y comidas) */}
+                                      {[...selectedUser.bebidas, ...selectedUser.restaurante].map((producto, index) => (
                                         <tr key={index}>
-                                            <td>{producto.nombre}</td>
-                                            <td>{producto.cantidad}</td>
-                                            <td>{producto.precio}</td>
-                                            <td>{producto.cantidad * producto.precio}</td>
+                                          <td>{producto.nombre}</td>
+                                          <td>{producto.cantidad}</td>
+                                          <td>{producto.precio}</td>
+                                          <td>{producto.cantidad * producto.precio}</td>
                                         </tr>
-                                    ))}
-                                </tbody>
-                                <tfoot className="border-t-3 border-green-500 pt-2">
-                                  <tr>
-                                    <td className="w-6/12 text-left"></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td style={{height:"60px", paddingRight: "20px", width: "150px"}} className="text-right">Total: {
-                                      [...selectedUser.bebidas, ...selectedUser.restaurante].reduce((acc, producto) => 
-                                        acc + (producto.cantidad * producto.precio), 0
-                                      )
-                                    }</td>
-                                  </tr>
-                                </tfoot>
-                              </table>
-                            ) : (
-                              <p className="border-4 w-full text-center">No hay productos que mostrar😔</p>
-                            )}
+                                      ))}
+                                    </tbody>
+                                    <tfoot className="border-t-3 border-green-500 pt-2">
+                                      <tr>
+                                        <td className="w-6/12 text-left"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td style={{ height: "60px", paddingRight: "20px", width: "150px" }} className="text-right">Total: {
+                                          [...selectedUser.bebidas, ...selectedUser.restaurante].reduce((acc, producto) =>
+                                            acc + (producto.cantidad * producto.precio), 0
+                                          )
+                                        }</td>
+                                      </tr>
+                                    </tfoot>
+                                  </table>
+                                ) : (
+                                  <p className="border-4 w-full text-center">No hay productos que mostrar😔</p>
+                                )}
+                              </div>
+
+                            </section>
                           </div>
-
-                        </section>
-                      </div>
-                    </ModalBody>
+                        </ModalBody>
 
 
-                    <ModalFooter>
-                      <Button color="danger" variant="light" onClick={closeModal}>
-                        Cerrar
-                      </Button>
-                    </ModalFooter>
-                  </ModalContent>
-                </Modal>
-              )}
+                        <ModalFooter>
+                          <Button color="danger" variant="light" onClick={closeModal}>
+                            Cerrar
+                          </Button>
+                        </ModalFooter>
+                      </ModalContent>
+                    </Modal>
+                  )}
                 </TableCell>
 
-              {/* --------------------FIN DEL MODAL */}
-              
+                {/* --------------------FIN DEL MODAL */}
 
-              <TableCell  className="w-2/12">
-                  ID
+
+                <TableCell className="w-2/12">
+                  {cliente.identificacion}
                 </TableCell>
 
 
@@ -940,7 +883,7 @@ const guardarFood = async (food) => {
 
 
 
-                
+
                 <TableCell>
                   {cliente._id === editedUserId ? (
                     <div className="flex">
@@ -974,18 +917,18 @@ const guardarFood = async (food) => {
                 <TableCell>{cliente.mediosDePagoPendiente}</TableCell>
                 <TableCell>{cliente.pagoPendiente}</TableCell>
 
-                   
-                     
-                      <TableCell key={cliente._id} className=" ">
-                  
-                      <div className=" flex justify-center">
-                      <div className="flex flex-wrap gap-3">
-                          {sizesm.map((size) => (
-                            <Button className="bg-white-100" key={size} onPress={() => handleOpenm(size,cliente._id)}>
-                              <img className="w-7 h-7" src={plus} alt="" />
-                            </Button>
-                          ))}
-                        </div>
+
+
+                <TableCell key={cliente._id} className=" ">
+
+                  <div className=" flex justify-center">
+                    <div className="flex flex-wrap gap-3">
+                      {sizesm.map((size) => (
+                        <Button className="bg-white-100" key={size} onPress={() => handleOpenm(size, cliente._id)}>
+                          <img className="w-7 h-7" src={plus} alt="" />
+                        </Button>
+                      ))}
+                    </div>
 
                     <Modal size={size} isOpen={isModalOpenM} onClose={closeModalM}>
                       <ModalContent>
@@ -1039,10 +982,9 @@ const guardarFood = async (food) => {
                     </Modal>
 
 
-                      </div>
-                
-                      </TableCell>
-                    
+                  </div>
+
+                </TableCell>
 
 
 
@@ -1050,67 +992,68 @@ const guardarFood = async (food) => {
 
 
 
-<TableCell key={cliente.id} className="">
-                                <div className="flex flex-wrap gap-3">
-        {sizesm.map((size) => (
-          <Button className="bg-white-100" key={size} onPress={() => handleOpenmf(size,cliente._id)}>
-            <img className="w-7 h-7" src={plus} alt="" />
-          </Button>
-        ))}
-      </div>
-      
-                        <Modal size={size} isOpen={isModalOpenF} onClose={closeModalF}>
-        <ModalContent>
-          {(closeModalF) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">COMIDAS</ModalHeader>
-              <ModalBody>
-<Input
-                                name="restaurante"
-                                label="Ingrese la cantidad para adultos"
-                                type="number"
-                                value={isNaN(cantidadFood) ? '' : cantidadFood}
-                                onChange={(e) => {
-                                  const value = parseInt(e.target.value, 10);
-                                  setCantidadBebida(isNaN(value) ? 0 : value);
-                                }}
-                              />
-              <Select
-                      name="bebidas"
-                      label="Seleccionar bebida para adultos"
-                                value={foodSeleccionada}
-                                onChange={(e) => {
-                                  const selectedFood = e.target.value;
-                                  setFoodSeleccionada(selectedFood);
 
-                                  const foodSeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood);
-                                  if (foodSeleccionadaInfo) {
-                                    setPrecioFoodSeleccionada(foodSeleccionadaInfo.ValorUnitario);
-                                    setFoodSeleccionadaId(foodSeleccionadaInfo._id);
-                                  }
-                                }}
-                              >
-                      {snacks.map((food) => (
-                        <SelectItem key={food.Descripcion}>
-                          {food.Descripcion}
-                        </SelectItem>
-                      ))}
-                    </Select>
-              </ModalBody>
-              <ModalFooter>
-                <Button color="danger" variant="light" onPress={closeModalF}>
-                  Close
-                </Button>
-                <Button onClick={handleGuardarFood}>
-                                Guardar Bebidas
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
-                
-                  </TableCell>
+                <TableCell key={cliente.id} className="">
+                  <div className="flex flex-wrap gap-3">
+                    {sizesm.map((size) => (
+                      <Button className="bg-white-100" key={size} onPress={() => handleOpenmf(size, cliente._id)}>
+                        <img className="w-7 h-7" src={plusb} alt="" />
+                      </Button>
+                    ))}
+                  </div>
+
+                  <Modal size={size} isOpen={isModalOpenF} onClose={closeModalF}>
+                    <ModalContent>
+                      {(closeModalF) => (
+                        <>
+                          <ModalHeader className="flex flex-col gap-1">COMIDAS</ModalHeader>
+                          <ModalBody>
+                            <Input
+                              name="restaurante"
+                              label="Ingrese la cantidad para adultos"
+                              type="number"
+                              value={isNaN(cantidadFood) ? '' : cantidadFood}
+                              onChange={(e) => {
+                                const value = parseInt(e.target.value, 10);
+                                setCantidadFood(isNaN(value) ? 0 : value);
+                              }}
+                            />
+                            <Select
+                              name="bebidas"
+                              label="Seleccionar bebida para adultos"
+                              value={foodSeleccionada}
+                              onChange={(e) => {
+                                const selectedFood = e.target.value;
+                                setFoodSeleccionada(selectedFood);
+
+                                const foodSeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood);
+                                if (foodSeleccionadaInfo) {
+                                  setPrecioFoodSeleccionada(foodSeleccionadaInfo.ValorUnitario);
+                                  setFoodSeleccionadaId(foodSeleccionadaInfo._id);
+                                }
+                              }}
+                            >
+                              {snacks.map((food) => (
+                                <SelectItem key={food.Descripcion}>
+                                  {food.Descripcion}
+                                </SelectItem>
+                              ))}
+                            </Select>
+                          </ModalBody>
+                          <ModalFooter>
+                            <Button color="danger" variant="light" onPress={closeModalF}>
+                              Close
+                            </Button>
+                            <Button onClick={handleGuardarFood}>
+                              Guardar Bebidas
+                            </Button>
+                          </ModalFooter>
+                        </>
+                      )}
+                    </ModalContent>
+                  </Modal>
+
+                </TableCell>
 
 
 
@@ -1162,8 +1105,7 @@ const guardarFood = async (food) => {
                 {/* {cliente.restaurante.map((food, index) => (
                   <TableCell key={index}>{food?.nombre || "aun no hay bebidas"}</TableCell>
                 ))} */}
-
-                <TableCell>{cliente.totalConsumo}</TableCell>
+                <TableCell></TableCell>
                 <TableCell className="flex justify-center align-center pr-5 w-60">
                   {cliente.identificacion === editedUserId && (
                     <div className="flex">

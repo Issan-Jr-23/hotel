@@ -23,17 +23,11 @@ router.post("/agregar-cantidad", addCv)
 router.delete("/eliminar-mekato/:id", deleteProducto)
 router.put("/update-producto/:id", updateProducto)
 router.post('actualizar-inventario',updateBebidas)
-<<<<<<< HEAD
 // router.get('/fill-type', filType)
 router.post('/actualizar-inventario-bebida',updateCB)
 router.get('/verificar-disponibilidad/:id',validCB)
 router.get('/fill-type', filType)
 router.post('/actualizar-inventario-food',updateCF)
 router.get('/verificar-disponibilidad-food/:id',validCF)
-=======
-router.get('/fill-type', filType)
-router.post('/actualizar-inventario-food',updateCF)
-router.get('/verificar-disponibilidad/:id',validCF)
->>>>>>> 7d60d4aa75235bdb975b1e3ce1afbaaa5c8133d4
 
 export default router;

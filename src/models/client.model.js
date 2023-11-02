@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 import moment from "moment-timezone";
 
 const clienteSchema = new mongoose.Schema({
+  identificacion: {
+    type: Number,
+    required: true
+  },
   nombre: {
     type: String,
     required: true,
@@ -15,17 +19,14 @@ const clienteSchema = new mongoose.Schema({
   mediosDePago: {
     type: String,
     enum: ['efectivo','nequi', 'daviplata', 'pse','efecty', 'transferencia'],
-    required: true,
   },
   pagoAnticipado :{
     type: Number,
-    Required: true,
     default: 0
   },
   mediosDePagoPendiente: {
     type: String,
     enum: ['efectivo','nequi', 'daviplata', 'pse','efecty', 'transferencia'],
-    required: true,
   },
   pagoPendiente: {
     type: Number,
