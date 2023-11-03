@@ -1,4 +1,4 @@
-import {Navbar,DropdownItem,Dropdown,DropdownTrigger,DropdownMenu,Avatar, NavbarBrand,NavbarMenu,NavbarMenuItem,NavbarMenuToggle, NavbarContent, NavbarItem, Button} from "@nextui-org/react";
+import {Navbar,DropdownItem,Dropdown,DropdownTrigger,DropdownMenu,Avatar, NavbarBrand,NavbarMenu, NavbarContent, NavbarItem, Button} from "@nextui-org/react";
 import { Link } from "react-router-dom";
 import './navbars.css'
 import { useAuth } from "../context/authContext";
@@ -7,15 +7,11 @@ export default function Navbars() {
 
 
   const { isAuthenticated, logout, user } = useAuth();
-  console.log(isAuthenticated, user)
-
+  const { isAdmin } = useAuth();
 
 
   return (
     <Navbar isBordered className="bg-zinc-800 h-20 justify-beetween">
-      {/* <NavbarContent className="sm:hidden" justify="start">
-        <NavbarMenuToggle />
-      </NavbarContent> */}
 
       <NavbarContent className="sm:hidden pr-3" justify="center">
         <NavbarBrand>
@@ -25,7 +21,7 @@ export default function Navbars() {
 
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarBrand>
-          <Link to={isAuthenticated ? "/home" : "/register"}><img className="w-14" src={logo} alt="" /> </Link>
+          <Link to={isAuthenticated ? "/home" : "/"}><img className="w-14" src={logo} alt="" /> </Link>
         </NavbarBrand>
         <Dropdown>
           <NavbarItem >
@@ -100,11 +96,13 @@ export default function Navbars() {
             Energia Renovable
           </Link>
         </NavbarItem>
-        <NavbarItem >
-          <Link to="/Register" className="text-blue-700 font-medium text-base" color="foreground">
+        {isAdmin && ( 
+        <NavbarItem>
+          <Link to="/Register" className="text-blue-700 font-medium text-base">
             Registrar
           </Link>
         </NavbarItem>
+      )}
       </NavbarContent>
 
       <NavbarContent as="div" className="items-center" justify="">

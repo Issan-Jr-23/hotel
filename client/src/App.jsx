@@ -12,7 +12,7 @@ import InvAlimentos from "./pages/InventarioAlimentos.jsx";
 import Mekatos from "./pages/Mekatos.jsx"
 import Food from "./pages/Food.jsx"
 import Bebidas from "./pages/Bebidas.jsx"
-import Register from "./pages/RegisterPage.jsx"
+
 
 
 
@@ -39,7 +39,9 @@ function App() {
                 <Route path="/alimentos" element={<InvAlimentos/>}/>
                 <Route path="/food" element={<Food/>}/>
                 <Route path="/drinks" element={<Bebidas/>}/>
-                <Route path="/Register" element={<Register/>}/>
+                <Route element={<AdminRoute />}>
+                <Route path="/register" element={<Register/>}/>
+              </Route>
               </Route>
             </Routes>
           </main>

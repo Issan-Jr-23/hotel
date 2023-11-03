@@ -16,8 +16,18 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [errors, setErrors] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   // clear errors after 5 seconds
+
+  useEffect(() => {
+    if (user && user.role === 'admin') { 
+      setIsAdmin(true);
+    } else {
+      setIsAdmin(false);
+    }
+  }, [user]);
+
   useEffect(() => {
     if (errors.length > 0) {
       const timer = setTimeout(() => {
@@ -81,6 +91,8 @@ export const AuthProvider = ({ children }) => {
     checkLogin();
   }, []);
 
+  
+
   return (
     <AuthContext.Provider
       value={{
@@ -89,6 +101,7 @@ export const AuthProvider = ({ children }) => {
         signin,
         logout,
         isAuthenticated,
+        isAdmin,
         errors,
         loading,
       }}
