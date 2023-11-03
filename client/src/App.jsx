@@ -39,9 +39,6 @@ function App() {
                 <Route path="/alimentos" element={<InvAlimentos/>}/>
                 <Route path="/food" element={<Food/>}/>
                 <Route path="/drinks" element={<Bebidas/>}/>
-                <Route element={<AdminRoute />}>
-                <Route path="/register" element={<Register/>}/>
-              </Route>
               </Route>
             </Routes>
           </main>
