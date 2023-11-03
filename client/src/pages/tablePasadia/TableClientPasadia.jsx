@@ -16,8 +16,10 @@ import {
   useDisclosure,
   Select,
   SelectItem,
+  RadioGroup, Radio
 } from "@nextui-org/react";
 
+import "./tables.css"
 import axios from "axios";
 import editar from "../../images/boligrafo.png";
 import borrar from "../../images/borrar.png";
@@ -37,11 +39,21 @@ export default function App() {
   const [precioBebidaSeleccionada, setPrecioBebidaSeleccionada] = useState(0);
   const [bebidaSeleccionadaId, setBebidaSeleccionadaId] = useState(null);
 
+  const [cantidadBebida1, setCantidadBebida1] = useState(1);
+  const [bebida1Seleccionada, setBebida1Seleccionada] = useState('');
+  const [precioBebida1Seleccionada, setPrecioBebida1Seleccionada] = useState(0);
+  const [bebida1SeleccionadaId, setBebida1SeleccionadaId] = useState(null);
+
 
   const [cantidadFood, setCantidadFood] = useState(1);
   const [foodSeleccionada, setFoodSeleccionada] = useState('');
   const [precioFoodSeleccionada, setPrecioFoodSeleccionada] = useState(0);
   const [foodSeleccionadaId, setFoodSeleccionadaId] = useState(null);
+
+  const [cantidadFood1, setCantidadFood1] = useState(1);
+  const [food1Seleccionada, setFood1Seleccionada] = useState('');
+  const [precioFood1Seleccionada, setPrecioFood1Seleccionada] = useState(0);
+  const [food1SeleccionadaId, setFood1SeleccionadaId] = useState(null);
 
   const [selectedClientId, setSelectedClientId] = useState(null);
   const [cantidadDeBebidas, setCantidadDeBebidas] = useState('');
@@ -50,10 +62,7 @@ export default function App() {
   const [editedName, setEditedName] = useState("");
   const [editPago, setEditPago] = useState("");
 
-  // const [cantidadBebidaN, setCantidadBebidaN] = useState(1);
-  // const [bebidaSeleccionadaN, setBebidaSeleccionadaN] = useState('');
-  // const [precioBebidaSeleccionadaN, setPrecioBebidaSeleccionadaN] = useState(0);
-  // const [bebidaSeleccionadaIdN, setBebidaSeleccionadaIdN] = useState(null);
+
 
   const options = ["Si", "No"];
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -70,8 +79,7 @@ export default function App() {
     pagoAnticipado: "",
     mediosDePagoPendiente: "",
     pagoPendiente: "",
-    bebidas: "",
-    restaurante: ""
+    fechaPasadia: ""
 
   });
 
@@ -100,34 +108,7 @@ export default function App() {
     });
   };
 
-  const actualizarInventario = async (bebidaId, VentaAdultos, VentaNinios) => {
-    const response = await axios.post('http://127.0.0.1:3000/api/actualizar-inventario', {
-      bebidaId,
-      VentaAdultos,
-      VentaNinios
-    });
-    // Maneja la respuesta como lo necesites
-  }
 
-  const handleBebidasChange = (selectedIndex) => {
-    const selectedDrink = drinks[selectedIndex];
-    console.log(selectedDrink);
-    setFormData({
-      ...formData,
-      bebidas: [selectedDrink],
-    });
-    console.log(formData)
-  };
-
-  const handleRestauranteChange = (selectedIndex) => {
-    const selectedSnack = snacks[selectedIndex];
-    console.log(selectedSnack);
-    setFormData({
-      ...formData,
-      restaurante: selectedSnack,
-    });
-    console.log(formData)
-  };
 
   // const actualizarCantidadBebida = (bebidaSeleccionada, cantidadDeseada) => {
   //   axios.put('http://localhost:3000/api/update-bebidas', {
@@ -145,7 +126,6 @@ export default function App() {
 
 
 
-  // Función para actualizar el inventario de bebidas en el servidor.
   const actualizarInventarioBebida = async (bebidaId, cantidad) => {
     try {
       const response = await axios.post('http://127.0.0.1:3000/api/actualizar-inventario-bebida', {
@@ -163,54 +143,77 @@ export default function App() {
   };
 
   const handleGuardarBebida = async () => {
-    console.log(" id del cliente " + selectedClientId);
-
+    console.log("id del cliente " + selectedClientId);
+  
     try {
-      if (!selectedClientId || !bebidaSeleccionadaId) {
+      // Check for client and at least one drink selection
+      if (!selectedClientId || (!bebidaSeleccionadaId && !bebida1SeleccionadaId)) {
         throw new Error('No se ha seleccionado un cliente o una bebida.');
       }
-
-      // Verifica la disponibilidad de la bebida antes de proceder
-      const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad/${bebidaSeleccionadaId}`);
-      const cantidadInicial = response.data.CantidadInicial
-      const cantidadRestante = response.data.cantidadRestante;
-      if (cantidadBebida > cantidadInicial) {
-        alert("La bebida no tiene suficiente stock");
-        return;  // Termina la función aquí, no procedas con el proceso de guardar
-      } else if (cantidadBebida > cantidadRestante) {
-        alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
-      }
-
-      let isBebidaAdultoAdded = false;
-
-      if (cantidadBebida > 0 && bebidaSeleccionadaId && selectedClientId) {
+  
+      // Function to check stock and update inventory for a given drink
+      const checkStockAndUpdateInventory = async (bebidaId, cantidad) => {
+        const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad/${bebidaId}`);
+        const cantidadInicial = response.data.CantidadInicial;
+        const cantidadRestante = response.data.cantidadRestante;
+  
+        if (cantidad > cantidadInicial) {
+          alert("La bebida no tiene suficiente stock");
+          return false;
+        } else if (cantidad > cantidadRestante) {
+          alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
+          return false;
+        }
+  
+        await actualizarInventarioBebida(bebidaId, cantidad);
+        return true;
+      };
+  
+      let isBebidaAdded = false;
+  
+      // Handle the first drink selection
+      if (cantidadBebida > 0 && bebidaSeleccionadaId) {
         const bebidaAdultos = {
           id: bebidaSeleccionadaId,
           nombre: bebidaSeleccionada,
           cantidad: cantidadBebida,
           precio: precioBebidaSeleccionada,
         };
-
-        await guardarBebida(bebidaAdultos);
-
-        // Actualizar el inventario después de guardar la bebida para el cliente
-        await actualizarInventarioBebida(bebidaSeleccionadaId, cantidadBebida);
-
-        isBebidaAdultoAdded = true;
-        console.log("Adultos" + bebidaAdultos);
+  
+        if (await checkStockAndUpdateInventory(bebidaSeleccionadaId, cantidadBebida)) {
+          await guardarBebida(bebidaAdultos);
+          isBebidaAdded = true;
+          console.log("Bebida para adultos agregada:", bebidaAdultos);
+        }
       }
-
-      if (!isBebidaAdultoAdded) {
-        alert("No se ha agregado una bebida para adultos");
+  
+      // Handle the second drink selection
+      if (cantidadBebida1 > 0 && bebida1SeleccionadaId) {
+        const bebidaAdultos1 = {
+          id: bebida1SeleccionadaId,
+          nombre: bebida1Seleccionada,
+          cantidad: cantidadBebida1,
+          precio: precioBebida1Seleccionada, // Assuming you have a state variable for this
+        };
+  
+        if (await checkStockAndUpdateInventory(bebida1SeleccionadaId, cantidadBebida1)) {
+          await guardarBebida(bebidaAdultos1);
+          isBebidaAdded = true;
+          console.log("Segunda bebida para adultos agregada:", bebidaAdultos1);
+        }
       }
-
-      onClose();
+  
+      if (!isBebidaAdded) {
+        alert("No se ha agregado ninguna bebida");
+      } else {
+        onClose(); // Assuming onClose is a function to close the modal
+      }
     } catch (error) {
       console.error('Error al guardar las bebidas en el cliente:', error.message);
     }
   };
+  
 
-  // Función para hacer la petición de guardar la bebida en el cliente.
   const guardarBebida = async (bebida) => {
     try {
       const response = await axios.post('http://127.0.0.1:3000/api/pasadia-agregar-bebida', {
@@ -227,6 +230,12 @@ export default function App() {
       throw error;  // Re-throw para ser capturado en handleGuardarBebida
     }
   };
+
+
+
+
+
+
 
   ////////////////////////////////////---guardar comidas-----/////////////////
 
@@ -248,52 +257,72 @@ export default function App() {
   };
 
   const handleGuardarFood = async () => {
-    console.log(" id del cliente " + selectedClientId);
-
+    console.log("id del cliente " + selectedClientId);
+  
     try {
-      if (!selectedClientId || !foodSeleccionadaId) {
-        throw new Error('No se ha seleccionado un cliente o una bebida.');
+      if (!selectedClientId || (!foodSeleccionadaId && !food1SeleccionadaId)) {
+        throw new Error('No se ha seleccionado un cliente o una comida.');
       }
-
-      // Verifica la disponibilidad de la bebida antes de proceder
-      const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad/${foodSeleccionadaId}`);
-      const cantidadRestante = response.data.cantidadRestante;
-      const cantidadInicial = response.data.CantidadInicial
-      if (cantidadFood > cantidadInicial) {
-        alert("La bebida no tiene suficiente stock");
-      } else if (cantidadFood > cantidadRestante) {
-        alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
-        return;  // Termina la función aquí, no procedas con el proceso de guardar
-      }
-
-      let isFoodAdultoAdded = false;
-
-      if (cantidadFood > 0 && foodSeleccionadaId && selectedClientId) {
-        const foodAdultos = {
+  
+      const checkStockAndUpdateInventory = async (foodId, cantidad) => {
+        const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad/${foodId}`);
+        const cantidadInicial = response.data.CantidadInicial;
+        const cantidadRestante = response.data.cantidadRestante;
+  
+        if (cantidad > cantidadInicial) {
+          alert("La comida no tiene suficiente stock");
+          return false;
+        } else if (cantidad > cantidadRestante) {
+          alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
+          return false;
+        }
+  
+        await actualizarInventarioFood(foodId, cantidad);
+        return true;
+      };
+  
+      let isFoodAdded = false;
+  
+      if (cantidadFood > 0 && foodSeleccionadaId) {
+        const comidaAdultos = {
           id: foodSeleccionadaId,
           nombre: foodSeleccionada,
           cantidad: cantidadFood,
           precio: precioFoodSeleccionada,
         };
-
-        await guardarFood(foodAdultos);
-
-        // Actualizar el inventario después de guardar la bebida para el cliente
-        await actualizarInventarioFood(foodSeleccionadaId, cantidadFood);
-
-        isFoodAdultoAdded = true;
-        console.log("Adultos" + foodAdultos);
+  
+        if (await checkStockAndUpdateInventory(foodSeleccionadaId, cantidadFood)) {
+          await guardarFood(comidaAdultos);
+          isFoodAdded = true;
+          console.log("Comida para adultos agregada:", comidaAdultos);
+        }
       }
-
-      if (!isFoodAdultoAdded) {
-        alert("No se ha agregado una bebida para adultos");
+  
+      if (cantidadFood1 > 0 && food1SeleccionadaId) {
+        const comidaAdultos1 = {
+          id: food1SeleccionadaId,
+          nombre: food1Seleccionada,
+          cantidad: cantidadFood1,
+          precio: precioFood1Seleccionada,
+        };
+  
+        if (await checkStockAndUpdateInventory(food1SeleccionadaId, cantidadFood1)) {
+          await guardarFood(comidaAdultos1);
+          isFoodAdded = true;
+          console.log("Segunda comida para adultos agregada:", comidaAdultos1);
+        }
       }
-
-      onClose();
+  
+      if (!isFoodAdded) {
+        alert("No se ha agregado ninguna comida");
+      } else {
+        onClose(); // Assuming onClose is a function to close the modal
+      }
     } catch (error) {
-      console.error('Error al guardar las bebidas en el cliente:', error.message);
+      console.error('Error al guardar las comidas en el cliente:', error.message);
     }
   };
+  
 
   // Función para hacer la petición de guardar la bebida en el cliente.
   const guardarFood = async (food) => {
@@ -316,92 +345,6 @@ export default function App() {
   ////////////////////////////////////---fin  guardar comidas-----/////////////////
 
   //////////////////////////////////////////////////////////////////
-
-
-
-  // Función para actualizar el inventario de bebidas en el servidor.
-  // const actualizarInventariofood = async (foodId, cantidad) => {
-  //   try {
-  //     const response = await axios.post('http://127.0.0.1:3000/api/actualizar-inventario-food', {
-  //       id: foodId,
-  //       cantidad,
-  //     });
-
-  //     if (response.status < 200 || response.status >= 300) {
-  //       throw new Error(`Error al actualizar el inventario. Estado de la respuesta: ${response.status}`);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error al actualizar el inventario de bebidas:', error.message);
-  //     throw error;  // Re-throw para ser capturado en handleGuardarBebida
-  //   }
-  // };
-
-  // const handleGuardarFood = async () => {
-  //   console.log(" id del cliente " + selectedClientId);
-
-  //   try {
-  //       if (!selectedClientId || !foodSeleccionadaId) {
-  //           throw new Error('No se ha seleccionado un cliente o una bebida.');
-  //       }
-
-  //       // Verifica la disponibilidad de la bebida antes de proceder
-  //       const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad-food/${foodSeleccionadaId}`);
-  //       const cantidadRestante = response.data.cantidadRestante;
-  //       const cantidadInicial = response.data.CantidadInicial
-  //       if(cantidadFood > cantidadInicial){
-  //         alert("La bebida no tiene suficiente stock");
-  //       }else if (cantidadFood > cantidadRestante) {
-  //           alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
-  //           return;  // Termina la función aquí, no procedas con el proceso de guardar
-  //       }
-
-  //       let isFoodClientAdded = false;
-
-  //       if (cantidadFood > 0 && foodSeleccionadaId && selectedClientId) {
-  //           const foodclient = {
-  //               id: foodSeleccionadaId,
-  //               nombre: foodSeleccionada,
-  //               cantidad: cantidadFood,
-  //               precio: precioFoodSeleccionada,
-  //           };
-
-  //           await guardarFood(foodclient);
-
-  //           // Actualizar el inventario después de guardar la bebida para el cliente
-  //           await actualizarInventariofood(foodSeleccionadaId, cantidadFood);
-
-  //           isFoodClientAdded = true;
-  //           console.log("Adultos" + foodclient);
-  //       }
-
-  //       if (!isFoodClientAdded) {
-  //           alert("No se ha agregado una bebida para adultos");
-  //       }
-
-
-  //   } catch (error) {
-  //       console.error('Error al guardar las bebidas en el cliente:', error.message);
-  //   }
-  // };
-
-  // // Función para hacer la petición de guardar la bebida en el cliente.
-  // const guardarFood = async (food) => {
-  //   try {
-  //       const response = await axios.post('http://127.0.0.1:3000/api/pasadia-agregar-food', {
-  //           id: selectedClientId,
-  //           food,
-  //       });
-  //       console.log("peticion: ", selectedClientId);
-  //       closeModalF()
-  //       if (response.status < 200 || response.status >= 300) {
-  //           throw new Error(`Error al agregar la bebida. Estado de la respuesta: ${response.status}`);
-  //       }
-  //   } catch (error) {
-  //       console.error('Error al guardar la bebida en el cliente:', error.message);
-  //       throw error;  // Re-throw para ser capturado en handleGuardarBebida
-  //   }
-  // };
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -585,6 +528,18 @@ export default function App() {
     setModalOpen(true);
   };
 
+  const rol1 = [
+    "Administrador de Sistemas",
+  ]
+
+  const rol2 = "admin"
+  const rol3 = "user"
+
+
+  const roles = [
+    "admin", "user"
+  ]
+
  
 
   return (
@@ -696,6 +651,14 @@ export default function App() {
                       value={formData.pagoAnticipado}
                       onChange={handleInputChange}
                     />
+                    <Input
+                      name="fechaPasadia"
+                      type="date"
+                      label="Fecha en la desea disfrutar el pasadia"
+                      placeholder="Fecha en la desea disfrutar el pasadia"
+                      value={formData.fechaPasadia}
+                      onChange={handleInputChange}
+                    />
                     <select
                       id="mediosDePagoPendiente"
                       name="mediosDePagoPendiente"
@@ -749,8 +712,8 @@ export default function App() {
       <section className="flex coluns-2 border-3 mt-5 mx-5 rounded-t-2xl border-blue-300">
         <Table className=" text-center uppercase" aria-label="Lista de Usuarios">
           <TableHeader className="text-center">
-            <TableColumn className="text-center">+</TableColumn>
-            <TableColumn className="text-center max-w-xs">ID</TableColumn>
+            <TableColumn className="text-center tables_im">+</TableColumn>
+            <TableColumn className="text-center tables_im">ID</TableColumn>
             <TableColumn className="text-center ">Nombre</TableColumn>
             <TableColumn className="text-center ">Reserva</TableColumn>
             <TableColumn className="text-center ">Adultos</TableColumn>
@@ -759,13 +722,15 @@ export default function App() {
             <TableColumn className="text-center ">
               Anticipo
             </TableColumn>
-            <TableColumn className="text-center">Fecha de registro</TableColumn>
-            <TableColumn className="text-center">Metodo de pago</TableColumn>
-            <TableColumn className="text-center">Pago pendiente o total</TableColumn>
+            <TableColumn className="text-center tables_im">Fecha de registro</TableColumn>
+            <TableColumn className="text-center tables_im">fecha de inicio del pasadia</TableColumn>
+            <TableColumn className="text-center tables_im">Metodo de pago</TableColumn>
+            <TableColumn className="text-center tables_im">Pago pendiente o total</TableColumn>
             <TableColumn className="text-center">add bebida</TableColumn>
             <TableColumn className="text-center">add comida</TableColumn>
             <TableColumn className="text-center">Consumo total</TableColumn>
-            <TableColumn className="text-center">Acción</TableColumn>
+            
+            {/* <TableColumn className="text-center">Acción</TableColumn> */}
           </TableHeader>
 
 
@@ -778,7 +743,7 @@ export default function App() {
           <TableBody emptyContent="No hay elementos por mostrar" className="">
             {users.map((cliente) => (
 
-              <TableRow key={cliente._id}>
+              <TableRow className="cursor-pointer hover:bg-blue-200" key={cliente._id}>
 
 
                 {/* -------------------MODAL DE PRODUCTOS SELECCIONADOS*/}
@@ -797,7 +762,7 @@ export default function App() {
                       <ModalContent >
                         <ModalHeader className="border-b-3 border-blue-500 text-3xl flex  justify-between">
                           <div className="mb-0.5">History</div>
-                          <div className="uppercase"> {selectedUser.nombre}</div>
+                          <div className="uppercase"> {selectedUser.nombre} - {selectedUser.identificacion}</div>
                         </ModalHeader>
                         <ModalBody className="uppercase flex">
                           <div className="flex w-full">
@@ -913,7 +878,16 @@ export default function App() {
                 <TableCell>{cliente.cantidadPersonas.ninios}</TableCell>
                 <TableCell>{cliente.mediosDePago}</TableCell>
                 <TableCell>{cliente.pagoAnticipado}</TableCell>
-                <TableCell>{cliente.fechaDeRegistro}</TableCell>
+                <TableCell>{new Date(cliente.fechaDeRegistro).toLocaleDateString('es-ES', {
+                      year: 'numeric',
+                      month: 'long'  ,
+                      day: 'numeric' ,
+                    })}</TableCell>
+                <TableCell>{new Date(cliente.fechaPasadia).toLocaleDateString('es-ES', {
+                      year: 'numeric',
+                      month: 'long'  ,
+                      day: 'numeric' ,
+                    })}</TableCell>
                 <TableCell>{cliente.mediosDePagoPendiente}</TableCell>
                 <TableCell>{cliente.pagoPendiente}</TableCell>
 
@@ -930,12 +904,19 @@ export default function App() {
                       ))}
                     </div>
 
-                    <Modal size={size} isOpen={isModalOpenM} onClose={closeModalM}>
+                    <Modal
+                     classNames={{
+                      backdrop: "bg-inherit, blur",
+                    }}
+                    size={size} isOpen={isModalOpenM} onClose={closeModalM}>
                       <ModalContent>
                         {(closeModalM) => (
                           <>
                             <ModalHeader className="flex flex-col gap-1">BEBIDAS</ModalHeader>
                             <ModalBody>
+                              <RadioGroup>
+                                <Radio value=""> Cortesia </Radio>
+                              </RadioGroup>
                               <Input
                                 name="bebidas"
                                 label="Ingrese la cantidad para adultos"
@@ -958,6 +939,37 @@ export default function App() {
                                   if (bebidaSeleccionadaInfo) {
                                     setPrecioBebidaSeleccionada(bebidaSeleccionadaInfo.ValorUnitario);
                                     setBebidaSeleccionadaId(bebidaSeleccionadaInfo._id);
+                                  }
+                                }}
+                              >
+                                {drinks.map((bebida) => (
+                                  <SelectItem key={bebida.Descripcion}>
+                                    {bebida.Descripcion}
+                                  </SelectItem>
+                                ))}
+                              </Select>
+                              <Input
+                                name="bebidas"
+                                label="Ingrese la cantidad para adultos"
+                                type="number"
+                                value={isNaN(cantidadBebida1) ? '' : cantidadBebida1}
+                                onChange={(e) => {
+                                  const value = parseInt(e.target.value, 10);
+                                  setCantidadBebida1(isNaN(value) ? 0 : value);
+                                }}
+                              />
+                              <Select
+                                name="bebidas"
+                                label="Seleccionar bebida para adultos"
+                                value={bebida1Seleccionada}
+                                onChange={(e) => {
+                                  const selectedBebida1 = e.target.value;
+                                  setBebida1Seleccionada(selectedBebida1);
+
+                                  const bebida1SeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida1);
+                                  if (bebida1SeleccionadaInfo) {
+                                    setPrecioBebida1Seleccionada(bebida1SeleccionadaInfo.ValorUnitario);
+                                    setBebida1SeleccionadaId(bebida1SeleccionadaInfo._id);
                                   }
                                 }}
                               >
@@ -1008,6 +1020,9 @@ export default function App() {
                         <>
                           <ModalHeader className="flex flex-col gap-1">COMIDAS</ModalHeader>
                           <ModalBody>
+                          <RadioGroup>
+                                <Radio value=""> Cortesia </Radio>
+                              </RadioGroup>
                             <Input
                               name="restaurante"
                               label="Ingrese la cantidad para adultos"
@@ -1019,7 +1034,7 @@ export default function App() {
                               }}
                             />
                             <Select
-                              name="bebidas"
+                              name="restaurante"
                               label="Seleccionar bebida para adultos"
                               value={foodSeleccionada}
                               onChange={(e) => {
@@ -1030,6 +1045,40 @@ export default function App() {
                                 if (foodSeleccionadaInfo) {
                                   setPrecioFoodSeleccionada(foodSeleccionadaInfo.ValorUnitario);
                                   setFoodSeleccionadaId(foodSeleccionadaInfo._id);
+                                }
+                              }}
+                            >
+                              {snacks.map((food) => (
+                                <SelectItem key={food.Descripcion}>
+                                  {food.Descripcion}
+                                </SelectItem>
+                              ))}
+                            </Select>
+
+                                {/* COMIDA 2 */}
+
+                            <Input
+                              name="restaurante"
+                              label="Ingrese la cantidad para adultos"
+                              type="number"
+                              value={isNaN(cantidadFood1) ? '' : cantidadFood1}
+                              onChange={(e) => {
+                                const value = parseInt(e.target.value, 10);
+                                setCantidadFood1(isNaN(value) ? 0 : value);
+                              }}
+                            />
+                            <Select
+                              name="restaurante"
+                              label="Seleccionar bebida para adultos"
+                              value={food1Seleccionada}
+                              onChange={(e) => {
+                                const selectedFood1 = e.target.value;
+                                setFood1Seleccionada(selectedFood1);
+
+                                const food1SeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood1);
+                                if (food1SeleccionadaInfo) {
+                                  setPrecioFoodSeleccionada(food1SeleccionadaInfo.ValorUnitario);
+                                  setFoodSeleccionadaId(food1SeleccionadaInfo._id);
                                 }
                               }}
                             >
@@ -1052,7 +1101,6 @@ export default function App() {
                       )}
                     </ModalContent>
                   </Modal>
-
                 </TableCell>
 
 
@@ -1099,14 +1147,9 @@ export default function App() {
 
 
 
-                {/* {cliente.bebidas.map((bebida, index) => (
-                  <TableCell key={index}>{bebida?.nombre || "aun no hay bebidas"}</TableCell>
-                ))} */}
-                {/* {cliente.restaurante.map((food, index) => (
-                  <TableCell key={index}>{food?.nombre || "aun no hay bebidas"}</TableCell>
-                ))} */}
-                <TableCell></TableCell>
-                <TableCell className="flex justify-center align-center pr-5 w-60">
+               
+                <TableCell>{cliente.pagoAnticipado + cliente.pagoPendiente}</TableCell>
+                {/* <TableCell className="flex justify-center align-center pr-5 w-60">
                   {cliente.identificacion === editedUserId && (
                     <div className="flex">
                       <img
@@ -1131,7 +1174,7 @@ export default function App() {
                     alt="Delete"
                     onClick={() => handleDeleteUser(cliente._id)}
                   />
-                </TableCell>
+                </TableCell> */}
               </TableRow>
             ))}
           </TableBody>

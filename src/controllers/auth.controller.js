@@ -2,7 +2,7 @@ import User from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { TOKEN_SECRET } from "../config.js";
-import { createAccessToken } from "../libs/jwt.js";
+import { createAccessToken } from "../libs/jwt.js"; 
 
 export const register = async (req, res) => {
   try {
@@ -16,56 +16,55 @@ export const register = async (req, res) => {
       });
     }
 
-    // Validar roles
-    const allowedRoles = ["user", "editor", "admin"]; // Ejemplo de roles permitidos
+    
+    const userRoles = Array.isArray(roles) ? roles : [roles];
+    const allowedRoles = ["user", "editor", "admin"];
 
-    if (Array.isArray(roles)) {
-      for (let role of roles) {
-        if (!allowedRoles.includes(role)) {
-          return res.status(400).json({ message: ["Invalid role provided"] });
-        }
-      }
-    } else {
-      if (!allowedRoles.includes(roles)) {
+   
+    for (let role of userRoles) {
+      if (!allowedRoles.includes(role)) {
         return res.status(400).json({ message: ["Invalid role provided"] });
       }
     }
 
-    // hashing the password
+ 
     const passwordHash = await bcrypt.hash(password, 10);
 
-    // creating the user
+   
     const newUser = new User({
       username,
       email,
       password: passwordHash,
-      roles,
+      roles: userRoles, 
     });
 
-    // saving the user in the database
+    
     const userSaved = await newUser.save();
 
-    // create access token
+    
     const token = await createAccessToken({
       id: userSaved._id,
     });
 
+    
     res.cookie("token", token, {
       httpOnly: process.env.NODE_ENV !== "development",
       secure: true,
       sameSite: "none",
     });
 
+   
     res.json({
       id: userSaved._id,
       username: userSaved.username,
       email: userSaved.email,
-      roles: userSaved.roles,  // También podrías incluir roles en la respuesta
+      roles: userSaved.roles,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 export const login = async (req, res) => {
   try {

@@ -12,7 +12,7 @@ import InvAlimentos from "./pages/InventarioAlimentos.jsx";
 import Mekatos from "./pages/Mekatos.jsx"
 import Food from "./pages/Food.jsx"
 import Bebidas from "./pages/Bebidas.jsx"
-import Register from "./pages/Resgistro.jsx"
+import Register from "./pages/RegisterPage.jsx"
 
 
 

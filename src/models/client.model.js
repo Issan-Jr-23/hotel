@@ -4,7 +4,6 @@ import moment from "moment-timezone";
 const clienteSchema = new mongoose.Schema({
   identificacion: {
     type: Number,
-    required: true
   },
   nombre: {
     type: String,
@@ -49,6 +48,9 @@ const clienteSchema = new mongoose.Schema({
   fechaDeRegistro: {
     type: Date,
     default: () => moment.tz("America/Bogota").toDate(), 
+  },
+  fechaPasadia: {
+    type: Date, 
   },
   bebidas: {
     type: Array,
