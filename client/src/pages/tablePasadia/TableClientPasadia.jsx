@@ -38,6 +38,36 @@ export default function App() {
   const [drinks, setDrinks] = useState([]);
   const [snacks, setSnacks] = useState([]);
 
+  const [esCortesia, setEsCortesia] = useState(false);
+  const [cantidadCortesias, setCantidadCortesias] = useState(0);
+
+const handleCortesiaChange = (event) => {
+  setEsCortesia(event.target.value === "cortesia");
+};
+
+function handleCortesiaCheckboxChange(event) {
+  // Actualizar el estado cuando se marque o desmarque la opción de cortesía
+  setEsCortesia(event.target.checked);
+}
+
+function handleBebidaSeleccionadaChange(event) {
+  // Actualizar el estado con la bebida seleccionada
+  const { value, id } = event.target;
+  setBebidaSeleccionada(value);
+  setBebidaSeleccionadaId(id);
+}
+
+function handleCantidadCortesiasChange(event) {
+  // Actualizar el estado con la cantidad de cortesías
+  setCantidadCortesias(Number(event.target.value));
+}
+
+
+
+
+
+
+
   const [cantidadBebida, setCantidadBebida] = useState(1);
   const [bebidaSeleccionada, setBebidaSeleccionada] = useState('');
   const [precioBebidaSeleccionada, setPrecioBebidaSeleccionada] = useState(0);
@@ -148,77 +178,81 @@ export default function App() {
     }
   };
 
-  const handleGuardarBebida = async () => {
-    console.log("id del cliente " + selectedClientId);
-  
-    try {
-      // Check for client and at least one drink selection
-      if (!selectedClientId || (!bebidaSeleccionadaId && !bebida1SeleccionadaId)) {
-        throw new Error('No se ha seleccionado un cliente o una bebida.');
-      }
-  
-      // Function to check stock and update inventory for a given drink
-      const checkStockAndUpdateInventory = async (bebidaId, cantidad) => {
-        const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad/${bebidaId}`);
-        const cantidadInicial = response.data.CantidadInicial;
-        const cantidadRestante = response.data.cantidadRestante;
-  
-        if (cantidad > cantidadInicial) {
-          alert("La bebida no tiene suficiente stock");
-          return false;
-        } else if (cantidad > cantidadRestante) {
-          alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
-          return false;
-        }
-  
-        await actualizarInventarioBebida(bebidaId, cantidad);
-        return true;
+const handleGuardarBebida = async () => {
+  console.log("id del cliente " + selectedClientId);
+
+  try {
+    // Caso de cortesía
+    if (esCortesia && bebidaSeleccionada) {
+      const bebidaCortesia = {
+        id: bebidaSeleccionadaId,
+        nombre: bebidaSeleccionada,
+        cantidad: cantidadCortesias,
+        precio: 0,
+        mensaje: "Cortesía"
       };
-  
-      let isBebidaAdded = false;
-  
-      // Handle the first drink selection
-      if (cantidadBebida > 0 && bebidaSeleccionadaId) {
-        const bebidaAdultos = {
-          id: bebidaSeleccionadaId,
-          nombre: bebidaSeleccionada,
-          cantidad: cantidadBebida,
-          precio: precioBebidaSeleccionada,
-        };
-  
-        if (await checkStockAndUpdateInventory(bebidaSeleccionadaId, cantidadBebida)) {
-          await guardarBebida(bebidaAdultos);
-          isBebidaAdded = true;
-          console.log("Bebida para adultos agregada:", bebidaAdultos);
-        }
-      }
-  
-      // Handle the second drink selection
-      if (cantidadBebida1 > 0 && bebida1SeleccionadaId) {
-        const bebidaAdultos1 = {
-          id: bebida1SeleccionadaId,
-          nombre: bebida1Seleccionada,
-          cantidad: cantidadBebida1,
-          precio: precioBebida1Seleccionada, // Assuming you have a state variable for this
-        };
-  
-        if (await checkStockAndUpdateInventory(bebida1SeleccionadaId, cantidadBebida1)) {
-          await guardarBebida(bebidaAdultos1);
-          isBebidaAdded = true;
-          console.log("Segunda bebida para adultos agregada:", bebidaAdultos1);
-        }
-      }
-  
-      if (!isBebidaAdded) {
-        alert("No se ha agregado ninguna bebida");
-      } else {
-        onClose(); // Assuming onClose is a function to close the modal
-      }
-    } catch (error) {
-      console.error('Error al guardar las bebidas en el cliente:', error.message);
+
+      await guardarBebida(bebidaCortesia);
+      alert(`Cortesía guardada con éxito para ${cantidadCortesias} personas.`);
+      onClose(); // Función para cerrar el modal
+      return; // Finaliza la ejecución aquí si es una cortesía
     }
-  };
-  
+
+    // Verificar que hay un cliente y bebida seleccionada
+    if (!selectedClientId || (!bebidaSeleccionadaId && !bebida1SeleccionadaId)) {
+      throw new Error('No se ha seleccionado un cliente o una bebida.');
+    }
+
+    // Actualizar inventario y verificar stock
+    const checkStockAndUpdateInventory = async (bebidaId, cantidad) => {
+      // ... Lógica para verificar y actualizar inventario
+    };
+
+    let isBebidaAdded = false;
+
+    // Manejar selección de la primera bebida
+    if (cantidadBebida > 0 && bebidaSeleccionadaId) {
+      const bebidaConPrecio = {
+        id: bebidaSeleccionadaId,
+        nombre: bebidaSeleccionada,
+        cantidad: cantidadBebida,
+        precio: precioBebidaSeleccionada,
+      };
+
+      if (await checkStockAndUpdateInventory(bebidaSeleccionadaId, cantidadBebida)) {
+        await guardarBebida(bebidaConPrecio);
+        isBebidaAdded = true;
+        console.log("Bebida agregada:", bebidaConPrecio);
+      }
+    }
+
+    // Manejar selección de la segunda bebida
+    if (cantidadBebida1 > 0 && bebida1SeleccionadaId) {
+      const bebidaConPrecio1 = {
+        id: bebida1SeleccionadaId,
+        nombre: bebida1Seleccionada,
+        cantidad: cantidadBebida1,
+        precio: precioBebida1Seleccionada,
+      };
+
+      if (await checkStockAndUpdateInventory(bebida1SeleccionadaId, cantidadBebida1)) {
+        await guardarBebida(bebidaConPrecio1);
+        isBebidaAdded = true;
+        console.log("Segunda bebida agregada:", bebidaConPrecio1);
+      }
+    }
+
+    if (!isBebidaAdded) {
+      alert("No se ha agregado ninguna bebida.");
+    } else {
+      onClose(); // Función para cerrar el modal
+    }
+
+  } catch (error) {
+    console.error('Error al guardar las bebidas en el cliente:', error.message);
+  }
+};
+
 
   const guardarBebida = async (bebida) => {
     try {
@@ -735,7 +769,7 @@ export default function App() {
             <TableColumn className="text-center">add bebida</TableColumn>
             <TableColumn className="text-center">add comida</TableColumn>
             <TableColumn className="text-center">Consumo total</TableColumn>
-            <TableColumn className="text-center">Acción</TableColumn>
+            {/* <TableColumn className="text-center">Acción</TableColumn> */}
           </TableHeader>
 
 
@@ -919,9 +953,9 @@ export default function App() {
                           <>
                             <ModalHeader className="flex flex-col gap-1">BEBIDAS</ModalHeader>
                             <ModalBody>
-                              <RadioGroup>
-                                <Radio value=""> Cortesia </Radio>
-                              </RadioGroup>
+                            <RadioGroup onChange={handleCortesiaChange}>
+                            <Radio value="cortesia"> Cortesia </Radio>
+                            </RadioGroup>
                               <Input
                                 name="bebidas"
                                 label="Ingrese la cantidad para adultos"
@@ -1158,8 +1192,8 @@ export default function App() {
                 {/* {cliente.restaurante.map((food, index) => (
                   <TableCell key={index}>{food?.nombre || "aun no hay bebidas"}</TableCell>
                 ))} */}
-                <TableCell></TableCell>
-                <TableCell className="flex justify-center align-center pr-5 w-60">
+                <TableCell>{cliente.pagoPendiente + cliente.pagoAnticipado}</TableCell>
+                {/* <TableCell className="flex justify-center align-center pr-5 w-60">
                   {cliente.identificacion === editedUserId && (
                     <div className="flex">
                       <img
@@ -1184,7 +1218,7 @@ export default function App() {
                     alt="Delete"
                     onClick={() => handleDeleteUser(cliente._id)}
                   />
-                </TableCell>
+                </TableCell> */}
               </TableRow>
             ))}
           </TableBody>
