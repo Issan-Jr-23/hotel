@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Table,
   TableHeader,
@@ -16,10 +16,9 @@ import {
   useDisclosure,
   Select,
   SelectItem,
-  RadioGroup, Radio
+  RadioGroup, Radio, Checkbox
 } from "@nextui-org/react";
 
-import "./tables.css"
 import axios from "axios";
 import editar from "../../images/boligrafo.png";
 import borrar from "../../images/borrar.png";
@@ -28,31 +27,72 @@ import chevron from "../../images/right.png";
 import plus from "../../images/plus.png";
 import plusb from "../../images/plus_blue.png";
 import toast, { Toaster } from 'react-hot-toast';
-import { useAuth } from "../../context/authContext.jsx";
+// import "./tables.css"
+import "../table/table.css"
 
-export default function App() {
+export default function App({dato}) {
+
+  const [esCortesia, setEsCortesia] = useState(false);
+
+  const handleCortesiaChange = (event) => {
+    setEsCortesia(event.target.value === "cortesia");
+  };
   
-  const { user } = useAuth(); 
-  const { isAdmin } = useAuth();
   const [users, setUsers] = useState([]);
   const [drinks, setDrinks] = useState([]);
   const [snacks, setSnacks] = useState([]);
+
+  const [busqueda, setBusqueda] = useState('');
+
+  const datosFiltrados = useMemo(() => {
+    if (!busqueda) return users;
+
+    return users.filter((user) => {
+      return user.identificacion.toString().includes(busqueda);
+    });
+  }, [busqueda, users]);
+
+  
+
+
+  const handleSearchChange = (event) => {
+    setBusqueda(event.target.value);
+  };
+
+
+
+  // const [searchTerm, setSearchTerm] = useState("");
+
+
+  // const datos = users
+  // .filter(product => product.Descripcion.toLowerCase().includes(searchTerm.toLowerCase()));
+
+
+
+
+
+  //bebida 1
 
   const [cantidadBebida, setCantidadBebida] = useState(1);
   const [bebidaSeleccionada, setBebidaSeleccionada] = useState('');
   const [precioBebidaSeleccionada, setPrecioBebidaSeleccionada] = useState(0);
   const [bebidaSeleccionadaId, setBebidaSeleccionadaId] = useState(null);
 
+  //bebida 2
+
   const [cantidadBebida1, setCantidadBebida1] = useState(1);
   const [bebida1Seleccionada, setBebida1Seleccionada] = useState('');
   const [precioBebida1Seleccionada, setPrecioBebida1Seleccionada] = useState(0);
   const [bebida1SeleccionadaId, setBebida1SeleccionadaId] = useState(null);
 
+ //comida 1
 
   const [cantidadFood, setCantidadFood] = useState(1);
   const [foodSeleccionada, setFoodSeleccionada] = useState('');
   const [precioFoodSeleccionada, setPrecioFoodSeleccionada] = useState(0);
   const [foodSeleccionadaId, setFoodSeleccionadaId] = useState(null);
+
+//comida 2
 
   const [cantidadFood1, setCantidadFood1] = useState(1);
   const [food1Seleccionada, setFood1Seleccionada] = useState('');
@@ -156,7 +196,42 @@ export default function App() {
       if (!selectedClientId || (!bebidaSeleccionadaId && !bebida1SeleccionadaId)) {
         throw new Error('No se ha seleccionado un cliente o una bebida.');
       }
+
+//--------------------------------
+
+      if (esCortesia && cantidadBebida > 0) {
+          console.log("cortesia 1")
+        const bebidaCortesia = {
+          id: bebidaSeleccionadaId, 
+          nombre: bebidaSeleccionada, 
+          cantidad: cantidadBebida,
+          precio: 0, 
+          mensaje: "Cortesía" 
+        };
+        await guardarBebida(bebidaCortesia);
+        console.log(`Cortesía guardada con éxito para ${cantidadBebida} personas.`);
+      }
+
+
+      if (esCortesia && cantidadBebida1 > 0) {
+        console.log("cortesia 2")
+        const bebidaCortesia1 = {
+          id: bebida1SeleccionadaId, 
+          nombre: bebida1Seleccionada, 
+          cantidad: cantidadBebida1,
+          precio: 0, 
+          mensaje: "Cortesía" 
+        };
+        await guardarBebida(bebidaCortesia1);
+        console.log(`Cortesía guardada con éxito para ${cantidadBebida1} personas.`);
+        onClose(); 
+        return; 
+      }
   
+
+      //----------------------------------
+
+
       // Function to check stock and update inventory for a given drink
       const checkStockAndUpdateInventory = async (bebidaId, cantidad) => {
         const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad/${bebidaId}`);
@@ -176,6 +251,7 @@ export default function App() {
       };
   
       let isBebidaAdded = false;
+      
   
       // Handle the first drink selection
       if (cantidadBebida > 0 && bebidaSeleccionadaId) {
@@ -269,6 +345,8 @@ export default function App() {
       if (!selectedClientId || (!foodSeleccionadaId && !food1SeleccionadaId)) {
         throw new Error('No se ha seleccionado un cliente o una comida.');
       }
+
+   
   
       const checkStockAndUpdateInventory = async (foodId, cantidad) => {
         const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad/${foodId}`);
@@ -546,6 +624,9 @@ export default function App() {
     "admin", "user"
   ]
 
+
+  const pasadiaAdultos = 70000;
+  const pasadiaNinios = 50000;
  
 
   return (
@@ -580,9 +661,10 @@ export default function App() {
                       type="number"
 
                       variant="flat"
-                      label="Identificacòn del usuario"
+                      label="IDENTIFICACIÓN DE USUARIO"
                       value={formData.identificacion}
                       onChange={handleInputChange}
+                      className="border-blue-400 border-2 rounded-xl"
                     />
                     <Input
                       required
@@ -591,17 +673,18 @@ export default function App() {
                       type="text"
 
                       variant="flat"
-                      label="Nombre de usuario"
+                      label="NOMBRE DE USUARIO"
                       value={formData.nombre}
                       onChange={handleInputChange}
+                      className="border-blue-400 border-2 rounded-xl"
                     />
 
                     <Select
                       required
                       id="reserva"
                       name="reserva"
-                      label="¿La reserva fue realizada?"
-                      className="max-w-full w-full"
+                      label="¿LA RESERVA FUE REALIZADA?"
+                      className="max-w-full w-full border-blue-400 border-2 rounded-xl"
                       value={formData.reserva}
                       onChange={(event) => handleReservaChange(event.target.value)}
                     >
@@ -611,15 +694,18 @@ export default function App() {
                         </SelectItem>
                       ))}
                     </Select>
+                    <div className="flex">
+
                     <Input
                       required
                       id="adultos"
                       name="adultos"
                       type="number"
                       variant="flat"
-                      label="Cantidad de Adultos"
+                      label="CANTIDAD DE ADULTOS"
                       value={formData.cantidadPersonas.adultos}
                       onChange={(event) => handleInputChange(event, "adultos")}
+                      className="mr-3 border-green-400 border-2 rounded-xl"
                     />
 
                     <Input
@@ -628,17 +714,23 @@ export default function App() {
                       name="ninios"
                       type="number"
                       variant="flat"
-                      label="Cantidad de Niños"
+                      label="CANTIDAD DE NIÑOS"
                       value={formData.cantidadPersonas.ninios}
                       onChange={(event) => handleInputChange(event, "ninios")}
+                      className="ml-3 border-green-400 border-2 rounded-xl" 
+                       
                     />
+                    </div>
+                    <div className="flex">
+
                     <select
                       id="mediosDePago"
                       name="mediosDePago"
                       value={formData.mediosDePago}
                       onChange={(event) => handleInputChange(event)}
+                      className="mr-3 w-6/12 outline-none border-2 rounded-xl border-blue-400"
                     >
-                      <option value="">Seleccione un tipo</option>
+                      <option value="">METODO DE PAGO</option>
                       <option value="efectivo">Efectivo</option>
                       <option value="nequi">Nequi</option>
                       <option value="daviplata">Daviplata</option>
@@ -650,28 +742,33 @@ export default function App() {
                       required
                       id="pagoAnticipado"
                       name="pagoAnticipado"
-                      className=""
+                      className="w-6/12 ml-3 rounded-xl border-2  border-blue-400"
                       type="number"
                       variant="flat"
-                      label="Pago anticipado"
+                      label="PAGO ANTICIPADO"
                       value={formData.pagoAnticipado}
                       onChange={handleInputChange}
+                      
                     />
+                    </div>
                     <Input
                       name="fechaPasadia"
                       type="date"
-                      label="Fecha en la desea disfrutar el pasadia"
+                      label="FECHA EN LA QUE DESEA DISFRUTAR EL PASADIA"
+                      className="rounded-xl border-2 border-blue-400"
                       placeholder="Fecha en la desea disfrutar el pasadia"
                       value={formData.fechaPasadia}
                       onChange={handleInputChange}
                     />
+                    <div className="flex">
                     <select
+                    className="w-6/12 mr-3 outline-none rounded-xl border-2 border-blue-400"
                       id="mediosDePagoPendiente"
                       name="mediosDePagoPendiente"
                       value={formData.mediosDePagoPendiente}
                       onChange={(event) => handleInputChange(event)}
                     >
-                      <option value="">Seleccione un tipo</option>
+                      <option value="">METODO DE PAGO</option>
                       <option value="efectivo">Efectivo</option>
                       <option value="nequi">Nequi</option>
                       <option value="daviplata">Daviplata</option>
@@ -683,13 +780,14 @@ export default function App() {
                       required
                       id="pagoPendiente"
                       name="pagoPendiente"
-                      className=""
+                      className="w-6/12 ml-3 border-2 border-blue-400 rounded-xl"
                       type="number"
                       variant="flat"
-                      label="Pago anticipado"
+                      label="PAGO ANTICIPADO"
                       value={formData.pagoPendiente}
                       onChange={handleInputChange}
                     />
+                    </div>
 
                   </ModalBody>
                   <ModalFooter>
@@ -705,6 +803,18 @@ export default function App() {
             </ModalContent>
           </Modal>
         </div>
+        <div className="w-52 flex justify-center">
+
+        <input
+        id="s"
+        type="search"
+        label="busca el producto"
+        value={busqueda}
+        onChange={handleSearchChange}
+        className="w-10 h-10"
+        >
+      </input>
+        </div>
         <div className="flex items-center justify-center ">
           <img
             className="w-10 h-10 cursor-pointer flex items-center justify-center "
@@ -713,17 +823,19 @@ export default function App() {
           />
         </div>
       </div>
-
-
+        
       <section className="flex coluns-2 border-3 mt-5 mx-5 rounded-t-2xl border-blue-300">
+          {/* Input de búsqueda */}
         <Table className=" text-center uppercase" aria-label="Lista de Usuarios">
           <TableHeader className="text-center">
             <TableColumn className="text-center">+</TableColumn>
             <TableColumn className="text-center max-w-xs">ID</TableColumn>
             <TableColumn className="text-center ">Nombre</TableColumn>
             <TableColumn className="text-center ">Reserva</TableColumn>
-            <TableColumn className="text-center ">Adultos</TableColumn>
+            <TableColumn className="text-center ">Precio niños</TableColumn>
+            <TableColumn className="text-center ">Precio adultos</TableColumn>
             <TableColumn className="text-center ">Niños</TableColumn>
+            <TableColumn className="text-center ">Adultos</TableColumn>
             <TableColumn className="text-center ">Metodo de pago</TableColumn>
             <TableColumn className="text-center ">
               Anticipo
@@ -734,8 +846,9 @@ export default function App() {
             <TableColumn className="text-center tables_im">Pago pendiente o total</TableColumn>
             <TableColumn className="text-center">add bebida</TableColumn>
             <TableColumn className="text-center">add comida</TableColumn>
-            <TableColumn className="text-center">Consumo total</TableColumn>
-            <TableColumn className="text-center">Acción</TableColumn>
+            <TableColumn className="text-center">Total de la reserva</TableColumn>
+            <TableColumn className="text-center">Pago pendiente</TableColumn>
+            {/* <TableColumn className="text-center">Acción</TableColumn> */}
           </TableHeader>
 
 
@@ -746,7 +859,7 @@ export default function App() {
 
 
           <TableBody emptyContent="No hay elementos por mostrar" className="">
-            {users.map((cliente) => (
+            {datosFiltrados.map((cliente) => (
 
               <TableRow className="cursor-pointer hover:bg-blue-200" key={cliente._id}>
 
@@ -867,6 +980,8 @@ export default function App() {
                   )}
                 </TableCell>
                 <TableCell>{cliente.reserva}</TableCell>
+                <TableCell>{pasadiaNinios}</TableCell>
+                <TableCell>{pasadiaAdultos}</TableCell>
                 <TableCell>
                   {cliente._id === editedUserId ? (
                     <div className="flex">
@@ -919,9 +1034,9 @@ export default function App() {
                           <>
                             <ModalHeader className="flex flex-col gap-1">BEBIDAS</ModalHeader>
                             <ModalBody>
-                              <RadioGroup>
-                                <Radio value=""> Cortesia </Radio>
-                              </RadioGroup>
+                            <RadioGroup onChange={handleCortesiaChange}>
+                            <Radio value="cortesia"> Cortesía </Radio>
+                          </RadioGroup>
                               <Input
                                 name="bebidas"
                                 label="Ingrese la cantidad para adultos"
@@ -1158,8 +1273,10 @@ export default function App() {
                 {/* {cliente.restaurante.map((food, index) => (
                   <TableCell key={index}>{food?.nombre || "aun no hay bebidas"}</TableCell>
                 ))} */}
-                <TableCell></TableCell>
-                <TableCell className="flex justify-center align-center pr-5 w-60">
+                <TableCell>{(cliente.cantidadPersonas.adultos * pasadiaAdultos) + (cliente.cantidadPersonas.ninios * pasadiaNinios)}</TableCell>
+                  
+                <TableCell>{(cliente.cantidadPersonas.adultos * pasadiaAdultos) + (cliente.cantidadPersonas.ninios * pasadiaNinios) - (cliente.pagoAnticipado + cliente.pagoPendiente)}</TableCell>
+                {/* <TableCell className="flex justify-center align-center pr-5 w-60">
                   {cliente.identificacion === editedUserId && (
                     <div className="flex">
                       <img
@@ -1184,7 +1301,7 @@ export default function App() {
                     alt="Delete"
                     onClick={() => handleDeleteUser(cliente._id)}
                   />
-                </TableCell>
+                </TableCell> */}
               </TableRow>
             ))}
           </TableBody>
