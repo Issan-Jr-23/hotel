@@ -16,7 +16,7 @@ import {
   useDisclosure,
   Select,
   SelectItem,
-  RadioGroup, Radio, Checkbox
+  RadioGroup, Radio, Checkbox,Popover, PopoverTrigger, PopoverContent
 } from "@nextui-org/react";
 
 import axios from "axios";
@@ -30,7 +30,7 @@ import toast, { Toaster } from 'react-hot-toast';
 // import "./tables.css"
 import "../table/table.css"
 
-export default function App({dato}) {
+export default function App() {
 
   const [esCortesia, setEsCortesia] = useState(false);
 
@@ -199,34 +199,43 @@ export default function App({dato}) {
 
 //--------------------------------
 
-      if (esCortesia && cantidadBebida > 0) {
-          console.log("cortesia 1")
-        const bebidaCortesia = {
-          id: bebidaSeleccionadaId, 
-          nombre: bebidaSeleccionada, 
-          cantidad: cantidadBebida,
-          precio: 0, 
-          mensaje: "Cortesía" 
-        };
-        await guardarBebida(bebidaCortesia);
-        console.log(`Cortesía guardada con éxito para ${cantidadBebida} personas.`);
-      }
+let atLeastOneCortesiaSaved = false;
 
+if (esCortesia) {
+  if (cantidadBebida > 0 && bebidaSeleccionadaId) {
+    console.log("cortesia 1")
+    const bebidaCortesia = {
+      id: bebidaSeleccionadaId, 
+      nombre: bebidaSeleccionada, 
+      cantidad: cantidadBebida,
+      precio: 0, 
+      mensaje: "Cortesía" 
+    };
+    await guardarBebida(bebidaCortesia);
+    console.log(`Cortesía guardada con éxito para ${cantidadBebida} personas.`);
+    atLeastOneCortesiaSaved = true;
+  }
 
-      if (esCortesia && cantidadBebida1 > 0) {
-        console.log("cortesia 2")
-        const bebidaCortesia1 = {
-          id: bebida1SeleccionadaId, 
-          nombre: bebida1Seleccionada, 
-          cantidad: cantidadBebida1,
-          precio: 0, 
-          mensaje: "Cortesía" 
-        };
-        await guardarBebida(bebidaCortesia1);
-        console.log(`Cortesía guardada con éxito para ${cantidadBebida1} personas.`);
-        onClose(); 
-        return; 
-      }
+  if (cantidadBebida1 > 0 && bebida1SeleccionadaId) {
+    console.log("cortesia 2")
+    const bebidaCortesia1 = {
+      id: bebida1SeleccionadaId, 
+      nombre: bebida1Seleccionada, 
+      cantidad: cantidadBebida1,
+      precio: 0, 
+      mensaje: "Cortesía" 
+    };
+    await guardarBebida(bebidaCortesia1);
+    console.log(`Cortesía guardada con éxito para ${cantidadBebida1} personas.`);
+    atLeastOneCortesiaSaved = true;
+  }
+
+  // Now we check if at least one drink has been saved as a courtesy.
+  if (atLeastOneCortesiaSaved) {
+    onClose(); // Close the modal after handling all courtesy drinks
+  }
+  return; // Exit the function after handling the courtesy logic
+}
   
 
       //----------------------------------
@@ -777,7 +786,6 @@ export default function App({dato}) {
                       <option value="transferencia">Transferencia</option>
                     </select>
                     <Input
-                      required
                       id="pagoPendiente"
                       name="pagoPendiente"
                       className="w-6/12 ml-3 border-2 border-blue-400 rounded-xl"
@@ -794,7 +802,7 @@ export default function App({dato}) {
                     <Button color="danger" variant="light" onClick={onClose}>
                       Cerrar
                     </Button>
-                    <Button color="primary" onClick={handleFormSubmitB}>
+                    <Button color="primary" onClick={handleFormSubmit}>
                       Guardar
                     </Button>
                   </ModalFooter>
@@ -832,18 +840,21 @@ export default function App({dato}) {
             <TableColumn className="text-center max-w-xs">ID</TableColumn>
             <TableColumn className="text-center ">Nombre</TableColumn>
             <TableColumn className="text-center ">Reserva</TableColumn>
-            <TableColumn className="text-center ">Precio niños</TableColumn>
+        
+            {/* <TableColumn className="text-center ">Precio niños</TableColumn>
             <TableColumn className="text-center ">Precio adultos</TableColumn>
+
+           
             <TableColumn className="text-center ">Niños</TableColumn>
-            <TableColumn className="text-center ">Adultos</TableColumn>
-            <TableColumn className="text-center ">Metodo de pago</TableColumn>
+            <TableColumn className="text-center ">Adultos</TableColumn> */}
+            {/* <TableColumn className="text-center ">Metodo de pago</TableColumn>
             <TableColumn className="text-center ">
               Anticipo
-            </TableColumn>
-            <TableColumn className="text-center tables_im">Fecha de registro</TableColumn>
+            </TableColumn> */}
+            {/* <TableColumn className="text-center tables_im">Fecha de registro</TableColumn> */}
             <TableColumn className="text-center tables_im">fecha de inicio del pasadia</TableColumn>
-            <TableColumn className="text-center tables_im">Metodo de pago</TableColumn>
-            <TableColumn className="text-center tables_im">Pago pendiente o total</TableColumn>
+            {/* <TableColumn className="text-center tables_im">Metodo de pago</TableColumn>
+            <TableColumn className="text-center tables_im">Pago pendiente o total</TableColumn> */}
             <TableColumn className="text-center">add bebida</TableColumn>
             <TableColumn className="text-center">add comida</TableColumn>
             <TableColumn className="text-center">Total de la reserva</TableColumn>
@@ -871,6 +882,7 @@ export default function App({dato}) {
 
                 <TableCell>
                   {sizess.map((size) => (
+                    
                     <Button className="bg-white" key={size} onPress={() => handleOpenM(size)} onClick={() => handleOpenModal(cliente)}>
                       <img className="w-4" src={chevron} alt="" />
                     </Button>
@@ -968,7 +980,7 @@ export default function App({dato}) {
 
 
                 <TableCell>
-                  {cliente._id === editedUserId ? (
+                  {/* {cliente._id === editedUserId ? (
                     <div className="flex">
                       <Input
                         value={editedName}
@@ -977,12 +989,33 @@ export default function App({dato}) {
                     </div>
                   ) : (
                     cliente.nombre
-                  )}
+                  )} */}
+
+                  <Popover placement="bottom" offset={20} showArrow>
+                        <PopoverTrigger>
+                          <p>{cliente.nombre}</p>
+                        </PopoverTrigger>
+                        <PopoverContent>
+                          <div className="px-1 py-2">
+                            <div className="text-small font-bold">Información</div>
+                            <div className="text-red-500">Valor del pasadia</div>
+                            <div className="text-tiny">Ninios: {pasadiaNinios}</div>
+                            <div className="text-tiny">Adultos{pasadiaAdultos}</div>
+                            <div className="text-red-500">Cantidad de personas</div>
+                            <div className="text-tiny">Adultos: {cliente.cantidadPersonas.adultos}</div>
+                            <div>Niños: {cliente.cantidadPersonas.ninios}</div>
+                            <div className="text-red-500">Anticipo de pasadia</div>
+                            <div>Metodo de pago: {cliente.mediosDePago}</div>
+                            <div>Anticipo: {cliente.pagoAnticipado}</div>
+                          </div>
+                        </PopoverContent>
+                      </Popover>
+
                 </TableCell>
                 <TableCell>{cliente.reserva}</TableCell>
-                <TableCell>{pasadiaNinios}</TableCell>
-                <TableCell>{pasadiaAdultos}</TableCell>
-                <TableCell>
+                {/* <TableCell>{pasadiaNinios}</TableCell>
+                <TableCell>{pasadiaAdultos}</TableCell> */}
+                {/* <TableCell>
                   {cliente._id === editedUserId ? (
                     <div className="flex">
                       <Input
@@ -995,21 +1028,21 @@ export default function App({dato}) {
                     cliente.cantidadPersonas.adultos
                   )}
                 </TableCell>
-                <TableCell>{cliente.cantidadPersonas.ninios}</TableCell>
-                <TableCell>{cliente.mediosDePago}</TableCell>
-                <TableCell>{cliente.pagoAnticipado}</TableCell>
-                <TableCell>{new Date(cliente.fechaDeRegistro).toLocaleDateString('es-ES', {
+                <TableCell>{cliente.cantidadPersonas.ninios}</TableCell> */}
+                {/* <TableCell>{cliente.mediosDePago}</TableCell>
+                <TableCell>{cliente.pagoAnticipado}</TableCell> */}
+                {/* <TableCell>{new Date(cliente.fechaDeRegistro).toLocaleDateString('es-ES', {
                       year: 'numeric',
                       month: 'long'  ,
                       day: 'numeric' ,
-                    })}</TableCell>
+                    })}</TableCell> */}
                 <TableCell>{new Date(cliente.fechaPasadia).toLocaleDateString('es-ES', {
                       year: 'numeric',
                       month: 'long'  ,
                       day: 'numeric' ,
                     })}</TableCell>
-                <TableCell>{cliente.mediosDePagoPendiente}</TableCell>
-                <TableCell>{cliente.pagoPendiente}</TableCell>
+                {/* <TableCell>{cliente.mediosDePagoPendiente}</TableCell>
+                <TableCell>{cliente.pagoPendiente}</TableCell> */}
 
 
 
@@ -1035,7 +1068,7 @@ export default function App({dato}) {
                             <ModalHeader className="flex flex-col gap-1">BEBIDAS</ModalHeader>
                             <ModalBody>
                             <RadioGroup onChange={handleCortesiaChange}>
-                            <Radio value="cortesia"> Cortesía </Radio>
+                            <Radio value="cortesia">Cortesía</Radio>
                           </RadioGroup>
                               <Input
                                 name="bebidas"
