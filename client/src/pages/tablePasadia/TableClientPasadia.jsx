@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Table,
   TableHeader,
@@ -16,10 +16,9 @@ import {
   useDisclosure,
   Select,
   SelectItem,
-  RadioGroup, Radio
+  RadioGroup, Radio, Checkbox,Popover, PopoverTrigger, PopoverContent
 } from "@nextui-org/react";
 
-import "./tables.css"
 import axios from "axios";
 import editar from "../../images/boligrafo.png";
 import borrar from "../../images/borrar.png";
@@ -28,61 +27,41 @@ import chevron from "../../images/right.png";
 import plus from "../../images/plus.png";
 import plusb from "../../images/plus_blue.png";
 import toast, { Toaster } from 'react-hot-toast';
-import { useAuth } from "../../context/authContext.jsx";
+// import "./tables.css"
+import "../table/table.css"
 
 export default function App() {
+
+  const [esCortesia, setEsCortesia] = useState(false);
+
+  const handleCortesiaChange = (event) => {
+    setEsCortesia(event.target.value === "cortesia");
+  };
   
-  const { user } = useAuth(); 
-  const { isAdmin } = useAuth();
   const [users, setUsers] = useState([]);
   const [drinks, setDrinks] = useState([]);
   const [snacks, setSnacks] = useState([]);
-
-  const [esCortesia, setEsCortesia] = useState(false);
-  const [cantidadCortesias, setCantidadCortesias] = useState(0);
-
-const handleCortesiaChange = (event) => {
-  setEsCortesia(event.target.value === "cortesia");
-};
-
-function handleCortesiaCheckboxChange(event) {
-  // Actualizar el estado cuando se marque o desmarque la opción de cortesía
-  setEsCortesia(event.target.checked);
-}
-
-function handleBebidaSeleccionadaChange(event) {
-  // Actualizar el estado con la bebida seleccionada
-  const { value, id } = event.target;
-  setBebidaSeleccionada(value);
-  setBebidaSeleccionadaId(id);
-}
-
-function handleCantidadCortesiasChange(event) {
-  // Actualizar el estado con la cantidad de cortesías
-  setCantidadCortesias(Number(event.target.value));
-}
-
-
-
-
-
-
 
   const [cantidadBebida, setCantidadBebida] = useState(1);
   const [bebidaSeleccionada, setBebidaSeleccionada] = useState('');
   const [precioBebidaSeleccionada, setPrecioBebidaSeleccionada] = useState(0);
   const [bebidaSeleccionadaId, setBebidaSeleccionadaId] = useState(null);
 
+  //bebida 2
+
   const [cantidadBebida1, setCantidadBebida1] = useState(1);
   const [bebida1Seleccionada, setBebida1Seleccionada] = useState('');
   const [precioBebida1Seleccionada, setPrecioBebida1Seleccionada] = useState(0);
   const [bebida1SeleccionadaId, setBebida1SeleccionadaId] = useState(null);
 
+ //comida 1
 
   const [cantidadFood, setCantidadFood] = useState(1);
   const [foodSeleccionada, setFoodSeleccionada] = useState('');
   const [precioFoodSeleccionada, setPrecioFoodSeleccionada] = useState(0);
   const [foodSeleccionadaId, setFoodSeleccionadaId] = useState(null);
+
+//comida 2
 
   const [cantidadFood1, setCantidadFood1] = useState(1);
   const [food1Seleccionada, setFood1Seleccionada] = useState('');
@@ -178,81 +157,77 @@ function handleCantidadCortesiasChange(event) {
     }
   };
 
-const handleGuardarBebida = async () => {
-  console.log("id del cliente " + selectedClientId);
-
-  try {
-    // Caso de cortesía
-    if (esCortesia && bebidaSeleccionada) {
-      const bebidaCortesia = {
-        id: bebidaSeleccionadaId,
-        nombre: bebidaSeleccionada,
-        cantidad: cantidadCortesias,
-        precio: 0,
-        mensaje: "Cortesía"
-      };
-
-      await guardarBebida(bebidaCortesia);
-      alert(`Cortesía guardada con éxito para ${cantidadCortesias} personas.`);
-      onClose(); // Función para cerrar el modal
-      return; // Finaliza la ejecución aquí si es una cortesía
-    }
-
-    // Verificar que hay un cliente y bebida seleccionada
-    if (!selectedClientId || (!bebidaSeleccionadaId && !bebida1SeleccionadaId)) {
-      throw new Error('No se ha seleccionado un cliente o una bebida.');
-    }
-
-    // Actualizar inventario y verificar stock
-    const checkStockAndUpdateInventory = async (bebidaId, cantidad) => {
-      // ... Lógica para verificar y actualizar inventario
-    };
-
-    let isBebidaAdded = false;
-
-    // Manejar selección de la primera bebida
-    if (cantidadBebida > 0 && bebidaSeleccionadaId) {
-      const bebidaConPrecio = {
-        id: bebidaSeleccionadaId,
-        nombre: bebidaSeleccionada,
-        cantidad: cantidadBebida,
-        precio: precioBebidaSeleccionada,
-      };
-
-      if (await checkStockAndUpdateInventory(bebidaSeleccionadaId, cantidadBebida)) {
-        await guardarBebida(bebidaConPrecio);
-        isBebidaAdded = true;
-        console.log("Bebida agregada:", bebidaConPrecio);
+  const handleGuardarBebida = async () => {
+    console.log("id del cliente " + selectedClientId);
+  
+    try {
+      // Check for client and at least one drink selection
+      if (!selectedClientId || (!bebidaSeleccionadaId && !bebida1SeleccionadaId)) {
+        throw new Error('No se ha seleccionado un cliente o una bebida.');
       }
-    }
-
-    // Manejar selección de la segunda bebida
-    if (cantidadBebida1 > 0 && bebida1SeleccionadaId) {
-      const bebidaConPrecio1 = {
-        id: bebida1SeleccionadaId,
-        nombre: bebida1Seleccionada,
-        cantidad: cantidadBebida1,
-        precio: precioBebida1Seleccionada,
+  
+      // Function to check stock and update inventory for a given drink
+      const checkStockAndUpdateInventory = async (bebidaId, cantidad) => {
+        const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad/${bebidaId}`);
+        const cantidadInicial = response.data.CantidadInicial;
+        const cantidadRestante = response.data.cantidadRestante;
+  
+        if (cantidad > cantidadInicial) {
+          alert("La bebida no tiene suficiente stock");
+          return false;
+        } else if (cantidad > cantidadRestante) {
+          alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
+          return false;
+        }
+  
+        await actualizarInventarioBebida(bebidaId, cantidad);
+        return true;
       };
-
-      if (await checkStockAndUpdateInventory(bebida1SeleccionadaId, cantidadBebida1)) {
-        await guardarBebida(bebidaConPrecio1);
-        isBebidaAdded = true;
-        console.log("Segunda bebida agregada:", bebidaConPrecio1);
+  
+      let isBebidaAdded = false;
+  
+      // Handle the first drink selection
+      if (cantidadBebida > 0 && bebidaSeleccionadaId) {
+        const bebidaAdultos = {
+          id: bebidaSeleccionadaId,
+          nombre: bebidaSeleccionada,
+          cantidad: cantidadBebida,
+          precio: precioBebidaSeleccionada,
+        };
+  
+        if (await checkStockAndUpdateInventory(bebidaSeleccionadaId, cantidadBebida)) {
+          await guardarBebida(bebidaAdultos);
+          isBebidaAdded = true;
+          console.log("Bebida para adultos agregada:", bebidaAdultos);
+        }
       }
+  
+      // Handle the second drink selection
+      if (cantidadBebida1 > 0 && bebida1SeleccionadaId) {
+        const bebidaAdultos1 = {
+          id: bebida1SeleccionadaId,
+          nombre: bebida1Seleccionada,
+          cantidad: cantidadBebida1,
+          precio: precioBebida1Seleccionada, // Assuming you have a state variable for this
+        };
+  
+        if (await checkStockAndUpdateInventory(bebida1SeleccionadaId, cantidadBebida1)) {
+          await guardarBebida(bebidaAdultos1);
+          isBebidaAdded = true;
+          console.log("Segunda bebida para adultos agregada:", bebidaAdultos1);
+        }
+      }
+  
+      if (!isBebidaAdded) {
+        alert("No se ha agregado ninguna bebida");
+      } else {
+        onClose(); // Assuming onClose is a function to close the modal
+      }
+    } catch (error) {
+      console.error('Error al guardar las bebidas en el cliente:', error.message);
     }
-
-    if (!isBebidaAdded) {
-      alert("No se ha agregado ninguna bebida.");
-    } else {
-      onClose(); // Función para cerrar el modal
-    }
-
-  } catch (error) {
-    console.error('Error al guardar las bebidas en el cliente:', error.message);
-  }
-};
-
+  };
+  
 
   const guardarBebida = async (bebida) => {
     try {
@@ -303,6 +278,8 @@ const handleGuardarBebida = async () => {
       if (!selectedClientId || (!foodSeleccionadaId && !food1SeleccionadaId)) {
         throw new Error('No se ha seleccionado un cliente o una comida.');
       }
+
+   
   
       const checkStockAndUpdateInventory = async (foodId, cantidad) => {
         const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad/${foodId}`);
@@ -580,6 +557,9 @@ const handleGuardarBebida = async () => {
     "admin", "user"
   ]
 
+
+  const pasadiaAdultos = 70000;
+  const pasadiaNinios = 50000;
  
 
   return (
@@ -614,9 +594,10 @@ const handleGuardarBebida = async () => {
                       type="number"
 
                       variant="flat"
-                      label="Identificacòn del usuario"
+                      label="IDENTIFICACIÓN DE USUARIO"
                       value={formData.identificacion}
                       onChange={handleInputChange}
+                      className="border-blue-400 border-2 rounded-xl"
                     />
                     <Input
                       required
@@ -625,17 +606,18 @@ const handleGuardarBebida = async () => {
                       type="text"
 
                       variant="flat"
-                      label="Nombre de usuario"
+                      label="NOMBRE DE USUARIO"
                       value={formData.nombre}
                       onChange={handleInputChange}
+                      className="border-blue-400 border-2 rounded-xl"
                     />
 
                     <Select
                       required
                       id="reserva"
                       name="reserva"
-                      label="¿La reserva fue realizada?"
-                      className="max-w-full w-full"
+                      label="¿LA RESERVA FUE REALIZADA?"
+                      className="max-w-full w-full border-blue-400 border-2 rounded-xl"
                       value={formData.reserva}
                       onChange={(event) => handleReservaChange(event.target.value)}
                     >
@@ -645,15 +627,18 @@ const handleGuardarBebida = async () => {
                         </SelectItem>
                       ))}
                     </Select>
+                    <div className="flex">
+
                     <Input
                       required
                       id="adultos"
                       name="adultos"
                       type="number"
                       variant="flat"
-                      label="Cantidad de Adultos"
+                      label="CANTIDAD DE ADULTOS"
                       value={formData.cantidadPersonas.adultos}
                       onChange={(event) => handleInputChange(event, "adultos")}
+                      className="mr-3 border-green-400 border-2 rounded-xl"
                     />
 
                     <Input
@@ -662,17 +647,23 @@ const handleGuardarBebida = async () => {
                       name="ninios"
                       type="number"
                       variant="flat"
-                      label="Cantidad de Niños"
+                      label="CANTIDAD DE NIÑOS"
                       value={formData.cantidadPersonas.ninios}
                       onChange={(event) => handleInputChange(event, "ninios")}
+                      className="ml-3 border-green-400 border-2 rounded-xl" 
+                       
                     />
+                    </div>
+                    <div className="flex">
+
                     <select
                       id="mediosDePago"
                       name="mediosDePago"
                       value={formData.mediosDePago}
                       onChange={(event) => handleInputChange(event)}
+                      className="mr-3 w-6/12 outline-none border-2 rounded-xl border-blue-400"
                     >
-                      <option value="">Seleccione un tipo</option>
+                      <option value="">METODO DE PAGO</option>
                       <option value="efectivo">Efectivo</option>
                       <option value="nequi">Nequi</option>
                       <option value="daviplata">Daviplata</option>
@@ -684,28 +675,33 @@ const handleGuardarBebida = async () => {
                       required
                       id="pagoAnticipado"
                       name="pagoAnticipado"
-                      className=""
+                      className="w-6/12 ml-3 rounded-xl border-2  border-blue-400"
                       type="number"
                       variant="flat"
-                      label="Pago anticipado"
+                      label="PAGO ANTICIPADO"
                       value={formData.pagoAnticipado}
                       onChange={handleInputChange}
+                      
                     />
+                    </div>
                     <Input
                       name="fechaPasadia"
                       type="date"
-                      label="Fecha en la desea disfrutar el pasadia"
+                      label="FECHA EN LA QUE DESEA DISFRUTAR EL PASADIA"
+                      className="rounded-xl border-2 border-blue-400"
                       placeholder="Fecha en la desea disfrutar el pasadia"
                       value={formData.fechaPasadia}
                       onChange={handleInputChange}
                     />
+                    <div className="flex">
                     <select
+                    className="w-6/12 mr-3 outline-none rounded-xl border-2 border-blue-400"
                       id="mediosDePagoPendiente"
                       name="mediosDePagoPendiente"
                       value={formData.mediosDePagoPendiente}
                       onChange={(event) => handleInputChange(event)}
                     >
-                      <option value="">Seleccione un tipo</option>
+                      <option value="">METODO DE PAGO</option>
                       <option value="efectivo">Efectivo</option>
                       <option value="nequi">Nequi</option>
                       <option value="daviplata">Daviplata</option>
@@ -714,23 +710,23 @@ const handleGuardarBebida = async () => {
                       <option value="transferencia">Transferencia</option>
                     </select>
                     <Input
-                      required
                       id="pagoPendiente"
                       name="pagoPendiente"
-                      className=""
+                      className="w-6/12 ml-3 border-2 border-blue-400 rounded-xl"
                       type="number"
                       variant="flat"
-                      label="Pago anticipado"
+                      label="PAGO ANTICIPADO"
                       value={formData.pagoPendiente}
                       onChange={handleInputChange}
                     />
+                    </div>
 
                   </ModalBody>
                   <ModalFooter>
                     <Button color="danger" variant="light" onClick={onClose}>
                       Cerrar
                     </Button>
-                    <Button color="primary" onClick={handleFormSubmitB}>
+                    <Button color="primary" onClick={handleFormSubmit}>
                       Guardar
                     </Button>
                   </ModalFooter>
@@ -738,6 +734,18 @@ const handleGuardarBebida = async () => {
               )}
             </ModalContent>
           </Modal>
+        </div>
+        <div className="w-52 flex justify-center">
+
+        <input
+        id="s"
+        type="search"
+        label="busca el producto"
+        value={busqueda}
+        onChange={handleSearchChange}
+        className="w-10 h-10"
+        >
+      </input>
         </div>
         <div className="flex items-center justify-center ">
           <img
@@ -747,29 +755,34 @@ const handleGuardarBebida = async () => {
           />
         </div>
       </div>
-
-
+        
       <section className="flex coluns-2 border-3 mt-5 mx-5 rounded-t-2xl border-blue-300">
+          {/* Input de búsqueda */}
         <Table className=" text-center uppercase" aria-label="Lista de Usuarios">
           <TableHeader className="text-center">
             <TableColumn className="text-center">+</TableColumn>
             <TableColumn className="text-center max-w-xs">ID</TableColumn>
             <TableColumn className="text-center ">Nombre</TableColumn>
             <TableColumn className="text-center ">Reserva</TableColumn>
-            <TableColumn className="text-center ">Adultos</TableColumn>
+        
+            {/* <TableColumn className="text-center ">Precio niños</TableColumn>
+            <TableColumn className="text-center ">Precio adultos</TableColumn>
+
+           
             <TableColumn className="text-center ">Niños</TableColumn>
-            <TableColumn className="text-center ">Metodo de pago</TableColumn>
+            <TableColumn className="text-center ">Adultos</TableColumn> */}
+            {/* <TableColumn className="text-center ">Metodo de pago</TableColumn>
             <TableColumn className="text-center ">
               Anticipo
-            </TableColumn>
-            <TableColumn className="text-center tables_im">Fecha de registro</TableColumn>
+            </TableColumn> */}
+            {/* <TableColumn className="text-center tables_im">Fecha de registro</TableColumn> */}
             <TableColumn className="text-center tables_im">fecha de inicio del pasadia</TableColumn>
-            <TableColumn className="text-center tables_im">Metodo de pago</TableColumn>
-            <TableColumn className="text-center tables_im">Pago pendiente o total</TableColumn>
+            {/* <TableColumn className="text-center tables_im">Metodo de pago</TableColumn>
+            <TableColumn className="text-center tables_im">Pago pendiente o total</TableColumn> */}
             <TableColumn className="text-center">add bebida</TableColumn>
             <TableColumn className="text-center">add comida</TableColumn>
             <TableColumn className="text-center">Consumo total</TableColumn>
-            {/* <TableColumn className="text-center">Acción</TableColumn> */}
+            <TableColumn className="text-center">Acción</TableColumn>
           </TableHeader>
 
 
@@ -780,7 +793,7 @@ const handleGuardarBebida = async () => {
 
 
           <TableBody emptyContent="No hay elementos por mostrar" className="">
-            {users.map((cliente) => (
+            {datosFiltrados.map((cliente) => (
 
               <TableRow className="cursor-pointer hover:bg-blue-200" key={cliente._id}>
 
@@ -792,6 +805,7 @@ const handleGuardarBebida = async () => {
 
                 <TableCell>
                   {sizess.map((size) => (
+                    
                     <Button className="bg-white" key={size} onPress={() => handleOpenM(size)} onClick={() => handleOpenModal(cliente)}>
                       <img className="w-4" src={chevron} alt="" />
                     </Button>
@@ -889,7 +903,7 @@ const handleGuardarBebida = async () => {
 
 
                 <TableCell>
-                  {cliente._id === editedUserId ? (
+                  {/* {cliente._id === editedUserId ? (
                     <div className="flex">
                       <Input
                         value={editedName}
@@ -898,10 +912,33 @@ const handleGuardarBebida = async () => {
                     </div>
                   ) : (
                     cliente.nombre
-                  )}
+                  )} */}
+
+                  <Popover placement="bottom" offset={20} showArrow>
+                        <PopoverTrigger>
+                          <p>{cliente.nombre}</p>
+                        </PopoverTrigger>
+                        <PopoverContent>
+                          <div className="px-1 py-2">
+                            <div className="text-small font-bold">Información</div>
+                            <div className="text-red-500">Valor del pasadia</div>
+                            <div className="text-tiny">Ninios: {pasadiaNinios}</div>
+                            <div className="text-tiny">Adultos{pasadiaAdultos}</div>
+                            <div className="text-red-500">Cantidad de personas</div>
+                            <div className="text-tiny">Adultos: {cliente.cantidadPersonas.adultos}</div>
+                            <div>Niños: {cliente.cantidadPersonas.ninios}</div>
+                            <div className="text-red-500">Anticipo de pasadia</div>
+                            <div>Metodo de pago: {cliente.mediosDePago}</div>
+                            <div>Anticipo: {cliente.pagoAnticipado}</div>
+                          </div>
+                        </PopoverContent>
+                      </Popover>
+
                 </TableCell>
                 <TableCell>{cliente.reserva}</TableCell>
-                <TableCell>
+                {/* <TableCell>{pasadiaNinios}</TableCell>
+                <TableCell>{pasadiaAdultos}</TableCell> */}
+                {/* <TableCell>
                   {cliente._id === editedUserId ? (
                     <div className="flex">
                       <Input
@@ -914,21 +951,21 @@ const handleGuardarBebida = async () => {
                     cliente.cantidadPersonas.adultos
                   )}
                 </TableCell>
-                <TableCell>{cliente.cantidadPersonas.ninios}</TableCell>
-                <TableCell>{cliente.mediosDePago}</TableCell>
-                <TableCell>{cliente.pagoAnticipado}</TableCell>
-                <TableCell>{new Date(cliente.fechaDeRegistro).toLocaleDateString('es-ES', {
+                <TableCell>{cliente.cantidadPersonas.ninios}</TableCell> */}
+                {/* <TableCell>{cliente.mediosDePago}</TableCell>
+                <TableCell>{cliente.pagoAnticipado}</TableCell> */}
+                {/* <TableCell>{new Date(cliente.fechaDeRegistro).toLocaleDateString('es-ES', {
                       year: 'numeric',
                       month: 'long'  ,
                       day: 'numeric' ,
-                    })}</TableCell>
+                    })}</TableCell> */}
                 <TableCell>{new Date(cliente.fechaPasadia).toLocaleDateString('es-ES', {
                       year: 'numeric',
                       month: 'long'  ,
                       day: 'numeric' ,
                     })}</TableCell>
-                <TableCell>{cliente.mediosDePagoPendiente}</TableCell>
-                <TableCell>{cliente.pagoPendiente}</TableCell>
+                {/* <TableCell>{cliente.mediosDePagoPendiente}</TableCell>
+                <TableCell>{cliente.pagoPendiente}</TableCell> */}
 
 
 
@@ -953,9 +990,9 @@ const handleGuardarBebida = async () => {
                           <>
                             <ModalHeader className="flex flex-col gap-1">BEBIDAS</ModalHeader>
                             <ModalBody>
-                            <RadioGroup onChange={handleCortesiaChange}>
-                            <Radio value="cortesia"> Cortesia </Radio>
-                            </RadioGroup>
+                              <RadioGroup>
+                                <Radio value=""> Cortesia </Radio>
+                              </RadioGroup>
                               <Input
                                 name="bebidas"
                                 label="Ingrese la cantidad para adultos"
@@ -1192,8 +1229,8 @@ const handleGuardarBebida = async () => {
                 {/* {cliente.restaurante.map((food, index) => (
                   <TableCell key={index}>{food?.nombre || "aun no hay bebidas"}</TableCell>
                 ))} */}
-                <TableCell>{cliente.pagoPendiente + cliente.pagoAnticipado}</TableCell>
-                {/* <TableCell className="flex justify-center align-center pr-5 w-60">
+                <TableCell></TableCell>
+                <TableCell className="flex justify-center align-center pr-5 w-60">
                   {cliente.identificacion === editedUserId && (
                     <div className="flex">
                       <img
