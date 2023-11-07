@@ -17,7 +17,8 @@ const clienteSchema = new mongoose.Schema({
   },
   mediosDePago: {
     type: String,
-    enum: ['efectivo','nequi', 'daviplata', 'pse','efecty', 'transferencia'],
+    enum: ['efectivo','nequi', 'daviplata', 'pse','efecty', 'transferencia',''],
+    default:"",
   },
   pagoAnticipado :{
     type: Number,
@@ -25,11 +26,11 @@ const clienteSchema = new mongoose.Schema({
   },
   mediosDePagoPendiente: {
     type: String,
-    enum: ['efectivo','nequi', 'daviplata', 'pse','efecty', 'transferencia'],
+    enum: ['efectivo','nequi', 'daviplata', 'pse','efecty', 'transferencia',''],
+    default: "",
   },
   pagoPendiente: {
     type: Number,
-    required: true,
     default: 0
   },
   totalReserva: {

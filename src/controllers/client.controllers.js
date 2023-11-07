@@ -149,7 +149,7 @@ export const obtenerCPI = async (req, res) => {
 
 
 export const updatePP = async (req, res) => {
-  const clienteId = req.params.identificacion;
+  const clienteId = req.params.id;
   const { pagoPendiente, mediosDePagoPendiente } = req.body;
 
   try {

@@ -123,15 +123,25 @@ export default function App() {
 
   const handleInputChange = (event, fieldName) => {
     const { name, value } = event.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-      cantidadPersonas: {
-        ...formData.cantidadPersonas,
-        [fieldName]: parseInt(value, 10),
-      },
-    });
+    
+    const totalCosto = (formData.cantidadPersonas.ninios * pasadiaNinios) +
+                       (formData.cantidadPersonas.adultos * pasadiaAdultos);
+  
+    const totalPendiente = totalCosto; 
+    console.log(totalPendiente); 
+  
+    if ((name === 'pagoPendiente' && parseFloat(value) > totalPendiente) ||
+        (name === 'pagoAnticipado' && parseFloat(value) > totalCosto)) {
+      alert('El monto no puede ser mayor que el costo total o el monto pendiente.');
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+        ...(fieldName ? { cantidadPersonas: { ...formData.cantidadPersonas, [fieldName]: parseInt(value, 10) } } : {})
+      });
+    }
   };
+  
 
   const handleReservaChange = (selectedSize) => {
     setFormData({
@@ -139,24 +149,6 @@ export default function App() {
       reserva: selectedSize,
     });
   };
-
-
-
-  // const actualizarCantidadBebida = (bebidaSeleccionada, cantidadDeseada) => {
-  //   axios.put('http://localhost:3000/api/update-bebidas', {
-  //     bebida: bebidaSeleccionada,
-  //     cantidad: cantidadDeseada,
-  //   })
-  //     .then(response => {
-  //       console.log('Cantidad de bebida actualizada con éxito:', response.data);
-  //     })
-  //     .catch(error => {
-  //       console.error('Error al actualizar la cantidad de bebida:', error);
-  //     });
-  // };
-
-
-
 
   const actualizarInventarioBebida = async (bebidaId, cantidad) => {
     try {
@@ -170,7 +162,7 @@ export default function App() {
       }
     } catch (error) {
       console.error('Error al actualizar el inventario de bebidas:', error.message);
-      throw error;  // Re-throw para ser capturado en handleGuardarBebida
+      throw error;  
     }
   };
 
@@ -179,27 +171,24 @@ const handleGuardarBebida = async () => {
   console.log("id del cliente " + selectedClientId);
 
   try {
-    // Verificación inicial de selección de cliente y bebida
     if (!selectedClientId || (!bebidaSeleccionadaId && !bebida1SeleccionadaId)) {
       throw new Error('No se ha seleccionado un cliente o una bebida.');
     }
 
-    // Obtener la cantidad de personas del cliente seleccionado
     const clienteResponse = await axios.get(`http://127.0.0.1:3000/api/pasadia-clientes/${selectedClientId}`);
     const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
     const totalPersonas = ninios + adultos;
+    console.log(totalPersonas)
 
-    // Validación de la cantidad de cortesías con la cantidad de personas
     const totalCortesias = cantidadBebida + cantidadBebida1;
     if (totalCortesias > totalPersonas) {
       alert(`La cantidad de cortesías (${totalCortesias}) no puede exceder la cantidad de personas (${totalPersonas}).`);
     }
 
-    // Función para comprobar el inventario y actualizarlo si es necesario
     const checkStockAndUpdateInventory = async (bebidaId, cantidad) => {
-      // Sustituir con la lógica correcta para obtener la disponibilidad de la bebida
       const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad/${bebidaId}`);
       const { cantidadInicial, cantidadRestante } = response.data;
+      console.log(response.data)
 
       if (cantidad > cantidadInicial) {
         throw new Error("No hay suficiente stock de la bebida seleccionada.");
@@ -207,18 +196,14 @@ const handleGuardarBebida = async () => {
         throw new Error(`Solo quedan ${cantidadRestante} unidades en el inventario.`);
       }
 
-      // Actualizar el inventario si la bebida no es de cortesía
       if (!esCortesia) {
-        // Sustituir con la lógica para actualizar el inventario
         await actualizarInventarioBebida(bebidaId, cantidad);
       }
     };
 
-    // Procesar las bebidas de cortesía
     if (esCortesia) {
       if (cantidadBebida > 0 && bebidaSeleccionadaId) {
         await checkStockAndUpdateInventory(bebidaSeleccionadaId, cantidadBebida);
-        // Sustituir con la lógica para guardar la bebida en el sistema
         await guardarBebida({
           id: bebidaSeleccionadaId,
           nombre: bebidaSeleccionada,
@@ -230,7 +215,6 @@ const handleGuardarBebida = async () => {
 
       if (cantidadBebida1 > 0 && bebida1SeleccionadaId) {
         await checkStockAndUpdateInventory(bebida1SeleccionadaId, cantidadBebida1);
-        // Sustituir con la lógica para guardar la bebida en el sistema
         await guardarBebida({
           id: bebida1SeleccionadaId,
           nombre: bebida1Seleccionada,
@@ -240,17 +224,14 @@ const handleGuardarBebida = async () => {
         });
       }
 
-      // Cerrar el modal y salir de la función si se trataba de cortesía
-      onClose();
       return;
     }
 
-    // Procesar las bebidas no cortesía
     let bebidaGuardada = false;
 
     if (cantidadBebida > 0 && bebidaSeleccionadaId) {
+      console.log("datos"+cantidadBebida + bebida1SeleccionadaId)
       if (await checkStockAndUpdateInventory(bebidaSeleccionadaId, cantidadBebida)) {
-        // Sustituir con la lógica para guardar la bebida en el sistema
         await guardarBebida({
           id: bebidaSeleccionadaId,
           nombre: bebidaSeleccionada,
@@ -281,18 +262,12 @@ const handleGuardarBebida = async () => {
     }
 
     // Cerrar modal al finalizar con éxito
-    onClose();
   } catch (error) {
     console.error('Error al guardar las bebidas:', error.message);
     // Mostrar mensaje de error o manejarlo como se necesite
   }
 };
-
-// Funciones auxiliares como actualizarInventarioBebida y guardarBebida
-// deben ser definidas en otro lugar del código y ser llamadas aquí.
-
   
-
   const guardarBebida = async (bebida) => {
     try {
       const response = await axios.post('http://127.0.0.1:3000/api/pasadia-agregar-bebida', {
@@ -300,13 +275,12 @@ const handleGuardarBebida = async () => {
         bebida,
       });
       console.log("peticion: ", selectedClientId);
-      onClose();
       if (response.status < 200 || response.status >= 300) {
         throw new Error(`Error al agregar la bebida. Estado de la respuesta: ${response.status}`);
       }
     } catch (error) {
       console.error('Error al guardar la bebida en el cliente:', error.message);
-      throw error;  // Re-throw para ser capturado en handleGuardarBebida
+      throw error;  
     }
   };
 
@@ -331,7 +305,7 @@ const handleGuardarBebida = async () => {
       }
     } catch (error) {
       console.error('Error al actualizar el inventario de bebidas:', error.message);
-      throw error;  // Re-throw para ser capturado en handleGuardarBebida
+      throw error;
     }
   };
 
@@ -419,7 +393,7 @@ const handleGuardarBebida = async () => {
       }
     } catch (error) {
       console.error('Error al guardar la bebida en el cliente:', error.message);
-      throw error;  // Re-throw para ser capturado en handleGuardarBebida
+      throw error; 
     }
   };
 
@@ -627,7 +601,6 @@ const handleGuardarBebida = async () => {
 
   const [selectedClienteId, setSelectedClienteId] = useState(null);
 
-  // Estado para manejar los datos del formulario
   const [formDatas, setFormDatas] = useState({
     pagoPendiente: '',
     mediosDePagoPendiente: ''
@@ -652,7 +625,6 @@ const handleGuardarBebida = async () => {
         });
 
         console.log('Datos del cliente actualizados:', response.data);
-        // Aquí manejar la respuesta de la actualización
       } catch (error) {
         console.error('Hubo un problema con la petición Axios:', error);
       }
@@ -759,6 +731,7 @@ const handleGuardarBebida = async () => {
                     <select
                       id="mediosDePago"
                       name="mediosDePago"
+                      
                       value={formData.mediosDePago}
                       onChange={(event) => handleInputChange(event)}
                       className="mr-3 w-6/12 outline-none border-2 rounded-xl border-blue-400"
@@ -998,6 +971,7 @@ const handleGuardarBebida = async () => {
                       <div>Identificacion: {cliente.identificacion}</div>
                       <div className="text-tiny">Nombre: {cliente.nombre}</div>
                       <div className="text-red-500 text-small font-bold">Pago pendiente</div>
+                      <div>{((cliente.cantidadPersonas.adultos * pasadiaAdultos) + (cliente.cantidadPersonas.ninios * pasadiaNinios) - (cliente.pagoAnticipado + cliente.pagoPendiente))}</div>
                       <Input
                         type="number"
                         name="pagoPendiente"
