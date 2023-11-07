@@ -170,11 +170,22 @@ export default function App() {
   const handleGuardarBebida = async () => {
     console.log("id del cliente " + selectedClientId);
   
-    // Function to check stock and update inventory for a given drink
     const checkStockAndUpdateInventory = async (bebidaId, cantidad) => {
       const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad/${bebidaId}`);
+     
       const cantidadInicial = response.data.CantidadInicial;
       const cantidadRestante = response.data.cantidadRestante;
+
+      const clienteResponse = await axios.get(`http://127.0.0.1:3000/api/cabania-clientes/${selectedClientId}`);
+      const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
+      const totalPersonas = ninios + adultos;
+      console.log(totalPersonas)
+  
+      const totalCortesias = cantidadBebida + cantidadBebida1;
+      if (totalCortesias > totalPersonas) {
+        alert(`La cantidad de cortesías (${totalCortesias}) no puede exceder la cantidad de personas (${totalPersonas}).`);
+        return;
+      }
   
       if (cantidad > cantidadInicial) {
         alert("La bebida no tiene suficiente stock");
@@ -189,7 +200,6 @@ export default function App() {
     };
   
     try {
-      // Check for client and at least one drink selection
       if (!selectedClientId || (!bebidaSeleccionadaId && !bebida1SeleccionadaId)) {
         throw new Error('No se ha seleccionado un cliente o una bebida.');
       }
@@ -197,9 +207,7 @@ export default function App() {
       if (esCortesia) {
         let atLeastOneCortesiaSaved = false;
   
-        // Handle the first drink selection for courtesy
         if (cantidadBebida > 0 && bebidaSeleccionadaId) {
-          // Check inventory before saving courtesy drink
           if (await checkStockAndUpdateInventory(bebidaSeleccionadaId, cantidadBebida)) {
             console.log("cortesia 1");
             const bebidaCortesia = {
@@ -215,9 +223,7 @@ export default function App() {
           }
         }
   
-        // Handle the second drink selection for courtesy
         if (cantidadBebida1 > 0 && bebida1SeleccionadaId) {
-          // Check inventory before saving courtesy drink
           if (await checkStockAndUpdateInventory(bebida1SeleccionadaId, cantidadBebida1)) {
             console.log("cortesia 2");
             const bebidaCortesia1 = {
@@ -233,16 +239,14 @@ export default function App() {
           }
         }
   
-        // Close the modal if a courtesy was successfully saved
         if (atLeastOneCortesiaSaved) {
           onClose();
         }
-        return; // Exit the function after handling courtesy drinks
+        return; 
       }
   
       let isBebidaAdded = false;
   
-      // Handle the first drink selection
       if (cantidadBebida > 0 && bebidaSeleccionadaId) {
         const bebidaAdultos = {
           id: bebidaSeleccionadaId,
@@ -308,13 +312,13 @@ export default function App() {
 
 
 
-  ////////////////////////////////////---guardar comidas-----/////////////////
 
 
-  const actualizarInventarioFood = async (bebidaId, cantidad) => {
+
+  const actualizarInventarioFood = async (foodId, cantidad) => {
     try {
       const response = await axios.post('http://127.0.0.1:3000/api/actualizar-inventario-food', {
-        id: bebidaId,
+        id: foodId,
         cantidad,
       });
 
@@ -330,42 +334,53 @@ export default function App() {
   const handleGuardarFood = async () => {
     console.log("id del cliente " + selectedClientId);
   
+    const checkStockAndUpdateInventory = async (foodId, cantidad) => {
+      const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad/${foodId}`);
+      const cantidadInicial = response.data.CantidadInicial;
+      const cantidadRestante = response.data.cantidadRestante;
+  
+
+      const clienteResponse = await axios.get(`http://127.0.0.1:3000/api/cabania-clientes/${selectedClientId}`);
+      const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
+      const totalPersonas = ninios + adultos;
+      alert("La cantidad cortesias debe ser igual a la cantidad de personas "+totalPersonas)
+  
+      const totalCortesias = cantidadFood + cantidadFood1;
+      if (totalCortesias > totalPersonas) {
+        alert(`La cantidad de cortesías (${totalCortesias}) no puede exceder la cantidad de personas (${totalPersonas}).`);
+        return;
+      }
+
+
+      if (cantidad > cantidadInicial) {
+        alert("La bebida no tiene suficiente stock");
+        return false;
+      } else if (cantidad > cantidadRestante) {
+        alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
+        return false;
+      }
+  
+      await actualizarInventarioFood(foodId, cantidad);
+      return true;
+    };
+  
     try {
       if (!selectedClientId || (!foodSeleccionadaId && !food1SeleccionadaId)) {
         throw new Error('No se ha seleccionado un cliente o una bebida.');
       }
   
-      // Function to check stock and update inventory for a given drink
-      const checkStockAndUpdateInventory = async (foodId, cantidad) => {
-        const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad/${foodId}`);
-        const { cantidadInicial, cantidadRestante } = response.data;
-  
-        if (cantidad > cantidadInicial) {
-          alert("La bebida no tiene suficiente stock");
-          return false;
-        } else if (cantidad > cantidadRestante) {
-          alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
-          return false;
-        }
-  
-        await actualizarInventarioFood(foodId, cantidad);
-        return true;
-      };
-  
       if (esCortesia) {
         let atLeastOneCortesiaSaved = false;
   
-        // Handle the first drink selection for courtesy
         if (cantidadFood > 0 && foodSeleccionadaId) {
-          // Check inventory before saving courtesy drink
           if (await checkStockAndUpdateInventory(foodSeleccionadaId, cantidadFood)) {
             console.log("cortesia 1");
             const foodCortesia = {
-              id: foodSeleccionadaId, 
-              nombre: foodSeleccionada, 
+              id: foodSeleccionadaId,
+              nombre: foodSeleccionada,
               cantidad: cantidadFood,
-              precio: 0, 
-              mensaje: "Cortesía" 
+              precio: 0,
+              mensaje: "Cortesía"
             };
             await guardarFood(foodCortesia);
             console.log(`Cortesía guardada con éxito para ${cantidadFood} unidades.`);
@@ -373,17 +388,15 @@ export default function App() {
           }
         }
   
-        // Handle the second drink selection for courtesy
         if (cantidadFood1 > 0 && food1SeleccionadaId) {
-          // Check inventory before saving courtesy drink
           if (await checkStockAndUpdateInventory(food1SeleccionadaId, cantidadFood1)) {
             console.log("cortesia 2");
             const foodCortesia1 = {
-              id: food1SeleccionadaId, 
-              nombre: food1Seleccionada, 
+              id: food1SeleccionadaId,
+              nombre: food1Seleccionada,
               cantidad: cantidadFood1,
-              precio: 0, 
-              mensaje: "Cortesía" 
+              precio: 0,
+              mensaje: "Cortesía"
             };
             await guardarFood(foodCortesia1);
             console.log(`Cortesía guardada con éxito para ${cantidadFood1} unidades.`);
@@ -391,21 +404,57 @@ export default function App() {
           }
         }
   
+        // Close the modal if a courtesy was successfully saved
         if (atLeastOneCortesiaSaved) {
-          onClose(); // Close the modal after handling all courtesy drinks
+          onClose();
         }
-        return; // Exit the function after handling the courtesy logic
+        return; // Exit the function after handling courtesy drinks
       }
   
-      // The rest of your code for handling non-courtesy drinks...
+      let isBebidaAdded = false;
   
+      // Handle the first drink selection
+      if (cantidadFood > 0 && foodSeleccionadaId) {
+        const foodAdultos = {
+          id: foodSeleccionadaId,
+          nombre: foodSeleccionada,
+          cantidad: cantidadFood,
+          precio: precioFoodSeleccionada,
+        };
+  
+        if (await checkStockAndUpdateInventory(foodSeleccionadaId, cantidadFood)) {
+          await guardarFood(foodAdultos);
+          isBebidaAdded = true;
+          console.log("Bebida para adultos agregada:", foodAdultos);
+        }
+      }
+  
+      if (cantidadFood1 > 0 && food1SeleccionadaId) {
+        const foodAdultos1 = {
+          id: food1SeleccionadaId,
+          nombre: food1Seleccionada,
+          cantidad: cantidadFood1,
+          precio: precioFood1Seleccionada,
+        };
+  
+        if (await checkStockAndUpdateInventory(food1SeleccionadaId, cantidadFood1)) {
+          await guardarFood(foodAdultos1);
+          isBebidaAdded = true;
+          console.log("Segunda bebida para adultos agregada:", foodAdultos1);
+        }
+      }
+  
+      if (!isBebidaAdded) {
+        alert("No se ha agregado ninguna bebida");
+      } else {
+        onClose();
+      }
     } catch (error) {
-      console.error('Error al guardar las bebidas:', error.message);
+      console.error('Error al guardar las bebidas en el cliente:', error.message);
     }
   };
   
 
-  // Función para hacer la petición de guardar la bebida en el cliente.
   const guardarFood = async (food) => {
     try {
       const response = await axios.post('http://127.0.0.1:3000/api/pasadia-agregar-food', {
@@ -550,7 +599,6 @@ export default function App() {
 
   const { isOpen: isFirstModalOpen, onOpen: openFirstModal, onClose: closeFirstModal } = useDisclosure();
   const sizes = ['4xl'];
-  const [selectedSize, setSelectedSize] = React.useState('');
 
   const handleOpen = (size) => {
     setSelectedSize(size);
@@ -567,25 +615,27 @@ export default function App() {
     setSelectedUser(null);
   };
 
-  const [size, setSize] = React.useState('md')
+  const [size, setSize] = React.useState('5xl')
 
   const sizess = ["5xl",];
 
   const handleOpenM = (size) => {
-    setSize(size)
+  setSize(size)
   }
 
   const { isOpen: isModalOpenM, onOpen: openModalM, onClose: closeModalM } = useDisclosure();
   const { isOpen: isModalOpenF, onOpen: openModalF, onClose: closeModalF } = useDisclosure();
 
+  const [ancho, setAncho] = React.useState('md')
+  const sizesm = ["md"];
 
-  const sizesm = ["xs"];
-
-  const handleOpenm = (size, userId) => {
-    setSelectedSize(size);
+  const handleOpenm = (ancho, userId) => {
+    setAncho(ancho);
     setSelectedClientId(userId);
     openModalM();
   };
+
+  const [selectedSize, setSelectedSize] = React.useState('md');
 
   const handleOpenmf = (size, userId) => {
     setSelectedSize(size);
@@ -846,7 +896,7 @@ export default function App() {
         >
       </input>
         </div>
-        <div className="flex items-center justify-center ">
+        <div className="flex items-center justify-center  w-32 ml-3">
           <img
             className="w-10 h-10 cursor-pointer flex items-center justify-center "
             src={download}
@@ -880,7 +930,7 @@ export default function App() {
             <TableColumn className="text-center tables_im">Pago pendiente o total</TableColumn> */}
             <TableColumn className="text-center">add bebida</TableColumn>
             <TableColumn className="text-center">add comida</TableColumn>
-            <TableColumn className="text-center">Consumo total</TableColumn>
+            <TableColumn className="text-center">Pago pendiente</TableColumn>
             {/* <TableColumn className="text-center">Acción</TableColumn> */}
           </TableHeader>
 
@@ -910,7 +960,12 @@ export default function App() {
                     </Button>
                   ))}
                   {selectedUser && (
-                    <Modal size={size} isOpen={isModalOpen} onClose={closeModal} className="w-8/12">
+                    <Modal size={size} isOpen={isModalOpen} onClose={closeModal} className="w-8/12"
+                    classNames={{
+                      body: "py-6",
+                      backdrop: "bg-inherit",
+                    }}
+                    >
                       <ModalContent >
                         <ModalHeader className="border-b-3 border-blue-500 text-3xl flex  justify-between">
                           <div className="mb-0.5">History</div>
@@ -1027,7 +1082,7 @@ export default function App() {
                     <Button color="danger" onClick={actualizarDatosCliente}>Guardar</Button>
                     </div>
                     </div>
-                    : ""
+                    : "Pago completado🤩"
                     }
                   </PopoverContent>
                 </Popover>
@@ -1117,8 +1172,8 @@ export default function App() {
 
                 <div className=" flex justify-center">
                   <div className="flex flex-wrap gap-3">
-                    {sizesm.map((size) => (
-                      <Button className="bg-white-100" key={size} onPress={() => handleOpenm(size, cliente._id)}>
+                    {sizesm.map((ancho) => (
+                      <Button className="bg-white-100" key={ancho} onPress={() => handleOpenm(ancho, cliente._id)}>
                         <img className="w-7 h-7" src={plus} alt="" />
                       </Button>
                     ))}
@@ -1126,9 +1181,9 @@ export default function App() {
 
                   <Modal
                   classNames={{
-                    backdrop: "bg-inherit, blur",
+                    backdrop: "bg-inherit",
                   }}
-                  size={size} isOpen={isModalOpenM} onClose={closeModalM}>
+                  size={ancho} isOpen={isModalOpenM} onClose={closeModalM}>
                     <ModalContent>
                       {(closeModalM) => (
                         <>
@@ -1234,7 +1289,11 @@ export default function App() {
                     ))}
                   </div>
 
-                  <Modal size={size} isOpen={isModalOpenF} onClose={closeModalF}>
+                  <Modal size={selectedSize} isOpen={isModalOpenF} onClose={closeModalF}
+                    classNames={{
+                      backdrop: "bg-inherit",
+                    }}
+                  >
                     <ModalContent>
                       {(closeModalF) => (
                         <>

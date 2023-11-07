@@ -7,8 +7,8 @@ const Pasadia = () => {
     <div className='movimiento'>
         <Navbar />
       <div className='w-full'>
-      <h1 className='text-4xl tracking-wider font-medium text-white w-full h-12 flex justify-center items-center'>PASADIA</h1>
-        <TableClientPasadia/>
+      <h1 className='w-full h-16 flex justify-center items-center text-4xl text-white'>PASADIA</h1>
+        <TableClientPasadia/> 
       </div>
     </div>
   )

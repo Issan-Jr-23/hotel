@@ -4,7 +4,7 @@ import moment from "moment-timezone";
 const clienteSchema = new mongoose.Schema({
   identificacion: {
     type: Number,
-    required: true
+    unique:true,
   },
   nombre: {
     type: String,
@@ -18,7 +18,8 @@ const clienteSchema = new mongoose.Schema({
   },
   mediosDePago: {
     type: String,
-    enum: ['efectivo','nequi', 'daviplata', 'pse','efecty', 'transferencia'],
+    enum: ['efectivo','nequi', 'daviplata', 'pse','efecty', 'transferencia',''],
+    default:"",
   },
   pagoAnticipado :{
     type: Number,
@@ -26,11 +27,11 @@ const clienteSchema = new mongoose.Schema({
   },
   mediosDePagoPendiente: {
     type: String,
-    enum: ['efectivo','nequi', 'daviplata', 'pse','efecty', 'transferencia'],
+    enum: ['efectivo','nequi', 'daviplata', 'pse','efecty', 'transferencia',''],
+    default: "",
   },
   pagoPendiente: {
     type: Number,
-    required: true,
     default: 0
   },
   totalReserva: {
@@ -50,6 +51,9 @@ const clienteSchema = new mongoose.Schema({
     type: Date,
     default: () => moment.tz("America/Bogota").toDate(), 
   },
+  fechaPasadia: {
+    type: Date, 
+  },
   bebidas: {
     type: Array,
     required: false,
@@ -68,7 +72,7 @@ const clienteSchema = new mongoose.Schema({
 
 
 
-export default mongoose.model("Cabanias", clienteSchema);
+export default mongoose.model("Cabania", clienteSchema);
 
 
 

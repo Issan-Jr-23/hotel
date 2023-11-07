@@ -315,7 +315,8 @@ export default function App() {
               {/* --------------------------------------------------------------- */}
               <TableColumn className="text-center">Total de la venta</TableColumn>
               <TableColumn className="text-center">Cantidad restante</TableColumn>
-              <TableColumn className="text-center">accion</TableColumn>
+              <TableColumn className="text-center">Valor total</TableColumn>
+              {/* <TableColumn className="text-center">accion</TableColumn> */}
             </TableHeader>
             <TableBody emptyContent="No hay filas para mostrar.">
               {filteredProducts.map((inventario) => ( 
@@ -389,7 +390,8 @@ export default function App() {
                   <TableCell>{inventario.ProductosVendidos}</TableCell>
                   <TableCell>{inventario.ProductosVendidos * inventario.ValorUnitario}</TableCell>
                   <TableCell>{ inventario.CantidadInicial - inventario.ProductosVendidos}</TableCell>
-                  <TableCell className="flex justify-center align-center"> 
+                  <TableCell>{inventario.CantidadInicial * inventario.ValorUnitario}</TableCell>
+                  {/* <TableCell className="flex justify-center align-center"> 
                   {inventario._id === editedUserId && (
                     <img
                     className="w-8 h-8 mr-4 cursor-pointer"
@@ -417,7 +419,7 @@ export default function App() {
                   alt="Delete"
                   onClick={() => handleDelete(inventario._id)}
                 />
-                  </TableCell>
+                  </TableCell> */}
                 </TableRow>
               ))}
             </TableBody>

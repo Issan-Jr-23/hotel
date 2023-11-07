@@ -4,6 +4,7 @@ import moment from "moment-timezone";
 const clienteSchema = new mongoose.Schema({
   identificacion: {
     type: Number,
+    unique:true
   },
   nombre: {
     type: String,

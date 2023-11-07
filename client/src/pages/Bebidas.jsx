@@ -20,25 +20,7 @@ const MekatosTable = () => {
       });
   }, []);
 
-  // const confirmAdditionalQuantity = async (mekatoId) => {
-  //   try {
-  //     const additionalQuantityForProduct = additionalQuantities[mekatoId] || 0;
 
-  //     const response = await axios.post("http://127.0.0.1:3000/api/agregar-cantidad", {
-  //       mekatoId: mekatoId,
-  //       additionalQuantity: additionalQuantityForProduct,
-  //     });
-
-
-  //     setAdditionalQuantities((prev) => ({
-  //       ...prev,
-  //       [mekatoId]: 0,
-  //     }));
-  //   } catch (error) {
-  //     console.error("Error al agregar cantidad vendida:", error);
-  //     // Manejar el error, mostrar mensajes al usuario, etc.
-  //   }
-  // };
 
   return (
     <>

@@ -5,7 +5,7 @@ const Cabanias = () => {
   return (
     <div>
         <Navbar/>
-      <h1>CABANIAS</h1>
+      <h1 className='w-full h-16 flex justify-center items-center text-4xl text-white '>CABANIAS</h1>
         <MuiTable/>
     </div>
   )

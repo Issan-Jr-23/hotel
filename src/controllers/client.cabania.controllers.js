@@ -128,7 +128,53 @@ export const addFood = async (req, res) => {
   }
 };
 
+export const obtenerCPI = async (req, res) => {
+  try {
+    const clientId = req.params.id;
 
+    const cliente = await Cabania.findById(clientId);
+
+    if (!cliente) {
+      return res.status(404).send('Cliente no encontrado');
+    }
+
+    res.json({
+      cantidadPersonas: cliente.cantidadPersonas
+    });
+
+  } catch (error) {
+    res.status(500).send('Error al obtener los datos del cliente: ' + error.message);
+  }
+};
+
+
+export const updatePP = async (req, res) => {
+  const clienteId = req.params.id;
+  const { pagoPendiente, mediosDePagoPendiente } = req.body;
+
+  try {
+    // Busca el cliente por su identificación y actualiza
+    const cliente = await Cabania.findOneAndUpdate(
+      { identificacion: clienteId }, // Asegúrese de que esta línea esté utilizando la variable correcta `clienteId`
+      { pagoPendiente, mediosDePagoPendiente },
+      { new: true } // Devuelve el documento modificado
+    );
+
+    if (!cliente) {
+      return res.status(404).json({ message: 'Cliente no encontrado' });
+    }
+
+    console.log(`Cliente con ID ${clienteId} ha sido actualizado con la siguiente información:`);
+    console.log('Pago Pendiente:', pagoPendiente);
+    console.log('Medios de Pago Pendiente:', mediosDePagoPendiente);
+
+    // Respuesta exitosa con el cliente actualizado
+    res.status(200).json({ message: `Datos del cliente ${clienteId} actualizados correctamente`, cliente });
+  } catch (error) {
+    console.error('Error al actualizar el cliente:', error);
+    res.status(500).json({ message: 'Error al actualizar el cliente' });
+  }
+};
 
       
 
