@@ -167,106 +167,124 @@ export default function App() {
   };
 
 
-const handleGuardarBebida = async () => {
-  console.log("id del cliente " + selectedClientId);
-
-  try {
-    if (!selectedClientId || (!bebidaSeleccionadaId && !bebida1SeleccionadaId)) {
-      throw new Error('No se ha seleccionado un cliente o una bebida.');
-    }
-
-    const clienteResponse = await axios.get(`http://127.0.0.1:3000/api/pasadia-clientes/${selectedClientId}`);
-    const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
-    const totalPersonas = ninios + adultos;
-    console.log(totalPersonas)
-
-    const totalCortesias = cantidadBebida + cantidadBebida1;
-    if (totalCortesias > totalPersonas) {
-      alert(`La cantidad de cortesías (${totalCortesias}) no puede exceder la cantidad de personas (${totalPersonas}).`);
-    }
-
+  const handleGuardarBebida = async () => {
+    console.log("id del cliente " + selectedClientId);
+  
+    // Function to check stock and update inventory for a given drink
     const checkStockAndUpdateInventory = async (bebidaId, cantidad) => {
       const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad/${bebidaId}`);
-      const { cantidadInicial, cantidadRestante } = response.data;
-      console.log(response.data)
-
+      const cantidadInicial = response.data.CantidadInicial;
+      const cantidadRestante = response.data.cantidadRestante;
+  
       if (cantidad > cantidadInicial) {
-        throw new Error("No hay suficiente stock de la bebida seleccionada.");
+        alert("La bebida no tiene suficiente stock");
+        return false;
       } else if (cantidad > cantidadRestante) {
-        throw new Error(`Solo quedan ${cantidadRestante} unidades en el inventario.`);
+        alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
+        return false;
       }
-
-      if (!esCortesia) {
-        await actualizarInventarioBebida(bebidaId, cantidad);
-      }
+  
+      await actualizarInventarioBebida(bebidaId, cantidad);
+      return true;
     };
-
-    if (esCortesia) {
+  
+    try {
+      // Check for client and at least one drink selection
+      if (!selectedClientId || (!bebidaSeleccionadaId && !bebida1SeleccionadaId)) {
+        throw new Error('No se ha seleccionado un cliente o una bebida.');
+      }
+  
+      if (esCortesia) {
+        let atLeastOneCortesiaSaved = false;
+  
+        // Handle the first drink selection for courtesy
+        if (cantidadBebida > 0 && bebidaSeleccionadaId) {
+          // Check inventory before saving courtesy drink
+          if (await checkStockAndUpdateInventory(bebidaSeleccionadaId, cantidadBebida)) {
+            console.log("cortesia 1");
+            const bebidaCortesia = {
+              id: bebidaSeleccionadaId,
+              nombre: bebidaSeleccionada,
+              cantidad: cantidadBebida,
+              precio: 0,
+              mensaje: "Cortesía"
+            };
+            await guardarBebida(bebidaCortesia);
+            console.log(`Cortesía guardada con éxito para ${cantidadBebida} unidades.`);
+            atLeastOneCortesiaSaved = true;
+          }
+        }
+  
+        // Handle the second drink selection for courtesy
+        if (cantidadBebida1 > 0 && bebida1SeleccionadaId) {
+          // Check inventory before saving courtesy drink
+          if (await checkStockAndUpdateInventory(bebida1SeleccionadaId, cantidadBebida1)) {
+            console.log("cortesia 2");
+            const bebidaCortesia1 = {
+              id: bebida1SeleccionadaId,
+              nombre: bebida1Seleccionada,
+              cantidad: cantidadBebida1,
+              precio: 0,
+              mensaje: "Cortesía"
+            };
+            await guardarBebida(bebidaCortesia1);
+            console.log(`Cortesía guardada con éxito para ${cantidadBebida1} unidades.`);
+            atLeastOneCortesiaSaved = true;
+          }
+        }
+  
+        // Close the modal if a courtesy was successfully saved
+        if (atLeastOneCortesiaSaved) {
+          onClose();
+        }
+        return; // Exit the function after handling courtesy drinks
+      }
+  
+      let isBebidaAdded = false;
+  
+      // Handle the first drink selection
       if (cantidadBebida > 0 && bebidaSeleccionadaId) {
-        await checkStockAndUpdateInventory(bebidaSeleccionadaId, cantidadBebida);
-        await guardarBebida({
+        const bebidaAdultos = {
           id: bebidaSeleccionadaId,
           nombre: bebidaSeleccionada,
           cantidad: cantidadBebida,
-          precio: 0,
-          mensaje: "Cortesía"
-        });
+          precio: precioBebidaSeleccionada,
+        };
+  
+        if (await checkStockAndUpdateInventory(bebidaSeleccionadaId, cantidadBebida)) {
+          await guardarBebida(bebidaAdultos);
+          isBebidaAdded = true;
+          console.log("Bebida para adultos agregada:", bebidaAdultos);
+        }
       }
-
+  
+      // Handle the second drink selection
       if (cantidadBebida1 > 0 && bebida1SeleccionadaId) {
-        await checkStockAndUpdateInventory(bebida1SeleccionadaId, cantidadBebida1);
-        await guardarBebida({
+        const bebidaAdultos1 = {
           id: bebida1SeleccionadaId,
           nombre: bebida1Seleccionada,
           cantidad: cantidadBebida1,
-          precio: 0,
-          mensaje: "Cortesía"
-        });
+          precio: precioBebida1Seleccionada,
+        };
+  
+        if (await checkStockAndUpdateInventory(bebida1SeleccionadaId, cantidadBebida1)) {
+          await guardarBebida(bebidaAdultos1);
+          isBebidaAdded = true;
+          console.log("Segunda bebida para adultos agregada:", bebidaAdultos1);
+        }
       }
-
-      return;
-    }
-
-    let bebidaGuardada = false;
-
-    if (cantidadBebida > 0 && bebidaSeleccionadaId) {
-      console.log("datos"+cantidadBebida + bebida1SeleccionadaId)
-      if (await checkStockAndUpdateInventory(bebidaSeleccionadaId, cantidadBebida)) {
-        await guardarBebida({
-          id: bebidaSeleccionadaId,
-          nombre: bebidaSeleccionada,
-          cantidad: cantidadBebida,
-          precio: precioBebidaSeleccionada
-        });
-        bebidaGuardada = true;
+  
+      if (!isBebidaAdded) {
+        alert("No se ha agregado ninguna bebida");
+      } else {
+        onClose(); // Close the modal after adding drinks
       }
+    } catch (error) {
+      console.error('Error al guardar las bebidas en el cliente:', error.message);
     }
-
-    if (cantidadBebida1 > 0 && bebida1SeleccionadaId) {
-      if (await checkStockAndUpdateInventory(bebida1SeleccionadaId, cantidadBebida1)) {
-        // Sustituir con la lógica para guardar la bebida en el sistema
-        await guardarBebida({
-          id: bebida1SeleccionadaId,
-          nombre: bebida1Seleccionada,
-          cantidad: cantidadBebida1,
-          precio: precioBebida1Seleccionada
-        });
-        bebidaGuardada = true;
-      }
-    }
-
-    if (bebidaGuardada) {
-      console.log("Bebida(s) guardada(s) con éxito.");
-    } else {
-      throw new Error("No se pudo guardar ninguna bebida.");
-    }
-
-    // Cerrar modal al finalizar con éxito
-  } catch (error) {
-    console.error('Error al guardar las bebidas:', error.message);
-    // Mostrar mensaje de error o manejarlo como se necesite
-  }
-};
+  };
+  
+  
   
   const guardarBebida = async (bebida) => {
     try {
@@ -274,7 +292,7 @@ const handleGuardarBebida = async () => {
         id: selectedClientId,
         bebida,
       });
-      console.log("peticion: ", selectedClientId);
+      console.log("peticion: ", response.data);
       if (response.status < 200 || response.status >= 300) {
         throw new Error(`Error al agregar la bebida. Estado de la respuesta: ${response.status}`);
       }
@@ -314,18 +332,16 @@ const handleGuardarBebida = async () => {
   
     try {
       if (!selectedClientId || (!foodSeleccionadaId && !food1SeleccionadaId)) {
-        throw new Error('No se ha seleccionado un cliente o una comida.');
+        throw new Error('No se ha seleccionado un cliente o una bebida.');
       }
-
-   
   
+      // Function to check stock and update inventory for a given drink
       const checkStockAndUpdateInventory = async (foodId, cantidad) => {
         const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad/${foodId}`);
-        const cantidadInicial = response.data.CantidadInicial;
-        const cantidadRestante = response.data.cantidadRestante;
+        const { cantidadInicial, cantidadRestante } = response.data;
   
         if (cantidad > cantidadInicial) {
-          alert("La comida no tiene suficiente stock");
+          alert("La bebida no tiene suficiente stock");
           return false;
         } else if (cantidad > cantidadRestante) {
           alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
@@ -336,45 +352,55 @@ const handleGuardarBebida = async () => {
         return true;
       };
   
-      let isFoodAdded = false;
+      if (esCortesia) {
+        let atLeastOneCortesiaSaved = false;
   
-      if (cantidadFood > 0 && foodSeleccionadaId) {
-        const comidaAdultos = {
-          id: foodSeleccionadaId,
-          nombre: foodSeleccionada,
-          cantidad: cantidadFood,
-          precio: precioFoodSeleccionada,
-        };
-  
-        if (await checkStockAndUpdateInventory(foodSeleccionadaId, cantidadFood)) {
-          await guardarFood(comidaAdultos);
-          isFoodAdded = true;
-          console.log("Comida para adultos agregada:", comidaAdultos);
+        // Handle the first drink selection for courtesy
+        if (cantidadFood > 0 && foodSeleccionadaId) {
+          // Check inventory before saving courtesy drink
+          if (await checkStockAndUpdateInventory(foodSeleccionadaId, cantidadFood)) {
+            console.log("cortesia 1");
+            const foodCortesia = {
+              id: foodSeleccionadaId, 
+              nombre: foodSeleccionada, 
+              cantidad: cantidadFood,
+              precio: 0, 
+              mensaje: "Cortesía" 
+            };
+            await guardarFood(foodCortesia);
+            console.log(`Cortesía guardada con éxito para ${cantidadFood} unidades.`);
+            atLeastOneCortesiaSaved = true;
+          }
         }
-      }
   
-      if (cantidadFood1 > 0 && food1SeleccionadaId) {
-        const comidaAdultos1 = {
-          id: food1SeleccionadaId,
-          nombre: food1Seleccionada,
-          cantidad: cantidadFood1,
-          precio: precioFood1Seleccionada,
-        };
-  
-        if (await checkStockAndUpdateInventory(food1SeleccionadaId, cantidadFood1)) {
-          await guardarFood(comidaAdultos1);
-          isFoodAdded = true;
-          console.log("Segunda comida para adultos agregada:", comidaAdultos1);
+        // Handle the second drink selection for courtesy
+        if (cantidadFood1 > 0 && food1SeleccionadaId) {
+          // Check inventory before saving courtesy drink
+          if (await checkStockAndUpdateInventory(food1SeleccionadaId, cantidadFood1)) {
+            console.log("cortesia 2");
+            const foodCortesia1 = {
+              id: food1SeleccionadaId, 
+              nombre: food1Seleccionada, 
+              cantidad: cantidadFood1,
+              precio: 0, 
+              mensaje: "Cortesía" 
+            };
+            await guardarFood(foodCortesia1);
+            console.log(`Cortesía guardada con éxito para ${cantidadFood1} unidades.`);
+            atLeastOneCortesiaSaved = true;
+          }
         }
+  
+        if (atLeastOneCortesiaSaved) {
+          onClose(); // Close the modal after handling all courtesy drinks
+        }
+        return; // Exit the function after handling the courtesy logic
       }
   
-      if (!isFoodAdded) {
-        alert("No se ha agregado ninguna comida");
-      } else {
-        onClose(); // Assuming onClose is a function to close the modal
-      }
+      // The rest of your code for handling non-courtesy drinks...
+  
     } catch (error) {
-      console.error('Error al guardar las comidas en el cliente:', error.message);
+      console.error('Error al guardar las bebidas:', error.message);
     }
   };
   
@@ -1214,11 +1240,11 @@ const handleGuardarBebida = async () => {
                         <>
                           <ModalHeader className="flex flex-col gap-1">COMIDAS</ModalHeader>
                           <ModalBody>
-                          <RadioGroup>
-                                <Radio value=""> Cortesia </Radio>
-                              </RadioGroup>
+                          <RadioGroup onChange={handleCortesiaChange}>
+                          <Radio value="cortesia">Cortesía</Radio>
+                        </RadioGroup>
                             <Input
-                              name="restaurante"
+                              name="bebidas"
                               label="Ingrese la cantidad para adultos"
                               type="number"
                               value={isNaN(cantidadFood) ? '' : cantidadFood}
@@ -1229,11 +1255,11 @@ const handleGuardarBebida = async () => {
                             />
                             <Select
                               name="restaurante"
-                              label="Seleccionar bebida para adultos"
+                              label="Seleccionar comida"
                               value={foodSeleccionada}
                               onChange={(e) => {
                                 const selectedFood = e.target.value;
-                                setFoodSeleccionada(selectedFood);
+                                setBebidaSeleccionada(selectedFood);
 
                                 const foodSeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood);
                                 if (foodSeleccionadaInfo) {
@@ -1248,9 +1274,6 @@ const handleGuardarBebida = async () => {
                                 </SelectItem>
                               ))}
                             </Select>
-
-                                {/* COMIDA 2 */}
-
                             <Input
                               name="restaurante"
                               label="Ingrese la cantidad para adultos"
@@ -1269,10 +1292,10 @@ const handleGuardarBebida = async () => {
                                 const selectedFood1 = e.target.value;
                                 setFood1Seleccionada(selectedFood1);
 
-                                const food1SeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood1);
+                                const food1SeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedFood1);
                                 if (food1SeleccionadaInfo) {
-                                  setPrecioFoodSeleccionada(food1SeleccionadaInfo.ValorUnitario);
-                                  setFoodSeleccionadaId(food1SeleccionadaInfo._id);
+                                  setPrecioFood1Seleccionada(food1SeleccionadaInfo.ValorUnitario);
+                                  setFood1SeleccionadaId(food1SeleccionadaInfo._id);
                                 }
                               }}
                             >
