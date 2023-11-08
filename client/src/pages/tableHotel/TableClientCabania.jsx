@@ -299,26 +299,19 @@ export default function App() {
         id: selectedClientId,
         bebida,
       });
-      setCantidadBebida(0); // o '' si quieres que el campo esté completamente vacío
-      setBebidaSeleccionada(''); // Establecer como vacío o el valor por defecto que desees
-      setPrecioBebidaSeleccionada(0); // o el valor por defecto inicial
-      setBebidaSeleccionadaId(''); // Establecer como vacío o el valor por defecto que desees
+      setCantidadBebida(""); 
+      setBebidaSeleccionada(''); 
+      setPrecioBebidaSeleccionada(""); 
+      setBebidaSeleccionadaId(''); 
   
-      // Haz lo mismo para la segunda bebida si es necesario
-      setCantidadBebida1(0); // o '' para un campo vacío
-      setBebida1Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
-      setPrecioBebida1Seleccionada(0); // o el valor por defecto inicial
-      setBebida1SeleccionadaId(''); // Establecer como vacío o el valor por defecto que desees
+      setCantidadBebida1(""); 
+      setBebida1Seleccionada('');
+      setPrecioBebida1Seleccionada("");
+      setBebida1SeleccionadaId('');
   
-      // Si tienes un estado para manejar el chequeo de cortesía, también debes restablecerlo
-      setEsCortesia(false); // O el valor por defecto que desees
+      setEsCortesia(false); 
   
-      // Cierra el modal después de limpiar los campos si es parte del flujo
       closeModalM();
-      console.log("peticion: ", response.data);
-      if (response.status < 200 || response.status >= 300) {
-        throw new Error(`Error al agregar la bebida. Estado de la respuesta: ${response.status}`);
-      }
     } catch (error) {
       console.error('Error al guardar la bebida en el cliente:', error.message);
       throw error;  
@@ -470,21 +463,20 @@ export default function App() {
         id: selectedClientId,
         food,
       });
-         setCantidadFood(""); // o '' si quieres que el campo esté completamente vacío
-    setFoodSeleccionada(''); // Establecer como vacío o el valor por defecto que desees
-    setPrecioFoodSeleccionada(""); // o el valor por defecto inicial
-    setFoodSeleccionadaId(''); // Establecer como vacío o el valor por defecto que desees
+         setCantidadFood(""); 
+    setFoodSeleccionada(''); 
+    setPrecioFoodSeleccionada(""); 
+    setFoodSeleccionadaId(''); 
 
-    // Haz lo mismo para la segunda comida si es necesario
-    setCantidadFood1(""); // o '' para un campo vacío
-    setFood1Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
-    setPrecioFood1Seleccionada(""); // o el valor por defecto inicial
-    setFood1SeleccionadaId(''); // Establecer como vacío o el valor por defecto que desees
+    
+    setCantidadFood1(""); 
+    setFood1Seleccionada(''); 
+    setPrecioFood1Seleccionada(""); 
+    setFood1SeleccionadaId(''); 
 
-    // Si tienes un estado para manejar el chequeo de cortesía, también debes restablecerlo
-    setEsCortesia(false); // O el valor por defecto que desees
+    
+    setEsCortesia(false); 
 
-    // Cierra el modal después de limpiar los campos si es parte del flujo
     closeModalF();
       console.log("peticion: ", selectedClientId);
       closeModalF();
@@ -1200,7 +1192,7 @@ export default function App() {
 
                   <Modal
                   classNames={{
-                    backdrop: "bg-inherit, blur",
+                    backdrop: "bg-inherit",
                   }}
                   size={ancho} isOpen={isModalOpenM} onClose={closeModalM}>
                     <ModalContent>
@@ -1325,7 +1317,7 @@ export default function App() {
                             checked={esCortesia}
                             onChange={handleCortesiaChange}
                           >
-                            Cortesía
+                            Cortesía cabanias
                           </Checkbox>
                             <Input
                               name="bebidas"

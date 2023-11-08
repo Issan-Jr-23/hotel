@@ -296,23 +296,18 @@ export default function App() {
         id: selectedClientId,
         bebida,
       });
-      const responses = await axios.get("http://127.0.0.1:3000/api/cabania-clientes");
-      setUsers(responses.data);
-      setCantidadBebida(0); // o '' si quieres que el campo esté completamente vacío
-      setBebidaSeleccionada(''); // Establecer como vacío o el valor por defecto que desees
-      setPrecioBebidaSeleccionada(0); // o el valor por defecto inicial
-      setBebidaSeleccionadaId(''); // Establecer como vacío o el valor por defecto que desees
+      setCantidadBebida(""); 
+      setBebidaSeleccionada(''); 
+      setPrecioBebidaSeleccionada(""); 
+      setBebidaSeleccionadaId(''); 
   
-      // Haz lo mismo para la segunda bebida si es necesario
-      setCantidadBebida1(0); // o '' para un campo vacío
-      setBebida1Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
-      setPrecioBebida1Seleccionada(0); // o el valor por defecto inicial
-      setBebida1SeleccionadaId(''); // Establecer como vacío o el valor por defecto que desees
+      setCantidadBebida1(""); 
+      setBebida1Seleccionada('');
+      setPrecioBebida1Seleccionada("");
+      setBebida1SeleccionadaId('');
   
-      // Si tienes un estado para manejar el chequeo de cortesía, también debes restablecerlo
-      setEsCortesia(false); // O el valor por defecto que desees
+      setEsCortesia(false); 
   
-      // Cierra el modal después de limpiar los campos si es parte del flujo
       closeModalM();
     } catch (error) {
       console.error('Error al guardar la bebida en el cliente:', error.message);
@@ -354,7 +349,7 @@ export default function App() {
       const cantidadInicial = response.data.CantidadInicial;
       const cantidadRestante = response.data.cantidadRestante;
 
-      const clienteResponse = await axios.get(`http://127.0.0.1:3000/api/cabania-clientes/${selectedClientId}`);
+      const clienteResponse = await axios.get(`http://127.0.0.1:3000/api/pasadia-clientes/${selectedClientId}`);
       const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
       const totalPersonas = ninios + adultos;
       console.log(totalPersonas)
@@ -418,7 +413,6 @@ export default function App() {
         }
   
         if (atLeastOneCortesiaSaved) {
-          onClose();
         }
         return; 
       }
@@ -468,32 +462,31 @@ export default function App() {
   
 
   const guardarFood = async (food) => {
+    
     try {
       const response = await axios.post('http://127.0.0.1:3000/api/pasadia-agregar-food', {
         id: selectedClientId,
         food,
       });
+         setCantidadFood(""); 
+    setFoodSeleccionada(''); 
+    setPrecioFoodSeleccionada(""); 
+    setFoodSeleccionadaId(''); 
+
+    
+    setCantidadFood1(""); 
+    setFood1Seleccionada(''); 
+    setPrecioFood1Seleccionada(""); 
+    setFood1SeleccionadaId(''); 
+
+    
+    setEsCortesia(false); 
+
+    closeModalF();
+      console.log("peticion: ", selectedClientId);
+      closeModalF();
       const responses = await axios.get("http://127.0.0.1:3000/api/cabania-clientes");
       setUsers(responses.data);
-      setCantidadFood(0); // o '' si quieres que el campo esté completamente vacío
-      setFoodSeleccionada(''); // Establecer como vacío o el valor por defecto que desees
-      setPrecioFoodSeleccionada(0); // o el valor por defecto inicial
-      setFoodSeleccionadaId(''); // Establecer como vacío o el valor por defecto que desees
-  
-      // Haz lo mismo para la segunda comida si es necesario
-      setCantidadFood1(0); // o '' para un campo vacío
-      setFood1Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
-      setPrecioFood1Seleccionada(0); // o el valor por defecto inicial
-      setFood1SeleccionadaId(''); // Establecer como vacío o el valor por defecto que desees
-  
-      // Si tienes un estado para manejar el chequeo de cortesía, también debes restablecerlo
-      setEsCortesia(false); // O el valor por defecto que desees
-  
-      // Cierra el modal después de limpiar los campos si es parte del flujo
-      closeModalF();
-      if (response.status < 200 || response.status >= 300) {
-        throw new Error(`Error al agregar la bebida. Estado de la respuesta: ${response.status}`);
-      }
     } catch (error) {
       console.error('Error al guardar la bebida en el cliente:', error.message);
       throw error; 
@@ -661,6 +654,15 @@ export default function App() {
     setAncho(ancho);
     setSelectedClientId(userId);
     openModalM();
+        setCantidadBebida(""); // o '' si quieres que el campo esté completamente vacío
+      setBebidaSeleccionada(''); 
+      setPrecioBebidaSeleccionada("");
+      setBebidaSeleccionadaId('');
+  
+      setCantidadBebida1(""); 
+      setBebida1Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
+      setPrecioBebida1Seleccionada(""); // o el valor por defecto inicial
+      setBebida1SeleccionadaId('');
   };
 
   const [selectedSize, setSelectedSize] = React.useState('md');
@@ -669,6 +671,7 @@ export default function App() {
     setSelectedSize(size);
     setSelectedClientId(userId);
     openModalF();
+    
   };
 
 
@@ -727,7 +730,8 @@ export default function App() {
           pagoPendiente: formDatas.pagoPendiente,
           mediosDePagoPendiente: formDatas.mediosDePagoPendiente
         });
-
+        const responses = await axios.get("http://127.0.0.1:3000/api/pasadia-clientes");
+        setUsers(responses.data);
         console.log('Datos del cliente actualizados:', response.data);
       } catch (error) {
         console.error('Hubo un problema con la petición Axios:', error);
@@ -941,21 +945,7 @@ export default function App() {
             <TableColumn className="text-center max-w-xs">ID</TableColumn>
             <TableColumn className="text-center ">Nombre</TableColumn>
             <TableColumn className="text-center ">Reserva</TableColumn>
-        
-            {/* <TableColumn className="text-center ">Precio niños</TableColumn>
-            <TableColumn className="text-center ">Precio adultos</TableColumn>
-
-           
-            <TableColumn className="text-center ">Niños</TableColumn>
-            <TableColumn className="text-center ">Adultos</TableColumn> */}
-            {/* <TableColumn className="text-center ">Metodo de pago</TableColumn>
-            <TableColumn className="text-center ">
-              Anticipo
-            </TableColumn> */}
-            {/* <TableColumn className="text-center tables_im">Fecha de registro</TableColumn> */}
             <TableColumn className="text-center tables_im">fecha de inicio del pasadia</TableColumn>
-            {/* <TableColumn className="text-center tables_im">Metodo de pago</TableColumn>
-            <TableColumn className="text-center tables_im">Pago pendiente o total</TableColumn> */}
             <TableColumn className="text-center">add bebida</TableColumn>
             <TableColumn className="text-center">add comida</TableColumn>
             <TableColumn className="text-center">Pago pendiente</TableColumn>
@@ -1146,17 +1136,18 @@ export default function App() {
                           <p>{cliente.nombre}</p>
                         </PopoverTrigger>
                         <PopoverContent>
-                          <div className="px-1 py-2">
+                        <div className="px-1 py-2">
                             <div className="text-small font-bold">Información</div>
-                            <div className="text-red-500">Valor del pasadia</div>
-                            <div className="text-tiny">Ninios: {pasadiaNinios}</div>
-                            <div className="text-tiny">Adultos{pasadiaAdultos}</div>
                             <div className="text-red-500">Cantidad de personas</div>
                             <div className="text-tiny">Adultos: {cliente.cantidadPersonas.adultos}</div>
                             <div>Niños: {cliente.cantidadPersonas.ninios}</div>
                             <div className="text-red-500">Anticipo de pasadia</div>
                             <div>Metodo de pago: {cliente.mediosDePago}</div>
                             <div>Anticipo: {cliente.pagoAnticipado}</div>
+                            <div className="text-red-500">pago pendienete o total</div>
+                            <div>Metodo de pago: {cliente.mediosDePagoPendiente}</div>
+                            <div>Pago pendiente: {cliente.pagoPendiente}</div>
+                            <div>pendiente: {(cliente.cantidadPersonas.adultos * pasadiaAdultos) + (cliente.cantidadPersonas.ninios * pasadiaNinios) - (cliente.pagoAnticipado + cliente.pagoPendiente)}</div>
                           </div>
                         </PopoverContent>
                       </Popover>
@@ -1330,9 +1321,12 @@ export default function App() {
                         <>
                           <ModalHeader className="flex flex-col gap-1">COMIDAS</ModalHeader>
                           <ModalBody>
-                          <RadioGroup onChange={handleCortesiaChange}>
-                          <Radio value="cortesia">Cortesía</Radio>
-                        </RadioGroup>
+                          <Checkbox
+                            checked={esCortesia}
+                            onChange={handleCortesiaChange}
+                          >
+                            Cortesía
+                          </Checkbox>
                             <Input
                               name="bebidas"
                               label="Ingrese la cantidad para adultos"
