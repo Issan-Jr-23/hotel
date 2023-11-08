@@ -67,6 +67,10 @@ const clienteSchema = new mongoose.Schema({
   consumoTotal: {
     type: Number,
     default: 0
+  },
+  totalCortesia: {
+    type: Number,
+    default: 0
   }
 });
 

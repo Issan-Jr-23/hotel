@@ -36,36 +36,37 @@ export default function App() {
 
   const [esCortesia, setEsCortesia] = useState(false);
 
+
   const handleCortesiaChange = (event) => {
-    setEsCortesia(event.target.value === "cortesia");
+    setEsCortesia(event.target.checked);
   };
   
   const [users, setUsers] = useState([]);
   const [drinks, setDrinks] = useState([]);
   const [snacks, setSnacks] = useState([]);
 
-  const [cantidadBebida, setCantidadBebida] = useState(1);
+  const [cantidadBebida, setCantidadBebida] = useState("");
   const [bebidaSeleccionada, setBebidaSeleccionada] = useState('');
   const [precioBebidaSeleccionada, setPrecioBebidaSeleccionada] = useState(0);
   const [bebidaSeleccionadaId, setBebidaSeleccionadaId] = useState(null);
 
   //bebida 2
 
-  const [cantidadBebida1, setCantidadBebida1] = useState(1);
+  const [cantidadBebida1, setCantidadBebida1] = useState("");
   const [bebida1Seleccionada, setBebida1Seleccionada] = useState('');
   const [precioBebida1Seleccionada, setPrecioBebida1Seleccionada] = useState(0);
   const [bebida1SeleccionadaId, setBebida1SeleccionadaId] = useState(null);
 
  //comida 1
 
-  const [cantidadFood, setCantidadFood] = useState(1);
+  const [cantidadFood, setCantidadFood] = useState("");
   const [foodSeleccionada, setFoodSeleccionada] = useState('');
   const [precioFoodSeleccionada, setPrecioFoodSeleccionada] = useState(0);
   const [foodSeleccionadaId, setFoodSeleccionadaId] = useState(null);
 
 //comida 2
 
-  const [cantidadFood1, setCantidadFood1] = useState(1);
+  const [cantidadFood1, setCantidadFood1] = useState("");
   const [food1Seleccionada, setFood1Seleccionada] = useState('');
   const [precioFood1Seleccionada, setPrecioFood1Seleccionada] = useState(0);
   const [food1SeleccionadaId, setFood1SeleccionadaId] = useState(null);
@@ -172,9 +173,9 @@ export default function App() {
   const handleGuardarBebida = async () => {
     console.log("id del cliente " + selectedClientId);
   
-    // Function to check stock and update inventory for a given drink
     const checkStockAndUpdateInventory = async (bebidaId, cantidad) => {
       const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad/${bebidaId}`);
+     
       const cantidadInicial = response.data.CantidadInicial;
       const cantidadRestante = response.data.cantidadRestante;
 
@@ -189,7 +190,6 @@ export default function App() {
         return;
       }
   
-  
       if (cantidad > cantidadInicial) {
         alert("La bebida no tiene suficiente stock");
         return false;
@@ -203,7 +203,6 @@ export default function App() {
     };
   
     try {
-      // Check for client and at least one drink selection
       if (!selectedClientId || (!bebidaSeleccionadaId && !bebida1SeleccionadaId)) {
         throw new Error('No se ha seleccionado un cliente o una bebida.');
       }
@@ -211,9 +210,7 @@ export default function App() {
       if (esCortesia) {
         let atLeastOneCortesiaSaved = false;
   
-        // Handle the first drink selection for courtesy
         if (cantidadBebida > 0 && bebidaSeleccionadaId) {
-          // Check inventory before saving courtesy drink
           if (await checkStockAndUpdateInventory(bebidaSeleccionadaId, cantidadBebida)) {
             console.log("cortesia 1");
             const bebidaCortesia = {
@@ -229,9 +226,7 @@ export default function App() {
           }
         }
   
-        // Handle the second drink selection for courtesy
         if (cantidadBebida1 > 0 && bebida1SeleccionadaId) {
-          // Check inventory before saving courtesy drink
           if (await checkStockAndUpdateInventory(bebida1SeleccionadaId, cantidadBebida1)) {
             console.log("cortesia 2");
             const bebidaCortesia1 = {
@@ -247,16 +242,14 @@ export default function App() {
           }
         }
   
-        // Close the modal if a courtesy was successfully saved
         if (atLeastOneCortesiaSaved) {
           onClose();
         }
-        return; // Exit the function after handling courtesy drinks
+        return; 
       }
   
       let isBebidaAdded = false;
   
-      // Handle the first drink selection
       if (cantidadBebida > 0 && bebidaSeleccionadaId) {
         const bebidaAdultos = {
           id: bebidaSeleccionadaId,
@@ -306,6 +299,22 @@ export default function App() {
         id: selectedClientId,
         bebida,
       });
+      setCantidadBebida(0); // o '' si quieres que el campo esté completamente vacío
+      setBebidaSeleccionada(''); // Establecer como vacío o el valor por defecto que desees
+      setPrecioBebidaSeleccionada(0); // o el valor por defecto inicial
+      setBebidaSeleccionadaId(''); // Establecer como vacío o el valor por defecto que desees
+  
+      // Haz lo mismo para la segunda bebida si es necesario
+      setCantidadBebida1(0); // o '' para un campo vacío
+      setBebida1Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
+      setPrecioBebida1Seleccionada(0); // o el valor por defecto inicial
+      setBebida1SeleccionadaId(''); // Establecer como vacío o el valor por defecto que desees
+  
+      // Si tienes un estado para manejar el chequeo de cortesía, también debes restablecerlo
+      setEsCortesia(false); // O el valor por defecto que desees
+  
+      // Cierra el modal después de limpiar los campos si es parte del flujo
+      closeModalM();
       console.log("peticion: ", response.data);
       if (response.status < 200 || response.status >= 300) {
         throw new Error(`Error al agregar la bebida. Estado de la respuesta: ${response.status}`);
@@ -455,16 +464,32 @@ export default function App() {
   
 
   const guardarFood = async (food) => {
+    
     try {
       const response = await axios.post('http://127.0.0.1:3000/api/cabania-agregar-food', {
         id: selectedClientId,
         food,
       });
+         setCantidadFood(""); // o '' si quieres que el campo esté completamente vacío
+    setFoodSeleccionada(''); // Establecer como vacío o el valor por defecto que desees
+    setPrecioFoodSeleccionada(""); // o el valor por defecto inicial
+    setFoodSeleccionadaId(''); // Establecer como vacío o el valor por defecto que desees
+
+    // Haz lo mismo para la segunda comida si es necesario
+    setCantidadFood1(""); // o '' para un campo vacío
+    setFood1Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
+    setPrecioFood1Seleccionada(""); // o el valor por defecto inicial
+    setFood1SeleccionadaId(''); // Establecer como vacío o el valor por defecto que desees
+
+    // Si tienes un estado para manejar el chequeo de cortesía, también debes restablecerlo
+    setEsCortesia(false); // O el valor por defecto que desees
+
+    // Cierra el modal después de limpiar los campos si es parte del flujo
+    closeModalF();
       console.log("peticion: ", selectedClientId);
-      onClose();
-      if (response.status < 200 || response.status >= 300) {
-        throw new Error(`Error al agregar la bebida. Estado de la respuesta: ${response.status}`);
-      }
+      closeModalF();
+      const responses = await axios.get("http://127.0.0.1:3000/api/cabania-clientes");
+      setUsers(responses.data);
     } catch (error) {
       console.error('Error al guardar la bebida en el cliente:', error.message);
       throw error; 
@@ -697,6 +722,8 @@ export default function App() {
           pagoPendiente: formDatas.pagoPendiente,
           mediosDePagoPendiente: formDatas.mediosDePagoPendiente
         });
+        const responses = await axios.get("http://127.0.0.1:3000/api/cabania-clientes");
+        setUsers(responses.data);
 
         console.log('Datos del cliente actualizados:', response.data);
       } catch (error) {
@@ -1194,7 +1221,7 @@ export default function App() {
                               value={isNaN(cantidadBebida) ? '' : cantidadBebida}
                               onChange={(e) => {
                                 const value = parseInt(e.target.value, 10);
-                                setCantidadBebida(isNaN(value) ? 0 : value);
+                                setCantidadBebida(isNaN(value) ? "" : value);
                               }}
                             />
                             <Select
@@ -1225,7 +1252,7 @@ export default function App() {
                               value={isNaN(cantidadBebida1) ? '' : cantidadBebida1}
                               onChange={(e) => {
                                 const value = parseInt(e.target.value, 10);
-                                setCantidadBebida1(isNaN(value) ? 0 : value);
+                                setCantidadBebida1(isNaN(value) ? "" : value);
                               }}
                             />
                             <Select
@@ -1294,9 +1321,12 @@ export default function App() {
                         <>
                           <ModalHeader className="flex flex-col gap-1">COMIDAS</ModalHeader>
                           <ModalBody>
-                          <RadioGroup onChange={handleCortesiaChange}>
-                          <Radio value="cortesia">Cortesía</Radio>
-                        </RadioGroup>
+                          <Checkbox
+                            checked={esCortesia}
+                            onChange={handleCortesiaChange}
+                          >
+                            Cortesía
+                          </Checkbox>
                             <Input
                               name="bebidas"
                               label="Ingrese la cantidad para adultos"
@@ -1304,7 +1334,7 @@ export default function App() {
                               value={isNaN(cantidadFood) ? '' : cantidadFood}
                               onChange={(e) => {
                                 const value = parseInt(e.target.value, 10);
-                                setCantidadFood(isNaN(value) ? 0 : value);
+                                setCantidadFood(isNaN(value) ? "" : value);
                               }}
                             />
                             <Select
@@ -1335,7 +1365,7 @@ export default function App() {
                               value={isNaN(cantidadFood1) ? '' : cantidadFood1}
                               onChange={(e) => {
                                 const value = parseInt(e.target.value, 10);
-                                setCantidadFood1(isNaN(value) ? 0 : value);
+                                setCantidadFood1(isNaN(value) ? "" : value);
                               }}
                             />
                             <Select
@@ -1346,7 +1376,7 @@ export default function App() {
                                 const selectedFood1 = e.target.value;
                                 setFood1Seleccionada(selectedFood1);
 
-                                const food1SeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedFood1);
+                                const food1SeleccionadaInfo = sna.find(bebida => bebida.Descripcion === selectedFood1);
                                 if (food1SeleccionadaInfo) {
                                   setPrecioFood1Seleccionada(food1SeleccionadaInfo.ValorUnitario);
                                   setFood1SeleccionadaId(food1SeleccionadaInfo._id);
