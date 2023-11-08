@@ -15,8 +15,7 @@ import {
   ModalFooter,
   useDisclosure,
   Select,
-  SelectItem,
-  RadioGroup, Radio, Checkbox,Popover, PopoverTrigger, PopoverContent
+  SelectItem, Checkbox,Popover, PopoverTrigger, PopoverContent
 } from "@nextui-org/react";
 
 import axios from "axios";
@@ -32,10 +31,7 @@ import "../table/table.css"
 
 export default function App() {
 
-  //#region 
-
   const [esCortesia, setEsCortesia] = useState(false);
-
 
   const handleCortesiaChange = (event) => {
     setEsCortesia(event.target.checked);
@@ -47,7 +43,7 @@ export default function App() {
 
   const [cantidadBebida, setCantidadBebida] = useState("");
   const [bebidaSeleccionada, setBebidaSeleccionada] = useState('');
-  const [precioBebidaSeleccionada, setPrecioBebidaSeleccionada] = useState(0);
+  const [precioBebidaSeleccionada, setPrecioBebidaSeleccionada] = useState("");
   const [bebidaSeleccionadaId, setBebidaSeleccionadaId] = useState(null);
 
   //bebida 2
@@ -98,7 +94,7 @@ export default function App() {
     mediosDePagoPendiente: "",
     pagoPendiente: "",
     fechaPasadia: "",
-    tipo_cabania: ""
+    habitaciones:""
 
   });
 
@@ -128,7 +124,8 @@ export default function App() {
   const handleInputChange = (event, fieldName) => {
     const { name, value } = event.target;
     
-    const totalCosto = (valorCabania);
+    const totalCosto = (valorHabitaciones);
+    console.log(totalCosto)
   
     const totalPendiente = totalCosto; 
   
@@ -177,19 +174,18 @@ export default function App() {
       const cantidadInicial = response.data.CantidadInicial;
       const cantidadRestante = response.data.cantidadRestante;
 
-      const clienteResponse = await axios.get(`http://127.0.0.1:3000/api/cabania-clientes/${selectedClientId}`);
+      const clienteResponse = await axios.get(`http://127.0.0.1:3000/api/habitaciones-clientes/${selectedClientId}`);
       const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
       const totalPersonas = ninios + adultos;
-
-      if(esCortesia){
-
+  
+      if (esCortesia) {
         const totalCortesias = cantidadBebida + cantidadBebida1;
         if (totalCortesias > totalPersonas) {
           alert(`La cantidad de cortesías (${totalCortesias}) no puede exceder la cantidad de personas (${totalPersonas}).`);
           return;
         }
+        
       }
-  
   
       if (cantidad > cantidadInicial) {
         alert("La bebida no tiene suficiente stock");
@@ -290,7 +286,7 @@ export default function App() {
   
   const guardarBebida = async (bebida) => {
     try {
-      const response = await axios.post('http://127.0.0.1:3000/api/cabania-agregar-bebida', {
+      const response = await axios.post('http://127.0.0.1:3000/api/habitaciones-agregar-bebida', {
         id: selectedClientId,
         bebida,
       });
@@ -337,19 +333,17 @@ export default function App() {
       const cantidadInicial = response.data.CantidadInicial;
       const cantidadRestante = response.data.cantidadRestante;
 
-      const clienteResponse = await axios.get(`http://127.0.0.1:3000/api/cabania-clientes/${selectedClientId}`);
+      const clienteResponse = await axios.get(`http://127.0.0.1:3000/api/habitaciones-clientes/${selectedClientId}`);
       const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
       const totalPersonas = ninios + adultos;
-
-      if(esCortesia){
+  
+      if (esCortesia) {
         const totalCortesias = cantidadFood + cantidadFood1;
         if (totalCortesias > totalPersonas) {
           alert(`La cantidad de cortesías (${totalCortesias}) no puede exceder la cantidad de personas (${totalPersonas}).`);
           return;
         }
-
       }
-  
   
       if (cantidad > cantidadInicial) {
         alert("La bebida no tiene suficiente stock");
@@ -399,16 +393,14 @@ export default function App() {
           }
         }
   
-        // Close the modal if a courtesy was successfully saved
         if (atLeastOneCortesiaSaved) {
           onClose();
         }
-        return; // Exit the function after handling courtesy drinks
+        return; 
       }
   
       let isBebidaAdded = false;
   
-      // Handle the first drink selection
       if (cantidadFood > 0 && foodSeleccionadaId) {
         const foodAdultos = {
           id: foodSeleccionadaId,
@@ -451,7 +443,7 @@ export default function App() {
   const guardarFood = async (food) => {
     
     try {
-      const response = await axios.post('http://127.0.0.1:3000/api/cabania-agregar-food', {
+      const response = await axios.post('http://127.0.0.1:3000/api/habitaciones-agregar-food', {
         id: selectedClientId,
         food,
       });
@@ -472,7 +464,7 @@ export default function App() {
 
     closeModalF();
       closeModalF();
-      const responses = await axios.get("http://127.0.0.1:3000/api/cabania-clientes");
+      const responses = await axios.get("http://127.0.0.1:3000/api/habitaciones-clientes");
       setUsers(responses.data);
     } catch (error) {
       console.error('Error al guardar la bebida en el cliente:', error.message);
@@ -485,7 +477,7 @@ export default function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:3000/api/cabania-clientes");
+        const response = await axios.get("http://127.0.0.1:3000/api/habitaciones-clientes");
         setUsers(response.data);
       } catch (error) {
         console.error("Error al obtener datos del servidor:", error);
@@ -496,7 +488,7 @@ export default function App() {
 
   const handleFormSubmit = async () => {
     try {
-      await axios.post("http://127.0.0.1:3000/api/cabania-registrar-cliente", formData);
+      await axios.post("http://127.0.0.1:3000/api/habitaciones-registrar-cliente", formData);
       onClose();
       toast.success('Cliente agregado exitosamente!');
       setFormData({
@@ -509,10 +501,10 @@ export default function App() {
         totalConsumo: "",
         cantidadPersonas: {
           adultos: "",
-          ninios: "", 
+          ninios: "",
         },
       });
-      const response = await axios.get("http://127.0.0.1:3000/api/cabania-clientes");
+      const response = await axios.get("http://127.0.0.1:3000/api/habitaciones-clientes");
       setUsers(response.data);
     } catch (error) {
       toast.error('Ocurrió un error al agregar el cliente.');
@@ -521,13 +513,13 @@ export default function App() {
 
   const handleFormSubmitB = async () => {
     try {
-      await axios.post("http://127.0.0.1:3000/api/cabania-registrar-cliente", formData);
+      await axios.post("http://127.0.0.1:3000/api/habitaciones-registrar-cliente", formData);
       onClose();
       toast.success('bebida agregada exitosamente');
       setFormData({
         bebidas: ""
       });
-      const response = await axios.get("http://127.0.0.1:3000/api/cabania-clientes");
+      const response = await axios.get("http://127.0.0.1:3000/api/habitaciones-clientes");
       setUsers(response.data);
     } catch (error) {
       toast.error('Ocurrió un error al agregar el cliente.');
@@ -537,7 +529,7 @@ export default function App() {
   const handleEditUser = async () => {
     try {
       await axios.put(
-        `http://127.0.0.1:3000/api/cabania/edit/${editedUserId}`,
+        `http://127.0.0.1:3000/api/habitaciones/edit/${editedUserId}`,
         {
           nombre: editedName,
           pagoPendienteTotal: editPago
@@ -567,7 +559,7 @@ export default function App() {
     }
 
     try {
-      await axios.delete(`http://127.0.0.1:3000/api/cabania/${id}`);
+      await axios.delete(`http://127.0.0.1:3000/api/habitaciones/${id}`);
       const updatedUsers = users.filter((user) => user._id !== id);
       setUsers(updatedUsers);
       toast.success('Successfully toasted!')
@@ -609,7 +601,6 @@ export default function App() {
 
   const { isOpen: isFirstModalOpen, onOpen: openFirstModal, onClose: closeFirstModal } = useDisclosure();
   const sizes = ['4xl'];
-  const [selectedSize, setSelectedSize] = React.useState('');
 
   const handleOpen = (size) => {
     setSelectedSize(size);
@@ -631,28 +622,38 @@ export default function App() {
   const sizess = ["5xl",];
 
   const handleOpenM = (size) => {
-    setSize(size)
+  setSize(size)
   }
 
   const { isOpen: isModalOpenM, onOpen: openModalM, onClose: closeModalM } = useDisclosure();
   const { isOpen: isModalOpenF, onOpen: openModalF, onClose: closeModalF } = useDisclosure();
 
-
   const [ancho, setAncho] = React.useState('md')
   const sizesm = ["xs"];
 
-  const handleOpenm = (size, userId) => {
-    setAncho(size);
+  const handleOpenm = (ancho, userId) => {
+    setAncho(ancho);
     setSelectedClientId(userId);
     openModalM();
+        setCantidadBebida(""); // o '' si quieres que el campo esté completamente vacío
+      setBebidaSeleccionada(''); 
+      setPrecioBebidaSeleccionada("");
+      setBebidaSeleccionadaId('');
+  
+      setCantidadBebida1(""); 
+      setBebida1Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
+      setPrecioBebida1Seleccionada(""); // o el valor por defecto inicial
+      setBebida1SeleccionadaId('');
   };
+
+  const [selectedSize, setSelectedSize] = React.useState('md');
 
   const handleOpenmf = (size, userId) => {
-    setAncho(size);
+    setSelectedSize(size);
     setSelectedClientId(userId);
     openModalF();
+    
   };
-
 
 
   const { isOpen: isModalOpenMc, onOpen: openModalMc, onClose: closeModalMc } = useDisclosure();
@@ -683,7 +684,7 @@ export default function App() {
   ]
 
 
-  const valorCabania = 400000
+  const valorHabitaciones = 300000;
 
   const [selectedClienteId, setSelectedClienteId] = useState(null);
 
@@ -705,13 +706,12 @@ export default function App() {
   const actualizarDatosCliente = async () => {
     if (selectedClienteId) {
       try {
-        const response = await axios.put(`http://127.0.0.1:3000/api/cabania-clientes/${selectedClienteId}/actualizar`, {
+        const response = await axios.put(`http://127.0.0.1:3000/api/habitaciones-clientes/${selectedClienteId}/actualizar`, {
           pagoPendiente: formDatas.pagoPendiente,
           mediosDePagoPendiente: formDatas.mediosDePagoPendiente
         });
-        const responses = await axios.get("http://127.0.0.1:3000/api/cabania-clientes");
+        const responses = await axios.get("http://127.0.0.1:3000/api/habitaciones-clientes");
         setUsers(responses.data);
-
       } catch (error) {
         console.error('Hubo un problema con la petición Axios:', error);
       }
@@ -720,7 +720,6 @@ export default function App() {
     }
   };
  
-  //#endregion
 
   return (
     <div className="max-w-full w-98 mx-auto">
@@ -789,20 +788,20 @@ export default function App() {
                     </Select>
 
                     <select
-                      id="tipo_cabania"
-                      name="tipo_cabania"
+                      id="mediosDePago"
+                      name="habitaciones"
                       
-                      value={formData.tipo_cabania}
+                      value={formData.habitaciones}
                       onChange={(event) => handleInputChange(event)}
-                      className="mr-3 w-full h-14 outline-none border-2 rounded-xl border-blue-400"
+                      className="w-full h-14 outline-none border-2 rounded-xl border-blue-400"
                     >
-                      <option value="">ELIGIR CABAÑA </option>
-                      <option value="Macuira">MACUIRA</option>
-                      <option value="Taroa">TAROA</option>
-                      {/* <option value="Mayapo">MAYAPO</option> */}
+                      <option value="">ELIGE LA HABITACIÓN</option>
+                      <option value="Descanso">DESCANSO</option>
+                      <option value="Jardin_Secreto">JARDIN SECRETO</option>
+                      <option value="Arcoiris">ARCOIRIS</option>
+                     
                     </select>
                     <div className="flex">
-                      
 
                     <Input
                       required
@@ -815,6 +814,7 @@ export default function App() {
                       onChange={(event) => handleInputChange(event, "adultos")}
                       className="mr-3 border-green-400 border-2 rounded-xl"
                     />
+
                     <Input
                       required
                       id="ninios"
@@ -922,7 +922,7 @@ export default function App() {
         >
       </input>
         </div>
-        <div className="flex items-center justify-center w-32 ml-3 ">
+        <div className="flex items-center justify-center  w-32 ml-3">
           <img
             className="w-10 h-10 cursor-pointer flex items-center justify-center "
             src={download}
@@ -939,27 +939,20 @@ export default function App() {
             <TableColumn className="text-center max-w-xs">ID</TableColumn>
             <TableColumn className="text-center ">Nombre</TableColumn>
             <TableColumn className="text-center ">Reserva</TableColumn>
-            <TableColumn className="text-center ">Cabaña</TableColumn>
-        
-            {/* <TableColumn className="text-center ">Precio niños</TableColumn>
-            <TableColumn className="text-center ">Precio adultos</TableColumn>
-
-           
-            <TableColumn className="text-center ">Niños</TableColumn>
-            <TableColumn className="text-center ">Adultos</TableColumn> */}
-            {/* <TableColumn className="text-center ">Metodo de pago</TableColumn>
-            <TableColumn className="text-center ">
-              Anticipo
-            </TableColumn> */}
-            {/* <TableColumn className="text-center tables_im">Fecha de registro</TableColumn> */}
+            <TableColumn className="text-center ">HABITACIONES</TableColumn>
             <TableColumn className="text-center tables_im">fecha de inicio del pasadia</TableColumn>
-            {/* <TableColumn className="text-center tables_im">Metodo de pago</TableColumn>
-            <TableColumn className="text-center tables_im">Pago pendiente o total</TableColumn> */}
             <TableColumn className="text-center">add bebida</TableColumn>
             <TableColumn className="text-center">add comida</TableColumn>
             <TableColumn className="text-center">Pago pendiente</TableColumn>
             {/* <TableColumn className="text-center">Acción</TableColumn> */}
           </TableHeader>
+
+
+
+
+
+
+
 
           <TableBody emptyContent="No hay elementos por mostrar" className="">
             {datosFiltrados.map((cliente) => (
@@ -982,6 +975,7 @@ export default function App() {
                   {selectedUser && (
                     <Modal size={size} isOpen={isModalOpen} onClose={closeModal} className="w-8/12"
                     classNames={{
+                      body: "py-6",
                       backdrop: "bg-inherit",
                     }}
                     >
@@ -992,10 +986,10 @@ export default function App() {
                         </ModalHeader>
                         <ModalBody className="uppercase flex">
                           <div className="flex w-full">
-                            <section className="flex justify-between w-full flex-wrap border-3">
+                            <section className="flex justify-between w-full flex-wrap ">
 
                               {/* Sección de Productos (Bebidas + Comidas) */}
-                              <div className="mx-5 my-1 border-2 w-full">
+                              <div className="mx-5 my-1  w-full">
                                 <h4 className="text-green-600">Productos (Bebidas y Comidas)</h4>
 
                                 {/* Combina ambos arrays (bebidas y comidas) y verifica si tiene elementos */}
@@ -1036,7 +1030,7 @@ export default function App() {
                                     </tfoot>
                                   </table>
                                 ) : (
-                                  <p className="border-4 w-full text-center">No hay productos que mostrar😔</p>
+                                  <p className=" w-full text-center">No hay productos que mostrar😔</p>
                                 )}
                               </div>
 
@@ -1064,14 +1058,14 @@ export default function App() {
                   <p onClick={() => seleccionarCliente(cliente.identificacion)}>{cliente.identificacion}</p>
                   </PopoverTrigger>
                   <PopoverContent >
-                    { cliente.reserva === "Si" && ((valorCabania) - (cliente.pagoAnticipado + cliente.pagoPendiente)) !== 0 ?
+                    { cliente.reserva === "Si" && ((valorHabitaciones) - (cliente.pagoAnticipado + cliente.pagoPendiente)) !== 0 ?
                     <div className="px-1 py-2">
                       <div className="text-small font-bold">Información</div>
                       <div className="text-red-500">Datos del usuario</div>
                       <div>Identificacion: {cliente.identificacion}</div>
                       <div className="text-tiny">Nombre: {cliente.nombre}</div>
                       <div className="text-red-500 text-small font-bold">Pago pendiente</div>
-                      <div>{((valorCabania) - (cliente.pagoAnticipado + cliente.pagoPendiente))}</div>
+                      <div>{((valorHabitaciones) - (cliente.pagoAnticipado + cliente.pagoPendiente))}</div>
                       <Input
                         type="number"
                         name="pagoPendiente"
@@ -1137,7 +1131,7 @@ export default function App() {
                           <p>{cliente.nombre}</p>
                         </PopoverTrigger>
                         <PopoverContent>
-                          <div className="px-1 py-2">
+                        <div className="px-1 py-2">
                             <div className="text-small font-bold">Información</div>
                             <div className="text-red-500">Cantidad de personas</div>
                             <div className="text-tiny">Adultos: {cliente.cantidadPersonas.adultos}</div>
@@ -1148,37 +1142,14 @@ export default function App() {
                             <div className="text-red-500">pago pendienete o total</div>
                             <div>Metodo de pago: {cliente.mediosDePagoPendiente}</div>
                             <div>Pago pendiente: {cliente.pagoPendiente}</div>
-                            <div>pendiente: {((valorCabania) - (cliente.pagoAnticipado + cliente.pagoPendiente))}</div>
+                            <div>pendiente: {((valorHabitaciones) - (cliente.pagoAnticipado + cliente.pagoPendiente))}</div>
                           </div>
-                          
                         </PopoverContent>
                       </Popover>
+
                 </TableCell>
-                <TableCell>{cliente.tipo_cabania}</TableCell>
                 <TableCell>{cliente.reserva}</TableCell>
-                {/* <TableCell>{pasadiaNinios}</TableCell>
-                <TableCell>{pasadiaAdultos}</TableCell> */}
-                {/* <TableCell>
-                  {cliente._id === editedUserId ? (
-                    <div className="flex">
-                      <Input
-                        type="number"
-                        value={editPago}
-                        onChange={(e) => setEditPago(e.target.value)}
-                      />
-                    </div>
-                  ) : (
-                    cliente.cantidadPersonas.adultos
-                  )}
-                </TableCell>
-                <TableCell>{cliente.cantidadPersonas.ninios}</TableCell> */}
-                {/* <TableCell>{cliente.mediosDePago}</TableCell>
-                <TableCell>{cliente.pagoAnticipado}</TableCell> */}
-                {/* <TableCell>{new Date(cliente.fechaDeRegistro).toLocaleDateString('es-ES', {
-                      year: 'numeric',
-                      month: 'long'  ,
-                      day: 'numeric' ,
-                    })}</TableCell> */}
+                <TableCell>{cliente.habitaciones}</TableCell>
                 <TableCell>{new Date(cliente.fechaPasadia).toLocaleDateString('es-ES', {
                       year: 'numeric',
                       month: 'long'  ,
@@ -1193,8 +1164,8 @@ export default function App() {
 
                 <div className=" flex justify-center">
                   <div className="flex flex-wrap gap-3">
-                    {sizesm.map((size) => (
-                      <Button className="bg-white-100" key={size} onPress={() => handleOpenm(size, cliente._id)}>
+                    {sizesm.map((ancho) => (
+                      <Button className="bg-white-100" key={ancho} onPress={() => handleOpenm(ancho, cliente._id)}>
                         <img className="w-7 h-7" src={plus} alt="" />
                       </Button>
                     ))}
@@ -1213,9 +1184,9 @@ export default function App() {
                           <Checkbox
                             checked={esCortesia}
                             onChange={handleCortesiaChange}
-                          >
-                            Cortesía cabañas
-                          </Checkbox>
+                            name="esCortesia"
+                            color="primary"
+                          >Cortesia pasadia</Checkbox>
                             <Input
                               name="bebidas"
                               label="Ingrese la cantidad"
@@ -1313,7 +1284,7 @@ export default function App() {
                     ))}
                   </div>
 
-                  <Modal size={ancho} isOpen={isModalOpenF} onClose={closeModalF}
+                  <Modal size={selectedSize} isOpen={isModalOpenF} onClose={closeModalF}
                     classNames={{
                       backdrop: "bg-inherit",
                     }}
@@ -1327,7 +1298,7 @@ export default function App() {
                             checked={esCortesia}
                             onChange={handleCortesiaChange}
                           >
-                            Cortesía cabañas
+                            Cortesía pasadia
                           </Checkbox>
                             <Input
                               name="bebidas"
@@ -1336,7 +1307,7 @@ export default function App() {
                               value={isNaN(cantidadFood) ? '' : cantidadFood}
                               onChange={(e) => {
                                 const value = parseInt(e.target.value, 10);
-                                setCantidadFood(isNaN(value) ? "" : value);
+                                setCantidadFood(isNaN(value) ? 0 : value);
                               }}
                             />
                             <Select
@@ -1367,7 +1338,7 @@ export default function App() {
                               value={isNaN(cantidadFood1) ? '' : cantidadFood1}
                               onChange={(e) => {
                                 const value = parseInt(e.target.value, 10);
-                                setCantidadFood1(isNaN(value) ? "" : value);
+                                setCantidadFood1(isNaN(value) ? 0 : value);
                               }}
                             />
                             <Select
@@ -1456,7 +1427,7 @@ export default function App() {
                 {/* {cliente.restaurante.map((food, index) => (
                   <TableCell key={index}>{food?.nombre || "aun no hay bebidas"}</TableCell>
                 ))} */}
-                <TableCell>{((valorCabania) - (cliente.pagoAnticipado + cliente.pagoPendiente))}</TableCell>
+                <TableCell> {((valorHabitaciones) - (cliente.pagoAnticipado + cliente.pagoPendiente))}</TableCell>
                 {/* <TableCell className="flex justify-center align-center pr-5 w-60">
                   {cliente.identificacion === editedUserId && (
                     <div className="flex">

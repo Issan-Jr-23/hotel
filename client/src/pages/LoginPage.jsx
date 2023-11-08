@@ -27,10 +27,10 @@ export function LoginPage() {
   }, [isAuthenticated]);
 
   return (
-    <div className="w-full  min-h-screen flex items-center justify-center">
+    <div className="w-full  min-h-screen flex flex-col items-center justify-center">
       <div className="w-72 h-72 flex flex-col items-center justify-center">
 
-        <h3 className="text-4xl text-white font-medium font-sans">BIENVENIDO🥳</h3>
+        <h3 className="text-4xl text-white font-medium font-sans">BIENVENIDO</h3>
         <img className="w-40 h-40" src={logo} alt="Logo del hotel MEQO" />
       </div>
       <Card>
@@ -61,10 +61,6 @@ export function LoginPage() {
 
           <Button>Login</Button>
         </form>
-
-        {/* <p className="flex gap-x-2 justify-between">
-          Don't have an account? <Link to="/register" className="text-sky-500">Sign up</Link>
-        </p> */}
       </Card>
     </div>
   );

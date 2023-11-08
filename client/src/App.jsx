@@ -8,15 +8,7 @@ import { Home } from "./pages/Home";
 import Pasadia from "./pages/Pasadia.jsx";
 import Cabanias from "./pages/Cabanias.jsx";
 import InvBebidas from "./pages/inventario.jsx";
-import InvAlimentos from "./pages/InventarioAlimentos.jsx";
-import Mekatos from "./pages/Mekatos.jsx"
-import Food from "./pages/Food.jsx"
-import Bebidas from "./pages/Bebidas.jsx"
-
-
-
-
-
+import Habitaciones from "./pages/Habitaciones.jsx";
 
 function App() {
 
@@ -34,11 +26,8 @@ function App() {
                 <Route path="/home" element={<Home/>}/>
                 <Route path="/Pasadia" element={<Pasadia/>} />
                 <Route path="/cabanias" element={<Cabanias/>} />
-                <Route path="/mekatos" element={<Mekatos/>} />
                 <Route path="/inventario" element={<InvBebidas/>}/>
-                <Route path="/alimentos" element={<InvAlimentos/>}/>
-                <Route path="/food" element={<Food/>}/>
-                <Route path="/drinks" element={<Bebidas/>}/>
+                <Route path="/habitaciones" element={<Habitaciones/>}/>
               </Route>
             </Routes>
           </main>

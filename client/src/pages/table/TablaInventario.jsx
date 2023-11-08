@@ -11,7 +11,6 @@ import editar from "../../images/boligrafo.png";
 import borrar from "../../images/borrar.png";
 import download from "../../images/download.png";
 import toast, {Toaster} from 'react-hot-toast';
-import {html2pdf} from 'html2pdf.js';
 import * as XLSX from 'xlsx';
 
 
@@ -50,7 +49,6 @@ export default function App() {
       ...formData,
       [name]: value,
     });
-    console.log(name)
     console
 };
 
@@ -179,8 +177,7 @@ export default function App() {
         {/* <CardDesplegable /> */}
         <>
       <div className="flex justify-between w-12/12 gap-3">
-      <button onClick={() => exportToExcel(filteredProducts)}>Descargar Excel</button>
-
+      <img  className="h-10 w-10 ml-5 cursor-pointer" onClick={() => exportToExcel(filteredProducts)} src={download} alt="" />
 
 
 
@@ -197,15 +194,7 @@ export default function App() {
           Agregar producto
         </Button>
 
-        {/* <Select
-          value={selectedType} 
-          onChange={(value) => setSelectedType(value)}
-          label="Filtrar el tipo"
-        >
-          <SelectItem value="Bebida">Bebidas</SelectItem>
-          <SelectItem value="comida">Comidas</SelectItem>
-          <SelectItem value="mekato">Mekatos</SelectItem>
-        </Select> */}
+        
   <div className=" w-52 flex justify-center">
         <input
         id="s"
@@ -224,7 +213,6 @@ export default function App() {
         <option id="p" className="w-52 text-white bg-emerald-400  "  value="">Todos</option>
         <option className="w-52 text-white bg-emerald-400  " value="Bebida">Bebidas</option>
         <option className="w-52 text-white bg-emerald-400  "  value="comida">Comidas</option>
-        <option className="w-52 text-white bg-emerald-400  "  value="mekato">MeKatos</option>
 
       </select>
 
@@ -256,7 +244,6 @@ export default function App() {
                   <option value="">Seleccione un tipo</option>
                   <option value="Bebida">Bebidas</option>
                   <option value="comida">Comidas</option>
-                  <option value="mekato">Mekatos</option>
                 </select>
                 <Input
                   name="Caducidad"

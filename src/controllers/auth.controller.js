@@ -16,16 +16,7 @@ export const register = async (req, res) => {
       });
     }
 
-    
-    const userRoles = Array.isArray(roles) ? roles : [roles];
-    const allowedRoles = ["user", "editor", "admin"];
-
-   
-    for (let role of userRoles) {
-      if (!allowedRoles.includes(role)) {
-        return res.status(400).json({ message: ["Invalid role provided"] });
-      }
-    }
+  
 
  
     const passwordHash = await bcrypt.hash(password, 10);
@@ -35,7 +26,6 @@ export const register = async (req, res) => {
       username,
       email,
       password: passwordHash,
-      roles: userRoles, 
     });
 
     

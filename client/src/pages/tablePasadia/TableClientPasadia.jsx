@@ -1,3 +1,5 @@
+
+//#region 
 import React, { useState, useEffect, useMemo } from "react";
 import {
   Table,
@@ -15,8 +17,7 @@ import {
   ModalFooter,
   useDisclosure,
   Select,
-  SelectItem,
-  RadioGroup, Radio, Checkbox,Popover, PopoverTrigger, PopoverContent
+  SelectItem, Checkbox,Popover, PopoverTrigger, PopoverContent
 } from "@nextui-org/react";
 
 import axios from "axios";
@@ -29,9 +30,10 @@ import plusb from "../../images/plus_blue.png";
 import toast, { Toaster } from 'react-hot-toast';
 // import "./tables.css"
 import "../table/table.css"
-
+//#endregion
 export default function App() {
 
+//#region 
   const [esCortesia, setEsCortesia] = useState(false);
 
   const handleCortesiaChange = (event) => {
@@ -42,28 +44,28 @@ export default function App() {
   const [drinks, setDrinks] = useState([]);
   const [snacks, setSnacks] = useState([]);
 
-  const [cantidadBebida, setCantidadBebida] = useState(1);
+  const [cantidadBebida, setCantidadBebida] = useState("");
   const [bebidaSeleccionada, setBebidaSeleccionada] = useState('');
-  const [precioBebidaSeleccionada, setPrecioBebidaSeleccionada] = useState(0);
+  const [precioBebidaSeleccionada, setPrecioBebidaSeleccionada] = useState("");
   const [bebidaSeleccionadaId, setBebidaSeleccionadaId] = useState(null);
 
   //bebida 2
 
-  const [cantidadBebida1, setCantidadBebida1] = useState(1);
+  const [cantidadBebida1, setCantidadBebida1] = useState("");
   const [bebida1Seleccionada, setBebida1Seleccionada] = useState('');
   const [precioBebida1Seleccionada, setPrecioBebida1Seleccionada] = useState(0);
   const [bebida1SeleccionadaId, setBebida1SeleccionadaId] = useState(null);
 
  //comida 1
 
-  const [cantidadFood, setCantidadFood] = useState(1);
+  const [cantidadFood, setCantidadFood] = useState("");
   const [foodSeleccionada, setFoodSeleccionada] = useState('');
   const [precioFoodSeleccionada, setPrecioFoodSeleccionada] = useState(0);
   const [foodSeleccionadaId, setFoodSeleccionadaId] = useState(null);
 
 //comida 2
 
-  const [cantidadFood1, setCantidadFood1] = useState(1);
+  const [cantidadFood1, setCantidadFood1] = useState("");
   const [food1Seleccionada, setFood1Seleccionada] = useState('');
   const [precioFood1Seleccionada, setPrecioFood1Seleccionada] = useState(0);
   const [food1SeleccionadaId, setFood1SeleccionadaId] = useState(null);
@@ -98,9 +100,9 @@ export default function App() {
 
   });
 
+//#endregion
 
-
-
+//#region 
 
   
   const [busqueda, setBusqueda] = useState('');
@@ -128,7 +130,6 @@ export default function App() {
                        (formData.cantidadPersonas.adultos * pasadiaAdultos);
   
     const totalPendiente = totalCosto; 
-    console.log(totalPendiente); 
   
     if ((name === 'pagoPendiente' && parseFloat(value) > totalPendiente) ||
         (name === 'pagoAnticipado' && parseFloat(value) > totalCosto)) {
@@ -168,7 +169,6 @@ export default function App() {
 
 
   const handleGuardarBebida = async () => {
-    console.log("id del cliente " + selectedClientId);
   
     const checkStockAndUpdateInventory = async (bebidaId, cantidad) => {
       const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad/${bebidaId}`);
@@ -179,12 +179,14 @@ export default function App() {
       const clienteResponse = await axios.get(`http://127.0.0.1:3000/api/pasadia-clientes/${selectedClientId}`);
       const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
       const totalPersonas = ninios + adultos;
-      console.log(totalPersonas)
   
-      const totalCortesias = cantidadBebida + cantidadBebida1;
-      if (totalCortesias > totalPersonas) {
-        alert(`La cantidad de cortesías (${totalCortesias}) no puede exceder la cantidad de personas (${totalPersonas}).`);
-        return;
+      if (esCortesia) {
+        const totalCortesias = cantidadBebida + cantidadBebida1;
+        if (totalCortesias > totalPersonas) {
+          alert(`La cantidad de cortesías (${totalCortesias}) no puede exceder la cantidad de personas (${totalPersonas}).`);
+          return;
+        }
+        
       }
   
       if (cantidad > cantidadInicial) {
@@ -209,7 +211,6 @@ export default function App() {
   
         if (cantidadBebida > 0 && bebidaSeleccionadaId) {
           if (await checkStockAndUpdateInventory(bebidaSeleccionadaId, cantidadBebida)) {
-            console.log("cortesia 1");
             const bebidaCortesia = {
               id: bebidaSeleccionadaId,
               nombre: bebidaSeleccionada,
@@ -218,14 +219,12 @@ export default function App() {
               mensaje: "Cortesía"
             };
             await guardarBebida(bebidaCortesia);
-            console.log(`Cortesía guardada con éxito para ${cantidadBebida} unidades.`);
             atLeastOneCortesiaSaved = true;
           }
         }
   
         if (cantidadBebida1 > 0 && bebida1SeleccionadaId) {
           if (await checkStockAndUpdateInventory(bebida1SeleccionadaId, cantidadBebida1)) {
-            console.log("cortesia 2");
             const bebidaCortesia1 = {
               id: bebida1SeleccionadaId,
               nombre: bebida1Seleccionada,
@@ -234,7 +233,6 @@ export default function App() {
               mensaje: "Cortesía"
             };
             await guardarBebida(bebidaCortesia1);
-            console.log(`Cortesía guardada con éxito para ${cantidadBebida1} unidades.`);
             atLeastOneCortesiaSaved = true;
           }
         }
@@ -258,7 +256,6 @@ export default function App() {
         if (await checkStockAndUpdateInventory(bebidaSeleccionadaId, cantidadBebida)) {
           await guardarBebida(bebidaAdultos);
           isBebidaAdded = true;
-          console.log("Bebida para adultos agregada:", bebidaAdultos);
         }
       }
   
@@ -274,7 +271,6 @@ export default function App() {
         if (await checkStockAndUpdateInventory(bebida1SeleccionadaId, cantidadBebida1)) {
           await guardarBebida(bebidaAdultos1);
           isBebidaAdded = true;
-          console.log("Segunda bebida para adultos agregada:", bebidaAdultos1);
         }
       }
   
@@ -296,6 +292,7 @@ export default function App() {
         id: selectedClientId,
         bebida,
       });
+      toast.success('Bebida guardada exitosamente!');
       setCantidadBebida(""); 
       setBebidaSeleccionada(''); 
       setPrecioBebidaSeleccionada(""); 
@@ -315,15 +312,6 @@ export default function App() {
     }
   };
 
-
-
-
-
-
-
-
-
-
   const actualizarInventarioFood = async (foodId, cantidad) => {
     try {
       const response = await axios.post('http://127.0.0.1:3000/api/actualizar-inventario-food', {
@@ -341,23 +329,22 @@ export default function App() {
   };
 
   const handleGuardarFood = async () => {
-    console.log("id del cliente " + selectedClientId);
   
     const checkStockAndUpdateInventory = async (foodId, cantidad) => {
       const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad/${foodId}`);
-     
       const cantidadInicial = response.data.CantidadInicial;
       const cantidadRestante = response.data.cantidadRestante;
 
       const clienteResponse = await axios.get(`http://127.0.0.1:3000/api/pasadia-clientes/${selectedClientId}`);
       const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
       const totalPersonas = ninios + adultos;
-      console.log(totalPersonas)
   
-      const totalCortesias = cantidadFood + cantidadFood1;
-      if (totalCortesias > totalPersonas) {
-        alert(`La cantidad de cortesías (${totalCortesias}) no puede exceder la cantidad de personas (${totalPersonas}).`);
-        return;
+      if (esCortesia) {
+        const totalCortesias = cantidadFood + cantidadFood1;
+        if (totalCortesias > totalPersonas) {
+          alert(`La cantidad de cortesías (${totalCortesias}) no puede exceder la cantidad de personas (${totalPersonas}).`);
+          return;
+        }
       }
   
       if (cantidad > cantidadInicial) {
@@ -382,7 +369,6 @@ export default function App() {
   
         if (cantidadFood > 0 && foodSeleccionadaId) {
           if (await checkStockAndUpdateInventory(foodSeleccionadaId, cantidadFood)) {
-            console.log("cortesia 1");
             const foodCortesia = {
               id: foodSeleccionadaId,
               nombre: foodSeleccionada,
@@ -390,15 +376,13 @@ export default function App() {
               precio: 0,
               mensaje: "Cortesía"
             };
-            await guardarBebida(foodCortesia);
-            console.log(`Cortesía guardada con éxito para ${cantidadFood} unidades.`);
+            await guardarFood(foodCortesia);
             atLeastOneCortesiaSaved = true;
           }
         }
   
         if (cantidadFood1 > 0 && food1SeleccionadaId) {
           if (await checkStockAndUpdateInventory(food1SeleccionadaId, cantidadFood1)) {
-            console.log("cortesia 2");
             const foodCortesia1 = {
               id: food1SeleccionadaId,
               nombre: food1Seleccionada,
@@ -407,17 +391,17 @@ export default function App() {
               mensaje: "Cortesía"
             };
             await guardarFood(foodCortesia1);
-            console.log(`Cortesía guardada con éxito para ${cantidadBebida1} unidades.`);
             atLeastOneCortesiaSaved = true;
           }
         }
   
         if (atLeastOneCortesiaSaved) {
+          onClose();
         }
         return; 
       }
   
-      let isFoodAdded = false;
+      let isBebidaAdded = false;
   
       if (cantidadFood > 0 && foodSeleccionadaId) {
         const foodAdultos = {
@@ -428,13 +412,11 @@ export default function App() {
         };
   
         if (await checkStockAndUpdateInventory(foodSeleccionadaId, cantidadFood)) {
-          await guardarBebida(foodAdultos);
-          isFoodAdded = true;
-          console.log("Bebida para adultos agregada:", foodAdultos);
+          await guardarFood(foodAdultos);
+          isBebidaAdded = true;
         }
       }
   
-      // Handle the second drink selection
       if (cantidadFood1 > 0 && food1SeleccionadaId) {
         const foodAdultos1 = {
           id: food1SeleccionadaId,
@@ -444,16 +426,15 @@ export default function App() {
         };
   
         if (await checkStockAndUpdateInventory(food1SeleccionadaId, cantidadFood1)) {
-          await guardarBebida(foodAdultos1);
-          isFoodAdded = true;
-          console.log("Segunda bebida para adultos agregada:", foodAdultos1);
+          await guardarFood(foodAdultos1);
+          isBebidaAdded = true;
         }
       }
   
-      if (!isFoodAdded) {
+      if (!isBebidaAdded) {
         alert("No se ha agregado ninguna bebida");
       } else {
-        onClose(); // Close the modal after adding drinks
+        closeModalF();
       }
     } catch (error) {
       console.error('Error al guardar las bebidas en el cliente:', error.message);
@@ -468,6 +449,7 @@ export default function App() {
         id: selectedClientId,
         food,
       });
+      toast.success('Comida guardada exitosamente!');
          setCantidadFood(""); 
     setFoodSeleccionada(''); 
     setPrecioFoodSeleccionada(""); 
@@ -483,9 +465,8 @@ export default function App() {
     setEsCortesia(false); 
 
     closeModalF();
-      console.log("peticion: ", selectedClientId);
       closeModalF();
-      const responses = await axios.get("http://127.0.0.1:3000/api/cabania-clientes");
+      const responses = await axios.get("http://127.0.0.1:3000/api/pasadia-clientes");
       setUsers(responses.data);
     } catch (error) {
       console.error('Error al guardar la bebida en el cliente:', error.message);
@@ -493,9 +474,7 @@ export default function App() {
     }
   };
 
-  ////////////////////////////////////---fin  guardar comidas-----/////////////////
-
-  //////////////////////////////////////////////////////////////////
+ 
 
   useEffect(() => {
     const fetchData = async () => {
@@ -518,10 +497,14 @@ export default function App() {
         identificacion: "",
         nombre: "",
         reserva: "",
-        pagoPendienteTotal: "",
+        pagoPendienteTotal: "", 
         bebidas: "",
         restaurante: "",
         totalConsumo: "",
+        cantidadPersonas: {
+          adultos: "",
+          ninios: "",
+        },
       });
       const response = await axios.get("http://127.0.0.1:3000/api/pasadia-clientes");
       setUsers(response.data);
@@ -648,20 +631,20 @@ export default function App() {
   const { isOpen: isModalOpenF, onOpen: openModalF, onClose: closeModalF } = useDisclosure();
 
   const [ancho, setAncho] = React.useState('md')
-  const sizesm = ["md"];
+  const sizesm = ["xs"];
 
   const handleOpenm = (ancho, userId) => {
     setAncho(ancho);
     setSelectedClientId(userId);
     openModalM();
-        setCantidadBebida(""); // o '' si quieres que el campo esté completamente vacío
+        setCantidadBebida(""); 
       setBebidaSeleccionada(''); 
       setPrecioBebidaSeleccionada("");
       setBebidaSeleccionadaId('');
   
       setCantidadBebida1(""); 
-      setBebida1Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
-      setPrecioBebida1Seleccionada(""); // o el valor por defecto inicial
+      setBebida1Seleccionada(''); 
+      setPrecioBebida1Seleccionada(""); 
       setBebida1SeleccionadaId('');
   };
 
@@ -703,7 +686,7 @@ export default function App() {
   ]
 
 
-  const pasadiaAdultos = 70000;
+  const pasadiaAdultos = 60000;
   const pasadiaNinios = 50000;
 
   const [selectedClienteId, setSelectedClienteId] = useState(null);
@@ -732,7 +715,6 @@ export default function App() {
         });
         const responses = await axios.get("http://127.0.0.1:3000/api/pasadia-clientes");
         setUsers(responses.data);
-        console.log('Datos del cliente actualizados:', response.data);
       } catch (error) {
         console.error('Hubo un problema con la petición Axios:', error);
       }
@@ -740,7 +722,7 @@ export default function App() {
       console.error('No hay un cliente seleccionado para actualizar');
     }
   };
- 
+ //#endregion
 
   return (
     <div className="max-w-full w-98 mx-auto">
@@ -991,10 +973,10 @@ export default function App() {
                         </ModalHeader>
                         <ModalBody className="uppercase flex">
                           <div className="flex w-full">
-                            <section className="flex justify-between w-full flex-wrap border-3">
+                            <section className="flex justify-between w-full flex-wrap ">
 
                               {/* Sección de Productos (Bebidas + Comidas) */}
-                              <div className="mx-5 my-1 border-2 w-full">
+                              <div className="mx-5 my-1  w-full">
                                 <h4 className="text-green-600">Productos (Bebidas y Comidas)</h4>
 
                                 {/* Combina ambos arrays (bebidas y comidas) y verifica si tiene elementos */}
@@ -1035,7 +1017,7 @@ export default function App() {
                                     </tfoot>
                                   </table>
                                 ) : (
-                                  <p className="border-4 w-full text-center">No hay productos que mostrar😔</p>
+                                  <p className=" w-full text-center">No hay productos que mostrar😔</p>
                                 )}
                               </div>
 
@@ -1120,16 +1102,6 @@ export default function App() {
 
 
                 <TableCell>
-                  {/* {cliente._id === editedUserId ? (
-                    <div className="flex">
-                      <Input
-                        value={editedName}
-                        onChange={(e) => setEditedName(e.target.value)}
-                      />
-                    </div>
-                  ) : (
-                    cliente.nombre
-                  )} */}
 
                   <Popover placement="bottom" offset={20} showArrow>
                         <PopoverTrigger>
@@ -1154,39 +1126,11 @@ export default function App() {
 
                 </TableCell>
                 <TableCell>{cliente.reserva}</TableCell>
-                {/* <TableCell>{pasadiaNinios}</TableCell>
-                <TableCell>{pasadiaAdultos}</TableCell> */}
-                {/* <TableCell>
-                  {cliente._id === editedUserId ? (
-                    <div className="flex">
-                      <Input
-                        type="number"
-                        value={editPago}
-                        onChange={(e) => setEditPago(e.target.value)}
-                      />
-                    </div>
-                  ) : (
-                    cliente.cantidadPersonas.adultos
-                  )}
-                </TableCell>
-                <TableCell>{cliente.cantidadPersonas.ninios}</TableCell> */}
-                {/* <TableCell>{cliente.mediosDePago}</TableCell>
-                <TableCell>{cliente.pagoAnticipado}</TableCell> */}
-                {/* <TableCell>{new Date(cliente.fechaDeRegistro).toLocaleDateString('es-ES', {
-                      year: 'numeric',
-                      month: 'long'  ,
-                      day: 'numeric' ,
-                    })}</TableCell> */}
                 <TableCell>{new Date(cliente.fechaPasadia).toLocaleDateString('es-ES', {
                       year: 'numeric',
                       month: 'long'  ,
                       day: 'numeric' ,
                     })}</TableCell>
-                {/* <TableCell>{cliente.mediosDePagoPendiente}</TableCell>
-                <TableCell>{cliente.pagoPendiente}</TableCell> */}
-
-
-
                 <TableCell key={cliente._id} className=" ">
 
                 <div className=" flex justify-center">
@@ -1213,20 +1157,20 @@ export default function App() {
                             onChange={handleCortesiaChange}
                             name="esCortesia"
                             color="primary"
-                          />
+                          >Cortesia pasadia</Checkbox>
                             <Input
                               name="bebidas"
-                              label="Ingrese la cantidad para adultos"
+                              label="Ingrese la cantidad"
                               type="number"
                               value={isNaN(cantidadBebida) ? '' : cantidadBebida}
                               onChange={(e) => {
                                 const value = parseInt(e.target.value, 10);
-                                setCantidadBebida(isNaN(value) ? 0 : value);
+                                setCantidadBebida(isNaN(value) ? "" : value);
                               }}
                             />
                             <Select
                               name="bebidas"
-                              label="Seleccionar bebida para adultos"
+                              label="Seleccionar bebida"
                               value={bebidaSeleccionada}
                               onChange={(e) => {
                                 const selectedBebida = e.target.value;
@@ -1247,17 +1191,17 @@ export default function App() {
                             </Select>
                             <Input
                               name="bebidas"
-                              label="Ingrese la cantidad para adultos"
+                              label="Ingrese la cantidad"
                               type="number"
                               value={isNaN(cantidadBebida1) ? '' : cantidadBebida1}
                               onChange={(e) => {
                                 const value = parseInt(e.target.value, 10);
-                                setCantidadBebida1(isNaN(value) ? 0 : value);
+                                setCantidadBebida1(isNaN(value) ? "" : value);
                               }}
                             />
                             <Select
                               name="bebidas"
-                              label="Seleccionar bebida para adultos"
+                              label="Seleccionar bebida"
                               value={bebida1Seleccionada}
                               onChange={(e) => {
                                 const selectedBebida1 = e.target.value;
@@ -1281,8 +1225,8 @@ export default function App() {
                             <Button color="danger" variant="light" onPress={closeModalM}>
                               Close
                             </Button>
-                            <Button onClick={handleGuardarBebida}>
-                              Guardar Bebidas
+                            <Button color="primary" onClick={handleGuardarBebida}>
+                              Ahorrar
                             </Button>
                           </ModalFooter>
                         </>
@@ -1325,11 +1269,11 @@ export default function App() {
                             checked={esCortesia}
                             onChange={handleCortesiaChange}
                           >
-                            Cortesía
+                            Cortesía pasadia
                           </Checkbox>
                             <Input
                               name="bebidas"
-                              label="Ingrese la cantidad para adultos"
+                              label="Ingrese la cantidad"
                               type="number"
                               value={isNaN(cantidadFood) ? '' : cantidadFood}
                               onChange={(e) => {
@@ -1360,7 +1304,7 @@ export default function App() {
                             </Select>
                             <Input
                               name="restaurante"
-                              label="Ingrese la cantidad para adultos"
+                              label="Ingrese la cantidad"
                               type="number"
                               value={isNaN(cantidadFood1) ? '' : cantidadFood1}
                               onChange={(e) => {
@@ -1370,7 +1314,7 @@ export default function App() {
                             />
                             <Select
                               name="restaurante"
-                              label="Seleccionar bebida para adultos"
+                              label="Seleccionar comida"
                               value={food1Seleccionada}
                               onChange={(e) => {
                                 const selectedFood1 = e.target.value;
@@ -1394,8 +1338,8 @@ export default function App() {
                             <Button color="danger" variant="light" onPress={closeModalF}>
                               Close
                             </Button>
-                            <Button onClick={handleGuardarFood}>
-                              Guardar Bebidas
+                            <Button color="primary" onClick={handleGuardarFood}>
+                              Ahorrar
                             </Button>
                           </ModalFooter>
                         </>
@@ -1448,12 +1392,7 @@ export default function App() {
 
 
 
-                {/* {cliente.bebidas.map((bebida, index) => (
-                  <TableCell key={index}>{bebida?.nombre || "aun no hay bebidas"}</TableCell>
-                ))} */}
-                {/* {cliente.restaurante.map((food, index) => (
-                  <TableCell key={index}>{food?.nombre || "aun no hay bebidas"}</TableCell>
-                ))} */}
+               
                 <TableCell> {(cliente.cantidadPersonas.adultos * pasadiaAdultos) + (cliente.cantidadPersonas.ninios * pasadiaNinios) - (cliente.pagoAnticipado + cliente.pagoPendiente)}</TableCell>
                 {/* <TableCell className="flex justify-center align-center pr-5 w-60">
                   {cliente.identificacion === editedUserId && (

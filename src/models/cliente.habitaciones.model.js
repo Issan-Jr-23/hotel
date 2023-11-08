@@ -21,6 +21,11 @@ const clienteSchema = new mongoose.Schema({
     enum: ['efectivo','nequi', 'daviplata', 'pse','efecty', 'transferencia',''],
     default:"",
   },
+  habitaciones: {
+    type: String,
+    enum: ['Descanso','Jardin_Secreto', 'Arcoiris',''],
+    default:"",
+  },
   pagoAnticipado :{
     type: Number,
     default: 0
@@ -72,7 +77,7 @@ const clienteSchema = new mongoose.Schema({
 
 
 
-export default mongoose.model("Pasadia", clienteSchema);
+export default mongoose.model("Habitaciones", clienteSchema);
 
 
 

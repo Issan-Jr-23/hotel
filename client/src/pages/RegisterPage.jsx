@@ -19,10 +19,8 @@ function Register() {
   const onSubmit = async (values) => {
     try {
       const response = await signup(values);
-      // After successful signup, you might want to navigate to another page or do something else with the response.
-      navigate('/dashboard'); // Replace with your desired route
+      navigate('/dashboard'); 
     } catch (error) {
-      // Handle any errors, such as displaying a message to the user
       console.error("Signup failed: ", error);
     }
   };

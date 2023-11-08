@@ -21,6 +21,11 @@ const clienteSchema = new mongoose.Schema({
     enum: ['efectivo','nequi', 'daviplata', 'pse','efecty', 'transferencia',''],
     default:"",
   },
+  tipo_cabania: {
+    type: String,
+    enum: ['Macuira','Taroa','Mayapo',''],
+    default:"",
+  },
   pagoAnticipado :{
     type: Number,
     default: 0
