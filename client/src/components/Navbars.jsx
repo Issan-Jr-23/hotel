@@ -94,6 +94,7 @@ export default function Navbars() {
       </NavbarContent>
 
       <NavbarContent as="div" className="items-center" justify="">
+      <p className="font-semibold text-white "> Welcome {user.username}</p>
         <Dropdown placement="bottom-end">
           <DropdownTrigger>
               <Avatar className="cursor-pointer" showFallback/>

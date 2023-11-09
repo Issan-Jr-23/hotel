@@ -75,7 +75,12 @@ export default function App() {
   const [editPago, setEditPago] = useState("");
 
   
-
+  const [errorFechaPasadia, setErrorFechaPasadia] = useState(false);
+  const [errorIdentificacion, setErrorIdentificacion] = useState(false);
+  const [errorNombre, setErrorNombre] = useState(false);
+  const [errorReserva, setErrorReserva] = useState(false);
+  const [errorAdultos, setErrorAdultos] = useState(false);
+  const [errorHabitacion, setErrorHabitacion] = useState(false);
 
 
   const options = ["Si", "No"];
@@ -123,6 +128,20 @@ export default function App() {
 
   const handleInputChange = (event, fieldName) => {
     const { name, value } = event.target;
+
+    if (name === 'identificacion') {
+      setErrorIdentificacion(!value);
+    } else if (name === 'nombre') {
+      setErrorNombre(!value);
+    } else if (name === 'fechaPasadia') {
+      setErrorFechaPasadia(!value); 
+    }else if(name === 'reserva'){
+      setErrorReserva(!value);
+    } else if (name === 'adultos') {
+      setErrorAdultos(!value)
+    }else if(name === 'habitaciones'){
+
+    }
     
     const totalCosto = (valorHabitaciones);
     console.log(totalCosto)
@@ -500,6 +519,67 @@ export default function App() {
 
   const handleFormSubmit = async () => {
     try {
+
+
+      event.preventDefault();
+      let formIsValid = true;
+    
+      //fecha pasadia 
+
+      if (!formData.fechaPasadia) {
+        setErrorFechaPasadia(true);
+        formIsValid = false;
+      } else {
+        setErrorFechaPasadia(false);
+      }
+
+      //identificacion
+    
+      if (!formData.identificacion) {
+        setErrorIdentificacion(true);
+        formIsValid = false;
+      } else {
+        setErrorIdentificacion(false);
+      }
+
+      //nombre
+
+      if(!formData.nombre){
+        setErrorNombre(true)
+        formIsValid=false
+      }else{
+        setErrorNombre(false)
+      }
+
+      //reserva
+
+      if(!formData.reserva){
+        setErrorReserva(true)
+        formIsValid=false
+      }else{
+        setErrorReserva(false)
+      }
+      
+      //adultos
+
+      if(!formData.cantidadPersonas.adultos){
+        setErrorAdultos(true)
+        formIsValid=false
+      }else{
+        setErrorAdultos(false)
+      }
+
+      if(!formData.habitaciones){
+        setErrorHabitacion(true)
+        formIsValid=false
+      }else{
+        setErrorHabitacion(false)
+      }
+
+      if(formIsValid){
+
+
+
       await axios.post("http://127.0.0.1:3000/api/habitaciones-registrar-cliente", formData);
       onClose();
       toast.success('Cliente agregado exitosamente!');
@@ -518,6 +598,7 @@ export default function App() {
       });
       const response = await axios.get("http://127.0.0.1:3000/api/habitaciones-clientes");
       setUsers(response.data);
+    }
     } catch (error) {
       toast.error('Ocurrió un error al agregar el cliente.');
     }
@@ -697,11 +778,24 @@ export default function App() {
 
   const seleccionarCliente = (identificacion) => {
     setSelectedClienteId(identificacion);
+    calcularPagoPendiente(identificacion); // Actualiza para calcular el pago pendiente
   };
 
   const handleInputChanges = (e) => {
     const { name, value } = e.target;
     setFormDatas({ ...formDatas, [name]: value });
+  };
+
+
+  const calcularPagoPendiente = (identificacion) => {
+    const clienteSeleccionado = users.find(user => user.identificacion === identificacion);
+    if (clienteSeleccionado) {
+      const pagoPendienteCalculado = valorHabitaciones - (clienteSeleccionado.pagoAnticipado + clienteSeleccionado.pagoPendiente);
+      setFormDatas(prevFormDatas => ({
+        ...prevFormDatas,
+        pagoPendiente: pagoPendienteCalculado.toString(),
+      }));
+    }
   };
 
 
@@ -758,7 +852,7 @@ export default function App() {
                   <ModalBody>
 
                     <Input
-                      required
+                      isRequired
                       id="identificacion"
                       name="identificacion"
                       type="number"
@@ -767,10 +861,10 @@ export default function App() {
                       label="IDENTIFICACIÓN DE USUARIO"
                       value={formData.identificacion}
                       onChange={handleInputChange}
-                      className="border-blue-400 border-2 rounded-xl"
+                      className={`rounded-xl border-2 ${errorIdentificacion ? 'border-red-500' : 'border-blue-400'}`}
                     />
                     <Input
-                      required
+                      isRequired
                       id="nombre"
                       name="nombre"
                       type="text"
@@ -779,15 +873,15 @@ export default function App() {
                       label="NOMBRE DE USUARIO"
                       value={formData.nombre}
                       onChange={handleInputChange}
-                      className="border-blue-400 border-2 rounded-xl"
+                      className={`rounded-xl border-2 ${errorNombre ? 'border-red-500' : 'border-blue-400'}`}
                     />
 
                     <Select
-                      required
+                      isRequired
                       id="reserva"
                       name="reserva"
                       label="¿LA RESERVA FUE REALIZADA?"
-                      className="max-w-full w-full border-blue-400 border-2 rounded-xl"
+                      className={`rounded-xl border-2 ${errorReserva ? 'border-red-500' : 'border-blue-400'}`}
                       value={formData.reserva}
                       onChange={(event) => handleReservaChange(event.target.value)}
                     >
@@ -799,14 +893,14 @@ export default function App() {
                     </Select>
 
                     <select
+                      required
                       id="mediosDePago"
                       name="habitaciones"
-                      
                       value={formData.habitaciones}
                       onChange={(event) => handleInputChange(event)}
-                      className="w-full h-14 outline-none border-2 rounded-xl border-blue-400"
+                      className={`h-14 outline-none rounded-xl border-2 ${errorHabitacion ? 'border-red-500' : 'border-blue-400'}`}
                     >
-                      <option value="">ELIGE LA HABITACIÓN</option>
+                      <option value="">ELIGE LA HABITACIÓN </option>
                       <option value="Descanso">DESCANSO</option>
                       <option value="Jardin_Secreto">JARDIN SECRETO</option>
                       <option value="Arcoiris">ARCOIRIS</option>
@@ -815,7 +909,7 @@ export default function App() {
                     <div className="flex">
 
                     <Input
-                      required
+                      isRequired
                       id="adultos"
                       name="adultos"
                       type="number"
@@ -823,7 +917,7 @@ export default function App() {
                       label="CANTIDAD DE ADULTOS"
                       value={formData.cantidadPersonas.adultos}
                       onChange={(event) => handleInputChange(event, "adultos")}
-                      className="mr-3 border-green-400 border-2 rounded-xl"
+                      className={`rounded-xl border-2 ${errorAdultos ? 'border-red-500' : 'border-blue-400'}`}
                     />
 
                     <Input
@@ -871,10 +965,11 @@ export default function App() {
                     />
                     </div>
                     <Input
+                    isRequired
                       name="fechaPasadia"
                       type="date"
                       label="FECHA EN LA QUE DESEA DISFRUTAR DE LA HABITACIÓN"
-                      className="rounded-xl border-2 border-blue-400"
+                      className={`rounded-xl border-2 ${errorFechaPasadia ? 'border-red-500' : 'border-blue-400'}`}
                       placeholder="Fecha en la desea disfrutar el pasadia"
                       value={formData.fechaPasadia}
                       onChange={handleInputChange}
@@ -951,7 +1046,7 @@ export default function App() {
             <TableColumn className="text-center ">Nombre</TableColumn>
             <TableColumn className="text-center ">Reserva</TableColumn>
             <TableColumn className="text-center ">HABITACIONES</TableColumn>
-            <TableColumn className="text-center tables_im">fecha de inicio del pasadia</TableColumn>
+            <TableColumn className="text-center tables_im">fecha de inicio habitaciones</TableColumn>
             <TableColumn className="text-center">add bebida</TableColumn>
             <TableColumn className="text-center">add comida</TableColumn>
             <TableColumn className="text-center">Pago pendiente</TableColumn>

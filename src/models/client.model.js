@@ -53,6 +53,7 @@ const clienteSchema = new mongoose.Schema({
   },
   fechaPasadia: {
     type: Date, 
+    required: true
   },
   bebidas: {
     type: Array,

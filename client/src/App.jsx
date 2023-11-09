@@ -10,6 +10,9 @@ import Cabanias from "./pages/Cabanias.jsx";
 import InvBebidas from "./pages/inventario.jsx";
 import Habitaciones from "./pages/Habitaciones.jsx";
 
+ 
+
+
 function App() {
 
  

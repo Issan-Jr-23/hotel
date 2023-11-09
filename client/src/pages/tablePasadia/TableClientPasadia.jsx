@@ -77,7 +77,11 @@ export default function App() {
   const [editedName, setEditedName] = useState("");
   const [editPago, setEditPago] = useState("");
 
-  
+  const [errorFechaPasadia, setErrorFechaPasadia] = useState(false);
+  const [errorIdentificacion, setErrorIdentificacion] = useState(false);
+  const [errorNombre, setErrorNombre] = useState(false);
+  const [errorReserva, setErrorReserva] = useState(false);
+  const [errorAdultos, setErrorAdultos] = useState(false);
 
 
 
@@ -115,8 +119,6 @@ export default function App() {
     });
   }, [busqueda, users]);
 
-  
-
 
   const handleSearchChange = (event) => {
     setBusqueda(event.target.value);
@@ -125,6 +127,18 @@ export default function App() {
 
   const handleInputChange = (event, fieldName) => {
     const { name, value } = event.target;
+
+    if (name === 'identificacion') {
+      setErrorIdentificacion(!value);
+    } else if (name === 'nombre') {
+      setErrorNombre(!value);
+    } else if (name === 'fechaPasadia') {
+      setErrorFechaPasadia(!value); 
+    }else if(name === 'reserva'){
+      setErrorReserva(!value);
+    } else if (name === 'adultos') {
+      setErrorAdultos(!value)
+    }
     
     const totalCosto = (formData.cantidadPersonas.ninios * pasadiaNinios) +
                        (formData.cantidadPersonas.adultos * pasadiaAdultos);
@@ -143,7 +157,7 @@ export default function App() {
     }
   };
   
-
+//#region 
   const handleReservaChange = (selectedSize) => {
     setFormData({
       ...formData,
@@ -170,7 +184,7 @@ export default function App() {
 
   const handleGuardarBebida = async () => {
     if (!selectedClientId || (!bebidaSeleccionadaId && !bebida1SeleccionadaId)) {
-      toast.error('No se ha seleccionado un cliente o una comida.');
+      toast.error('No se ha seleccionado un cliente o una Bebida.');
       toast.
       return;
     }
@@ -288,7 +302,6 @@ export default function App() {
       console.error('Error al guardar las bebidas en el cliente:', error.message);
     }
   };
-  
   
   
   const guardarBebida = async (bebida) => {
@@ -485,7 +498,6 @@ export default function App() {
   };
 
  
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -498,31 +510,85 @@ export default function App() {
     fetchData();
   }, []);
 
-  const handleFormSubmit = async () => {
+  //#endregion
+
+  const handleFormSubmit = async (event) => {
+    
     try {
-      await axios.post("http://127.0.0.1:3000/api/pasadia-registrar-cliente", formData);
-      onClose();
-      toast.success('Cliente agregado exitosamente!');
-      setFormData({
-        identificacion: "",
-        nombre: "",
-        reserva: "",
-        pagoPendienteTotal: "", 
-        bebidas: "",
-        restaurante: "",
-        totalConsumo: "",
-        cantidadPersonas: {
-          adultos: "",
-          ninios: "",
-        },
-      });
-      const response = await axios.get("http://127.0.0.1:3000/api/pasadia-clientes");
-      setUsers(response.data);
+      event.preventDefault();
+      let formIsValid = true;
+    
+      //fecha pasadia 
+
+      if (!formData.fechaPasadia) {
+        setErrorFechaPasadia(true);
+        formIsValid = false;
+      } else {
+        setErrorFechaPasadia(false);
+      }
+
+      //identificacion
+    
+      if (!formData.identificacion) {
+        setErrorIdentificacion(true);
+        formIsValid = false;
+      } else {
+        setErrorIdentificacion(false);
+      }
+
+      //nombre
+
+      if(!formData.nombre){
+        setErrorNombre(true)
+        formIsValid=false
+      }else{
+        setErrorNombre(false)
+      }
+
+      //reserva
+
+      if(!formData.reserva){
+        setErrorReserva(true)
+        formIsValid=false
+      }else{
+        setErrorReserva(false)
+      }
+      
+      //adultos
+
+      if(!formData.cantidadPersonas.adultos){
+        setErrorAdultos(true)
+        formIsValid=false
+      }else{
+        setErrorAdultos(false)
+      }
+
+      if(formIsValid){
+
+        await axios.post("http://127.0.0.1:3000/api/pasadia-registrar-cliente", formData);
+        onClose();
+        toast.success('Cliente agregado exitosamente!');
+        setFormData({
+          identificacion: "",
+          nombre: "",
+          reserva: "",
+          pagoPendienteTotal: "", 
+          bebidas: "",
+          restaurante: "",
+          totalConsumo: "",
+          cantidadPersonas: {
+            adultos: "",
+            ninios: "",
+          },
+        });
+        const response = await axios.get("http://127.0.0.1:3000/api/pasadia-clientes");
+        setUsers(response.data);
+      }
     } catch (error) {
-      toast.error('Ocurrió un error al agregar el cliente.');
+      toast.error('Ocurrió un error al agregar el cliente o el registro ya existe.');
     }
   };
-
+//#region 
   const handleFormSubmitB = async () => {
     try {
       await axios.post("http://127.0.0.1:3000/api/pasadia-registrar-cliente", formData);
@@ -683,10 +749,6 @@ export default function App() {
     setModalOpen(true);
   };
 
-  const rol1 = [
-    "Administrador de Sistemas",
-  ]
-
 
 
   const pasadiaAdultos = 60000;
@@ -701,6 +763,20 @@ export default function App() {
 
   const seleccionarCliente = (identificacion) => {
     setSelectedClienteId(identificacion);
+    calcularPagoPendiente(identificacion);
+  };
+
+  const calcularPagoPendiente = (identificacion) => {
+    const clienteSeleccionado = users.find(user => user.identificacion === identificacion);
+    if (clienteSeleccionado) {
+      const totalPago = (clienteSeleccionado.cantidadPersonas.adultos * pasadiaAdultos) +
+                        (clienteSeleccionado.cantidadPersonas.ninios * pasadiaNinios);
+      const pagoPendienteCalculado = totalPago - (clienteSeleccionado.pagoAnticipado + clienteSeleccionado.pagoPendiente);
+      setFormDatas({
+        ...formDatas,
+        pagoPendiente: pagoPendienteCalculado.toString()
+      });
+    }
   };
 
   const handleInputChanges = (e) => {
@@ -762,7 +838,7 @@ export default function App() {
                   <ModalBody>
 
                     <Input
-                      required
+                      isRequired
                       id="identificacion"
                       name="identificacion"
                       type="number"
@@ -771,10 +847,10 @@ export default function App() {
                       label="IDENTIFICACIÓN DE USUARIO"
                       value={formData.identificacion}
                       onChange={handleInputChange}
-                      className="border-blue-400 border-2 rounded-xl"
+                      className={`rounded-xl border-2 ${errorIdentificacion ? 'border-red-500' : 'border-blue-400'}`}
                     />
                     <Input
-                      required
+                      isRequired
                       id="nombre"
                       name="nombre"
                       type="text"
@@ -783,15 +859,15 @@ export default function App() {
                       label="NOMBRE DE USUARIO"
                       value={formData.nombre}
                       onChange={handleInputChange}
-                      className="border-blue-400 border-2 rounded-xl"
+                      className={`rounded-xl border-2 ${errorNombre ? 'border-red-500' : 'border-blue-400'}`}
                     />
 
                     <Select
-                      required
+                      isRequired
                       id="reserva"
                       name="reserva"
                       label="¿LA RESERVA FUE REALIZADA?"
-                      className="max-w-full w-full border-blue-400 border-2 rounded-xl"
+                      className={`rounded-xl border-2 ${errorReserva ? 'border-red-500' : 'border-blue-400'}`}
                       value={formData.reserva}
                       onChange={(event) => handleReservaChange(event.target.value)}
                     >
@@ -804,7 +880,7 @@ export default function App() {
                     <div className="flex">
 
                     <Input
-                      required
+                      isRequired
                       id="adultos"
                       name="adultos"
                       type="number"
@@ -812,7 +888,7 @@ export default function App() {
                       label="CANTIDAD DE ADULTOS"
                       value={formData.cantidadPersonas.adultos}
                       onChange={(event) => handleInputChange(event, "adultos")}
-                      className="mr-3 border-green-400 border-2 rounded-xl"
+                      className={`rounded-xl border-2 ${errorAdultos ? 'border-red-500' : 'border-green-400'}`}
                     />
 
                     <Input
@@ -860,14 +936,16 @@ export default function App() {
                     />
                     </div>
                     <Input
+                      isRequired
                       name="fechaPasadia"
                       type="date"
                       label="FECHA EN LA QUE DESEA DISFRUTAR EL PASADIA"
-                      className="rounded-xl border-2 border-blue-400"
+                      className={`rounded-xl border-2 ${errorFechaPasadia ? 'border-red-500' : 'border-blue-400'}`}
                       placeholder="Fecha en la desea disfrutar el pasadia"
                       value={formData.fechaPasadia}
                       onChange={handleInputChange}
                     />
+                     {/* {showError && <div style={{ color: 'red' }}>Este campo es requerido.</div>} */}
                     <div className="flex">
                     <select
                     className="w-6/12 mr-3 outline-none rounded-xl border-2 border-blue-400"
@@ -931,9 +1009,9 @@ export default function App() {
         </div>
       </div>
         
-      <section className="flex mt-5 mx-5 rounded-t-2xl ">
+      <section className="flex mt-5 mx-5 rounded-t-2xl">
           {/* Input de búsqueda */}
-        <Table className=" text-center uppercase" aria-label="Lista de Usuarios">
+        <Table className=" text-center uppercase mb-20" aria-label="Lista de Usuarios">
           <TableHeader className="text-center">
             <TableColumn className="text-center">+</TableColumn>
             <TableColumn className="text-center max-w-xs">ID</TableColumn>
@@ -941,15 +1019,10 @@ export default function App() {
             <TableColumn className="text-center ">Reserva</TableColumn>
             <TableColumn className="text-center tables_im">fecha de inicio del pasadia</TableColumn>
             <TableColumn className="text-center">add bebida</TableColumn>
-            <TableColumn className="text-center">add comida</TableColumn>
+            <TableColumn className="text-center flex items-center justify-center">add comida</TableColumn>
             <TableColumn className="text-center">Pago pendiente</TableColumn>
             {/* <TableColumn className="text-center">Acción</TableColumn> */}
           </TableHeader>
-
-
-
-
-
 
 
 
@@ -1047,10 +1120,7 @@ export default function App() {
                     </Modal>
                   )}
                 </TableCell>
-
                 {/* --------------------FIN DEL MODAL */}
-
-
                 <TableCell className="w-2/12">
                 <Popover placement="top">
                   <PopoverTrigger>
@@ -1070,7 +1140,7 @@ export default function App() {
                         name="pagoPendiente"
                         placeholder="Ingrse la cantidad"
                         className="border-2 border-blue-500 rounded-xl mt-2"
-                        value={formDatas.pagoPendiente}
+                        value={formDatas.pagoPendiente }
                       onChange={handleInputChanges}
                       />
                     
@@ -1099,20 +1169,6 @@ export default function App() {
                   </PopoverContent>
                 </Popover>
                 </TableCell> 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                 <TableCell>
 
                   <Popover placement="bottom" offset={20} showArrow>
@@ -1250,15 +1306,7 @@ export default function App() {
                 </div>
 
                 </TableCell>
-
-
-
-
-
-
-
-
-                <TableCell key={cliente.id} className="">
+                <TableCell key={cliente.id} className="text-center flex justify-center items-center">
                   <div className="flex flex-wrap gap-3">
                     {sizesm.map((size) => (
                       <Button className="bg-white-100" key={size} onPress={() => handleOpenmf(size, cliente._id)}>
