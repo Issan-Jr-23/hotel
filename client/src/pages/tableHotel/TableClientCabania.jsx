@@ -127,11 +127,18 @@ export default function App() {
 
   const handleInputChange = (event, fieldName) => {
     const { name, value } = event.target;
+    let totalCosto;
     
-    const totalCosto = (valorCabania);
-  
-    const totalPendiente = totalCosto; 
-  
+    // Si la cabaña seleccionada es Mayapo, usar valorCabaniaMayapo, de lo contrario valorCabaniaOtras
+    if (event.target.name === "tipo_cabania") {
+      totalCosto = value === "Mayapo" ? valorCabaniaM : valorCabania;
+    } else {
+      totalCosto = formData.tipo_cabania === "Mayapo" ? valorCabaniaM : valorCabania;
+    }
+    
+    const totalPendiente = totalCosto;
+    console.log(totalCosto)
+    
     if ((name === 'pagoPendiente' && parseFloat(value) > totalPendiente) ||
         (name === 'pagoAnticipado' && parseFloat(value) > totalCosto)) {
       alert('El monto no puede ser mayor que el costo total o el monto pendiente.');
@@ -139,6 +146,9 @@ export default function App() {
       setFormData({
         ...formData,
         [name]: value,
+        totalCosto, // Actualizamos el costo total en el estado
+        ...(name === "tipo_cabania" && { [name]: value }), // Actualizamos el tipo de cabaña seleccionada si ese es el campo que cambió
+        // Actualización condicional de cantidadPersonas si fieldName es proporcionado
         ...(fieldName ? { cantidadPersonas: { ...formData.cantidadPersonas, [fieldName]: parseInt(value, 10) } } : {})
       });
     }
@@ -684,6 +694,7 @@ export default function App() {
 
 
   const valorCabania = 400000
+  const valorCabaniaM = 500000
 
   const [selectedClienteId, setSelectedClienteId] = useState(null);
 
@@ -708,6 +719,10 @@ export default function App() {
         const response = await axios.put(`http://127.0.0.1:3000/api/cabania-clientes/${selectedClienteId}/actualizar`, {
           pagoPendiente: formDatas.pagoPendiente,
           mediosDePagoPendiente: formDatas.mediosDePagoPendiente
+        });
+        setFormDatas({
+          pagoPendiente: '',
+          mediosDePagoPendiente: ''
         });
         const responses = await axios.get("http://127.0.0.1:3000/api/cabania-clientes");
         setUsers(responses.data);
@@ -799,7 +814,7 @@ export default function App() {
                       <option value="">ELIGIR CABAÑA </option>
                       <option value="Macuira">MACUIRA</option>
                       <option value="Taroa">TAROA</option>
-                      {/* <option value="Mayapo">MAYAPO</option> */}
+                      <option value="Mayapo">MAYAPO</option>
                     </select>
                     <div className="flex">
                       
@@ -1064,21 +1079,23 @@ export default function App() {
                   <p onClick={() => seleccionarCliente(cliente.identificacion)}>{cliente.identificacion}</p>
                   </PopoverTrigger>
                   <PopoverContent >
-                    { cliente.reserva === "Si" && ((valorCabania) - (cliente.pagoAnticipado + cliente.pagoPendiente)) !== 0 ?
+                    { cliente.reserva === "Si" && cliente.tipo_cabania !== "Mayapo" && ((valorCabania) - (cliente.pagoAnticipado + cliente.pagoPendiente)) ||  
+                    cliente.reserva === "Si" && cliente.tipo_cabania === "Mayapo" && ((valorCabaniaM) - (cliente.pagoAnticipado + cliente.pagoPendiente)) !== 0 ?
                     <div className="px-1 py-2">
                       <div className="text-small font-bold">Información</div>
                       <div className="text-red-500">Datos del usuario</div>
                       <div>Identificacion: {cliente.identificacion}</div>
                       <div className="text-tiny">Nombre: {cliente.nombre}</div>
                       <div className="text-red-500 text-small font-bold">Pago pendiente</div>
-                      <div>{((valorCabania) - (cliente.pagoAnticipado + cliente.pagoPendiente))}</div>
+                      <div>{cliente.tipo_cabania === "Mayapo" ? ((valorCabaniaM) - (cliente.pagoAnticipado + cliente.pagoPendiente))
+                : ((valorCabania) - (cliente.pagoAnticipado + cliente.pagoPendiente))}</div>
                       <Input
                         type="number"
                         name="pagoPendiente"
                         placeholder="Ingrse la cantidad"
                         className="border-2 border-blue-500 rounded-xl mt-2"
                         value={formDatas.pagoPendiente}
-                      onChange={handleInputChanges}
+                        onChange={handleInputChanges}
                       />
                     
                       <div><select
@@ -1121,16 +1138,6 @@ export default function App() {
 
 
                 <TableCell>
-                  {/* {cliente._id === editedUserId ? (
-                    <div className="flex">
-                      <Input
-                        value={editedName}
-                        onChange={(e) => setEditedName(e.target.value)}
-                      />
-                    </div>
-                  ) : (
-                    cliente.nombre
-                  )} */}
 
                   <Popover placement="bottom" offset={20} showArrow>
                         <PopoverTrigger>
@@ -1148,7 +1155,8 @@ export default function App() {
                             <div className="text-red-500">pago pendienete o total</div>
                             <div>Metodo de pago: {cliente.mediosDePagoPendiente}</div>
                             <div>Pago pendiente: {cliente.pagoPendiente}</div>
-                            <div>pendiente: {((valorCabania) - (cliente.pagoAnticipado + cliente.pagoPendiente))}</div>
+                            <div>pendiente: {cliente.tipo_cabania === "Mayapo" ? ((valorCabaniaM) - (cliente.pagoAnticipado + cliente.pagoPendiente))
+                : ((valorCabania) - (cliente.pagoAnticipado + cliente.pagoPendiente))}</div>
                           </div>
                           
                         </PopoverContent>
@@ -1156,29 +1164,6 @@ export default function App() {
                 </TableCell>
                 <TableCell>{cliente.tipo_cabania}</TableCell>
                 <TableCell>{cliente.reserva}</TableCell>
-                {/* <TableCell>{pasadiaNinios}</TableCell>
-                <TableCell>{pasadiaAdultos}</TableCell> */}
-                {/* <TableCell>
-                  {cliente._id === editedUserId ? (
-                    <div className="flex">
-                      <Input
-                        type="number"
-                        value={editPago}
-                        onChange={(e) => setEditPago(e.target.value)}
-                      />
-                    </div>
-                  ) : (
-                    cliente.cantidadPersonas.adultos
-                  )}
-                </TableCell>
-                <TableCell>{cliente.cantidadPersonas.ninios}</TableCell> */}
-                {/* <TableCell>{cliente.mediosDePago}</TableCell>
-                <TableCell>{cliente.pagoAnticipado}</TableCell> */}
-                {/* <TableCell>{new Date(cliente.fechaDeRegistro).toLocaleDateString('es-ES', {
-                      year: 'numeric',
-                      month: 'long'  ,
-                      day: 'numeric' ,
-                    })}</TableCell> */}
                 <TableCell>{new Date(cliente.fechaPasadia).toLocaleDateString('es-ES', {
                       year: 'numeric',
                       month: 'long'  ,
@@ -1456,7 +1441,8 @@ export default function App() {
                 {/* {cliente.restaurante.map((food, index) => (
                   <TableCell key={index}>{food?.nombre || "aun no hay bebidas"}</TableCell>
                 ))} */}
-                <TableCell>{((valorCabania) - (cliente.pagoAnticipado + cliente.pagoPendiente))}</TableCell>
+                <TableCell>{cliente.tipo_cabania === "Mayapo" ? ((valorCabaniaM) - (cliente.pagoAnticipado + cliente.pagoPendiente))
+                : ((valorCabania) - (cliente.pagoAnticipado + cliente.pagoPendiente))}</TableCell>
                 {/* <TableCell className="flex justify-center align-center pr-5 w-60">
                   {cliente.identificacion === editedUserId && (
                     <div className="flex">
