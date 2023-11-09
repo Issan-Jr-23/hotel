@@ -180,6 +180,11 @@ export default function App() {
 
 
   const handleGuardarBebida = async () => {
+
+    if (!selectedClientId || (!bebidaSeleccionadaId && !bebida1SeleccionadaId)) {
+      toast.error('No se ha seleccionado un cliente o una bebida.');
+      return;
+    }
   
     const checkStockAndUpdateInventory = async (bebidaId, cantidad) => {
       const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad/${bebidaId}`);
@@ -190,16 +195,15 @@ export default function App() {
       const clienteResponse = await axios.get(`http://127.0.0.1:3000/api/cabania-clientes/${selectedClientId}`);
       const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
       const totalPersonas = ninios + adultos;
-
-      if(esCortesia){
-
+  
+      if (esCortesia) {
         const totalCortesias = cantidadBebida + cantidadBebida1;
         if (totalCortesias > totalPersonas) {
           alert(`La cantidad de cortesías (${totalCortesias}) no puede exceder la cantidad de personas (${totalPersonas}).`);
           return;
         }
+        
       }
-  
   
       if (cantidad > cantidadInicial) {
         alert("La bebida no tiene suficiente stock");
@@ -271,7 +275,6 @@ export default function App() {
         }
       }
   
-      // Handle the second drink selection
       if (cantidadBebida1 > 0 && bebida1SeleccionadaId) {
         const bebidaAdultos1 = {
           id: bebida1SeleccionadaId,
@@ -289,7 +292,7 @@ export default function App() {
       if (!isBebidaAdded) {
         alert("No se ha agregado ninguna bebida");
       } else {
-        onClose(); // Close the modal after adding drinks
+        onClose(); 
       }
     } catch (error) {
       console.error('Error al guardar las bebidas en el cliente:', error.message);
@@ -304,6 +307,7 @@ export default function App() {
         id: selectedClientId,
         bebida,
       });
+      const responses = await axios.get("http://127.0.0.1:3000/api/cabania-clientes");
       toast.success('Bebida guardada exitosamente!');
       setCantidadBebida(""); 
       setBebidaSeleccionada(''); 
@@ -342,6 +346,12 @@ export default function App() {
 
   const handleGuardarFood = async () => {
   
+    if (!selectedClientId || (!foodSeleccionadaId && !food1SeleccionadaId)) {
+      toast.error('No se ha seleccionado un cliente o una comida.');
+      toast.
+      return;
+    }
+
     const checkStockAndUpdateInventory = async (foodId, cantidad) => {
       const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad/${foodId}`);
       const cantidadInicial = response.data.CantidadInicial;
@@ -350,16 +360,14 @@ export default function App() {
       const clienteResponse = await axios.get(`http://127.0.0.1:3000/api/cabania-clientes/${selectedClientId}`);
       const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
       const totalPersonas = ninios + adultos;
-
-      if(esCortesia){
+  
+      if (esCortesia) {
         const totalCortesias = cantidadFood + cantidadFood1;
         if (totalCortesias > totalPersonas) {
           alert(`La cantidad de cortesías (${totalCortesias}) no puede exceder la cantidad de personas (${totalPersonas}).`);
           return;
         }
-
       }
-  
   
       if (cantidad > cantidadInicial) {
         alert("La bebida no tiene suficiente stock");
@@ -409,16 +417,14 @@ export default function App() {
           }
         }
   
-        // Close the modal if a courtesy was successfully saved
         if (atLeastOneCortesiaSaved) {
           onClose();
         }
-        return; // Exit the function after handling courtesy drinks
+        return; 
       }
   
       let isBebidaAdded = false;
   
-      // Handle the first drink selection
       if (cantidadFood > 0 && foodSeleccionadaId) {
         const foodAdultos = {
           id: foodSeleccionadaId,
@@ -465,25 +471,24 @@ export default function App() {
         id: selectedClientId,
         food,
       });
-      toast.success('Comida guardada exitosamente!');
-         setCantidadFood(""); 
-    setFoodSeleccionada(''); 
-    setPrecioFoodSeleccionada(""); 
-    setFoodSeleccionadaId(''); 
-
-    
-    setCantidadFood1(""); 
-    setFood1Seleccionada(''); 
-    setPrecioFood1Seleccionada(""); 
-    setFood1SeleccionadaId(''); 
-
-    
-    setEsCortesia(false); 
-
-    closeModalF();
-      closeModalF();
       const responses = await axios.get("http://127.0.0.1:3000/api/cabania-clientes");
-      setUsers(responses.data);
+      toast.success('Comida guardada exitosamente!');
+        setCantidadFood(""); 
+        setFoodSeleccionada(''); 
+        setPrecioFoodSeleccionada(""); 
+        setFoodSeleccionadaId(''); 
+
+    
+        setCantidadFood1(""); 
+        setFood1Seleccionada(''); 
+        setPrecioFood1Seleccionada(""); 
+        setFood1SeleccionadaId(''); 
+
+    
+      setEsCortesia(false); 
+
+      closeModalF();
+      
     } catch (error) {
       console.error('Error al guardar la bebida en el cliente:', error.message);
       throw error; 
@@ -680,32 +685,21 @@ export default function App() {
     setModalOpen(true);
   };
 
-  const rol1 = [
-    "Administrador de Sistemas",
-  ]
-
-  const rol2 = "admin"
-  const rol3 = "user"
-
-
-  const roles = [
-    "admin", "user"
-  ]
-
 
   const valorCabania = 400000
   const valorCabaniaM = 500000
 
   const [selectedClienteId, setSelectedClienteId] = useState(null);
 
+  const seleccionarCliente = (identificacion) => {
+    setSelectedClienteId(identificacion);
+  };
+
   const [formDatas, setFormDatas] = useState({
     pagoPendiente: '',
     mediosDePagoPendiente: ''
   });
 
-  const seleccionarCliente = (identificacion) => {
-    setSelectedClienteId(identificacion);
-  };
 
   const handleInputChanges = (e) => {
     const { name, value } = e.target;
@@ -714,6 +708,12 @@ export default function App() {
 
 
   const actualizarDatosCliente = async () => {
+
+    if (!formDatas.pagoPendiente || !formDatas.mediosDePagoPendiente) {
+      toast.error('Debe llenar todos los campos');
+      return;
+    }
+
     if (selectedClienteId) {
       try {
         const response = await axios.put(`http://127.0.0.1:3000/api/cabania-clientes/${selectedClienteId}/actualizar`, {
@@ -724,6 +724,7 @@ export default function App() {
           pagoPendiente: '',
           mediosDePagoPendiente: ''
         });
+        toast.success('Datos actualizados exitosamente');
         const responses = await axios.get("http://127.0.0.1:3000/api/cabania-clientes");
         setUsers(responses.data);
 
@@ -877,7 +878,7 @@ export default function App() {
                     <Input
                       name="fechaPasadia"
                       type="date"
-                      label="FECHA EN LA QUE DESEA DISFRUTAR EL PASADIA"
+                      label="FECHA EN LA QUE DESEA DISFRUTAR DE LA CABAÑA"
                       className="rounded-xl border-2 border-blue-400"
                       placeholder="Fecha en la desea disfrutar el pasadia"
                       value={formData.fechaPasadia}
@@ -946,7 +947,7 @@ export default function App() {
         </div>
       </div>
         
-      <section className="flex coluns-2 border-3 mt-5 mx-5 rounded-t-2xl border-blue-300">
+      <section className="flex mt-5 mx-5 rounded-t-2xl">
           {/* Input de búsqueda */}
         <Table className=" text-center uppercase" aria-label="Lista de Usuarios">
           <TableHeader className="text-center">
@@ -1010,8 +1011,8 @@ export default function App() {
                             <section className="flex justify-between w-full flex-wrap border-3">
 
                               {/* Sección de Productos (Bebidas + Comidas) */}
-                              <div className="mx-5 my-1 border-2 w-full">
-                                <h4 className="text-green-600">Productos (Bebidas y Comidas)</h4>
+                              <div className="mx-5 my-1  w-full">
+                                
 
                                 {/* Combina ambos arrays (bebidas y comidas) y verifica si tiene elementos */}
                                 {selectedUser.bebidas && selectedUser.restaurante &&

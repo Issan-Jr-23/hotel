@@ -167,6 +167,12 @@ export default function App() {
 
 
   const handleGuardarBebida = async () => {
+
+    if (!selectedClientId || (!bebidaSeleccionadaId && !bebida1SeleccionadaId)) {
+      toast.error('No se ha seleccionado un cliente o una bebida.');
+      toast.
+      return;
+    }
   
     const checkStockAndUpdateInventory = async (bebidaId, cantidad) => {
       const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad/${bebidaId}`);
@@ -275,7 +281,7 @@ export default function App() {
       if (!isBebidaAdded) {
         alert("No se ha agregado ninguna bebida");
       } else {
-        onClose(); // Close the modal after adding drinks
+        onClose();
       }
     } catch (error) {
       console.error('Error al guardar las bebidas en el cliente:', error.message);
@@ -327,6 +333,12 @@ export default function App() {
   };
 
   const handleGuardarFood = async () => {
+
+    if (!selectedClientId || (!foodSeleccionadaId && !food1SeleccionadaId)) {
+      toast.error('No se ha seleccionado un cliente o una comida.');
+      toast.
+      return;
+    }
   
     const checkStockAndUpdateInventory = async (foodId, cantidad) => {
       const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad/${foodId}`);
@@ -671,17 +683,7 @@ export default function App() {
     setModalOpen(true);
   };
 
-  const rol1 = [
-    "Administrador de Sistemas",
-  ]
 
-  const rol2 = "admin"
-  const rol3 = "user"
-
-
-  const roles = [
-    "admin", "user"
-  ]
 
 
   const valorHabitaciones = 300000;
@@ -704,12 +706,21 @@ export default function App() {
 
 
   const actualizarDatosCliente = async () => {
+    if (!formDatas.pagoPendiente || !formDatas.mediosDePagoPendiente) {
+      toast.error('Debe llenar todos los campos');
+      return;
+    }
     if (selectedClienteId) {
       try {
         const response = await axios.put(`http://127.0.0.1:3000/api/habitaciones-clientes/${selectedClienteId}/actualizar`, {
           pagoPendiente: formDatas.pagoPendiente,
           mediosDePagoPendiente: formDatas.mediosDePagoPendiente
         });
+        setFormDatas({
+          pagoPendiente: '',
+          mediosDePagoPendiente: ''
+        });
+        toast.success('Datos actualizados exitosamente');
         const responses = await axios.get("http://127.0.0.1:3000/api/habitaciones-clientes");
         setUsers(responses.data);
       } catch (error) {
@@ -862,7 +873,7 @@ export default function App() {
                     <Input
                       name="fechaPasadia"
                       type="date"
-                      label="FECHA EN LA QUE DESEA DISFRUTAR EL PASADIA"
+                      label="FECHA EN LA QUE DESEA DISFRUTAR DE LA HABITACIÓN"
                       className="rounded-xl border-2 border-blue-400"
                       placeholder="Fecha en la desea disfrutar el pasadia"
                       value={formData.fechaPasadia}
@@ -931,7 +942,7 @@ export default function App() {
         </div>
       </div>
         
-      <section className="flex coluns-2 border-3 mt-5 mx-5 rounded-t-2xl border-blue-300">
+      <section className="flex mt-5 mx-5 rounded-t-2xl">
           {/* Input de búsqueda */}
         <Table className=" text-center uppercase" aria-label="Lista de Usuarios">
           <TableHeader className="text-center">

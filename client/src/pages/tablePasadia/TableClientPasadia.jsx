@@ -169,6 +169,11 @@ export default function App() {
 
 
   const handleGuardarBebida = async () => {
+    if (!selectedClientId || (!bebidaSeleccionadaId && !bebida1SeleccionadaId)) {
+      toast.error('No se ha seleccionado un cliente o una comida.');
+      toast.
+      return;
+    }
   
     const checkStockAndUpdateInventory = async (bebidaId, cantidad) => {
       const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad/${bebidaId}`);
@@ -329,6 +334,11 @@ export default function App() {
   };
 
   const handleGuardarFood = async () => {
+    if (!selectedClientId || (!foodSeleccionadaId && !food1SeleccionadaId)) {
+      toast.error('No se ha seleccionado un cliente o una comida.');
+      toast.
+      return;
+    }
   
     const checkStockAndUpdateInventory = async (foodId, cantidad) => {
       const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad/${foodId}`);
@@ -677,13 +687,6 @@ export default function App() {
     "Administrador de Sistemas",
   ]
 
-  const rol2 = "admin"
-  const rol3 = "user"
-
-
-  const roles = [
-    "admin", "user"
-  ]
 
 
   const pasadiaAdultos = 60000;
@@ -707,12 +710,21 @@ export default function App() {
 
 
   const actualizarDatosCliente = async () => {
+    if (!formDatas.pagoPendiente || !formDatas.mediosDePagoPendiente) {
+      toast.error('Debe llenar todos los campos');
+      return;
+    }
     if (selectedClienteId) {
       try {
         const response = await axios.put(`http://127.0.0.1:3000/api/pasadia-clientes/${selectedClienteId}/actualizar`, {
           pagoPendiente: formDatas.pagoPendiente,
           mediosDePagoPendiente: formDatas.mediosDePagoPendiente
         });
+        setFormDatas({
+          pagoPendiente: '',
+          mediosDePagoPendiente: ''
+        });
+        toast.success('Datos actualizados exitosamente');
         const responses = await axios.get("http://127.0.0.1:3000/api/pasadia-clientes");
         setUsers(responses.data);
       } catch (error) {
@@ -919,7 +931,7 @@ export default function App() {
         </div>
       </div>
         
-      <section className="flex coluns-2 border-3 mt-5 mx-5 rounded-t-2xl border-blue-300">
+      <section className="flex mt-5 mx-5 rounded-t-2xl ">
           {/* Input de búsqueda */}
         <Table className=" text-center uppercase" aria-label="Lista de Usuarios">
           <TableHeader className="text-center">

@@ -102,8 +102,8 @@ export default function Navbars() {
             <DropdownItem aria-label="prueba" key="profile" className="h-14 gap-2">
               <p className="font-semibold "> Welcome {user.username}</p>
             </DropdownItem>
-            <DropdownItem aria-label="prueba" key="logout" color="danger">
-            <Link to="/" onClick={() => logout()}>
+            <DropdownItem aria-label="prueba" key="logout" color="danger"  to="/" onClick={() => logout()}>
+            <Link>
                 Logout
               </Link>
             </DropdownItem>
