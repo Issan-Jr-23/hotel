@@ -113,6 +113,7 @@ export default function App() {
 
 
 
+
   
   const [busqueda, setBusqueda] = useState('');
 
@@ -169,9 +170,8 @@ export default function App() {
       setFormData({
         ...formData,
         [name]: value,
-        totalCosto, // Actualizamos el costo total en el estado
-        ...(name === "tipo_cabania" && { [name]: value }), // Actualizamos el tipo de cabaña seleccionada si ese es el campo que cambió
-        // Actualización condicional de cantidadPersonas si fieldName es proporcionado
+        totalCosto, 
+        ...(name === "tipo_cabania" && { [name]: value }),
         ...(fieldName ? { cantidadPersonas: { ...formData.cantidadPersonas, [fieldName]: parseInt(value, 10) } } : {})
       });
     }
@@ -202,6 +202,9 @@ export default function App() {
   };
 
 
+
+
+
   const handleGuardarBebida = async () => {
 
     if (!selectedClientId || (!bebidaSeleccionadaId && !bebida1SeleccionadaId)) {
@@ -212,21 +215,44 @@ export default function App() {
     const checkStockAndUpdateInventory = async (bebidaId, cantidad) => {
       const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad/${bebidaId}`);
      
-      const cantidadInicial = response.data.CantidadInicial;
-      const cantidadRestante = response.data.cantidadRestante;
+      const cantidadInicial = response.data
+      const cantidadRestante = response.data;
 
       const clienteResponse = await axios.get(`http://127.0.0.1:3000/api/cabania-clientes/${selectedClientId}`);
       const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
+      const {cantidadDeCortesias} = clienteResponse.data;
       const totalPersonas = ninios + adultos;
+      const tdc = totalPersonas - cantidadDeCortesias;
+      console.log("hola: "+cantidadDeCortesias)
+      console.log("hola: "+totalPersonas)
   
       if (esCortesia) {
         const totalCortesias = cantidadBebida + cantidadBebida1;
+        console.log("prueba: "+totalCortesias)
         if (totalCortesias > totalPersonas) {
           alert(`La cantidad de cortesías (${totalCortesias}) no puede exceder la cantidad de personas (${totalPersonas}).`);
           return;
+        }else if(cantidadDeCortesias === totalPersonas){
+          alert("has alcanzado el limite de cortesias")
+          return;
+        }else if( totalCortesias > tdc){
+          alert(`Tus cortesias disponibles son (${tdc}) y no debe ser mayor a esa cantidad`)
+          return;
+        }else{
+          
+          console.log("ingresamos a la actualizacion")
+          const nuevaCantidadDeCortesias = Number(cantidadDeCortesias) + Number(totalCortesias);
+          console.log("hola 1: "+cantidadDeCortesias)
+          console.log("hola 2: "+totalCortesias)
+          console.log("mi actualizacion"+nuevaCantidadDeCortesias)
+          await axios.put(`http://127.0.0.1:3000/api/cabania-clientes/${selectedClientId}/cortesias`, {
+            cantidadDeCortesias: nuevaCantidadDeCortesias
+          });
+          alert(`La cantidad de cortesías ha sido actualizada a ${nuevaCantidadDeCortesias}.`);
         }
-        
       }
+
+ 
   
       if (cantidad > cantidadInicial) {
         alert("La bebida no tiene suficiente stock");
@@ -532,7 +558,7 @@ export default function App() {
     fetchData();
   }, []);
 
-  const handleFormSubmit = async () => {
+  const handleFormSubmit = async (event) => {
     try {
 
 
@@ -784,16 +810,16 @@ export default function App() {
 
   const seleccionarCliente = (identificacion) => {
     setSelectedClienteId(identificacion);
-    calcularPagoPendiente(identificacion); // Añadir llamada a calcularPagoPendiente
+    calcularPagoPendiente(identificacion); 
   };
+  
 
-  // Función para manejar cambios en los inputs
+
   const handleInputChanges = (e) => {
     const { name, value } = e.target;
     setFormDatas({ ...formDatas, [name]: value });
   };
 
-  // Función para calcular el pago pendiente basado en el tipo de cabaña
   const calcularPagoPendiente = (identificacion) => {
     const clienteSeleccionado = users.find(user => user.identificacion === identificacion);
     if (clienteSeleccionado) {
@@ -805,6 +831,8 @@ export default function App() {
       });
     }
   };
+
+
 
 
   const actualizarDatosCliente = async () => {
@@ -1193,6 +1221,7 @@ export default function App() {
                       <div>{cliente.tipo_cabania === "Mayapo" ? ((valorCabaniaM) - (cliente.pagoAnticipado + cliente.pagoPendiente))
                 : ((valorCabania) - (cliente.pagoAnticipado + cliente.pagoPendiente))}</div>
                       <Input
+                      disabled
                         type="number"
                         name="pagoPendiente"
                         placeholder="Ingrse la cantidad"
@@ -1225,7 +1254,7 @@ export default function App() {
                     }
                   </PopoverContent>
                 </Popover>
-                </TableCell> 
+              </TableCell> 
 
 
 
@@ -1277,12 +1306,12 @@ export default function App() {
 
 
 
-                <TableCell key={cliente._id} className=" ">
+                <TableCell key={cliente._id} >
 
                 <div className=" flex justify-center">
                   <div className="flex flex-wrap gap-3">
                     {sizesm.map((size) => (
-                      <Button className="bg-white-100" key={size} onPress={() => handleOpenm(size, cliente._id)}>
+                      <Button className="bg-white-100" key={size} onPress={() => handleOpenm(size, cliente._id) }  >
                         <img className="w-7 h-7" src={plus} alt="" />
                       </Button>
                     ))}

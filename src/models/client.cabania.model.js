@@ -73,7 +73,7 @@ const clienteSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
-  totalCortesia: {
+  cantidadDeCortesias: {
     type: Number,
     default: 0
   }

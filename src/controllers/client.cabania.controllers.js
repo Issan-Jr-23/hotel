@@ -36,7 +36,7 @@ export const deleteClient = async (req, res) => {
     console.error('Error al eliminar el usuario:', error);
     res.status(500).json({ message: 'Error interno del servidor.' });
   }
-}
+} 
 
 
 
@@ -139,8 +139,10 @@ export const obtenerCPI = async (req, res) => {
     }
 
     res.json({
-      cantidadPersonas: cliente.cantidadPersonas
+      cantidadPersonas: cliente.cantidadPersonas,
+      cantidadDeCortesias: cliente.cantidadDeCortesias
     });
+
 
   } catch (error) {
     res.status(500).send('Error al obtener los datos del cliente: ' + error.message);
@@ -173,6 +175,29 @@ export const updatePP = async (req, res) => {
   } catch (error) {
     console.error('Error al actualizar el cliente:', error);
     res.status(500).json({ message: 'Error al actualizar el cliente' });
+  }
+};
+
+
+export const updateClientCts = async (req, res) => {
+  const identificacion = req.params.id;
+  const { cantidadDeCortesias} = req.body;
+
+  try {
+    const cortesias = await Cabania.findOneAndUpdate(
+      { _id: identificacion },
+      { cantidadDeCortesias },
+      { new: true }
+    );
+
+    if (!cortesias) {
+      return res.status(404).json({ mensaje: 'Cortesia no encontrado' });
+    }
+
+    res.json({ mensaje: 'Cortesia actualizada correctamente', cortesias });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ mensaje: 'Error interno del servidor' });
   }
 };
 

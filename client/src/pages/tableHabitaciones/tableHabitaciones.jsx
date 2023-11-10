@@ -199,18 +199,39 @@ export default function App() {
       const cantidadInicial = response.data.CantidadInicial;
       const cantidadRestante = response.data.cantidadRestante;
 
-      const clienteResponse = await axios.get(`http://127.0.0.1:3000/api/habitaciones-clientes/${selectedClientId}`);
+      const clienteResponse = await axios.get(`http://127.0.0.1:3000/api/pasadia-clientes/${selectedClientId}`);
       const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
+      const {cantidadDeCortesias} = clienteResponse.data;
       const totalPersonas = ninios + adultos;
+      const tdc = totalPersonas - cantidadDeCortesias;
+      console.log("hola: "+cantidadDeCortesias)
+      console.log("hola: "+totalPersonas)
   
       if (esCortesia) {
         const totalCortesias = cantidadBebida + cantidadBebida1;
+        console.log("prueba: "+totalCortesias)
         if (totalCortesias > totalPersonas) {
           alert(`La cantidad de cortesías (${totalCortesias}) no puede exceder la cantidad de personas (${totalPersonas}).`);
           return;
+        }else if(cantidadDeCortesias === totalPersonas){
+          alert("has alcanzado el limite de cortesias")
+          return;
+        }else if( totalCortesias > tdc){
+          alert(`Tus cortesias disponibles son (${tdc}) y no debe ser mayor a esa cantidad`)
+          return;
+        }else{
+          
+          console.log("ingresamos a la actualizacion")
+          const nuevaCantidadDeCortesias = Number(cantidadDeCortesias) + Number(totalCortesias);
+          console.log("hola 1: "+cantidadDeCortesias)
+          console.log("hola 2: "+totalCortesias)
+          console.log("mi actualizacion"+nuevaCantidadDeCortesias)
+          await axios.put(`http://127.0.0.1:3000/api/pasadia-clientes/${selectedClientId}/cortesias`, {
+            cantidadDeCortesias: nuevaCantidadDeCortesias
+          });
         }
-        
       }
+
   
       if (cantidad > cantidadInicial) {
         alert("La bebida no tiene suficiente stock");
@@ -584,17 +605,19 @@ export default function App() {
       onClose();
       toast.success('Cliente agregado exitosamente!');
       setFormData({
-        identificacion: "",
+        identificacion:"",
         nombre: "",
         reserva: "",
-        pagoPendienteTotal: "",
-        bebidas: "",
-        restaurante: "",
-        totalConsumo: "",
         cantidadPersonas: {
           adultos: "",
           ninios: "",
         },
+        mediosDePago: "",
+        pagoAnticipado: "",
+        mediosDePagoPendiente: "",
+        pagoPendiente: "",
+        fechaPasadia: "",
+        habitaciones:""
       });
       const response = await axios.get("http://127.0.0.1:3000/api/habitaciones-clientes");
       setUsers(response.data);
