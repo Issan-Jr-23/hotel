@@ -130,7 +130,7 @@ export const addFood = async (req, res) => {
 
 export const obtenerCPI = async (req, res) => {
   try {
-    const clientId = req.params.id;
+    const clientId = req.params.id; 
 
     const cliente = await Cliente.findById(clientId);
 
@@ -139,7 +139,9 @@ export const obtenerCPI = async (req, res) => {
     }
 
     res.json({
-      cantidadPersonas: cliente.cantidadPersonas
+      cantidadPersonas: cliente.cantidadPersonas,
+      cantidadDeCortesias: cliente.cantidadDeCortesias,
+      cantidadDeCortesiasF: cliente.cantidadDeCortesiasF
     });
 
   } catch (error) {
@@ -153,11 +155,10 @@ export const updatePP = async (req, res) => {
   const { pagoPendiente, mediosDePagoPendiente } = req.body;
 
   try {
-    // Busca el cliente por su identificación y actualiza
     const cliente = await Cliente.findOneAndUpdate(
-      { identificacion: clienteId }, // Asegúrese de que esta línea esté utilizando la variable correcta `clienteId`
+      { identificacion: clienteId }, 
       { pagoPendiente, mediosDePagoPendiente },
-      { new: true } // Devuelve el documento modificado
+      { new: true } 
     );
 
     if (!cliente) {
@@ -168,7 +169,6 @@ export const updatePP = async (req, res) => {
     console.log('Pago Pendiente:', pagoPendiente);
     console.log('Medios de Pago Pendiente:', mediosDePagoPendiente);
 
-    // Respuesta exitosa con el cliente actualizado
     res.status(200).json({ message: `Datos del cliente ${clienteId} actualizados correctamente`, cliente });
   } catch (error) {
     console.error('Error al actualizar el cliente:', error);
@@ -176,6 +176,28 @@ export const updatePP = async (req, res) => {
   }
 };
 
+
+export const updateClientCts = async (req, res) => {
+  const identificacion = req.params.id; 
+  const { cantidadDeCortesias, cantidadDeCortesiasF } = req.body;
+
+  try {
+    const cortesias = await Cliente.findOneAndUpdate(
+      { _id: identificacion },
+      { cantidadDeCortesias, cantidadDeCortesiasF  },
+      { new: true }
+    );
+
+    if (!cortesias) {
+      return res.status(404).json({ mensaje: 'Cortesia no encontrado' });
+    }
+
+    res.json({ mensaje: 'Cortesia actualizada correctamente', cortesias });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ mensaje: 'Error interno del servidor' });
+  }
+};
       
 
 

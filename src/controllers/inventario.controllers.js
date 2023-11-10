@@ -211,16 +211,13 @@ export const updateCB = async (req, res) => {
   try {
     const { id, cantidad } = req.body;
 
-    // Busca la bebida por ID
     const bebida = await Bebida.findById(id);
     if (!bebida) {
         return res.status(404).send({ error: 'Bebida no encontrada.' });
     }
 
-    // Calcula la cantidad restante en el inventario
     const cantidadRestante = bebida.CantidadInicial - bebida.ProductosVendidos;
 
-    // Verifica si hay suficiente cantidad en el inventario
     if (cantidad > cantidadRestante) {
         return res.status(400).send({ error: `Solo quedan ${cantidadRestante} unidades de ${bebida.Descripcion} disponibles en el inventario.` });
     }
@@ -356,7 +353,7 @@ export const validCF = async (req, res) => {
       console.error('Error al verificar la disponibilidad:', error);
       res.status(500).send({ error: 'Error interno del servidor.' });
   }
-};
+}; 
 
 
 

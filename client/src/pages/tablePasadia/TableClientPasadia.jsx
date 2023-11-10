@@ -183,7 +183,7 @@ export default function App() {
 
 
   const handleGuardarBebida = async () => {
-    if (!selectedClientId || (!bebidaSeleccionadaId && !bebida1SeleccionadaId)) {
+    if (!selectedClientId || (!bebidaSeleccionadaId && !bebida1SeleccionadaId)) { 
       toast.error('No se ha seleccionado un cliente o una Bebida.');
       toast.
       return;
@@ -192,26 +192,41 @@ export default function App() {
     const checkStockAndUpdateInventory = async (bebidaId, cantidad) => {
       const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad/${bebidaId}`);
      
-      const cantidadInicial = response.data.CantidadInicial;
+    
       const cantidadRestante = response.data.cantidadRestante;
 
       const clienteResponse = await axios.get(`http://127.0.0.1:3000/api/pasadia-clientes/${selectedClientId}`);
       const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
+      const {cantidadDeCortesias} = clienteResponse.data;
+   
       const totalPersonas = ninios + adultos;
+      const tdc = totalPersonas - cantidadDeCortesias;
   
       if (esCortesia) {
         const totalCortesias = cantidadBebida + cantidadBebida1;
+        console.log("prueba: "+totalCortesias)
         if (totalCortesias > totalPersonas) {
           alert(`La cantidad de cortesías (${totalCortesias}) no puede exceder la cantidad de personas (${totalPersonas}).`);
           return;
+        }else if(cantidadDeCortesias === totalPersonas){
+          alert("has alcanzado el limite de cortesias")
+          return;
+        }else if( totalCortesias > tdc){
+          alert(`Tus cortesias disponibles son (${tdc}) y no debe ser mayor a esa cantidad`)
+          return;
+        }else{
+          
+          const nuevaCantidadDeCortesias = Number(cantidadDeCortesias) + Number(totalCortesias);
+          await axios.put(`http://127.0.0.1:3000/api/pasadia-clientes/${selectedClientId}/cortesias`, {
+            cantidadDeCortesias: nuevaCantidadDeCortesias
+          });
+          alert(`La cantidad de cortesías ha sido actualizada a ${nuevaCantidadDeCortesias}.`);
         }
-        
       }
+
+ 
   
-      if (cantidad > cantidadInicial) {
-        alert("La bebida no tiene suficiente stock");
-        return false;
-      } else if (cantidad > cantidadRestante) {
+     if (cantidad > cantidadRestante) {
         alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
         return false;
       }
@@ -303,7 +318,7 @@ export default function App() {
     }
   };
   
-  
+
   const guardarBebida = async (bebida) => {
     try {
       const response = await axios.post('http://127.0.0.1:3000/api/pasadia-agregar-bebida', {
@@ -329,7 +344,9 @@ export default function App() {
       throw error;  
     }
   };
-
+  //#endregion 
+  
+  
   const actualizarInventarioFood = async (foodId, cantidad) => {
     try {
       const response = await axios.post('http://127.0.0.1:3000/api/actualizar-inventario-food', {
@@ -355,32 +372,44 @@ export default function App() {
   
     const checkStockAndUpdateInventory = async (foodId, cantidad) => {
       const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad/${foodId}`);
-      const cantidadInicial = response.data.CantidadInicial;
+     
       const cantidadRestante = response.data.cantidadRestante;
-
+      
       const clienteResponse = await axios.get(`http://127.0.0.1:3000/api/pasadia-clientes/${selectedClientId}`);
       const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
+      const {cantidadDeCortesiasF} = clienteResponse.data;
       const totalPersonas = ninios + adultos;
-  
+      const tdc = totalPersonas - cantidadDeCortesiasF;
       if (esCortesia) {
         const totalCortesias = cantidadFood + cantidadFood1;
+        console.log("prueba: "+totalCortesias)
         if (totalCortesias > totalPersonas) {
           alert(`La cantidad de cortesías (${totalCortesias}) no puede exceder la cantidad de personas (${totalPersonas}).`);
           return;
+        }else if(cantidadDeCortesiasF === totalPersonas){
+          alert("has alcanzado el limite de cortesias")
+          return;
+        }else if( totalCortesias > tdc){
+          alert(`Tus cortesias disponibles son (${tdc}) y no debe ser mayor a esa cantidad`)
+          return;
+        }else{
+          const nuevaCantidadDeCortesias = Number(cantidadDeCortesiasF) + Number(totalCortesias);
+          await axios.put(`http://127.0.0.1:3000/api/pasadia-clientes/${selectedClientId}/cortesias`, {
+            cantidadDeCortesiasF: nuevaCantidadDeCortesias
+          });
+          alert(`La cantidad de cortesías ha sido actualizada a ${nuevaCantidadDeCortesias}.`);
         }
       }
-  
-      if (cantidad > cantidadInicial) {
-        alert("La bebida no tiene suficiente stock");
-        return false;
-      } else if (cantidad > cantidadRestante) {
+
+
+      if (cantidad > cantidadRestante) {
         alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
         return false;
       }
-  
       await actualizarInventarioFood(foodId, cantidad);
       return true;
     };
+
   
     try {
       if (!selectedClientId || (!foodSeleccionadaId && !food1SeleccionadaId)) {
@@ -455,7 +484,7 @@ export default function App() {
       }
   
       if (!isBebidaAdded) {
-        alert("No se ha agregado ninguna bebida");
+        alert("No se ha agregado ninguna comida");
       } else {
         closeModalF();
       }
@@ -813,6 +842,8 @@ export default function App() {
     }
   };
  //#endregion
+
+ 
 
   return (
     <div className="max-w-full w-98 mx-auto">

@@ -128,7 +128,7 @@ export const addFood = async (req, res) => {
   }
 };
 
-export const obtenerCPI = async (req, res) => {
+export const obtenerCPI = async (req, res) => { 
   try {
     const clientId = req.params.id;
 
@@ -140,7 +140,8 @@ export const obtenerCPI = async (req, res) => {
 
     res.json({
       cantidadPersonas: cliente.cantidadPersonas,
-      cantidadDeCortesias: cliente.cantidadDeCortesias
+      cantidadDeCortesias: cliente.cantidadDeCortesias,
+      cantidadDeCortesiasF: cliente.cantidadDeCortesiasF
     });
 
 
@@ -181,12 +182,12 @@ export const updatePP = async (req, res) => {
 
 export const updateClientCts = async (req, res) => {
   const identificacion = req.params.id;
-  const { cantidadDeCortesias} = req.body;
+  const { cantidadDeCortesias, cantidadDeCortesiasF} = req.body;
 
   try {
     const cortesias = await Cabania.findOneAndUpdate(
       { _id: identificacion },
-      { cantidadDeCortesias },
+      { cantidadDeCortesias, cantidadDeCortesiasF },
       { new: true }
     );
 
@@ -199,10 +200,10 @@ export const updateClientCts = async (req, res) => {
     console.error(error);
     res.status(500).json({ mensaje: 'Error interno del servidor' });
   }
-};
+}; 
 
       
 
 
 
-
+ 
