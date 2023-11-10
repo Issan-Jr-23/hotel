@@ -52,8 +52,7 @@ const clienteSchema = new mongoose.Schema({
     default: () => moment.tz("America/Bogota").toDate(), 
   },
   fechaPasadia: {
-    type: Date, 
-    required: true
+    type: Date
   },
   bebidas: {
     type: Array,

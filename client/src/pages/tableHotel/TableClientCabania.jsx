@@ -605,8 +605,6 @@ export default function App() {
         nombre: "",
         reserva: "",
         pagoPendienteTotal: "",
-        bebidas: "",
-        restaurante: "",
         totalConsumo: "",
         cantidadPersonas: {
           adultos: "",

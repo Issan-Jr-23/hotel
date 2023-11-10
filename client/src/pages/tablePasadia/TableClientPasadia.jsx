@@ -569,17 +569,19 @@ export default function App() {
         onClose();
         toast.success('Cliente agregado exitosamente!');
         setFormData({
-          identificacion: "",
+          identificacion:"",
           nombre: "",
           reserva: "",
-          pagoPendienteTotal: "", 
-          bebidas: "",
-          restaurante: "",
-          totalConsumo: "",
           cantidadPersonas: {
             adultos: "",
             ninios: "",
           },
+          mediosDePago: "",
+          pagoAnticipado: "",
+          mediosDePagoPendiente: "",
+          pagoPendiente: "",
+          fechaPasadia: ""
+
         });
         const response = await axios.get("http://127.0.0.1:3000/api/pasadia-clientes");
         setUsers(response.data);
@@ -1136,6 +1138,7 @@ export default function App() {
                       <div className="text-red-500 text-small font-bold">Pago pendiente</div>
                       <div>{((cliente.cantidadPersonas.adultos * pasadiaAdultos) + (cliente.cantidadPersonas.ninios * pasadiaNinios) - (cliente.pagoAnticipado + cliente.pagoPendiente))}</div>
                       <Input
+                      disabled
                         type="number"
                         name="pagoPendiente"
                         placeholder="Ingrse la cantidad"

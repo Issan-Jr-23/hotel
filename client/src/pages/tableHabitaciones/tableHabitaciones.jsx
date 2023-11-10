@@ -1177,6 +1177,7 @@ export default function App() {
                         name="pagoPendiente"
                         placeholder="Ingrse la cantidad"
                         className="border-2 border-blue-500 rounded-xl mt-2"
+                        disabled
                         value={formDatas.pagoPendiente}
                       onChange={handleInputChanges}
                       />
@@ -1201,7 +1202,7 @@ export default function App() {
                     <Button color="danger" onClick={actualizarDatosCliente}>Guardar</Button>
                     </div>
                     </div>
-                    : "Pago completado🤩"
+                    :  "Pago completado🤩" 
                     }
                   </PopoverContent>
                 </Popover>
