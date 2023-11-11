@@ -17,7 +17,7 @@ import {
   ModalFooter,
   useDisclosure,
   Select,
-  SelectItem, Checkbox,Popover, PopoverTrigger, PopoverContent
+  SelectItem, Checkbox,Popover, PopoverTrigger, PopoverContent, Pagination
 } from "@nextui-org/react";
 
 import axios from "axios";
@@ -531,7 +531,10 @@ export default function App() {
     const fetchData = async () => {
       try {
         const response = await axios.get("http://127.0.0.1:3000/api/pasadia-clientes");
-        setUsers(response.data);
+        
+        const usuariosOrdenados = response.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
+  
+        setUsers(usuariosOrdenados);
       } catch (error) {
         console.error("Error al obtener datos del servidor:", error);
       }
@@ -613,7 +616,8 @@ export default function App() {
 
         });
         const response = await axios.get("http://127.0.0.1:3000/api/pasadia-clientes");
-        setUsers(response.data);
+        const usuariosOrdenados = response.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
+        setUsers(usuariosOrdenados);
       }
     } catch (error) {
       toast.error('Ocurrió un error al agregar el cliente o el registro ya existe.');
@@ -730,8 +734,9 @@ export default function App() {
 
   const sizess = ["5xl",];
 
-  const handleOpenM = (size) => {
+  const handleOpenM = (size, userId) => {
   setSize(size)
+  setSelectedClientId(userId);
   }
 
   const { isOpen: isModalOpenM, onOpen: openModalM, onClose: closeModalM } = useDisclosure();
@@ -833,7 +838,8 @@ export default function App() {
         });
         toast.success('Datos actualizados exitosamente');
         const responses = await axios.get("http://127.0.0.1:3000/api/pasadia-clientes");
-        setUsers(responses.data);
+        const usuariosOrdenados = responses.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
+        setUsers(usuariosOrdenados);
       } catch (error) {
         console.error('Hubo un problema con la petición Axios:', error);
       }
@@ -843,7 +849,21 @@ export default function App() {
   };
  //#endregion
 
- 
+ const [displayLimit, setDisplayLimit] = useState(5);
+ const [currentPage, setCurrentPage] = useState(1);
+
+ const handleChangeDisplayLimit = (event) => {
+  setDisplayLimit(Number(event.target.value));
+  setCurrentPage(1); 
+};
+
+
+
+const totalPages = Math.ceil(datosFiltrados.length / displayLimit + 1 );
+const start = (currentPage - 1) * displayLimit;
+const end = start + displayLimit ;
+
+
 
   return (
     <div className="max-w-full w-98 mx-auto">
@@ -1041,10 +1061,39 @@ export default function App() {
           />
         </div>
       </div>
+
         
-      <section className="flex mt-5 mx-5 rounded-t-2xl">
+      <section className="flex flex-col mt-5 mx-5 rounded-t-2xl mb-20">
           {/* Input de búsqueda */}
-        <Table className=" text-center uppercase mb-20" aria-label="Lista de Usuarios">
+          <div className="flex justify-end">
+      <select className="w-28 h-10 rounded-xl mb-1 outline-blue-500" onChange={handleChangeDisplayLimit} value={displayLimit}>
+        <option value="1">Mostrar 1</option>
+        <option value="5">Mostrar 5</option>
+        <option value="10">Mostrar 10</option>
+        <option value="15">Mostrar 15</option>
+        <option value="50">Mostrar 50</option>
+        <option value="100">Mostrar 100</option>
+      </select>
+
+          </div>
+        <Table className=" text-center uppercase mb-5" aria-label="Lista de Usuarios" 
+        bottomContent = {
+          <div className="w-full flex justify-center">
+            <Pagination
+            isCompact
+            showControls
+            initialPage={1}
+            color="primary"
+            page={currentPage}
+            total={totalPages}
+            onChange={(newPage) => setCurrentPage(newPage)}
+          />
+
+          </div>
+        }
+        
+        >
+          
           <TableHeader className="text-center">
             <TableColumn className="text-center">+</TableColumn>
             <TableColumn className="text-center max-w-xs">ID</TableColumn>
@@ -1059,8 +1108,8 @@ export default function App() {
 
 
 
-          <TableBody emptyContent="No hay elementos por mostrar" className="">
-            {datosFiltrados.map((cliente) => (
+          <TableBody emptyContent="No hay elementos por mostrar" className="rounded-xl">
+          {datosFiltrados.slice(start, end).map((cliente) => (
 
               <TableRow className="cursor-pointer hover:bg-blue-200" key={cliente._id}>
 
@@ -1073,7 +1122,7 @@ export default function App() {
                 <TableCell>
                   {sizess.map((size) => (
                     
-                    <Button className="bg-white" key={size} onPress={() => handleOpenM(size)} onClick={() => handleOpenModal(cliente)}>
+                    <Button className="bg-inherit focus:outline-blue-500" key={size} onPress={() => handleOpenM(size,cliente._id)} onClick={() => handleOpenModal(cliente)}>
                       <img className="w-4" src={chevron} alt="" />
                     </Button>
                   ))}
@@ -1160,7 +1209,7 @@ export default function App() {
                   <p onClick={() => seleccionarCliente(cliente.identificacion)}>{cliente.identificacion}</p>
                   </PopoverTrigger>
                   <PopoverContent >
-                    { cliente.reserva === "Si" && ((cliente.cantidadPersonas.adultos * pasadiaAdultos) + (cliente.cantidadPersonas.ninios * pasadiaNinios) - (cliente.pagoAnticipado + cliente.pagoPendiente)) !== 0 ?
+                    { cliente.reserva === "Si" && ((cliente.cantidadPersonas.adultos * pasadiaAdultos) + (cliente.cantidadPersonas.ninios * pasadiaNinios) - (cliente.pagoAnticipado + cliente.pagoPendiente)) !== 0 || cliente.reserva === "No" && ((cliente.cantidadPersonas.adultos * pasadiaAdultos) + (cliente.cantidadPersonas.ninios * pasadiaNinios) - (cliente.pagoAnticipado + cliente.pagoPendiente)) !== 0  ?
                     <div className="px-1 py-2">
                       <div className="text-small font-bold">Información</div>
                       <div className="text-red-500">Datos del usuario</div>

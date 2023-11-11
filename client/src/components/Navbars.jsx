@@ -84,6 +84,11 @@ export default function Navbars() {
             Energia Renovable
           </Link>
         </NavbarItem>
+        <NavbarItem >
+          <Link to='/hotel-graphs' className="text-white ml-4 font-medium text-base" color="foreground" >
+            grapsh
+          </Link>
+        </NavbarItem>
         {isAdmin && ( 
         <NavbarItem>
           <Link to="/Register" className="text-blue-700 font-medium text-base">

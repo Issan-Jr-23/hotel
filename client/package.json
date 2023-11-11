@@ -25,6 +25,8 @@
     "dayjs-plugin-utc": "^0.1.2",
     "formik": "^2.4.5",
     "framer-motion": "^10.16.4",
+    "highcharts": "^11.2.0",
+    "highcharts-react-official": "^3.2.1",
     "html2pdf.js": "^0.10.1",
     "js-cookie": "^3.0.5",
     "pdfmake": "^0.2.7",

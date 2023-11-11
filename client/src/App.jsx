@@ -9,6 +9,8 @@ import Pasadia from "./pages/Pasadia.jsx";
 import Cabanias from "./pages/Cabanias.jsx";
 import InvBebidas from "./pages/inventario.jsx";
 import Habitaciones from "./pages/Habitaciones.jsx";
+import Hotel_graphs from "./graphs/LinearCharts.jsx"
+
 
  
 
@@ -31,6 +33,7 @@ function App() {
                 <Route path="/cabanias" element={<Cabanias/>} />
                 <Route path="/inventario" element={<InvBebidas/>}/>
                 <Route path="/habitaciones" element={<Habitaciones/>}/>
+                <Route path="/hotel-graphs" element={<Hotel_graphs/>}/>
               </Route>
             </Routes>
           </main>

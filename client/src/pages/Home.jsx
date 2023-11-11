@@ -13,9 +13,8 @@ export const Home = () => {
           <article className=' article_cont_images text-center'>
             <img className=' img_home_h' src={hotel} alt="imagen" />
             <Button className='bg-blue-200 text-blue-600 w-40 text-lg mt-6 rounded-3xl'>
-            <Link to="/inventario">
+            <Link to="/hotel-graphs">
             coming soon
-
             </Link>
             </Button>
           </article>
