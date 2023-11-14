@@ -1,33 +1,45 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Highcharts from 'highcharts';
+import HighchartsReact from 'highcharts-react-official';
 
-const LineChart = ({ data = [] }) => { // Valor predeterminado para data
-  useEffect(() => {
-    if (data.length > 0) { // Verificación para asegurarse de que data tiene elementos
-      Highcharts.chart('lineChartContainer', {
+const GraficaProductos = () => {
+    const [productos, setProductos] = useState([]);
+
+    useEffect(() => {
+        fetch('http://127.0.0.1:3000/api/productos/mas-vendidos')
+            .then(response => response.json())
+            .then(data => setProductos(data))
+            .catch(error => console.error('Error al obtener los datos:', error));
+    }, []);
+
+    const opcionesGrafica = {
         chart: {
-          type: 'line'
+            type: 'column', backgroundColor: "transparent"
         },
         title: {
-          text: 'Gráfico Lineal de Ejemplo'
+            text: 'Productos Más Vendidos', style: {
+              color: '#fff' // Replace with your desired color
+            }
         },
         xAxis: {
-          categories: data.map(item => item.category)
+            categories: productos.map(producto => producto.Descripcion)
         },
         yAxis: {
-          title: {
-            text: 'Valores'
-          }
+            title: {
+                text: 'Ventas'
+            }
         },
         series: [{
-          name: 'Datos',
-          data: data.map(item => item.value)
+            name: 'Ventas',
+            data: productos.map(producto => producto.ProductosVendidos)
         }]
-      });
-    }
-  }, [data]);
+    };
 
-  return <div id="lineChartContainer" />;
+    return (
+        <div style={{ backdropFilter: "blur(10px) saturate(90%) brightness(130%)", border:"1px solid #272c3d", borderRadius: "15px", color:"white" }}>
+            <HighchartsReact highcharts={Highcharts} options={opcionesGrafica} />
+        </div>
+    );
 };
 
-export default LineChart;
+export default GraficaProductos;

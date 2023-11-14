@@ -19,7 +19,7 @@ function Register() {
   const onSubmit = async (values) => {
     try {
       const response = await signup(values);
-      navigate('/dashboard'); 
+      alert("buen trabajo")
     } catch (error) {
       console.error("Signup failed: ", error);
     }
@@ -74,14 +74,16 @@ function Register() {
             <p className="text-red-500">{errors.confirmPassword.message}</p>
           )}
 
-          <Label htmlFor="roles">Role:</Label>
-          <select name="roles" type="text" {...register("roles")} defaultValue="user">
+                      {/* Campo nuevo para el Rol */}
+          <Label htmlFor="role">Role:</Label>
+          <select {...register("role")} className="border border-gray-300 rounded px-3 py-2">
             <option value="user">User</option>
             <option value="admin">Admin</option>
             <option value="editor">Editor</option>
+            {/* Añade más roles según sea necesario */}
           </select>
-          {errors.roles?.message && (
-            <p className="text-red-500">{errors.roles.message}</p>
+          {errors.role?.message && (
+            <p className="text-red-500">{errors.role.message}</p>
           )}
 
           <Button type="submit">Submit</Button>

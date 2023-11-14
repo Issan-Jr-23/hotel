@@ -5,7 +5,8 @@ import cookieParser from "cookie-parser";
 import clientRoutes from "./routes/client.routes.js"
 import clientCabaniasRoutes from "./routes/client.cabania.routes.js"
 import clienteHabitacionesModel from "./routes/cliente.habitaciones.routes.js";
-
+import grahps from "./routes/grahps.routes.js"
+import grahpsStock from "./routes/grahps.stock.routes.js"
 import authRoutes from "./routes/auth.routes.js";
 import bebidasRoutes from "./routes/inventario.routes.js";
 import { FRONTEND_URL } from "./config.js";
@@ -29,6 +30,8 @@ app.use("/api", clientRoutes);
 app.use("/api", clienteHabitacionesModel);
 app.use("/api", clientCabaniasRoutes);
 app.use("/api", bebidasRoutes);
+app.use("/api", grahps);
+app.use("/api", grahpsStock);
 
 if (process.env.NODE_ENV === "production") {
   const path = await import("path");

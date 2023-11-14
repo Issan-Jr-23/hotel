@@ -56,6 +56,21 @@ export default function App() {
   const [precioBebida1Seleccionada, setPrecioBebida1Seleccionada] = useState(0);
   const [bebida1SeleccionadaId, setBebida1SeleccionadaId] = useState(null);
 
+  const [cantidadBebida2, setCantidadBebida2] = useState("");
+  const [bebida2Seleccionada, setBebida2Seleccionada] = useState('');
+  const [precioBebida2Seleccionada, setPrecioBebida2Seleccionada] = useState(0);
+  const [bebida2SeleccionadaId, setBebida2SeleccionadaId] = useState(null);
+
+  const [cantidadBebida3, setCantidadBebida3] = useState("");
+  const [bebida3Seleccionada, setBebida3Seleccionada] = useState('');
+  const [precioBebida3Seleccionada, setPrecioBebida3Seleccionada] = useState(0);
+  const [bebida3SeleccionadaId, setBebida3SeleccionadaId] = useState(null);
+
+  const [cantidadBebida4, setCantidadBebida4] = useState("");
+  const [bebida4Seleccionada, setBebida4Seleccionada] = useState('');
+  const [precioBebida4Seleccionada, setPrecioBebida4Seleccionada] = useState(0);
+  const [bebida4SeleccionadaId, setBebida4SeleccionadaId] = useState(null);
+
  //comida 1
 
   const [cantidadFood, setCantidadFood] = useState("");
@@ -69,6 +84,21 @@ export default function App() {
   const [food1Seleccionada, setFood1Seleccionada] = useState('');
   const [precioFood1Seleccionada, setPrecioFood1Seleccionada] = useState(0);
   const [food1SeleccionadaId, setFood1SeleccionadaId] = useState(null);
+
+  const [cantidadFood2, setCantidadFood2] = useState("");
+  const [food2Seleccionada, setFood2Seleccionada] = useState('');
+  const [precioFood2Seleccionada, setPrecioFood2Seleccionada] = useState(0);
+  const [food2SeleccionadaId, setFood2SeleccionadaId] = useState(null);
+
+  const [cantidadFood3, setCantidadFood3] = useState("");
+  const [food3Seleccionada, setFood3Seleccionada] = useState('');
+  const [precioFood3Seleccionada, setPrecioFood3Seleccionada] = useState(0);
+  const [food3SeleccionadaId, setFood3SeleccionadaId] = useState(null);
+
+  const [cantidadFood4, setCantidadFood4] = useState("");
+  const [food4Seleccionada, setFood4Seleccionada] = useState('');
+  const [precioFood4Seleccionada, setPrecioFood4Seleccionada] = useState(0);
+  const [food4SeleccionadaId, setFood4SeleccionadaId] = useState(null);
 
   const [selectedClientId, setSelectedClientId] = useState(null);
   const [cantidadDeBebidas, setCantidadDeBebidas] = useState('');
@@ -271,6 +301,48 @@ export default function App() {
           }
         }
   
+        if (cantidadBebida2 > 0 && bebida2SeleccionadaId) {
+          if (await checkStockAndUpdateInventory(bebida2SeleccionadaId, cantidadBebida2)) {
+            const bebidaCortesia2 = {
+              id: bebida2SeleccionadaId,
+              nombre: bebida2Seleccionada,
+              cantidad: cantidadBebida2,
+              precio: 0,
+              mensaje: "Cortesía"
+            };
+            await guardarBebida(bebidaCortesia2);
+            atLeastOneCortesiaSaved = true;
+          }
+        }
+  
+        if (cantidadBebida3 > 0 && bebida3SeleccionadaId) {
+          if (await checkStockAndUpdateInventory(bebida3SeleccionadaId, cantidadBebida3)) {
+            const bebidaCortesia3 = {
+              id: bebida3SeleccionadaId,
+              nombre: bebida3Seleccionada,
+              cantidad: cantidadBebida3,
+              precio: 0,
+              mensaje: "Cortesía"
+            };
+            await guardarBebida(bebidaCortesia3);
+            atLeastOneCortesiaSaved = true;
+          }
+        }
+  
+        if (cantidadBebida4 > 0 && bebida4SeleccionadaId) {
+          if (await checkStockAndUpdateInventory(bebida4SeleccionadaId, cantidadBebida4)) {
+            const bebidaCortesia4 = {
+              id: bebida4SeleccionadaId,
+              nombre: bebida4Seleccionada,
+              cantidad: cantidadBebida4,
+              precio: 0,
+              mensaje: "Cortesía"
+            };
+            await guardarBebida(bebidaCortesia4);
+            atLeastOneCortesiaSaved = true;
+          }
+        }
+  
         if (atLeastOneCortesiaSaved) {
           onClose();
         }
@@ -293,7 +365,8 @@ export default function App() {
         }
       }
   
-      // Handle the second drink selection
+
+
       if (cantidadBebida1 > 0 && bebida1SeleccionadaId) {
         const bebidaAdultos1 = {
           id: bebida1SeleccionadaId,
@@ -304,6 +377,51 @@ export default function App() {
   
         if (await checkStockAndUpdateInventory(bebida1SeleccionadaId, cantidadBebida1)) {
           await guardarBebida(bebidaAdultos1);
+          isBebidaAdded = true;
+        }
+      }
+
+
+      if (cantidadBebida2 > 0 && bebida2SeleccionadaId) {
+        const bebidaAdultos2 = {
+          id: bebida2SeleccionadaId,
+          nombre: bebida2Seleccionada,
+          cantidad: cantidadBebida2,
+          precio: precioBebida2Seleccionada,
+        };
+  
+        if (await checkStockAndUpdateInventory(bebida2SeleccionadaId, cantidadBebida2)) {
+          await guardarBebida(bebidaAdultos2);
+          isBebidaAdded = true;
+        }
+      }
+
+
+      if (cantidadBebida3 > 0 && bebida3SeleccionadaId) {
+        const bebidaAdultos3 = {
+          id: bebida3SeleccionadaId,
+          nombre: bebida3Seleccionada,
+          cantidad: cantidadBebida3,
+          precio: precioBebida3Seleccionada,
+        };
+  
+        if (await checkStockAndUpdateInventory(bebida3SeleccionadaId, cantidadBebida3)) {
+          await guardarBebida(bebidaAdultos3);
+          isBebidaAdded = true;
+        }
+      }
+
+
+      if (cantidadBebida4 > 0 && bebida4SeleccionadaId) {
+        const bebidaAdultos4 = {
+          id: bebida4SeleccionadaId,
+          nombre: bebida4Seleccionada,
+          cantidad: cantidadBebida4,
+          precio: precioBebida4Seleccionada,
+        };
+  
+        if (await checkStockAndUpdateInventory(bebida4SeleccionadaId, cantidadBebida4)) {
+          await guardarBebida(bebidaAdultos4);
           isBebidaAdded = true;
         }
       }
@@ -447,6 +565,48 @@ export default function App() {
           }
         }
   
+        if (cantidadFood2 > 0 && food2SeleccionadaId) {
+          if (await checkStockAndUpdateInventory(food2SeleccionadaId, cantidadFood2)) {
+            const foodCortesia2 = {
+              id: food2SeleccionadaId,
+              nombre: food2Seleccionada,
+              cantidad: cantidadFood2,
+              precio: 0,
+              mensaje: "Cortesía"
+            };
+            await guardarFood(foodCortesia2);
+            atLeastOneCortesiaSaved = true;
+          }
+        }
+  
+        if (cantidadFood3 > 0 && food3SeleccionadaId) {
+          if (await checkStockAndUpdateInventory(food3SeleccionadaId, cantidadFood3)) {
+            const foodCortesia3 = {
+              id: food3SeleccionadaId,
+              nombre: food3Seleccionada,
+              cantidad: cantidadFood3,
+              precio: 0,
+              mensaje: "Cortesía"
+            };
+            await guardarFood(foodCortesia3);
+            atLeastOneCortesiaSaved = true;
+          }
+        }
+  
+        if (cantidadFood4 > 0 && food4SeleccionadaId) {
+          if (await checkStockAndUpdateInventory(food4SeleccionadaId, cantidadFood4)) {
+            const foodCortesia4 = {
+              id: food4SeleccionadaId,
+              nombre: food4Seleccionada,
+              cantidad: cantidadFood4,
+              precio: 0,
+              mensaje: "Cortesía"
+            };
+            await guardarFood(foodCortesia4);
+            atLeastOneCortesiaSaved = true;
+          }
+        }
+  
         if (atLeastOneCortesiaSaved) {
           onClose();
         }
@@ -479,6 +639,48 @@ export default function App() {
   
         if (await checkStockAndUpdateInventory(food1SeleccionadaId, cantidadFood1)) {
           await guardarFood(foodAdultos1);
+          isBebidaAdded = true;
+        }
+      }
+  
+      if (cantidadFood2 > 0 && food2SeleccionadaId) {
+        const foodAdultos2 = {
+          id: food2SeleccionadaId,
+          nombre: food2Seleccionada,
+          cantidad: cantidadFood2,
+          precio: precioFood2Seleccionada,
+        };
+  
+        if (await checkStockAndUpdateInventory(food2SeleccionadaId, cantidadFood2)) {
+          await guardarFood(foodAdultos2);
+          isBebidaAdded = true;
+        }
+      }
+  
+      if (cantidadFood3 > 0 && food3SeleccionadaId) {
+        const foodAdultos3 = {
+          id: food3SeleccionadaId,
+          nombre: food3Seleccionada,
+          cantidad: cantidadFood3,
+          precio: precioFood3Seleccionada,
+        };
+  
+        if (await checkStockAndUpdateInventory(food3SeleccionadaId, cantidadFood3)) {
+          await guardarFood(foodAdultos3);
+          isBebidaAdded = true;
+        }
+      }
+  
+      if (cantidadFood4 > 0 && food4SeleccionadaId) {
+        const foodAdultos4 = {
+          id: food4SeleccionadaId,
+          nombre: food4Seleccionada,
+          cantidad: cantidadFood4,
+          precio: precioFood4Seleccionada,
+        };
+  
+        if (await checkStockAndUpdateInventory(food4SeleccionadaId, cantidadFood4)) {
+          await guardarFood(foodAdultos4);
           isBebidaAdded = true;
         }
       }
@@ -742,8 +944,8 @@ export default function App() {
   const { isOpen: isModalOpenM, onOpen: openModalM, onClose: closeModalM } = useDisclosure();
   const { isOpen: isModalOpenF, onOpen: openModalF, onClose: closeModalF } = useDisclosure();
 
-  const [ancho, setAncho] = React.useState('md')
-  const sizesm = ["xs"];
+  const [ancho, setAncho] = React.useState('xl')
+  const sizesm = ["xl"];
 
   const handleOpenm = (ancho, userId) => {
     setAncho(ancho);
@@ -760,7 +962,7 @@ export default function App() {
       setBebida1SeleccionadaId('');
   };
 
-  const [selectedSize, setSelectedSize] = React.useState('md');
+  const [selectedSize, setSelectedSize] = React.useState('xl');
 
   const handleOpenmf = (size, userId) => {
     setSelectedSize(size);
@@ -1309,7 +1511,9 @@ const end = start + displayLimit ;
                             name="esCortesia"
                             color="primary"
                           >Cortesia pasadia</Checkbox>
+                          <div className="flex">
                             <Input
+                            className="mr-2"
                               name="bebidas"
                               label="Ingrese la cantidad"
                               type="number"
@@ -1320,6 +1524,7 @@ const end = start + displayLimit ;
                               }}
                             />
                             <Select
+                            className="ml-2"
                               name="bebidas"
                               label="Seleccionar bebida"
                               value={bebidaSeleccionada}
@@ -1340,7 +1545,11 @@ const end = start + displayLimit ;
                                 </SelectItem>
                               ))}
                             </Select>
+
+                          </div>
+                          <div className="flex">
                             <Input
+                            className="mr-2"
                               name="bebidas"
                               label="Ingrese la cantidad"
                               type="number"
@@ -1351,6 +1560,7 @@ const end = start + displayLimit ;
                               }}
                             />
                             <Select
+                            className="ml-2"
                               name="bebidas"
                               label="Seleccionar bebida"
                               value={bebida1Seleccionada}
@@ -1371,6 +1581,116 @@ const end = start + displayLimit ;
                                 </SelectItem>
                               ))}
                             </Select>
+
+                          </div>
+                          <div className="flex">
+                            <Input
+                            className="mr-2"
+                              name="bebidas"
+                              label="Ingrese la cantidad"
+                              type="number"
+                              value={isNaN(cantidadBebida2) ? '' : cantidadBebida2}
+                              onChange={(e) => {
+                                const value = parseInt(e.target.value, 10);
+                                setCantidadBebida2(isNaN(value) ? "" : value);
+                              }}
+                            />
+                            <Select
+                            className="ml-2"
+                              name="bebidas"
+                              label="Seleccionar bebida"
+                              value={bebida2Seleccionada}
+                              onChange={(e) => {
+                                const selectedBebida2 = e.target.value;
+                                setBebida2Seleccionada(selectedBebida2);
+
+                                const bebida2SeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida2);
+                                if (bebida2SeleccionadaInfo) {
+                                  setPrecioBebida2Seleccionada(bebida2SeleccionadaInfo.ValorUnitario);
+                                  setBebida2SeleccionadaId(bebida2SeleccionadaInfo._id);
+                                }
+                              }}
+                            >
+                              {drinks.map((bebida) => (
+                                <SelectItem key={bebida.Descripcion}>
+                                  {bebida.Descripcion}
+                                </SelectItem>
+                              ))}
+                            </Select>
+
+                          </div>
+                          <div className="flex">
+                            <Input
+                              className="mr-2"
+                              name="bebidas"
+                              label="Ingrese la cantidad"
+                              type="number"
+                              value={isNaN(cantidadBebida3) ? '' : cantidadBebida3}
+                              onChange={(e) => {
+                                const value = parseInt(e.target.value, 10);
+                                setCantidadBebida3(isNaN(value) ? "" : value);
+                              }}
+                            />
+                            <Select
+                            className="ml-2"
+                              name="bebidas"
+                              label="Seleccionar bebida"
+                              value={bebida3Seleccionada}
+                              onChange={(e) => {
+                                const selectedBebida3 = e.target.value;
+                                setBebida3Seleccionada(selectedBebida3);
+
+                                const bebida3SeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida3);
+                                if (bebida3SeleccionadaInfo) {
+                                  setPrecioBebida3Seleccionada(bebida3SeleccionadaInfo.ValorUnitario);
+                                  setBebida3SeleccionadaId(bebida3SeleccionadaInfo._id);
+                                }
+                              }}
+                            >
+                              {drinks.map((bebida) => (
+                                <SelectItem key={bebida.Descripcion}>
+                                  {bebida.Descripcion}
+                                </SelectItem>
+                              ))}
+                            </Select>
+
+                          </div>
+                          <div className="flex">
+                            <Input
+                            className="mr-2"
+                              name="bebidas"
+                              label="Ingrese la cantidad"
+                              type="number"
+                              value={isNaN(cantidadBebida4) ? '' : cantidadBebida4}
+                              onChange={(e) => {
+                                const value = parseInt(e.target.value, 10);
+                                setCantidadBebida4(isNaN(value) ? "" : value);
+                              }}
+                            />
+                            <Select
+                            className="ml-2"
+                              name="bebidas"
+                              label="Seleccionar bebida"
+                              value={bebida4Seleccionada}
+                              onChange={(e) => {
+                                const selectedBebida4 = e.target.value;
+                                setBebida4Seleccionada(selectedBebida4);
+
+                                const bebida4SeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida4);
+                                if (bebida4SeleccionadaInfo) {
+                                  setPrecioBebida4Seleccionada(bebida4SeleccionadaInfo.ValorUnitario);
+                                  setBebida4SeleccionadaId(bebida4SeleccionadaInfo._id);
+                                }
+                              }}
+                            >
+                              {drinks.map((bebida) => (
+                                <SelectItem key={bebida.Descripcion}>
+                                  {bebida.Descripcion}
+                                </SelectItem>
+                              ))}
+                            </Select>
+
+                          </div>
                           </ModalBody>
                           <ModalFooter>
                             <Button color="danger" variant="light" onPress={closeModalM}>
@@ -1414,7 +1734,10 @@ const end = start + displayLimit ;
                           >
                             Cortesía pasadia
                           </Checkbox>
+                          {/* ------------------------- */}
+                          <div className="flex">
                             <Input
+                            className="mr-2"
                               name="bebidas"
                               label="Ingrese la cantidad"
                               type="number"
@@ -1425,6 +1748,7 @@ const end = start + displayLimit ;
                               }}
                             />
                             <Select
+                            className="ml-2"
                               name="restaurante"
                               label="Seleccionar comida"
                               value={foodSeleccionada}
@@ -1445,7 +1769,13 @@ const end = start + displayLimit ;
                                 </SelectItem>
                               ))}
                             </Select>
+
+                          </div>
+                            {/* -------------------------------------- */}
+                            <div className="flex">
+
                             <Input
+                            className="mr-2"
                               name="restaurante"
                               label="Ingrese la cantidad"
                               type="number"
@@ -1456,6 +1786,7 @@ const end = start + displayLimit ;
                               }}
                             />
                             <Select
+                            className="ml-2"
                               name="restaurante"
                               label="Seleccionar comida"
                               value={food1Seleccionada}
@@ -1476,6 +1807,122 @@ const end = start + displayLimit ;
                                 </SelectItem>
                               ))}
                             </Select>
+                            </div>
+                            {/* -------------------------------- */}
+                            {/* -------------------------------------- */}
+                            <div className="flex">
+                            <Input
+                            className="mr-2"
+                              name="restaurante"
+                              label="Ingrese la cantidad"
+                              type="number"
+                              value={isNaN(cantidadFood2) ? '' : cantidadFood2}
+                              onChange={(e) => {
+                                const value = parseInt(e.target.value, 10);
+                                setCantidadFood2(isNaN(value) ? 0 : value);
+                              }}
+                            />
+                            <Select
+                            className="ml-2"
+                              name="restaurante"
+                              label="Seleccionar comida"
+                              value={food2Seleccionada}
+                              onChange={(e) => {
+                                const selectedFood2 = e.target.value;
+                                setFood2Seleccionada(selectedFood2);
+
+                                const food2SeleccionadaInfo = snacks.find(bebida => bebida.Descripcion === selectedFood2);
+                                if (food2SeleccionadaInfo) {
+                                  setPrecioFood2Seleccionada(food2SeleccionadaInfo.ValorUnitario);
+                                  setFood2SeleccionadaId(food2SeleccionadaInfo._id);
+                                }
+                              }}
+                            >
+                              {snacks.map((food) => (
+                                <SelectItem key={food.Descripcion}>
+                                  {food.Descripcion}
+                                </SelectItem>
+                              ))}
+                            </Select>
+
+                            </div>
+                            {/* -------------------------------- */}
+                            {/* -------------------------------------- */}
+                            <div className="flex">
+
+                            <Input
+                            className="mr-2"
+                              name="restaurante"
+                              label="Ingrese la cantidad"
+                              type="number"
+                              value={isNaN(cantidadFood3) ? '' : cantidadFood3}
+                              onChange={(e) => {
+                                const value = parseInt(e.target.value, 10);
+                                setCantidadFood3(isNaN(value) ? 0 : value);
+                              }}
+                            />
+                            <Select
+                            className="ml-2"
+                              name="restaurante"
+                              label="Seleccionar comida"
+                              value={food3Seleccionada}
+                              onChange={(e) => {
+                                const selectedFood3 = e.target.value;
+                                setFood3Seleccionada(selectedFood3);
+
+                                const food3SeleccionadaInfo = snacks.find(bebida => bebida.Descripcion === selectedFood2);
+                                if (food3SeleccionadaInfo) {
+                                  setPrecioFood3Seleccionada(food3SeleccionadaInfo.ValorUnitario);
+                                  setFood3SeleccionadaId(food3SeleccionadaInfo._id);
+                                }
+                              }}
+                            >
+                              {snacks.map((food) => (
+                                <SelectItem key={food.Descripcion}>
+                                  {food.Descripcion}
+                                </SelectItem>
+                              ))}
+                            </Select>
+                            </div>
+                            {/* -------------------------------- */}
+                            {/* -------------------------------------- */}
+                            <div className="flex">
+
+                            <Input
+                            className="mr-2"
+                              name="restaurante"
+                              label="Ingrese la cantidad"
+                              type="number"
+                              value={isNaN(cantidadFood4) ? '' : cantidadFood4}
+                              onChange={(e) => {
+                                const value = parseInt(e.target.value, 10);
+                                setCantidadFood4(isNaN(value) ? 0 : value);
+                              }}
+                            />
+                            <Select
+                            className="ml-2"
+                              name="restaurante"
+                              label="Seleccionar comida"
+                              value={food4Seleccionada}
+                              onChange={(e) => {
+                                const selectedFood4 = e.target.value;
+                                setFood4Seleccionada(selectedFood4);
+
+                                const food4SeleccionadaInfo = snacks.find(bebida => bebida.Descripcion === selectedFood4);
+                                if (food4SeleccionadaInfo) {
+                                  setPrecioFood4Seleccionada(food4SeleccionadaInfo.ValorUnitario);
+                                  setFood4SeleccionadaId(food4SeleccionadaInfo._id);
+                                }
+                              }}
+                            >
+                              {snacks.map((food) => (
+                                <SelectItem key={food.Descripcion}>
+                                  {food.Descripcion}
+                                </SelectItem>
+                              ))}
+                            </Select>
+                            </div>
+                            {/* -------------------------------- */}
                           </ModalBody>
                           <ModalFooter>
                             <Button color="danger" variant="light" onPress={closeModalF}>

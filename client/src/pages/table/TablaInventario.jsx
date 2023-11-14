@@ -5,18 +5,22 @@ import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell,Modal,
   ModalBody,
   ModalFooter,
   Button,
-  useDisclosure,Input,Select, SelectItem } from "@nextui-org/react";
+  useDisclosure,Input } from "@nextui-org/react";
 import axios from "axios";
 import editar from "../../images/boligrafo.png";
 import borrar from "../../images/borrar.png";
 import download from "../../images/download.png";
 import toast, {Toaster} from 'react-hot-toast';
 import * as XLSX from 'xlsx';
+import { useAuth } from "../../context/authContext.jsx";
 
 
 import "./table.css"
 
 export default function App() {
+  const { user } = useAuth();
+  const isAdmin = user && user.role === 'admin';
+  console.log("lo que me devuelve el isAdmin: "+isAdmin)
 
   const [editedUserId, setEditedUserId] = useState(null);
   const [editedName, setEditedName] = useState("");
@@ -152,7 +156,8 @@ export default function App() {
       'Valor Unitario': item.ValorUnitario,
       'Productos Vendidos': item.ProductosVendidos,
       'Total de la Venta': item.ProductosVendidos * item.ValorUnitario,
-      'Cantidad Restante': item.CantidadInicial - item.ProductosVendidos
+      'Cantidad Restante': item.CantidadInicial,
+      'Total de la venta': (item.CantidadInicial + item.ProductosVendidos) * item.ValorUnitario
     }));
   
     // Crear una hoja de trabajo a partir de los datos formateados
@@ -180,7 +185,7 @@ export default function App() {
       <img  className="h-10 w-10 ml-5 cursor-pointer" onClick={() => exportToExcel(filteredProducts)} src={download} alt="" />
 
 
-
+      {isAdmin &&
         <Button
           variant="flat"
           color="primary"
@@ -193,6 +198,8 @@ export default function App() {
         >
           Agregar producto
         </Button>
+      
+      }
 
         
   <div className=" w-52 flex justify-center">
@@ -290,7 +297,7 @@ export default function App() {
             
         </div>
         <section className="flex coluns-2  mx-5">
-          <Table id="myTable" className=" text-center uppercase" aria-label="Lista de Usuarios">
+          <Table  className=" text-center uppercase" aria-label="Lista de Usuarios">
             <TableHeader className="text-center bg-blue-500">
               <TableColumn className="text-center">descripcion del producto</TableColumn>
               <TableColumn className="text-center">Tipo</TableColumn>
@@ -303,7 +310,12 @@ export default function App() {
               <TableColumn className="text-center">Total de la venta</TableColumn>
               <TableColumn className="text-center">Cantidad restante</TableColumn>
               <TableColumn className="text-center">Valor total</TableColumn>
-              {/* <TableColumn className="text-center">accion</TableColumn> */}
+              
+              <TableColumn className="text-center">
+  {isAdmin ? 'Acción' : ''}
+</TableColumn>
+
+              
             </TableHeader>
             <TableBody emptyContent="No hay filas para mostrar.">
               {filteredProducts.map((inventario) => ( 
@@ -376,37 +388,43 @@ export default function App() {
                   
                   <TableCell>{inventario.ProductosVendidos}</TableCell>
                   <TableCell>{inventario.ProductosVendidos * inventario.ValorUnitario}</TableCell>
-                  <TableCell>{ inventario.CantidadInicial - inventario.ProductosVendidos}</TableCell>
-                  <TableCell>{inventario.CantidadInicial * inventario.ValorUnitario}</TableCell>
-                  {/* <TableCell className="flex justify-center align-center"> 
-                  {inventario._id === editedUserId && (
-                    <img
-                    className="w-8 h-8 mr-4 cursor-pointer"
-                    src={download}
-                    alt="actualizar"
-                    onClick={() => handleEditUser(inventario._id)}
-                  />
-                  )}
-                  <img
-                    className="w-8 h-8 mr-4 cursor-pointer"
-                    src={editar}
-                    alt="Edit"
-                    onClick={() => {
-                      setEditedName(inventario.Descripcion);
-                      setEditedType(inventario.tipo);
-                      setEditedDate(inventario.Caducidad);
-                      setEditedCantidad(inventario.CantidadInicial);
-                      setEditedValorUnitario(inventario.ValorUnitario);
-                      setEditedUserId(inventario._id)
-                    }}
-                  />
-                  <img
-                  className="w-8 h-8 cursor-pointer"
-                  src={borrar}
-                  alt="Delete"
-                  onClick={() => handleDelete(inventario._id)}
-                />
-                  </TableCell> */}
+                  <TableCell>{ inventario.CantidadInicial}</TableCell>
+                  <TableCell>{(inventario.CantidadInicial + inventario.ProductosVendidos) * inventario.ValorUnitario}</TableCell>
+                  
+                  <TableCell className="flex justify-center align-center">
+  {isAdmin ? (
+    <div className="flex w-40 justify-center items-center">
+      {inventario._id === editedUserId && (
+        <img
+          className="w-8 h-8 mr-4 cursor-pointer"
+          src={download}
+          alt="actualizar"
+          onClick={() => handleEditUser(inventario._id)}
+        />
+      )}
+      <img
+        className="w-8 h-8 mr-4 cursor-pointer"
+        src={editar}
+        alt="Edit"
+        onClick={() => {
+          setEditedName(inventario.Descripcion);
+          setEditedType(inventario.tipo);
+          setEditedDate(inventario.Caducidad);
+          setEditedCantidad(inventario.CantidadInicial);
+          setEditedValorUnitario(inventario.ValorUnitario);
+          setEditedUserId(inventario._id);
+        }}
+      />
+      <img
+        className="w-8 h-8 cursor-pointer"
+        src={borrar}
+        alt="Delete"
+        onClick={() => handleDelete(inventario._id)}
+      />
+    </div>
+  ) : null}
+</TableCell>
+
                 </TableRow>
               ))}
             </TableBody>

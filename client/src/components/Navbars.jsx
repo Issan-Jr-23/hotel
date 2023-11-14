@@ -7,7 +7,8 @@ export default function Navbars() {
 
 
   const { isAuthenticated, logout, user } = useAuth();
-  const { isAdmin } = useAuth();
+  const isAdmin = user && user.role === 'admin';
+  const isEditor = user && user.role == "editor";
 
 
   return (
@@ -84,18 +85,22 @@ export default function Navbars() {
             Energia Renovable
           </Link>
         </NavbarItem>
+            {isEditor && (
         <NavbarItem >
           <Link to='/hotel-graphs' className="text-white ml-4 font-medium text-base" color="foreground" >
             grapsh
           </Link>
         </NavbarItem>
-        {isAdmin && ( 
+
+            )}
+        {isAdmin && (
+        
         <NavbarItem>
           <Link to="/Register" className="text-blue-700 font-medium text-base">
             Registrar
           </Link>
         </NavbarItem>
-      )}
+        )}
       </NavbarContent>
 
       <NavbarContent as="div" className="items-center" justify="">
@@ -106,7 +111,7 @@ export default function Navbars() {
           </DropdownTrigger>
           <DropdownMenu aria-label="Profile Actions" variant="flat">
             <DropdownItem aria-label="prueba" key="profile" className="h-14 gap-2">
-              <p className="font-semibold "> Welcome {user.username}</p>
+              <p className="font-semibold "> Welcome {user.username} {user.roles}</p>
             </DropdownItem>
             <DropdownItem aria-label="prueba" key="logout" color="danger"  to="/" onClick={() => logout()}>
             <Link>

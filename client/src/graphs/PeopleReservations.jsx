@@ -34,10 +34,10 @@ const PieChart = () => {
     };
 
     // Crear la gráfica
-    Highcharts.chart('chart-container', options);
+    Highcharts.chart('chart-res-container', options);
   }, []);
 
-  return <div id="chart-container"></div>;
+  return <div id="chart-res-container"></div>;
 };
 
 export default PieChart;
