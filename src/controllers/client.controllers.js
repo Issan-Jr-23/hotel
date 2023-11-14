@@ -86,16 +86,24 @@ export const updateClient = async (req, res) => {
 
 
 export const addBebida = async (req, res) => {
-  const {id,bebida } = req.body;
+  const { id, bebida } = req.body;
 
   try {
-    const cliente = await Cliente.findById( id );
+    const cliente = await Cliente.findById(id);
 
     if (cliente) {
-      cliente.bebidas.push(bebida);
+      let index = cliente.bebidas.findIndex(b => b.id === bebida.id);
+
+      if (index > -1) {
+        // Si la bebida ya existe, actualiza la cantidad
+        cliente.bebidas[index].cantidad += bebida.cantidad;
+        cliente.markModified('bebidas'); // Indica que el array 'bebidas' ha sido modificado
+      } else {
+        // Si la bebida no existe, la agrega al array de bebidas
+        cliente.bebidas.push(bebida);
+      }
 
       await cliente.save();
-
       res.status(200).json(cliente);
     } else {
       res.status(404).json({ message: 'Cliente no encontrado' });
@@ -105,6 +113,8 @@ export const addBebida = async (req, res) => {
     res.status(500).json({ message: 'Error al agregar la bebida al cliente' });
   }
 };
+
+
 
 
 export const addFood = async (req, res) => {

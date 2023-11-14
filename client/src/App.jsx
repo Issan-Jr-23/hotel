@@ -40,7 +40,7 @@ function App() {
               <Route element={<ProtectedRoute allowedRoles={["editor"]} />}>
               <Route path="/Hotel-graphs" element={<Hotel_graphs />} />
               </Route>
-              <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+              <Route element={<ProtectedRoute allowedRoles={["editor"]} />}>
               <Route path="/Register" element={<Register />} />
               </Route>
 

@@ -4,10 +4,10 @@ import { Card, Message, Button, Input, Label } from "../components/ui";
 import { useForm } from "react-hook-form";
 import { registerSchema } from "../schemas/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Navbars from "../components/Navbars";
 
 function Register() {
   const { signup, errors: authErrors } = useAuth();
-  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -26,13 +26,20 @@ function Register() {
   };
 
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex items-center  flex-col"
+    style={{height:"100vh"}}
+    >
+      <Navbars/>
+      <div className=" w-full h-full flex justify-center items-center">
+
       <Card>
         {authErrors && authErrors.map((error, i) => (
           <Message key={i} message={error} />
         ))}
-        <h1 className="text-3xl font-bold">Register</h1>
+        <h1 className="text-3xl font-bold text-white">Register</h1>
         <form className="flex flex-col space-y-4" onSubmit={handleSubmit(onSubmit)}>
+          <div className="flex">
+            <section className="mr-2">
           <Label htmlFor="username">Username:</Label>
           <Input
             type="text"
@@ -44,15 +51,21 @@ function Register() {
             <p className="text-red-500">{errors.username.message}</p>
           )}
 
+            </section>
+            <section className="ml-2">
+
           <Label htmlFor="email">Email:</Label>
           <Input
             type="email"
-            placeholder="youremail@domain.tld"
+            placeholder="hotel@meqo.com"
             {...register("email")}
           />
           {errors.email?.message && (
             <p className="text-red-500">{errors.email.message}</p>
           )}
+            </section>
+          </div>
+
 
           <Label htmlFor="password">Password:</Label>
           <Input
@@ -76,7 +89,7 @@ function Register() {
 
                       {/* Campo nuevo para el Rol */}
           <Label htmlFor="role">Role:</Label>
-          <select {...register("role")} className="border border-gray-300 rounded px-3 py-2">
+          <select {...register("role")} className="border border-gray-300 rounded px-3 py-2 outline-none">
             <option value="user">User</option>
             <option value="admin">Admin</option>
             <option value="editor">Editor</option>
@@ -88,11 +101,8 @@ function Register() {
 
           <Button type="submit">Submit</Button>
         </form>
-        <p className="mt-4">
-          Already have an account?
-          <Link className="text-sky-500" to="/login"> Login</Link>
-        </p>
       </Card>
+      </div>
     </div>
   );
 }

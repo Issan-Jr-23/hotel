@@ -20,7 +20,7 @@ import "./table.css"
 export default function App() {
   const { user } = useAuth();
   const isAdmin = user && user.role === 'admin';
-  console.log("lo que me devuelve el isAdmin: "+isAdmin)
+  const isEditor = user && user.role === 'editor';
 
   const [editedUserId, setEditedUserId] = useState(null);
   const [editedName, setEditedName] = useState("");
@@ -185,7 +185,7 @@ export default function App() {
       <img  className="h-10 w-10 ml-5 cursor-pointer" onClick={() => exportToExcel(filteredProducts)} src={download} alt="" />
 
 
-      {isAdmin &&
+    
         <Button
           variant="flat"
           color="primary"
@@ -199,7 +199,7 @@ export default function App() {
           Agregar producto
         </Button>
       
-      }
+
 
         
   <div className=" w-52 flex justify-center">
@@ -309,7 +309,14 @@ export default function App() {
               {/* --------------------------------------------------------------- */}
               <TableColumn className="text-center">Total de la venta</TableColumn>
               <TableColumn className="text-center">Cantidad restante</TableColumn>
-              <TableColumn className="text-center">Valor total</TableColumn>
+              <TableColumn className="text-center">
+                {isAdmin || isEditor ? (
+                  <div>
+                    Valor total
+                  </div>
+                ) : null
+              }
+                </TableColumn>
               
               <TableColumn className="text-center">
   {isAdmin ? 'Acción' : ''}
@@ -389,41 +396,48 @@ export default function App() {
                   <TableCell>{inventario.ProductosVendidos}</TableCell>
                   <TableCell>{inventario.ProductosVendidos * inventario.ValorUnitario}</TableCell>
                   <TableCell>{ inventario.CantidadInicial}</TableCell>
-                  <TableCell>{(inventario.CantidadInicial + inventario.ProductosVendidos) * inventario.ValorUnitario}</TableCell>
+                  <TableCell>
+                    {isAdmin || isEditor ? (
+                      <div>
+                        {(inventario.CantidadInicial + inventario.ProductosVendidos) * inventario.ValorUnitario}
+                      </div>
+
+                    ) : null }
+                    </TableCell>
                   
                   <TableCell className="flex justify-center align-center">
-  {isAdmin ? (
-    <div className="flex w-40 justify-center items-center">
-      {inventario._id === editedUserId && (
-        <img
-          className="w-8 h-8 mr-4 cursor-pointer"
-          src={download}
-          alt="actualizar"
-          onClick={() => handleEditUser(inventario._id)}
-        />
-      )}
-      <img
-        className="w-8 h-8 mr-4 cursor-pointer"
-        src={editar}
-        alt="Edit"
-        onClick={() => {
-          setEditedName(inventario.Descripcion);
-          setEditedType(inventario.tipo);
-          setEditedDate(inventario.Caducidad);
-          setEditedCantidad(inventario.CantidadInicial);
-          setEditedValorUnitario(inventario.ValorUnitario);
-          setEditedUserId(inventario._id);
-        }}
-      />
-      <img
-        className="w-8 h-8 cursor-pointer"
-        src={borrar}
-        alt="Delete"
-        onClick={() => handleDelete(inventario._id)}
-      />
-    </div>
-  ) : null}
-</TableCell>
+                    {isAdmin || isEditor ? (
+                      <div className="flex w-40 justify-center items-center">
+                        {inventario._id === editedUserId && (
+                          <img
+                            className="w-8 h-8 mr-4 cursor-pointer"
+                            src={download}
+                            alt="actualizar"
+                            onClick={() => handleEditUser(inventario._id)}
+                          />
+                        )}
+                        <img
+                          className="w-8 h-8 mr-4 cursor-pointer"
+                          src={editar}
+                          alt="Edit"
+                          onClick={() => {
+                            setEditedName(inventario.Descripcion);
+                            setEditedType(inventario.tipo);
+                            setEditedDate(inventario.Caducidad);
+                            setEditedCantidad(inventario.CantidadInicial);
+                            setEditedValorUnitario(inventario.ValorUnitario);
+                            setEditedUserId(inventario._id);
+                          }}
+                        />
+                        <img
+                          className="w-8 h-8 cursor-pointer"
+                          src={borrar}
+                          alt="Delete"
+                          onClick={() => handleDelete(inventario._id)}
+                        />
+                      </div>
+                    ) : null}
+                  </TableCell>
 
                 </TableRow>
               ))}

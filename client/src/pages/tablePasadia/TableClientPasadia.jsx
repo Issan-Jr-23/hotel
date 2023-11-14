@@ -1709,48 +1709,49 @@ const end = start + displayLimit ;
                 </div>
 
                 </TableCell>
-                <TableCell key={cliente.id} className="text-center flex justify-center items-center">
+                <TableCell key={cliente._id} className=" ">
+
+                <div className=" flex justify-center">
                   <div className="flex flex-wrap gap-3">
-                    {sizesm.map((size) => (
-                      <Button className="bg-white-100" key={size} onPress={() => handleOpenmf(size, cliente._id)}>
-                        <img className="w-7 h-7" src={plusb} alt="" />
+                    {sizesm.map((ancho) => (
+                      <Button className="bg-white-100" key={ancho} onPress={() => handleOpenmf(ancho, cliente._id)}>
+                        <img className="w-7 h-7" src={plus} alt="" />
                       </Button>
                     ))}
                   </div>
 
-                  <Modal size={selectedSize} isOpen={isModalOpenF} onClose={closeModalF}
-                    classNames={{
-                      backdrop: "bg-inherit",
-                    }}
-                  >
+                  <Modal
+                  classNames={{
+                    backdrop: "bg-inherit",
+                  }}
+                  size={selectedSize} isOpen={isModalOpenF} onClose={closeModalF}>
                     <ModalContent>
                       {(closeModalF) => (
                         <>
-                          <ModalHeader className="flex flex-col gap-1">COMIDAS</ModalHeader>
+                          <ModalHeader className="flex flex-col gap-1">BEBIDAS</ModalHeader>
                           <ModalBody>
                           <Checkbox
                             checked={esCortesia}
                             onChange={handleCortesiaChange}
-                          >
-                            Cortesía pasadia
-                          </Checkbox>
-                          {/* ------------------------- */}
+                            name="esCortesia"
+                            color="primary"
+                          >Cortesia pasadia</Checkbox>
                           <div className="flex">
                             <Input
                             className="mr-2"
-                              name="bebidas"
+                              name="restaurante"
                               label="Ingrese la cantidad"
                               type="number"
                               value={isNaN(cantidadFood) ? '' : cantidadFood}
                               onChange={(e) => {
                                 const value = parseInt(e.target.value, 10);
-                                setCantidadFood(isNaN(value) ? 0 : value);
+                                setCantidadFood(isNaN(value) ? "" : value);
                               }}
                             />
                             <Select
                             className="ml-2"
-                              name="restaurante"
-                              label="Seleccionar comida"
+                              name="bebidas"
+                              label="Seleccionar bebida"
                               value={foodSeleccionada}
                               onChange={(e) => {
                                 const selectedFood = e.target.value;
@@ -1771,9 +1772,7 @@ const end = start + displayLimit ;
                             </Select>
 
                           </div>
-                            {/* -------------------------------------- */}
-                            <div className="flex">
-
+                          <div className="flex">
                             <Input
                             className="mr-2"
                               name="restaurante"
@@ -1782,19 +1781,19 @@ const end = start + displayLimit ;
                               value={isNaN(cantidadFood1) ? '' : cantidadFood1}
                               onChange={(e) => {
                                 const value = parseInt(e.target.value, 10);
-                                setCantidadFood1(isNaN(value) ? 0 : value);
+                                setCantidadFood1(isNaN(value) ? "" : value);
                               }}
                             />
                             <Select
                             className="ml-2"
-                              name="restaurante"
-                              label="Seleccionar comida"
+                              name="bebidas"
+                              label="Seleccionar bebida"
                               value={food1Seleccionada}
                               onChange={(e) => {
                                 const selectedFood1 = e.target.value;
                                 setFood1Seleccionada(selectedFood1);
 
-                                const food1SeleccionadaInfo = snacks.find(bebida => bebida.Descripcion === selectedFood1);
+                                const food1SeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood1);
                                 if (food1SeleccionadaInfo) {
                                   setPrecioFood1Seleccionada(food1SeleccionadaInfo.ValorUnitario);
                                   setFood1SeleccionadaId(food1SeleccionadaInfo._id);
@@ -1807,31 +1806,30 @@ const end = start + displayLimit ;
                                 </SelectItem>
                               ))}
                             </Select>
-                            </div>
-                            {/* -------------------------------- */}
-                            {/* -------------------------------------- */}
-                            <div className="flex">
+
+                          </div>
+                          <div className="flex">
                             <Input
                             className="mr-2"
-                              name="restaurante"
+                              name="bebidas"
                               label="Ingrese la cantidad"
                               type="number"
                               value={isNaN(cantidadFood2) ? '' : cantidadFood2}
                               onChange={(e) => {
                                 const value = parseInt(e.target.value, 10);
-                                setCantidadFood2(isNaN(value) ? 0 : value);
+                                setCantidadFood2(isNaN(value) ? "" : value);
                               }}
                             />
                             <Select
                             className="ml-2"
-                              name="restaurante"
-                              label="Seleccionar comida"
+                              name="bebidas"
+                              label="Seleccionar bebida"
                               value={food2Seleccionada}
                               onChange={(e) => {
                                 const selectedFood2 = e.target.value;
                                 setFood2Seleccionada(selectedFood2);
 
-                                const food2SeleccionadaInfo = snacks.find(bebida => bebida.Descripcion === selectedFood2);
+                                const food2SeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood2);
                                 if (food2SeleccionadaInfo) {
                                   setPrecioFood2Seleccionada(food2SeleccionadaInfo.ValorUnitario);
                                   setFood2SeleccionadaId(food2SeleccionadaInfo._id);
@@ -1845,32 +1843,29 @@ const end = start + displayLimit ;
                               ))}
                             </Select>
 
-                            </div>
-                            {/* -------------------------------- */}
-                            {/* -------------------------------------- */}
-                            <div className="flex">
-
+                          </div>
+                          <div className="flex">
                             <Input
-                            className="mr-2"
-                              name="restaurante"
+                              className="mr-2"
+                              name="bebidas"
                               label="Ingrese la cantidad"
                               type="number"
                               value={isNaN(cantidadFood3) ? '' : cantidadFood3}
                               onChange={(e) => {
                                 const value = parseInt(e.target.value, 10);
-                                setCantidadFood3(isNaN(value) ? 0 : value);
+                                setCantidadFood3(isNaN(value) ? "" : value);
                               }}
                             />
                             <Select
                             className="ml-2"
-                              name="restaurante"
-                              label="Seleccionar comida"
+                              name="bebidas"
+                              label="Seleccionar bebida"
                               value={food3Seleccionada}
                               onChange={(e) => {
                                 const selectedFood3 = e.target.value;
                                 setFood3Seleccionada(selectedFood3);
 
-                                const food3SeleccionadaInfo = snacks.find(bebida => bebida.Descripcion === selectedFood2);
+                                const food3SeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood3);
                                 if (food3SeleccionadaInfo) {
                                   setPrecioFood3Seleccionada(food3SeleccionadaInfo.ValorUnitario);
                                   setFood3SeleccionadaId(food3SeleccionadaInfo._id);
@@ -1883,32 +1878,30 @@ const end = start + displayLimit ;
                                 </SelectItem>
                               ))}
                             </Select>
-                            </div>
-                            {/* -------------------------------- */}
-                            {/* -------------------------------------- */}
-                            <div className="flex">
 
+                          </div>
+                          <div className="flex">
                             <Input
                             className="mr-2"
-                              name="restaurante"
+                              name="bebidas"
                               label="Ingrese la cantidad"
                               type="number"
                               value={isNaN(cantidadFood4) ? '' : cantidadFood4}
                               onChange={(e) => {
                                 const value = parseInt(e.target.value, 10);
-                                setCantidadFood4(isNaN(value) ? 0 : value);
+                                setCantidadFood4(isNaN(value) ? "" : value);
                               }}
                             />
                             <Select
                             className="ml-2"
-                              name="restaurante"
-                              label="Seleccionar comida"
+                              name="bebidas"
+                              label="Seleccionar bebida"
                               value={food4Seleccionada}
                               onChange={(e) => {
                                 const selectedFood4 = e.target.value;
                                 setFood4Seleccionada(selectedFood4);
 
-                                const food4SeleccionadaInfo = snacks.find(bebida => bebida.Descripcion === selectedFood4);
+                                const food4SeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood4);
                                 if (food4SeleccionadaInfo) {
                                   setPrecioFood4Seleccionada(food4SeleccionadaInfo.ValorUnitario);
                                   setFood4SeleccionadaId(food4SeleccionadaInfo._id);
@@ -1921,8 +1914,8 @@ const end = start + displayLimit ;
                                 </SelectItem>
                               ))}
                             </Select>
-                            </div>
-                            {/* -------------------------------- */}
+
+                          </div>
                           </ModalBody>
                           <ModalFooter>
                             <Button color="danger" variant="light" onPress={closeModalF}>
@@ -1936,7 +1929,11 @@ const end = start + displayLimit ;
                       )}
                     </ModalContent>
                   </Modal>
-                </TableCell>
+
+
+                </div>
+
+              </TableCell>
 
 
 

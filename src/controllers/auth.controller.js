@@ -6,7 +6,7 @@ import { createAccessToken } from "../libs/jwt.js";
 
 export const register = async (req, res) => {
   try {
-    const { username, email, password, role } = req.body; // Cambio de 'roles' a 'role'
+    const { username, email, password, role } = req.body;
 
     const userFound = await User.findOne({ email });
     if (userFound) {
@@ -23,7 +23,7 @@ export const register = async (req, res) => {
       username,
       email,
       password: passwordHash,
-      role: role || 'user', // Asigna 'user' como role predeterminado si no se proporciona
+      role: role || 'user', 
     });
 
     
@@ -44,13 +44,12 @@ export const register = async (req, res) => {
       id: userSaved._id,
       username: userSaved.username,
       email: userSaved.email,
-      role: userSaved.role, // Cambio de 'roles' a 'role'
+      role: userSaved.role,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
-
 
 export const login = async (req, res) => {
   try {
@@ -85,7 +84,7 @@ export const login = async (req, res) => {
       id: userFound._id,
       username: userFound.username,
       email: userFound.email,
-      role: userFound.role,  // También puedes incluir roles en la respuesta del login
+      role: userFound.role,
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });

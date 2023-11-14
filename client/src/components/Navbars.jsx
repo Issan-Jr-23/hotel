@@ -93,10 +93,10 @@ export default function Navbars() {
         </NavbarItem>
 
             )}
-        {isAdmin && (
+        {isEditor && (
         
         <NavbarItem>
-          <Link to="/Register" className="text-blue-700 font-medium text-base">
+          <Link to="/Register" className="text-red-500 font-medium text-base">
             Registrar
           </Link>
         </NavbarItem>
