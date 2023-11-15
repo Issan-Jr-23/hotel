@@ -92,17 +92,29 @@ export const addBebida = async (req, res) => {
     const cliente = await Cliente.findById(id);
 
     if (cliente) {
-      let index = cliente.bebidas.findIndex(b => b.id === bebida.id);
+      let index = -1;
+
+      // Determinar si se busca una bebida de cortesía o normal
+      if (bebida.mensaje === "Cortesía") {
+        // Busca si ya existe una bebida de cortesía igual
+        index = cliente.bebidas.findIndex(b => b.id === bebida.id && b.mensaje === "Cortesía");
+      } else {
+        // Busca si ya existe la misma bebida pero que no sea de cortesía
+        index = cliente.bebidas.findIndex(b => b.id === bebida.id && b.mensaje !== "Cortesía");
+      }
 
       if (index > -1) {
-        // Si la bebida ya existe, actualiza la cantidad
+        // Si la bebida ya existe (sea cortesía o no), actualiza la cantidad
         cliente.bebidas[index].cantidad += bebida.cantidad;
-        cliente.markModified('bebidas'); // Indica que el array 'bebidas' ha sido modificado
       } else {
-        // Si la bebida no existe, la agrega al array de bebidas
+        // Si la bebida no existe o es un tipo diferente (cortesía o no), la agrega
+        if (bebida.mensaje === "Cortesía") {
+          bebida.precio = 0; // Asegura que el precio de la cortesía sea 0
+        }
         cliente.bebidas.push(bebida);
       }
 
+      cliente.markModified('bebidas'); // Indica que el array 'bebidas' ha sido modificado
       await cliente.save();
       res.status(200).json(cliente);
     } else {
@@ -118,16 +130,36 @@ export const addBebida = async (req, res) => {
 
 
 export const addFood = async (req, res) => {
-  const {id,food } = req.body;
+  const { id, food } = req.body;
 
   try {
-    const cliente = await Cliente.findById( id );
+    const cliente = await Cliente.findById(id);
 
     if (cliente) {
-      cliente.restaurante.push(food);
+      let index = -1;
 
+      // Determinar si se busca una comida de cortesía o normal
+      if (food.mensaje === "Cortesía") {
+        // Busca si ya existe una comida de cortesía igual
+        index = cliente.restaurante.findIndex(f => f.id === food.id && f.mensaje === "Cortesía");
+      } else {
+        // Busca si ya existe la misma comida pero que no sea de cortesía
+        index = cliente.restaurante.findIndex(f => f.id === food.id && f.mensaje !== "Cortesía");
+      }
+
+      if (index > -1) {
+        // Si la comida ya existe (sea cortesía o no), actualiza la cantidad
+        cliente.restaurante[index].cantidad += food.cantidad;
+      } else {
+        // Si la comida no existe o es un tipo diferente (cortesía o no), la agrega
+        if (food.mensaje === "Cortesía") {
+          food.precio = 0; // Asegura que el precio de la cortesía sea 0
+        }
+        cliente.restaurante.push(food);
+      }
+
+      cliente.markModified('restaurante'); // Indica que el array 'restaurante' ha sido modificado
       await cliente.save();
-
       res.status(200).json(cliente);
     } else {
       res.status(404).json({ message: 'Cliente no encontrado' });

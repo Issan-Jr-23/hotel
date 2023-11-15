@@ -218,15 +218,14 @@ export const updateCB = async (req, res) => {
 
     const cantidadRestante = bebida.CantidadInicial - bebida.ProductosVendidos;
 
-
     if (cantidad > cantidadRestante) {
         return res.status(400).send({ error: `Solo quedan ${cantidadRestante} unidades de ${bebida.Descripcion} disponibles en el inventario.` });
     }
 
     bebida.ProductosVendidos += cantidad;
-    bebida.CantidadInicial -= cantidad
-
+    bebida.CantidadInicial -= cantidad;
     await bebida.save();  
+
 
     res.status(200).send({ message: 'Inventario actualizado con éxito.' });
 } catch (error) {
@@ -243,7 +242,7 @@ export const validCB = async (req, res) => {
           return res.status(404).send({ error: 'Bebida no encontrada.' });
       }
 
-      const cantidadRestante = bebida.CantidadInicial 
+      const cantidadRestante = bebida.CantidadInicial;
       res.status(200).send({ cantidadRestante });
   } catch (error) {
       console.error('Error al verificar la disponibilidad:', error);

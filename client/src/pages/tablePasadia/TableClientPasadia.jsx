@@ -17,7 +17,7 @@ import {
   ModalFooter,
   useDisclosure,
   Select,
-  SelectItem, Checkbox,Popover, PopoverTrigger, PopoverContent, Pagination
+  SelectItem, Checkbox,Popover, PopoverTrigger, PopoverContent
 } from "@nextui-org/react";
 
 import axios from "axios";
@@ -213,7 +213,7 @@ export default function App() {
 
 
   const handleGuardarBebida = async () => {
-    if (!selectedClientId || (!bebidaSeleccionadaId && !bebida1SeleccionadaId)) { 
+    if (!selectedClientId || (!bebidaSeleccionadaId && !bebida1SeleccionadaId && !bebida2SeleccionadaId && !bebida3SeleccionadaId && !bebida4SeleccionadaId)) { 
       toast.error('No se ha seleccionado un cliente o una Bebida.');
       toast.
       return;
@@ -227,35 +227,19 @@ export default function App() {
 
       const clienteResponse = await axios.get(`http://127.0.0.1:3000/api/pasadia-clientes/${selectedClientId}`);
       const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
-      const {cantidadDeCortesias} = clienteResponse.data;
    
       const totalPersonas = ninios + adultos;
-      const tdc = totalPersonas - cantidadDeCortesias;
   
       if (esCortesia) {
-        const totalCortesias = cantidadBebida + cantidadBebida1;
+        const totalCortesias = cantidadBebida + cantidadBebida1 + cantidadBebida2 + cantidadBebida3 + cantidadBebida4;
+        console.log(totalCortesias)
         console.log("prueba: "+totalCortesias)
         if (totalCortesias > totalPersonas) {
           alert(`La cantidad de cortesías (${totalCortesias}) no puede exceder la cantidad de personas (${totalPersonas}).`);
           return;
-        }else if(cantidadDeCortesias === totalPersonas){
-          alert("has alcanzado el limite de cortesias")
-          return;
-        }else if( totalCortesias > tdc){
-          alert(`Tus cortesias disponibles son (${tdc}) y no debe ser mayor a esa cantidad`)
-          return;
-        }else{
-          
-          const nuevaCantidadDeCortesias = Number(cantidadDeCortesias) + Number(totalCortesias);
-          await axios.put(`http://127.0.0.1:3000/api/pasadia-clientes/${selectedClientId}/cortesias`, {
-            cantidadDeCortesias: nuevaCantidadDeCortesias
-          });
-          alert(`La cantidad de cortesías ha sido actualizada a ${nuevaCantidadDeCortesias}.`);
         }
+       
       }
-
- 
-  
      if (cantidad > cantidadRestante) {
         alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
         return false;
@@ -266,7 +250,7 @@ export default function App() {
     };
   
     try {
-      if (!selectedClientId || (!bebidaSeleccionadaId && !bebida1SeleccionadaId)) {
+      if (!selectedClientId || (!bebidaSeleccionadaId && !bebida1SeleccionadaId && !bebida2SeleccionadaId && !bebida3SeleccionadaId && !bebida4SeleccionadaId)) {
         throw new Error('No se ha seleccionado un cliente o una bebida.');
       }
   
@@ -287,6 +271,7 @@ export default function App() {
           }
         }
   
+        //isCortesia
         if (cantidadBebida1 > 0 && bebida1SeleccionadaId) {
           if (await checkStockAndUpdateInventory(bebida1SeleccionadaId, cantidadBebida1)) {
             const bebidaCortesia1 = {
@@ -301,6 +286,7 @@ export default function App() {
           }
         }
   
+        //isCortesia
         if (cantidadBebida2 > 0 && bebida2SeleccionadaId) {
           if (await checkStockAndUpdateInventory(bebida2SeleccionadaId, cantidadBebida2)) {
             const bebidaCortesia2 = {
@@ -315,6 +301,7 @@ export default function App() {
           }
         }
   
+        //isCortesia
         if (cantidadBebida3 > 0 && bebida3SeleccionadaId) {
           if (await checkStockAndUpdateInventory(bebida3SeleccionadaId, cantidadBebida3)) {
             const bebidaCortesia3 = {
@@ -329,6 +316,7 @@ export default function App() {
           }
         }
   
+        //isCortesia
         if (cantidadBebida4 > 0 && bebida4SeleccionadaId) {
           if (await checkStockAndUpdateInventory(bebida4SeleccionadaId, cantidadBebida4)) {
             const bebidaCortesia4 = {
@@ -365,8 +353,7 @@ export default function App() {
         }
       }
   
-
-
+      // Handle the second drink selection
       if (cantidadBebida1 > 0 && bebida1SeleccionadaId) {
         const bebidaAdultos1 = {
           id: bebida1SeleccionadaId,
@@ -380,8 +367,8 @@ export default function App() {
           isBebidaAdded = true;
         }
       }
-
-
+  
+      // Handle the second drink selection
       if (cantidadBebida2 > 0 && bebida2SeleccionadaId) {
         const bebidaAdultos2 = {
           id: bebida2SeleccionadaId,
@@ -395,8 +382,8 @@ export default function App() {
           isBebidaAdded = true;
         }
       }
-
-
+  
+      // Handle the second drink selection
       if (cantidadBebida3 > 0 && bebida3SeleccionadaId) {
         const bebidaAdultos3 = {
           id: bebida3SeleccionadaId,
@@ -410,8 +397,8 @@ export default function App() {
           isBebidaAdded = true;
         }
       }
-
-
+  
+      // Handle the second drink selection
       if (cantidadBebida4 > 0 && bebida4SeleccionadaId) {
         const bebidaAdultos4 = {
           id: bebida4SeleccionadaId,
@@ -482,7 +469,7 @@ export default function App() {
   };
 
   const handleGuardarFood = async () => {
-    if (!selectedClientId || (!foodSeleccionadaId && !food1SeleccionadaId)) {
+    if (!selectedClientId || (!foodSeleccionadaId && !food1SeleccionadaId && food2SeleccionadaId && food3SeleccionadaId && food4SeleccionadaId)) {
       toast.error('No se ha seleccionado un cliente o una comida.');
       toast.
       return;
@@ -495,27 +482,12 @@ export default function App() {
       
       const clienteResponse = await axios.get(`http://127.0.0.1:3000/api/pasadia-clientes/${selectedClientId}`);
       const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
-      const {cantidadDeCortesiasF} = clienteResponse.data;
       const totalPersonas = ninios + adultos;
-      const tdc = totalPersonas - cantidadDeCortesiasF;
       if (esCortesia) {
-        const totalCortesias = cantidadFood + cantidadFood1;
-        console.log("prueba: "+totalCortesias)
+        const totalCortesias = cantidadFood + cantidadFood1 + cantidadFood2 + cantidadFood3 + cantidadFood4;
         if (totalCortesias > totalPersonas) {
           alert(`La cantidad de cortesías (${totalCortesias}) no puede exceder la cantidad de personas (${totalPersonas}).`);
           return;
-        }else if(cantidadDeCortesiasF === totalPersonas){
-          alert("has alcanzado el limite de cortesias")
-          return;
-        }else if( totalCortesias > tdc){
-          alert(`Tus cortesias disponibles son (${tdc}) y no debe ser mayor a esa cantidad`)
-          return;
-        }else{
-          const nuevaCantidadDeCortesias = Number(cantidadDeCortesiasF) + Number(totalCortesias);
-          await axios.put(`http://127.0.0.1:3000/api/pasadia-clientes/${selectedClientId}/cortesias`, {
-            cantidadDeCortesiasF: nuevaCantidadDeCortesias
-          });
-          alert(`La cantidad de cortesías ha sido actualizada a ${nuevaCantidadDeCortesias}.`);
         }
       }
 
@@ -530,7 +502,7 @@ export default function App() {
 
   
     try {
-      if (!selectedClientId || (!foodSeleccionadaId && !food1SeleccionadaId)) {
+      if (!selectedClientId || (!foodSeleccionadaId && !food1SeleccionadaId && !food2SeleccionadaId && !food3SeleccionadaId && !food4SeleccionadaId)) {
         throw new Error('No se ha seleccionado un cliente o una bebida.');
       }
   
@@ -551,6 +523,7 @@ export default function App() {
           }
         }
   
+        //isCortesia
         if (cantidadFood1 > 0 && food1SeleccionadaId) {
           if (await checkStockAndUpdateInventory(food1SeleccionadaId, cantidadFood1)) {
             const foodCortesia1 = {
@@ -565,6 +538,7 @@ export default function App() {
           }
         }
   
+        //isCortesia
         if (cantidadFood2 > 0 && food2SeleccionadaId) {
           if (await checkStockAndUpdateInventory(food2SeleccionadaId, cantidadFood2)) {
             const foodCortesia2 = {
@@ -579,6 +553,7 @@ export default function App() {
           }
         }
   
+        //isCortesia
         if (cantidadFood3 > 0 && food3SeleccionadaId) {
           if (await checkStockAndUpdateInventory(food3SeleccionadaId, cantidadFood3)) {
             const foodCortesia3 = {
@@ -593,6 +568,7 @@ export default function App() {
           }
         }
   
+        //isCortesia
         if (cantidadFood4 > 0 && food4SeleccionadaId) {
           if (await checkStockAndUpdateInventory(food4SeleccionadaId, cantidadFood4)) {
             const foodCortesia4 = {
@@ -629,6 +605,7 @@ export default function App() {
         }
       }
   
+      //nueva nuera
       if (cantidadFood1 > 0 && food1SeleccionadaId) {
         const foodAdultos1 = {
           id: food1SeleccionadaId,
@@ -642,7 +619,23 @@ export default function App() {
           isBebidaAdded = true;
         }
       }
+
+      //nueva nuera
+      if (cantidadFood1 > 0 && food1SeleccionadaId) {
+        const foodAdultos1 = {
+          id: food1SeleccionadaId,
+          nombre: food1Seleccionada,
+          cantidad: cantidadFood1,
+          precio: precioFood1Seleccionada,
+        };
   
+        if (await checkStockAndUpdateInventory(food1SeleccionadaId, cantidadFood1)) {
+          await guardarFood(foodAdultos1);
+          isBebidaAdded = true;
+        }
+      }
+
+      //nueva nuera
       if (cantidadFood2 > 0 && food2SeleccionadaId) {
         const foodAdultos2 = {
           id: food2SeleccionadaId,
@@ -656,7 +649,8 @@ export default function App() {
           isBebidaAdded = true;
         }
       }
-  
+
+      //nueva nuera
       if (cantidadFood3 > 0 && food3SeleccionadaId) {
         const foodAdultos3 = {
           id: food3SeleccionadaId,
@@ -670,7 +664,8 @@ export default function App() {
           isBebidaAdded = true;
         }
       }
-  
+
+      //nueva nuera
       if (cantidadFood4 > 0 && food4SeleccionadaId) {
         const foodAdultos4 = {
           id: food4SeleccionadaId,
@@ -684,6 +679,8 @@ export default function App() {
           isBebidaAdded = true;
         }
       }
+
+
   
       if (!isBebidaAdded) {
         alert("No se ha agregado ninguna comida");
@@ -733,10 +730,8 @@ export default function App() {
     const fetchData = async () => {
       try {
         const response = await axios.get("http://127.0.0.1:3000/api/pasadia-clientes");
-        
+        setUsers(response.data);
         const usuariosOrdenados = response.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
-  
-        setUsers(usuariosOrdenados);
       } catch (error) {
         console.error("Error al obtener datos del servidor:", error);
       }
@@ -818,8 +813,7 @@ export default function App() {
 
         });
         const response = await axios.get("http://127.0.0.1:3000/api/pasadia-clientes");
-        const usuariosOrdenados = response.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
-        setUsers(usuariosOrdenados);
+        setUsers(response.data);
       }
     } catch (error) {
       toast.error('Ocurrió un error al agregar el cliente o el registro ya existe.');
@@ -936,9 +930,8 @@ export default function App() {
 
   const sizess = ["5xl",];
 
-  const handleOpenM = (size, userId) => {
+  const handleOpenM = (size) => {
   setSize(size)
-  setSelectedClientId(userId);
   }
 
   const { isOpen: isModalOpenM, onOpen: openModalM, onClose: closeModalM } = useDisclosure();
@@ -962,7 +955,7 @@ export default function App() {
       setBebida1SeleccionadaId('');
   };
 
-  const [selectedSize, setSelectedSize] = React.useState('xl');
+  const [selectedSize, setSelectedSize] = React.useState('md');
 
   const handleOpenmf = (size, userId) => {
     setSelectedSize(size);
@@ -1040,8 +1033,8 @@ export default function App() {
         });
         toast.success('Datos actualizados exitosamente');
         const responses = await axios.get("http://127.0.0.1:3000/api/pasadia-clientes");
-        const usuariosOrdenados = responses.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
-        setUsers(usuariosOrdenados);
+        setUsers(responses.data);
+        const usuariosOrdenados = response.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
       } catch (error) {
         console.error('Hubo un problema con la petición Axios:', error);
       }
@@ -1064,8 +1057,7 @@ export default function App() {
 const totalPages = Math.ceil(datosFiltrados.length / displayLimit + 1 );
 const start = (currentPage - 1) * displayLimit;
 const end = start + displayLimit ;
-
-
+ 
 
   return (
     <div className="max-w-full w-98 mx-auto">
@@ -1263,9 +1255,8 @@ const end = start + displayLimit ;
           />
         </div>
       </div>
-
         
-      <section className="flex flex-col mt-5 mx-5 rounded-t-2xl mb-20">
+      <section className="flex mt-5 mx-5 rounded-t-2xl flex-col">
           {/* Input de búsqueda */}
           <div className="flex justify-end">
       <select className="w-28 h-10 rounded-xl mb-1 outline-blue-500" onChange={handleChangeDisplayLimit} value={displayLimit}>
@@ -1278,24 +1269,7 @@ const end = start + displayLimit ;
       </select>
 
           </div>
-        <Table className=" text-center uppercase mb-5" aria-label="Lista de Usuarios" 
-        bottomContent = {
-          <div className="w-full flex justify-center">
-            <Pagination
-            isCompact
-            showControls
-            initialPage={1}
-            color="primary"
-            page={currentPage}
-            total={totalPages}
-            onChange={(newPage) => setCurrentPage(newPage)}
-          />
-
-          </div>
-        }
-        
-        >
-          
+        <Table className=" text-center uppercase mb-20" aria-label="Lista de Usuarios">
           <TableHeader className="text-center">
             <TableColumn className="text-center">+</TableColumn>
             <TableColumn className="text-center max-w-xs">ID</TableColumn>
@@ -1310,8 +1284,8 @@ const end = start + displayLimit ;
 
 
 
-          <TableBody emptyContent="No hay elementos por mostrar" className="rounded-xl">
-          {datosFiltrados.slice(start, end).map((cliente) => (
+          <TableBody emptyContent="No hay elementos por mostrar" className="">
+            {datosFiltrados.slice(start, end).map((cliente) => (
 
               <TableRow className="cursor-pointer hover:bg-blue-200" key={cliente._id}>
 
@@ -1324,7 +1298,7 @@ const end = start + displayLimit ;
                 <TableCell>
                   {sizess.map((size) => (
                     
-                    <Button className="bg-inherit focus:outline-blue-500" key={size} onPress={() => handleOpenM(size,cliente._id)} onClick={() => handleOpenModal(cliente)}>
+                    <Button className="bg-white" key={size} onPress={() => handleOpenM(size)} onClick={() => handleOpenModal(cliente)}>
                       <img className="w-4" src={chevron} alt="" />
                     </Button>
                   ))}
@@ -1411,7 +1385,7 @@ const end = start + displayLimit ;
                   <p onClick={() => seleccionarCliente(cliente.identificacion)}>{cliente.identificacion}</p>
                   </PopoverTrigger>
                   <PopoverContent >
-                    { cliente.reserva === "Si" && ((cliente.cantidadPersonas.adultos * pasadiaAdultos) + (cliente.cantidadPersonas.ninios * pasadiaNinios) - (cliente.pagoAnticipado + cliente.pagoPendiente)) !== 0 || cliente.reserva === "No" && ((cliente.cantidadPersonas.adultos * pasadiaAdultos) + (cliente.cantidadPersonas.ninios * pasadiaNinios) - (cliente.pagoAnticipado + cliente.pagoPendiente)) !== 0  ?
+                    { cliente.reserva === "Si" && ((cliente.cantidadPersonas.adultos * pasadiaAdultos) + (cliente.cantidadPersonas.ninios * pasadiaNinios) - (cliente.pagoAnticipado + cliente.pagoPendiente)) !== 0 || cliente.reserva === "No" && ((cliente.cantidadPersonas.adultos * pasadiaAdultos) + (cliente.cantidadPersonas.ninios * pasadiaNinios) - (cliente.pagoAnticipado + cliente.pagoPendiente)) !== 0 ?
                     <div className="px-1 py-2">
                       <div className="text-small font-bold">Información</div>
                       <div className="text-red-500">Datos del usuario</div>
@@ -1523,6 +1497,7 @@ const end = start + displayLimit ;
                                 setCantidadBebida(isNaN(value) ? "" : value);
                               }}
                             />
+
                             <Select
                             className="ml-2"
                               name="bebidas"
@@ -1545,7 +1520,6 @@ const end = start + displayLimit ;
                                 </SelectItem>
                               ))}
                             </Select>
-
                           </div>
                           <div className="flex">
                             <Input
@@ -1621,7 +1595,7 @@ const end = start + displayLimit ;
                           </div>
                           <div className="flex">
                             <Input
-                              className="mr-2"
+                            className="mr-2"
                               name="bebidas"
                               label="Ingrese la cantidad"
                               type="number"
@@ -1709,33 +1683,31 @@ const end = start + displayLimit ;
                 </div>
 
                 </TableCell>
-                <TableCell key={cliente._id} className=" ">
-
-                <div className=" flex justify-center">
+                <TableCell key={cliente.id} className="text-center flex justify-center items-center">
                   <div className="flex flex-wrap gap-3">
-                    {sizesm.map((ancho) => (
-                      <Button className="bg-white-100" key={ancho} onPress={() => handleOpenmf(ancho, cliente._id)}>
-                        <img className="w-7 h-7" src={plus} alt="" />
+                    {sizesm.map((size) => (
+                      <Button className="bg-white-100" key={size} onPress={() => handleOpenmf(size, cliente._id)}>
+                        <img className="w-7 h-7" src={plusb} alt="" />
                       </Button>
                     ))}
                   </div>
 
-                  <Modal
-                  classNames={{
-                    backdrop: "bg-inherit",
-                  }}
-                  size={selectedSize} isOpen={isModalOpenF} onClose={closeModalF}>
+                  <Modal size={selectedSize} isOpen={isModalOpenF} onClose={closeModalF}
+                    classNames={{
+                      backdrop: "bg-inherit",
+                    }}
+                  >
                     <ModalContent>
                       {(closeModalF) => (
                         <>
-                          <ModalHeader className="flex flex-col gap-1">BEBIDAS</ModalHeader>
+                          <ModalHeader className="flex flex-col gap-1">COMIDAS</ModalHeader>
                           <ModalBody>
                           <Checkbox
                             checked={esCortesia}
                             onChange={handleCortesiaChange}
-                            name="esCortesia"
-                            color="primary"
-                          >Cortesia pasadia</Checkbox>
+                          >
+                            Cortesía pasadia
+                          </Checkbox>
                           <div className="flex">
                             <Input
                             className="mr-2"
@@ -1745,13 +1717,13 @@ const end = start + displayLimit ;
                               value={isNaN(cantidadFood) ? '' : cantidadFood}
                               onChange={(e) => {
                                 const value = parseInt(e.target.value, 10);
-                                setCantidadFood(isNaN(value) ? "" : value);
+                                setCantidadFood(isNaN(value) ? 0 : value);
                               }}
                             />
                             <Select
                             className="ml-2"
-                              name="bebidas"
-                              label="Seleccionar bebida"
+                              name="restaurante"
+                              label="Seleccionar comida"
                               value={foodSeleccionada}
                               onChange={(e) => {
                                 const selectedFood = e.target.value;
@@ -1773,6 +1745,7 @@ const end = start + displayLimit ;
 
                           </div>
                           <div className="flex">
+
                             <Input
                             className="mr-2"
                               name="restaurante"
@@ -1781,13 +1754,13 @@ const end = start + displayLimit ;
                               value={isNaN(cantidadFood1) ? '' : cantidadFood1}
                               onChange={(e) => {
                                 const value = parseInt(e.target.value, 10);
-                                setCantidadFood1(isNaN(value) ? "" : value);
+                                setCantidadFood1(isNaN(value) ? 0 : value);
                               }}
                             />
                             <Select
                             className="ml-2"
-                              name="bebidas"
-                              label="Seleccionar bebida"
+                              name="restaurante"
+                              label="Seleccionar comida"
                               value={food1Seleccionada}
                               onChange={(e) => {
                                 const selectedFood1 = e.target.value;
@@ -1806,24 +1779,24 @@ const end = start + displayLimit ;
                                 </SelectItem>
                               ))}
                             </Select>
-
                           </div>
                           <div className="flex">
+
                             <Input
                             className="mr-2"
-                              name="bebidas"
+                              name="restaurante"
                               label="Ingrese la cantidad"
                               type="number"
                               value={isNaN(cantidadFood2) ? '' : cantidadFood2}
                               onChange={(e) => {
                                 const value = parseInt(e.target.value, 10);
-                                setCantidadFood2(isNaN(value) ? "" : value);
+                                setCantidadFood2(isNaN(value) ? 0 : value);
                               }}
                             />
                             <Select
                             className="ml-2"
-                              name="bebidas"
-                              label="Seleccionar bebida"
+                              name="restaurante"
+                              label="Seleccionar comida"
                               value={food2Seleccionada}
                               onChange={(e) => {
                                 const selectedFood2 = e.target.value;
@@ -1842,24 +1815,24 @@ const end = start + displayLimit ;
                                 </SelectItem>
                               ))}
                             </Select>
-
                           </div>
                           <div className="flex">
+
                             <Input
-                              className="mr-2"
-                              name="bebidas"
+                            className="mr-2"
+                              name="restaurante"
                               label="Ingrese la cantidad"
                               type="number"
                               value={isNaN(cantidadFood3) ? '' : cantidadFood3}
                               onChange={(e) => {
                                 const value = parseInt(e.target.value, 10);
-                                setCantidadFood3(isNaN(value) ? "" : value);
+                                setCantidadFood3(isNaN(value) ? 0 : value);
                               }}
                             />
                             <Select
                             className="ml-2"
-                              name="bebidas"
-                              label="Seleccionar bebida"
+                              name="restaurante"
+                              label="Seleccionar comida"
                               value={food3Seleccionada}
                               onChange={(e) => {
                                 const selectedFood3 = e.target.value;
@@ -1878,24 +1851,24 @@ const end = start + displayLimit ;
                                 </SelectItem>
                               ))}
                             </Select>
-
                           </div>
                           <div className="flex">
+
                             <Input
                             className="mr-2"
-                              name="bebidas"
+                              name="restaurante"
                               label="Ingrese la cantidad"
                               type="number"
                               value={isNaN(cantidadFood4) ? '' : cantidadFood4}
                               onChange={(e) => {
                                 const value = parseInt(e.target.value, 10);
-                                setCantidadFood4(isNaN(value) ? "" : value);
+                                setCantidadFood4(isNaN(value) ? 0 : value);
                               }}
                             />
                             <Select
                             className="ml-2"
-                              name="bebidas"
-                              label="Seleccionar bebida"
+                              name="restaurante"
+                              label="Seleccionar comida"
                               value={food4Seleccionada}
                               onChange={(e) => {
                                 const selectedFood4 = e.target.value;
@@ -1914,7 +1887,6 @@ const end = start + displayLimit ;
                                 </SelectItem>
                               ))}
                             </Select>
-
                           </div>
                           </ModalBody>
                           <ModalFooter>
@@ -1929,11 +1901,7 @@ const end = start + displayLimit ;
                       )}
                     </ModalContent>
                   </Modal>
-
-
-                </div>
-
-              </TableCell>
+                </TableCell>
 
 
 
@@ -1981,6 +1949,7 @@ const end = start + displayLimit ;
 
                
                 <TableCell> {(cliente.cantidadPersonas.adultos * pasadiaAdultos) + (cliente.cantidadPersonas.ninios * pasadiaNinios) - (cliente.pagoAnticipado + cliente.pagoPendiente)}</TableCell>
+
                 {/* <TableCell className="flex justify-center align-center pr-5 w-60">
                   {cliente.identificacion === editedUserId && (
                     <div className="flex">
