@@ -845,6 +845,20 @@ export default function App() {
       console.error('No hay un cliente seleccionado para actualizar');
     }
   };
+
+  const [displayLimit, setDisplayLimit] = useState(5);
+  const [currentPage, setCurrentPage] = useState(1);
+ 
+  const handleChangeDisplayLimit = (event) => {
+   setDisplayLimit(Number(event.target.value));
+   setCurrentPage(1); 
+ };
+ 
+ 
+ 
+ const totalPages = Math.ceil(datosFiltrados.length / displayLimit + 1 );
+ const start = (currentPage - 1) * displayLimit;
+ const end = start + displayLimit ;
  
 
   return (
@@ -1058,8 +1072,19 @@ export default function App() {
         </div>
       </div>
         
-      <section className="flex mt-5 mx-5 rounded-t-2xl">
+      <section className="flex mt-5 mx-5 rounded-t-2xl flex-col">
           {/* Input de búsqueda */}
+          <div className="flex justify-end">
+      <select className="w-28 h-10 rounded-xl mb-1 outline-blue-500" onChange={handleChangeDisplayLimit} value={displayLimit}>
+        <option value="1">Mostrar 1</option>
+        <option value="5">Mostrar 5</option>
+        <option value="10">Mostrar 10</option>
+        <option value="15">Mostrar 15</option>
+        <option value="50">Mostrar 50</option>
+        <option value="100">Mostrar 100</option>
+      </select>
+
+          </div>
         <Table className=" text-center uppercase" aria-label="Lista de Usuarios">
           <TableHeader className="text-center">
             <TableColumn className="text-center">+</TableColumn>
@@ -1082,7 +1107,7 @@ export default function App() {
 
 
           <TableBody emptyContent="No hay elementos por mostrar" className="">
-            {datosFiltrados.map((cliente) => (
+          {datosFiltrados.slice(start, end).map((cliente) => (
 
               <TableRow className="cursor-pointer hover:bg-blue-200" key={cliente._id}>
 

@@ -6,10 +6,9 @@ import { createAccessToken } from "../libs/jwt.js";
 
 export const register = async (req, res) => {
   try {
-    const { username, email, password, roles } = req.body;
+    const { username, email, password, role } = req.body;
 
     const userFound = await User.findOne({ email });
-
     if (userFound) {
       return res.status(400).json({
         message: ["The email is already in use"],
@@ -20,12 +19,11 @@ export const register = async (req, res) => {
 
  
     const passwordHash = await bcrypt.hash(password, 10);
-
-   
     const newUser = new User({
       username,
       email,
       password: passwordHash,
+      role: role || 'user', 
     });
 
     
@@ -36,25 +34,22 @@ export const register = async (req, res) => {
       id: userSaved._id,
     });
 
-    
     res.cookie("token", token, {
       httpOnly: process.env.NODE_ENV !== "development",
       secure: true,
       sameSite: "none",
     });
 
-   
     res.json({
       id: userSaved._id,
       username: userSaved.username,
       email: userSaved.email,
-      roles: userSaved.roles,
+      role: userSaved.role,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
-
 
 export const login = async (req, res) => {
   try {
@@ -89,7 +84,7 @@ export const login = async (req, res) => {
       id: userFound._id,
       username: userFound.username,
       email: userFound.email,
-      roles: userFound.roles,  // También puedes incluir roles en la respuesta del login
+      role: userFound.role,
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -110,7 +105,7 @@ export const verifyToken = async (req, res) => {
       id: userFound._id,
       username: userFound.username,
       email: userFound.email,
-      roles: userFound.roles,  
+      role: userFound.role,  
     });
   });
 };
@@ -123,4 +118,3 @@ export const logout = async (req, res) => {
   });
   return res.sendStatus(200);
 };
-

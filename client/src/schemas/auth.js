@@ -18,11 +18,11 @@ export const registerSchema = z
     confirmPassword: z.string().min(6, {
       message: "Confirm password must be at least 6 characters long",
     }),
-    roles: z.array(z.union([
+    role: z.union([
       z.literal("user"),
       z.literal("admin"),
       z.literal("editor"),
-    ])).optional(),  // Make it optional or remove optional if it's required
+    ])// Make it optional or remove optional if it's required
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",

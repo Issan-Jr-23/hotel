@@ -12,11 +12,16 @@ import borrar from "../../images/borrar.png";
 import download from "../../images/download.png";
 import toast, {Toaster} from 'react-hot-toast';
 import * as XLSX from 'xlsx';
+import { useAuth } from "../../context/authContext.jsx";
 
 
 import "./table.css"
 
 export default function App() {
+
+  const { user } = useAuth();
+  const isAdmin = user && user.role === 'admin';
+  const isEditor = user && user.role === 'editor';
 
   const [editedUserId, setEditedUserId] = useState(null);
   const [editedName, setEditedName] = useState("");
@@ -303,7 +308,14 @@ export default function App() {
               <TableColumn className="text-center">Total de la venta</TableColumn>
               <TableColumn className="text-center">Cantidad restante</TableColumn>
               <TableColumn className="text-center">Valor total</TableColumn>
-              {/* <TableColumn className="text-center">accion</TableColumn> */}
+              <TableColumn className="text-center">
+                {isAdmin || isEditor ? (
+                  <div>
+                    Valor total
+                  </div>
+                ) : null
+              }
+                </TableColumn>
             </TableHeader>
             <TableBody emptyContent="No hay filas para mostrar.">
               {filteredProducts.map((inventario) => ( 
@@ -378,35 +390,39 @@ export default function App() {
                   <TableCell>{inventario.ProductosVendidos * inventario.ValorUnitario}</TableCell>
                   <TableCell>{ inventario.CantidadInicial - inventario.ProductosVendidos}</TableCell>
                   <TableCell>{inventario.CantidadInicial * inventario.ValorUnitario}</TableCell>
-                  {/* <TableCell className="flex justify-center align-center"> 
-                  {inventario._id === editedUserId && (
-                    <img
-                    className="w-8 h-8 mr-4 cursor-pointer"
-                    src={download}
-                    alt="actualizar"
-                    onClick={() => handleEditUser(inventario._id)}
-                  />
-                  )}
-                  <img
-                    className="w-8 h-8 mr-4 cursor-pointer"
-                    src={editar}
-                    alt="Edit"
-                    onClick={() => {
-                      setEditedName(inventario.Descripcion);
-                      setEditedType(inventario.tipo);
-                      setEditedDate(inventario.Caducidad);
-                      setEditedCantidad(inventario.CantidadInicial);
-                      setEditedValorUnitario(inventario.ValorUnitario);
-                      setEditedUserId(inventario._id)
-                    }}
-                  />
-                  <img
-                  className="w-8 h-8 cursor-pointer"
-                  src={borrar}
-                  alt="Delete"
-                  onClick={() => handleDelete(inventario._id)}
-                />
-                  </TableCell> */}
+                  <TableCell className="flex justify-center align-center">
+                    {isAdmin || isEditor ? (
+                      <div className="flex w-40 justify-center items-center">
+                        {inventario._id === editedUserId && (
+                          <img
+                            className="w-8 h-8 mr-4 cursor-pointer"
+                            src={download}
+                            alt="actualizar"
+                            onClick={() => handleEditUser(inventario._id)}
+                          />
+                        )}
+                        <img
+                          className="w-8 h-8 mr-4 cursor-pointer"
+                          src={editar}
+                          alt="Edit"
+                          onClick={() => {
+                            setEditedName(inventario.Descripcion);
+                            setEditedType(inventario.tipo);
+                            setEditedDate(inventario.Caducidad);
+                            setEditedCantidad(inventario.CantidadInicial);
+                            setEditedValorUnitario(inventario.ValorUnitario);
+                            setEditedUserId(inventario._id);
+                          }}
+                        />
+                        <img
+                          className="w-8 h-8 cursor-pointer"
+                          src={borrar}
+                          alt="Delete"
+                          onClick={() => handleDelete(inventario._id)}
+                        />
+                      </div>
+                    ) : null}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

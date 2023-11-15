@@ -177,10 +177,6 @@ export const filType = async (req, res) => {
 };
 
 
-
-
-
-
 // export const addCv = async (req, res) => {
 //   try {
 //     const { mekatoId, additionalQuantity } = req.body;
@@ -223,6 +219,7 @@ export const updateCB = async (req, res) => {
     }
 
     bebida.ProductosVendidos += cantidad;
+    bebida.CantidadInicial -= cantidad;
 
     await bebida.save();  
 
@@ -313,24 +310,21 @@ export const updateCF = async (req, res) => {
   try {
     const { id, cantidad } = req.body;
 
-    // Busca la bebida por ID
     const bebida = await Bebida.findById(id);
     if (!bebida) {
         return res.status(404).send({ error: 'Bebida no encontrada.' });
     }
 
-    // Calcula la cantidad restante en el inventario
     const cantidadRestante = bebida.CantidadInicial - bebida.ProductosVendidos;
 
-    // Verifica si hay suficiente cantidad en el inventario
     if (cantidad > cantidadRestante) {
         return res.status(400).send({ error: `Solo quedan ${cantidadRestante} unidades de ${bebida.Descripcion} disponibles en el inventario.` });
     }
 
-    // Actualiza la cantidad de bebidas vendidas
     bebida.ProductosVendidos += cantidad;
+    bebida.CantidadInicial -= cantidad;
 
-    await bebida.save();  // Guarda la bebida actualizada en la base de datos
+    await bebida.save();  
 
     res.status(200).send({ message: 'Inventario actualizado con éxito.' });
 } catch (error) {

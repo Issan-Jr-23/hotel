@@ -7,7 +7,9 @@ export default function Navbars() {
 
 
   const { isAuthenticated, logout, user } = useAuth();
-  const { isAdmin } = useAuth();
+  const isAdmin = user && user.role === 'admin';
+  const isEditor = user && user.role == "editor";
+  
 
 
   return (
@@ -84,7 +86,7 @@ export default function Navbars() {
             Energia Renovable
           </Link>
         </NavbarItem>
-        {isAdmin && ( 
+        {isAdmin || isEditor && ( 
         <NavbarItem>
           <Link to="/Register" className="text-blue-700 font-medium text-base">
             Registrar
