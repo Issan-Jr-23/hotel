@@ -1308,20 +1308,6 @@ export default function App() {
 
           </div>
         <Table className=" text-center uppercase" aria-label="Lista de Usuarios"
-                        bottomContent = {
-                          <div className="w-full flex justify-center">
-                            <Pagination
-                            isCompact
-                            showControls
-                            initialPage={1}
-                            color="primary"
-                            page={currentPage}
-                            total={totalPages}
-                            onChange={(newPage) => setCurrentPage(newPage)}
-                          />
-                
-                          </div>
-                        }
         >
           <TableHeader className="text-center">
             <TableColumn className="text-center">+</TableColumn>

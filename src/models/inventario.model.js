@@ -35,7 +35,7 @@ const inventarioSchema = new mongoose.Schema({
     default: 0
   },
   ValorTotal: {
-    type: Number,
+    type: Number, 
     default: 0
   },
   Restante: {

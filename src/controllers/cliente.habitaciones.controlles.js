@@ -84,7 +84,7 @@ export const addBebida = async (req, res) => {
   const { id, bebida } = req.body;
 
   try {
-    const cliente = await Cliente.findById(id);
+    const cliente = await Habitaciones.findById(id);
 
     if (cliente) {
       let index = -1;
@@ -128,7 +128,7 @@ export const addFood = async (req, res) => {
   const { id, food } = req.body;
 
   try {
-    const cliente = await Cliente.findById(id);
+    const cliente = await Habitaciones.findById(id);
 
     if (cliente) {
       let index = -1;

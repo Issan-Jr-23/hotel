@@ -28,6 +28,8 @@ import chevron from "../../images/right.png";
 import plus from "../../images/plus.png";
 import plusb from "../../images/plus_blue.png";
 import toast, { Toaster } from 'react-hot-toast';
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 // import "./tables.css"
 import "../table/table.css"
 //#endregion
@@ -279,7 +281,8 @@ export default function App() {
               nombre: bebida1Seleccionada,
               cantidad: cantidadBebida1,
               precio: 0,
-              mensaje: "Cortesía"
+              mensaje: "Cortesía",
+              fechaDeMarca: ""
             };
             await guardarBebida(bebidaCortesia1);
             atLeastOneCortesiaSaved = true;
@@ -294,7 +297,8 @@ export default function App() {
               nombre: bebida2Seleccionada,
               cantidad: cantidadBebida2,
               precio: 0,
-              mensaje: "Cortesía"
+              mensaje: "Cortesía",
+              fechaDeMarca: ""
             };
             await guardarBebida(bebidaCortesia2);
             atLeastOneCortesiaSaved = true;
@@ -309,7 +313,8 @@ export default function App() {
               nombre: bebida3Seleccionada,
               cantidad: cantidadBebida3,
               precio: 0,
-              mensaje: "Cortesía"
+              mensaje: "Cortesía",
+              fechaDeMarca:""
             };
             await guardarBebida(bebidaCortesia3);
             atLeastOneCortesiaSaved = true;
@@ -324,7 +329,8 @@ export default function App() {
               nombre: bebida4Seleccionada,
               cantidad: cantidadBebida4,
               precio: 0,
-              mensaje: "Cortesía"
+              mensaje: "Cortesía",
+              fechaDeMarca:""
             };
             await guardarBebida(bebidaCortesia4);
             atLeastOneCortesiaSaved = true;
@@ -345,6 +351,7 @@ export default function App() {
           nombre: bebidaSeleccionada,
           cantidad: cantidadBebida,
           precio: precioBebidaSeleccionada,
+          fechaDeMarca: ""
         };
   
         if (await checkStockAndUpdateInventory(bebidaSeleccionadaId, cantidadBebida)) {
@@ -360,6 +367,7 @@ export default function App() {
           nombre: bebida1Seleccionada,
           cantidad: cantidadBebida1,
           precio: precioBebida1Seleccionada,
+          fechaDeMarca: ""
         };
   
         if (await checkStockAndUpdateInventory(bebida1SeleccionadaId, cantidadBebida1)) {
@@ -375,6 +383,7 @@ export default function App() {
           nombre: bebida2Seleccionada,
           cantidad: cantidadBebida2,
           precio: precioBebida2Seleccionada,
+          fechaDeMarca: ""
         };
   
         if (await checkStockAndUpdateInventory(bebida2SeleccionadaId, cantidadBebida2)) {
@@ -390,6 +399,7 @@ export default function App() {
           nombre: bebida3Seleccionada,
           cantidad: cantidadBebida3,
           precio: precioBebida3Seleccionada,
+          fechaDeMarca: ""
         };
   
         if (await checkStockAndUpdateInventory(bebida3SeleccionadaId, cantidadBebida3)) {
@@ -405,6 +415,7 @@ export default function App() {
           nombre: bebida4Seleccionada,
           cantidad: cantidadBebida4,
           precio: precioBebida4Seleccionada,
+          fechaDeMarca: ""
         };
   
         if (await checkStockAndUpdateInventory(bebida4SeleccionadaId, cantidadBebida4)) {
@@ -1059,6 +1070,26 @@ const start = (currentPage - 1) * displayLimit;
 const end = start + displayLimit ;
  
 
+
+const generarPDF = () => {
+  const pdf = new jsPDF();
+  
+
+  pdf.text("Nombre del Cliente: " + selectedUser.nombre, 10, 10);
+  pdf.text("Identificación: " + selectedUser.identificacion, 10, 20);
+
+
+  let y = 30;
+  [...selectedUser.bebidas, ...selectedUser.restaurante].forEach((producto, index) => {
+    pdf.text(`${producto.nombre} - Cantidad: ${producto.cantidad} - Precio: ${producto.precio}`, 10, y);
+    y += 10;
+  });
+
+  // Guardar el PDF
+  pdf.save("factura.pdf");
+};
+
+
   return (
     <div className="max-w-full w-98 mx-auto">
       <Toaster />
@@ -1370,6 +1401,9 @@ const end = start + displayLimit ;
 
 
                         <ModalFooter>
+                        <Button color="primary" onClick={generarPDF}>
+                          Guardar como PDF
+                        </Button>
                           <Button color="danger" variant="light" onClick={closeModal}>
                             Cerrar
                           </Button>

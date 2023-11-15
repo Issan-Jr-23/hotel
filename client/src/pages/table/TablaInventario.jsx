@@ -319,8 +319,13 @@ export default function App() {
                 </TableColumn>
               
               <TableColumn className="text-center">
-  {isAdmin ? 'Acción' : ''}
-</TableColumn>
+                {isAdmin || isEditor ? (
+                <div>
+                  accion
+                </div>
+                 ): null
+                 }
+              </TableColumn>
 
               
             </TableHeader>
@@ -395,7 +400,7 @@ export default function App() {
                   
                   <TableCell>{inventario.ProductosVendidos}</TableCell>
                   <TableCell>{inventario.ProductosVendidos * inventario.ValorUnitario}</TableCell>
-                  <TableCell>{ inventario.CantidadInicial}</TableCell>
+                  <TableCell>{ inventario.CantidadInicial - inventario.ProductosVendidos}</TableCell>
                   <TableCell>
                     {isAdmin || isEditor ? (
                       <div>
