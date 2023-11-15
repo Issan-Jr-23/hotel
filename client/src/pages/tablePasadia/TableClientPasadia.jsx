@@ -266,7 +266,8 @@ export default function App() {
               nombre: bebidaSeleccionada,
               cantidad: cantidadBebida,
               precio: 0,
-              mensaje: "Cortesía"
+              mensaje: "Cortesía",
+              fechaDeMarca: ""
             };
             await guardarBebida(bebidaCortesia);
             atLeastOneCortesiaSaved = true;
@@ -1072,6 +1073,7 @@ const end = start + displayLimit ;
 
 
 const generarPDF = () => {
+
   const pdf = new jsPDF();
   
 
