@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {addFood, obtenerCPI, obtenerClientes, updateClientCts, updatePP} from "../controllers/client.controllers.js";
+import {actualizarFacturacion, addFood, obtenerCPI, obtenerClientes, updateClientCts, updatePP} from "../controllers/client.controllers.js";
 import {crearCliente} from "../controllers/client.controllers.js";
 import {deleteClient} from "../controllers/client.controllers.js";
 import {updateClient} from "../controllers/client.controllers.js";
@@ -16,5 +16,6 @@ router.post("/pasadia-agregar-food", addFood);
 router.get('/pasadia-clientes/:id', obtenerCPI)
 router.put('/pasadia-clientes/:id/actualizar', updatePP)
 router.put("/pasadia-clientes/:id/cortesias", updateClientCts);
+router.put("/facturacion", actualizarFacturacion)
 
 export default router;

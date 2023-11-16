@@ -240,6 +240,31 @@ export const updateClientCts = async (req, res) => {
     res.status(500).json({ mensaje: 'Error interno del servidor' });
   }
 };
+
+export const actualizarFacturacion = async (req, res) => {
+  try {
+    // console.log(req.body)
+    const { bebidas, restaurante,clienteId } = req.body;// Asume que envías el ID del cliente
+    
+    const cliente = await Cliente.findById(clienteId);
+    if (!cliente) {
+      return res.status(404).json({ message: "Cliente no encontrado: "+clienteId });
+    }
+
+    cliente.bebidas = bebidas;
+    cliente.restaurante = restaurante;
+    console.log(cliente.bebidas)
+    console.log(cliente.restaurante)
+
+    await cliente.save();
+    console.log(cliente)
+
+    res.status(200).json({ message: "Facturación actualizada con éxito" });
+  } catch (error) {
+    console.error('Error al actualizar la facturación:', error);
+    res.status(500).json({ message: "Error al actualizar la facturación" });
+  }
+};
       
 
 

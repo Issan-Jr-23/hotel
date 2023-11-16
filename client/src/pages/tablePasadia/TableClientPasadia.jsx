@@ -609,6 +609,7 @@ export default function App() {
           nombre: foodSeleccionada,
           cantidad: cantidadFood,
           precio: precioFoodSeleccionada,
+          fechaMarca: ""
         };
   
         if (await checkStockAndUpdateInventory(foodSeleccionadaId, cantidadFood)) {
@@ -1071,11 +1072,48 @@ const start = (currentPage - 1) * displayLimit;
 const end = start + displayLimit ;
  
 
+async function actualizarFechaEnProductos() {
+  // Obten la fecha y hora actual
+  const fechaActual = new Date();
 
-const generarPDF = () => {
+  // Resta 5 horas
+  fechaActual.setHours(fechaActual.getHours() - 5);
+
+  // Convierte a formato ISO si es necesario
+  const fechaISO = fechaActual.toISOString();
+
+  selectedUser.bebidas.forEach(bebida => {
+    bebida.fechaDeMarca = fechaISO;
+  });
+  selectedUser.restaurante.forEach(comida => {
+    comida.fechaMarca = fechaISO;
+  });
+
+  const datosActualizados = {
+    clienteId: selectedUser._id,
+    bebidas: selectedUser.bebidas,
+    restaurante: selectedUser.restaurante
+  };
+
+  try {
+    const response = await axios.put('http://127.0.0.1:3000/api/facturacion', datosActualizados);
+    console.log('Datos actualizados con éxito:', response.data);
+  } catch (error) {
+    console.error('Error al actualizar los datos:', error);
+  }
+}
+
+
+
+
+
+
+const generarPDF = async () => {
 
   const pdf = new jsPDF();
   
+  await actualizarFechaEnProductos(selectedUser._id);
+  console.log(selectedUser._id)
 
   pdf.text("Nombre del Cliente: " + selectedUser.nombre, 10, 10);
   pdf.text("Identificación: " + selectedUser.identificacion, 10, 20);
@@ -1345,7 +1383,7 @@ const generarPDF = () => {
                       <ModalContent >
                         <ModalHeader className="border-b-3 border-blue-500 text-3xl flex  justify-between">
                           <div className="mb-0.5">History</div>
-                          <div className="uppercase"> {selectedUser.nombre} - {selectedUser.identificacion}</div>
+                          <div className="uppercase"> {selectedUser.nombre} - {selectedUser.identificacion} - {selectedUser.fechaDeMarca}</div>
                         </ModalHeader>
                         <ModalBody className="uppercase flex">
                           <div className="flex w-full">
@@ -1403,7 +1441,7 @@ const generarPDF = () => {
 
 
                         <ModalFooter>
-                        <Button color="primary" onClick={generarPDF}>
+                        <Button color="primary" onClick={() => generarPDF(selectedUser._id)}>
                           Guardar como PDF
                         </Button>
                           <Button color="danger" variant="light" onClick={closeModal}>
