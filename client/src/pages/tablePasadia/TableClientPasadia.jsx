@@ -1129,6 +1129,14 @@ const generarPDF = async () => {
   pdf.save("factura.pdf");
 };
 
+let fecha = new Date();
+
+// Restar 5 horas
+fecha.setHours(fecha.getHours() - 5);
+
+// Formatear la fecha
+const fechaAjustada = fecha.toLocaleString();
+
 
   return (
     <div className="max-w-full w-98 mx-auto">
@@ -1410,10 +1418,27 @@ const generarPDF = async () => {
                                       {/* Muestra los productos (bebidas y comidas) */}
                                       {[...selectedUser.bebidas, ...selectedUser.restaurante].map((producto, index) => (
                                         <tr key={index}>
-                                          <td>{producto.nombre}</td>
-                                          <td>{producto.cantidad}</td>
-                                          <td>{producto.precio}</td>
-                                          <td>{producto.cantidad * producto.precio}</td>
+                                          <td>
+                                            {producto.fechaDeMarca === "" || producto.fechaDeMarca === fechaAjustada ?(
+                                              producto.nombre
+                                            ): null }
+                                            
+                                            </td>
+                                          <td>
+                                          {producto.fechaDeMarca === "" || producto.fechaDeMarca === fechaAjustada ?(
+                                              producto.cantidad
+                                            ): null }
+                                          </td>
+                                          <td>
+                                          {producto.fechaDeMarca === "" || producto.fechaDeMarca === fechaAjustada ?(
+                                              producto.precio
+                                            ): null }
+                                            </td>
+                                          <td>
+                                          {producto.fechaDeMarca === "" || producto.fechaDeMarca === fechaAjustada ?(
+                                              producto.cantidad  *  producto.precio
+                                            ): null }
+                                          </td>
                                         </tr>
                                       ))}
                                     </tbody>
@@ -1422,11 +1447,13 @@ const generarPDF = async () => {
                                         <td className="w-6/12 text-left"></td>
                                         <td></td>
                                         <td></td>
-                                        <td style={{ height: "60px", paddingRight: "20px", width: "150px" }} className="text-right">Total: {
-                                          [...selectedUser.bebidas, ...selectedUser.restaurante].reduce((acc, producto) =>
-                                            acc + (producto.cantidad * producto.precio), 0
-                                          )
-                                        }</td>
+                                        <td style={{ height: "60px", paddingRight: "20px", width: "150px" }} className="text-right">
+                                          Total: {
+                                            [...selectedUser.bebidas, ...selectedUser.restaurante]
+                                              .filter(producto => producto.fechaDeMarca === "" || producto.fechaDeMarca === fechaAjustada)
+                                              .reduce((acc, producto) => acc + (producto.cantidad * producto.precio), 0)
+                                          }
+                                        </td>
                                       </tr>
                                     </tfoot>
                                   </table>
