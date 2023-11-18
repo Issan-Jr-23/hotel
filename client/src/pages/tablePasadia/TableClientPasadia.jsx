@@ -1142,14 +1142,6 @@ const generarPDF = async () => {
   pdf.save("factura.pdf");
 };
 
-let fecha = new Date();
-
-// Restar 5 horas
-fecha.setHours(fecha.getHours() - 5);
-
-// Formatear la fecha
-const fechaAjustada = fecha.toLocaleString();
-
 
 
 let fecha = new Date();
@@ -1445,7 +1437,6 @@ const hours = fecha2.toLocaleString();
                                       {/* Muestra los productos (bebidas y comidas) */}
                                       {[...selectedUser.bebidas, ...selectedUser.restaurante].map((producto, index) => (
                                         <tr key={index}>
-
                                         <td>
                                           {
                                             (() => {
@@ -1474,29 +1465,6 @@ const hours = fecha2.toLocaleString();
                                           ): null }
                                         </td>
                                       </tr>
-=======
-                                          <td>
-                                            {producto.fechaDeMarca === "" || producto.fechaDeMarca === fechaAjustada ?(
-                                              producto.nombre
-                                            ): null }
-                                            
-                                            </td>
-                                          <td>
-                                          {producto.fechaDeMarca === "" || producto.fechaDeMarca === fechaAjustada ?(
-                                              producto.cantidad
-                                            ): null }
-                                          </td>
-                                          <td>
-                                          {producto.fechaDeMarca === "" || producto.fechaDeMarca === fechaAjustada ?(
-                                              producto.precio
-                                            ): null }
-                                            </td>
-                                          <td>
-                                          {producto.fechaDeMarca === "" || producto.fechaDeMarca === fechaAjustada ?(
-                                              producto.cantidad  *  producto.precio
-                                            ): null }
-                                          </td>
-                                        </tr>
                                       ))}
                                     </tbody>
                                     <tfoot className="border-t-3 border-green-500 pt-2">
