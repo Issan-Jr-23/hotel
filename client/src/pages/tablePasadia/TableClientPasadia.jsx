@@ -29,6 +29,7 @@ import plus from "../../images/plus.png";
 import plusb from "../../images/plus_blue.png";
 import toast, { Toaster } from 'react-hot-toast';
 import jsPDF from "jspdf";
+import Swal from 'sweetalert2';
 import html2canvas from "html2canvas";
 // import "./tables.css"
 import "../table/table.css"
@@ -528,7 +529,8 @@ export default function App() {
               nombre: foodSeleccionada,
               cantidad: cantidadFood,
               precio: 0,
-              mensaje: "Cortesía"
+              mensaje: "Cortesía",
+              fechaDeMarca: ""
             };
             await guardarFood(foodCortesia);
             atLeastOneCortesiaSaved = true;
@@ -543,7 +545,8 @@ export default function App() {
               nombre: food1Seleccionada,
               cantidad: cantidadFood1,
               precio: 0,
-              mensaje: "Cortesía"
+              mensaje: "Cortesía",
+              fechaDeMarca: ""
             };
             await guardarFood(foodCortesia1);
             atLeastOneCortesiaSaved = true;
@@ -558,7 +561,8 @@ export default function App() {
               nombre: food2Seleccionada,
               cantidad: cantidadFood2,
               precio: 0,
-              mensaje: "Cortesía"
+              mensaje: "Cortesía",
+              fechaDeMarca: ""
             };
             await guardarFood(foodCortesia2);
             atLeastOneCortesiaSaved = true;
@@ -573,7 +577,8 @@ export default function App() {
               nombre: food3Seleccionada,
               cantidad: cantidadFood3,
               precio: 0,
-              mensaje: "Cortesía"
+              mensaje: "Cortesía",
+              fechaDeMarca: ""
             };
             await guardarFood(foodCortesia3);
             atLeastOneCortesiaSaved = true;
@@ -588,7 +593,8 @@ export default function App() {
               nombre: food4Seleccionada,
               cantidad: cantidadFood4,
               precio: 0,
-              mensaje: "Cortesía"
+              mensaje: "Cortesía",
+              fechaDeMarca: ""
             };
             await guardarFood(foodCortesia4);
             atLeastOneCortesiaSaved = true;
@@ -609,7 +615,7 @@ export default function App() {
           nombre: foodSeleccionada,
           cantidad: cantidadFood,
           precio: precioFoodSeleccionada,
-          fechaMarca: ""
+          fechaDeMarca: ""
         };
   
         if (await checkStockAndUpdateInventory(foodSeleccionadaId, cantidadFood)) {
@@ -618,20 +624,7 @@ export default function App() {
         }
       }
   
-      //nueva nuera
-      if (cantidadFood1 > 0 && food1SeleccionadaId) {
-        const foodAdultos1 = {
-          id: food1SeleccionadaId,
-          nombre: food1Seleccionada,
-          cantidad: cantidadFood1,
-          precio: precioFood1Seleccionada,
-        };
-  
-        if (await checkStockAndUpdateInventory(food1SeleccionadaId, cantidadFood1)) {
-          await guardarFood(foodAdultos1);
-          isBebidaAdded = true;
-        }
-      }
+
 
       //nueva nuera
       if (cantidadFood1 > 0 && food1SeleccionadaId) {
@@ -640,6 +633,7 @@ export default function App() {
           nombre: food1Seleccionada,
           cantidad: cantidadFood1,
           precio: precioFood1Seleccionada,
+          fechaDeMarca: ""
         };
   
         if (await checkStockAndUpdateInventory(food1SeleccionadaId, cantidadFood1)) {
@@ -655,6 +649,7 @@ export default function App() {
           nombre: food2Seleccionada,
           cantidad: cantidadFood2,
           precio: precioFood2Seleccionada,
+          fechaDeMarca: ""
         };
   
         if (await checkStockAndUpdateInventory(food2SeleccionadaId, cantidadFood2)) {
@@ -670,6 +665,7 @@ export default function App() {
           nombre: food3Seleccionada,
           cantidad: cantidadFood3,
           precio: precioFood3Seleccionada,
+          fechaDeMarca: ""
         };
   
         if (await checkStockAndUpdateInventory(food3SeleccionadaId, cantidadFood3)) {
@@ -685,6 +681,7 @@ export default function App() {
           nombre: food4Seleccionada,
           cantidad: cantidadFood4,
           precio: precioFood4Seleccionada,
+          fechaDeMarca: ""
         };
   
         if (await checkStockAndUpdateInventory(food4SeleccionadaId, cantidadFood4)) {
@@ -1067,6 +1064,8 @@ export default function App() {
 
 
 
+
+
 const totalPages = Math.ceil(datosFiltrados.length / displayLimit + 1 );
 const start = (currentPage - 1) * displayLimit;
 const end = start + displayLimit ;
@@ -1083,10 +1082,16 @@ async function actualizarFechaEnProductos() {
   const fechaISO = fechaActual.toISOString();
 
   selectedUser.bebidas.forEach(bebida => {
-    bebida.fechaDeMarca = fechaISO;
+    // Solo actualiza si fechaDeMarca está vacía
+    if (bebida.fechaDeMarca === "") {
+      bebida.fechaDeMarca = fechaISO;
+    }
   });
   selectedUser.restaurante.forEach(comida => {
-    comida.fechaMarca = fechaISO;
+    // Solo actualiza si fechaMarca está vacía
+    if (comida.fechaDeMarca === "") {
+      comida.fechaDeMarca = fechaISO;
+    }
   });
 
   const datosActualizados = {
@@ -1094,6 +1099,8 @@ async function actualizarFechaEnProductos() {
     bebidas: selectedUser.bebidas,
     restaurante: selectedUser.restaurante
   };
+
+  console.log(datosActualizados)
 
   try {
     const response = await axios.put('http://127.0.0.1:3000/api/facturacion', datosActualizados);
@@ -1108,26 +1115,46 @@ async function actualizarFechaEnProductos() {
 
 
 
+
 const generarPDF = async () => {
-
   const pdf = new jsPDF();
-  
-  await actualizarFechaEnProductos(selectedUser._id);
-  console.log(selectedUser._id)
 
+  await actualizarFechaEnProductos(selectedUser._id);
+  console.log(selectedUser._id);
+  
+  // Información del cliente
   pdf.text("Nombre del Cliente: " + selectedUser.nombre, 10, 10);
   pdf.text("Identificación: " + selectedUser.identificacion, 10, 20);
 
-
+  // Preparar la impresión de los productos
   let y = 30;
-  [...selectedUser.bebidas, ...selectedUser.restaurante].forEach((producto, index) => {
-    pdf.text(`${producto.nombre} - Cantidad: ${producto.cantidad} - Precio: ${producto.precio}`, 10, y);
-    y += 10;
+  const productos = [...selectedUser.bebidas, ...selectedUser.restaurante];
+
+  // Asegurar que los productos a mostrar cumplen con la condición de tu modal
+  productos.forEach((producto, index) => {
+    if (producto.fechaDeMarca === "" || producto.fechaDeMarca === fechaAjustada) {
+      pdf.text(`${producto.nombre} - Cantidad: ${producto.cantidad} - Precio: ${producto.precio}`, 10, y);
+      y += 10;
+    }
   });
 
   // Guardar el PDF
   pdf.save("factura.pdf");
 };
+
+
+
+let fecha = new Date();
+
+fecha.setHours(fecha.getHours() - 5);
+
+const fechaAjustada = fecha.toLocaleString();
+
+let fecha2 = new Date();
+
+fecha2.setHours(fecha2.getHours());
+
+const hours = fecha2.toLocaleString();
 
 
   return (
@@ -1410,11 +1437,34 @@ const generarPDF = async () => {
                                       {/* Muestra los productos (bebidas y comidas) */}
                                       {[...selectedUser.bebidas, ...selectedUser.restaurante].map((producto, index) => (
                                         <tr key={index}>
-                                          <td>{producto.nombre}</td>
-                                          <td>{producto.cantidad}</td>
-                                          <td>{producto.precio}</td>
-                                          <td>{producto.cantidad * producto.precio}</td>
-                                        </tr>
+                                        <td>
+                                          {
+                                            (() => {
+                                              const cincoHorasEnMilisegundos = 3 * 60 * 60 * 1000; // 5 horas en milisegundos
+                                              const ahora = new Date();
+                                              const fechaDeMarca = new Date(producto.fechaDeMarca);
+                                              const diferenciaEnHoras = (ahora - fechaDeMarca) / cincoHorasEnMilisegundos;
+
+                                              return (producto.fechaDeMarca === "" || diferenciaEnHoras <= 3) ? producto.nombre : null;
+                                            })()
+                                          }
+                                        </td>
+                                        <td>
+                                        {producto.fechaDeMarca === "" || producto.fechaDeMarca === fechaAjustada ?(
+                                            producto.cantidad
+                                          ): null }
+                                        </td>
+                                        <td>
+                                        {producto.fechaDeMarca === "" || producto.fechaDeMarca === fechaAjustada ?(
+                                            producto.precio
+                                          ): null }
+                                          </td>
+                                        <td>
+                                        {producto.fechaDeMarca === "" || producto.fechaDeMarca === fechaAjustada ?(
+                                            producto.cantidad  *  producto.precio
+                                          ): null }
+                                        </td>
+                                      </tr>
                                       ))}
                                     </tbody>
                                     <tfoot className="border-t-3 border-green-500 pt-2">
@@ -1422,11 +1472,13 @@ const generarPDF = async () => {
                                         <td className="w-6/12 text-left"></td>
                                         <td></td>
                                         <td></td>
-                                        <td style={{ height: "60px", paddingRight: "20px", width: "150px" }} className="text-right">Total: {
-                                          [...selectedUser.bebidas, ...selectedUser.restaurante].reduce((acc, producto) =>
-                                            acc + (producto.cantidad * producto.precio), 0
-                                          )
-                                        }</td>
+                                        <td style={{ height: "60px", paddingRight: "20px", width: "150px" }} className="text-right">
+                                          Total: {
+                                            [...selectedUser.bebidas, ...selectedUser.restaurante]
+                                              .filter(producto => producto.fechaDeMarca === "" || producto.fechaDeMarca === fechaAjustada)
+                                              .reduce((acc, producto) => acc + (producto.cantidad * producto.precio), 0)
+                                          }
+                                        </td>
                                       </tr>
                                     </tfoot>
                                   </table>
@@ -1441,9 +1493,33 @@ const generarPDF = async () => {
 
 
                         <ModalFooter>
-                        <Button color="primary" onClick={() => generarPDF(selectedUser._id)}>
-                          Guardar como PDF
-                        </Button>
+                        <Button color="primary" onClick={() => {
+                            Swal.fire({
+                              title: '¿Estás seguro?',
+                              text: "¿Quieres guardar esto como PDF?",
+                              icon: 'warning',
+                              showCancelButton: true,
+                              confirmButtonColor: '#3085d6',
+                              cancelButtonColor: '#d33',
+                              confirmButtonText: 'Sí, guardar',
+                              cancelButtonText: 'No, cancelar'
+                            }).then((result) => {
+                              if (result.isConfirmed) {
+                                generarPDF(selectedUser._id);
+                                // Muestra un nuevo SweetAlert con el chulito de confirmación
+                                Swal.fire({
+                                  title: '¡Guardado!',
+                                  text: 'El archivo PDF ha sido guardado exitosamente.',
+                                  icon: 'success',
+                                  confirmButtonColor: '#3085d6',
+                                  confirmButtonText: 'Ok'
+                                });
+                              }
+                            })
+                          }}>
+                            Guardar como PDF
+                          </Button>
+
                           <Button color="danger" variant="light" onClick={closeModal}>
                             Cerrar
                           </Button>

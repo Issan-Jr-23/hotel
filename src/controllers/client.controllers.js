@@ -1,3 +1,4 @@
+import { now } from "mongoose";
 import Cliente from "../models/client.model.js";
 
 export const obtenerClientes = async (req, res) => {
@@ -129,6 +130,7 @@ export const addBebida = async (req, res) => {
 
 
 
+
 export const addFood = async (req, res) => {
   const { id, food } = req.body;
 
@@ -241,10 +243,11 @@ export const updateClientCts = async (req, res) => {
   }
 };
 
+
+
 export const actualizarFacturacion = async (req, res) => {
   try {
-    // console.log(req.body)
-    const { bebidas, restaurante,clienteId } = req.body;// Asume que envías el ID del cliente
+    const { bebidas, restaurante,clienteId } = req.body;
     
     const cliente = await Cliente.findById(clienteId);
     if (!cliente) {
@@ -253,11 +256,9 @@ export const actualizarFacturacion = async (req, res) => {
 
     cliente.bebidas = bebidas;
     cliente.restaurante = restaurante;
-    console.log(cliente.bebidas)
-    console.log(cliente.restaurante)
+    console.log(restaurante)
 
     await cliente.save();
-    console.log(cliente)
 
     res.status(200).json({ message: "Facturación actualizada con éxito" });
   } catch (error) {
