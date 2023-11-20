@@ -11,6 +11,7 @@ import {
 } from "@nextui-org/react";
 import { Input } from "@nextui-org/react";
 import { Select, SelectItem } from "@nextui-org/react";
+import { API_URL } from "../../config";
 
 
 export default function FormBebidas() {
@@ -42,7 +43,7 @@ export default function FormBebidas() {
 
 
   const handleFormSubmit = () => {
-    axios.post("http://127.0.0.1:3000/api/alimentos", formData)
+    axios.post( API_URL+"/alimentos", formData)
       .then((response) => {
         onClose();
       })

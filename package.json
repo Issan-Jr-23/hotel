@@ -4,7 +4,7 @@
   "description": "A MERN CRUD with Authentication",
   "main": "index.js",
   "type": "module",
-  "homepage": "https://meqo.com/admin",
+  "homepage": "https://www.hotelmeqo.com/meqo-soft/",
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon src/index.js --ignore client",
     "start": "cross-env NODE_ENV=production node src/index.js"

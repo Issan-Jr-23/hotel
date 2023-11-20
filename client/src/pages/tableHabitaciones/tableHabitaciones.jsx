@@ -26,8 +26,11 @@ import chevron from "../../images/right.png";
 import plus from "../../images/plus.png";
 import plusb from "../../images/plus_blue.png";
 import toast, { Toaster } from 'react-hot-toast';
+import jsPDF from "jspdf";
+import Swal from 'sweetalert2';
 // import "./tables.css"
 import "../table/table.css"
+import { API_URL } from "../../config";
 
 export default function App() {
 
@@ -200,7 +203,7 @@ export default function App() {
 
   const actualizarInventarioBebida = async (bebidaId, cantidad) => {
     try {
-      const response = await axios.post('http://127.0.0.1:3000/api/actualizar-inventario-bebida', {
+      const response = await axios.post(API_URL+'/actualizar-inventario-bebida', {
         id: bebidaId,
         cantidad,
       });
@@ -222,41 +225,29 @@ export default function App() {
     }
   
     const checkStockAndUpdateInventory = async (bebidaId, cantidad) => {
-      const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad/${bebidaId}`);
+      const response = await axios.get(`${API_URL}/verificar-disponibilidad/${bebidaId}`);
      
+    
       const cantidadRestante = response.data.cantidadRestante;
-      
-      const clienteResponse = await axios.get(`http://127.0.0.1:3000/api/habitaciones-clientes/${selectedClientId}`);
+
+      const clienteResponse = await axios.get(`${API_URL}/habitaciones-clientes/${selectedClientId}`);
       const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
-      const {cantidadDeCortesias} = clienteResponse.data;
+   
       const totalPersonas = ninios + adultos;
-      const tdc = totalPersonas - cantidadDeCortesias;
+  
       if (esCortesia) {
-        const totalCortesias = cantidadBebida + cantidadBebida1;
-        console.log("prueba: "+totalCortesias)
+        const totalCortesias = cantidadBebida + cantidadBebida1 + cantidadBebida2 + cantidadBebida3 + cantidadBebida4;
         if (totalCortesias > totalPersonas) {
           alert(`La cantidad de cortesías (${totalCortesias}) no puede exceder la cantidad de personas (${totalPersonas}).`);
           return;
-        }else if(cantidadDeCortesias === totalPersonas){
-          alert("has alcanzado el limite de cortesias")
-          return;
-        }else if( totalCortesias > tdc){
-          alert(`Tus cortesias disponibles son (${tdc}) y no debe ser mayor a esa cantidad`)
-          return;
-        }else{
-          const nuevaCantidadDeCortesias = Number(cantidadDeCortesias) + Number(totalCortesias);
-          await axios.put(`http://127.0.0.1:3000/api/habitaciones-clientes/${selectedClientId}/cortesias`, {
-            cantidadDeCortesias: nuevaCantidadDeCortesias
-          });
-          alert(`La cantidad de cortesías ha sido actualizada a ${nuevaCantidadDeCortesias}.`);
         }
+       
       }
-
-
-      if (cantidad > cantidadRestante) {
+     if (cantidad > cantidadRestante) {
         alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
         return false;
       }
+  
       await actualizarInventarioBebida(bebidaId, cantidad);
       return true;
     };
@@ -276,7 +267,8 @@ export default function App() {
               nombre: bebidaSeleccionada,
               cantidad: cantidadBebida,
               precio: 0,
-              mensaje: "Cortesía"
+              mensaje: "Cortesía",
+              fechaDeMarca: ""
             };
             await guardarBebida(bebidaCortesia); 
             atLeastOneCortesiaSaved = true;
@@ -290,7 +282,8 @@ export default function App() {
               nombre: bebida1Seleccionada,
               cantidad: cantidadBebida1,
               precio: 0,
-              mensaje: "Cortesía"
+              mensaje: "Cortesía",
+              fechaDeMarca: ""
             };
             await guardarBebida(bebidaCortesia1);
             atLeastOneCortesiaSaved = true;
@@ -304,7 +297,8 @@ export default function App() {
               nombre: bebida2Seleccionada,
               cantidad: cantidadBebida2,
               precio: 0,
-              mensaje: "Cortesía"
+              mensaje: "Cortesía",
+              fechaDeMarca: ""
             };
             await guardarBebida(bebidaCortesia2);
             atLeastOneCortesiaSaved = true;
@@ -318,7 +312,8 @@ export default function App() {
               nombre: bebida3Seleccionada,
               cantidad: cantidadBebida3,
               precio: 0,
-              mensaje: "Cortesía"
+              mensaje: "Cortesía",
+              fechaDeMarca: ""
             };
             await guardarBebida(bebidaCortesia3);
             atLeastOneCortesiaSaved = true;
@@ -332,7 +327,8 @@ export default function App() {
               nombre: bebida4Seleccionada,
               cantidad: cantidadBebida4,
               precio: 0,
-              mensaje: "Cortesía"
+              mensaje: "Cortesía",
+              fechaDeMarca: ""
             };
             await guardarBebida(bebidaCortesia4);
             atLeastOneCortesiaSaved = true;
@@ -353,6 +349,7 @@ export default function App() {
           nombre: bebidaSeleccionada,
           cantidad: cantidadBebida,
           precio: precioBebidaSeleccionada,
+          fechaDeMarca: ""
         };
   
         if (await checkStockAndUpdateInventory(bebidaSeleccionadaId, cantidadBebida)) {
@@ -367,6 +364,7 @@ export default function App() {
           nombre: bebida1Seleccionada,
           cantidad: cantidadBebida1,
           precio: precioBebida1Seleccionada,
+          fechaDeMarca: ""
         };
   
         if (await checkStockAndUpdateInventory(bebida1SeleccionadaId, cantidadBebida1)) {
@@ -381,6 +379,7 @@ export default function App() {
           nombre: bebida2Seleccionada,
           cantidad: cantidadBebida2,
           precio: precioBebida2Seleccionada,
+          fechaDeMarca: ""
         };
   
         if (await checkStockAndUpdateInventory(bebida2SeleccionadaId, cantidadBebida2)) {
@@ -395,6 +394,7 @@ export default function App() {
           nombre: bebida3Seleccionada,
           cantidad: cantidadBebida3,
           precio: precioBebida3Seleccionada,
+          fechaDeMarca: ""
         };
   
         if (await checkStockAndUpdateInventory(bebida3SeleccionadaId, cantidadBebida3)) {
@@ -409,6 +409,7 @@ export default function App() {
           nombre: bebida4Seleccionada,
           cantidad: cantidadBebida4,
           precio: precioBebida4Seleccionada,
+          fechaDeMarca: ""
         };
   
         if (await checkStockAndUpdateInventory(bebida4SeleccionadaId, cantidadBebida4)) {
@@ -429,7 +430,7 @@ export default function App() {
   
   const guardarBebida = async (bebida) => {
     try {
-      const response = await axios.post('http://127.0.0.1:3000/api/habitaciones-agregar-bebida', {
+      const response = await axios.post(API_URL+'/habitaciones-agregar-bebida', {
         id: selectedClientId,
         bebida,
       });
@@ -455,7 +456,7 @@ export default function App() {
 
   const actualizarInventarioFood = async (foodId, cantidad) => {
     try {
-      const response = await axios.post('http://127.0.0.1:3000/api/actualizar-inventario-food', {
+      const response = await axios.post(API_URL+'/actualizar-inventario-food', {
         id: foodId,
         cantidad,
       });
@@ -478,33 +479,18 @@ export default function App() {
     }
   
     const checkStockAndUpdateInventory = async (foodId, cantidad) => {
-      const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad/${foodId}`);
+      const response = await axios.get(`${API_URL}/verificar-disponibilidad/${foodId}`);
      
       const cantidadRestante = response.data.cantidadRestante;
       
-      const clienteResponse = await axios.get(`http://127.0.0.1:3000/api/habitaciones-clientes/${selectedClientId}`);
+      const clienteResponse = await axios.get(`${API_URL}/habitaciones-clientes/${selectedClientId}`);
       const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
-      const {cantidadDeCortesiasF} = clienteResponse.data;
       const totalPersonas = ninios + adultos;
-      const tdc = totalPersonas - cantidadDeCortesiasF;
       if (esCortesia) {
-        const totalCortesias = cantidadFood + cantidadFood1;
-        console.log("prueba: "+totalCortesias)
+        const totalCortesias = cantidadFood + cantidadFood1 + cantidadFood2 + cantidadFood3 + cantidadFood4;
         if (totalCortesias > totalPersonas) {
           alert(`La cantidad de cortesías (${totalCortesias}) no puede exceder la cantidad de personas (${totalPersonas}).`);
           return;
-        }else if(cantidadDeCortesiasF === totalPersonas){
-          alert("has alcanzado el limite de cortesias")
-          return;
-        }else if( totalCortesias > tdc){
-          alert(`Tus cortesias disponibles son (${tdc}) y no debe ser mayor a esa cantidad`)
-          return;
-        }else{
-          const nuevaCantidadDeCortesias = Number(cantidadDeCortesiasF) + Number(totalCortesias);
-          await axios.put(`http://127.0.0.1:3000/api/habitaciones-clientes/${selectedClientId}/cortesias`, {
-            cantidadDeCortesiasF: nuevaCantidadDeCortesias
-          });
-          alert(`La cantidad de cortesías ha sido actualizada a ${nuevaCantidadDeCortesias}.`);
         }
       }
 
@@ -533,7 +519,8 @@ export default function App() {
               nombre: foodSeleccionada,
               cantidad: cantidadFood,
               precio: 0,
-              mensaje: "Cortesía"
+              mensaje: "Cortesía",
+              fechaDeMarca: ""
             };
             await guardarFood(foodCortesia);
             atLeastOneCortesiaSaved = true;
@@ -547,7 +534,8 @@ export default function App() {
               nombre: food1Seleccionada,
               cantidad: cantidadFood1,
               precio: 0,
-              mensaje: "Cortesía"
+              mensaje: "Cortesía",
+              fechaDeMarca: ""
             };
             await guardarFood(foodCortesia1);
             atLeastOneCortesiaSaved = true;
@@ -561,7 +549,8 @@ export default function App() {
               nombre: food2Seleccionada,
               cantidad: cantidadFood2,
               precio: 0,
-              mensaje: "Cortesía"
+              mensaje: "Cortesía",
+              fechaDeMarca: ""
             };
             await guardarFood(foodCortesia2);
             atLeastOneCortesiaSaved = true;
@@ -575,7 +564,8 @@ export default function App() {
               nombre: food3Seleccionada,
               cantidad: cantidadFood3,
               precio: 0,
-              mensaje: "Cortesía"
+              mensaje: "Cortesía",
+              fechaDeMarca: ""
             };
             await guardarFood(foodCortesia3);
             atLeastOneCortesiaSaved = true;
@@ -589,7 +579,8 @@ export default function App() {
               nombre: food4Seleccionada,
               cantidad: cantidadFood4,
               precio: 0,
-              mensaje: "Cortesía"
+              mensaje: "Cortesía",
+              fechaDeMarca: ""
             };
             await guardarFood(foodCortesia4);
             atLeastOneCortesiaSaved = true;
@@ -610,6 +601,7 @@ export default function App() {
           nombre: foodSeleccionada,
           cantidad: cantidadFood,
           precio: precioFoodSeleccionada,
+          fechaDeMarca: ""
         };
   
         if (await checkStockAndUpdateInventory(foodSeleccionadaId, cantidadFood)) {
@@ -624,6 +616,7 @@ export default function App() {
           nombre: food1Seleccionada,
           cantidad: cantidadFood1,
           precio: precioFood1Seleccionada,
+          fechaDeMarca: ""
         };
   
         if (await checkStockAndUpdateInventory(food1SeleccionadaId, cantidadFood1)) {
@@ -638,6 +631,7 @@ export default function App() {
           nombre: food2Seleccionada,
           cantidad: cantidadFood2,
           precio: precioFood2Seleccionada,
+          fechaDeMarca: ""
         };
   
         if (await checkStockAndUpdateInventory(food2SeleccionadaId, cantidadFood2)) {
@@ -652,6 +646,7 @@ export default function App() {
           nombre: food3Seleccionada,
           cantidad: cantidadFood3,
           precio: precioFood3Seleccionada,
+          fechaDeMarca: ""
         };
   
         if (await checkStockAndUpdateInventory(food3SeleccionadaId, cantidadFood3)) {
@@ -666,6 +661,7 @@ export default function App() {
           nombre: food4Seleccionada,
           cantidad: cantidadFood4,
           precio: precioFood4Seleccionada,
+          fechaDeMarca: ""
         };
   
         if (await checkStockAndUpdateInventory(food4SeleccionadaId, cantidadFood4)) {
@@ -688,7 +684,7 @@ export default function App() {
   const guardarFood = async (food) => {
     
     try {
-      const response = await axios.post('http://127.0.0.1:3000/api/habitaciones-agregar-food', {
+      const response = await axios.post(API_URL+'/habitaciones-agregar-food', {
         id: selectedClientId,
         food,
       });
@@ -709,7 +705,7 @@ export default function App() {
 
     closeModalF();
       closeModalF();
-      const responses = await axios.get("http://127.0.0.1:3000/api/habitaciones-clientes");
+      const responses = await axios.get(API_URL+"/habitaciones-clientes");
       setUsers(responses.data);
     } catch (error) {
       console.error('Error al guardar la bebida en el cliente:', error.message);
@@ -722,7 +718,7 @@ export default function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:3000/api/habitaciones-clientes");
+        const response = await axios.get(API_URL+"/habitaciones-clientes");
         setUsers(response.data);
         const usuariosOrdenados = response.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
       } catch (error) {
@@ -795,7 +791,7 @@ export default function App() {
 
 
 
-      await axios.post("http://127.0.0.1:3000/api/habitaciones-registrar-cliente", formData);
+      await axios.post(API_URL+"/habitaciones-registrar-cliente", formData);
       onClose();
       toast.success('Cliente agregado exitosamente!');
       setFormData({
@@ -813,7 +809,7 @@ export default function App() {
         fechaPasadia: "",
         habitaciones:""
       });
-      const response = await axios.get("http://127.0.0.1:3000/api/habitaciones-clientes");
+      const response = await axios.get(API_URL+"/habitaciones-clientes");
       setUsers(response.data);
     }
     } catch (error) {
@@ -823,13 +819,13 @@ export default function App() {
 
   const handleFormSubmitB = async () => {
     try {
-      await axios.post("http://127.0.0.1:3000/api/habitaciones-registrar-cliente", formData);
+      await axios.post(API_URL+"/habitaciones-registrar-cliente", formData);
       onClose();
       toast.success('bebida agregada exitosamente');
       setFormData({
         bebidas: ""
       });
-      const response = await axios.get("http://127.0.0.1:3000/api/habitaciones-clientes");
+      const response = await axios.get(API_URL+"/habitaciones-clientes");
       setUsers(response.data);
     } catch (error) {
       toast.error('Ocurrió un error al agregar el cliente.');
@@ -839,7 +835,7 @@ export default function App() {
   const handleEditUser = async () => {
     try {
       await axios.put(
-        `http://127.0.0.1:3000/api/habitaciones/edit/${editedUserId}`,
+        `${API_URL}/habitaciones/edit/${editedUserId}`,
         {
           nombre: editedName,
           pagoPendienteTotal: editPago
@@ -869,7 +865,7 @@ export default function App() {
     }
 
     try {
-      await axios.delete(`http://127.0.0.1:3000/api/habitaciones/${id}`);
+      await axios.delete(`${API_URL}/habitaciones/${id}`);
       const updatedUsers = users.filter((user) => user._id !== id);
       setUsers(updatedUsers);
       toast.success('Successfully toasted!')
@@ -882,7 +878,7 @@ export default function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:3000/api/drinks");
+        const response = await axios.get(API_URL+"/drinks");
         setDrinks(response.data);
         setCantidadDeBebidas(response.data)
       } catch (error) {
@@ -895,7 +891,7 @@ export default function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:3000/api/food");
+        const response = await axios.get(API_URL+"/food");
         setSnacks(response.data);
       } catch (error) {
         console.error("Error al obtener datos del servidor:", error);
@@ -1023,7 +1019,7 @@ export default function App() {
     }
     if (selectedClienteId) {
       try {
-        const response = await axios.put(`http://127.0.0.1:3000/api/habitaciones-clientes/${selectedClienteId}/actualizar`, {
+        const response = await axios.put(`${API_URL}/habitaciones-clientes/${selectedClienteId}/actualizar`, {
           pagoPendiente: formDatas.pagoPendiente,
           mediosDePagoPendiente: formDatas.mediosDePagoPendiente
         });
@@ -1032,7 +1028,7 @@ export default function App() {
           mediosDePagoPendiente: ''
         });
         toast.success('Datos actualizados exitosamente');
-        const responses = await axios.get("http://127.0.0.1:3000/api/habitaciones-clientes");
+        const responses = await axios.get(API_URL+"/habitaciones-clientes");
         setUsers(responses.data);
       } catch (error) {
         console.error('Hubo un problema con la petición Axios:', error);
@@ -1050,12 +1046,83 @@ export default function App() {
    setDisplayLimit(Number(event.target.value));
    setCurrentPage(1); 
  };
+
+
+
+
+ async function actualizarFechaEnProductos() {
+  const fechaActual = new Date();
+  fechaActual.setHours(fechaActual.getHours() - 5);
+  const fechaISO = fechaActual.toISOString();
+  selectedUser.bebidas.forEach(bebida => {
+    if (bebida.fechaDeMarca === "") {
+      bebida.fechaDeMarca = fechaISO;
+    }
+  });
+  selectedUser.restaurante.forEach(comida => {
+    if (comida.fechaDeMarca === "") {
+      comida.fechaDeMarca = fechaISO;
+    }
+  });
+  const datosActualizados = {
+    clienteId: selectedUser._id,
+    bebidas: selectedUser.bebidas,
+    restaurante: selectedUser.restaurante
+  };
+  console.log(datosActualizados)
+  try {
+    const response = await axios.put(API_URL+'/habitaciones-facturacion', datosActualizados);
+    console.log('Datos actualizados con éxito:', response.data);
+  } catch (error) {
+    console.error('Error al actualizar los datos:', error);
+  }
+}
+ 
+
+const generarPDF = async () => {
+  const pdf = new jsPDF();
+
+  await actualizarFechaEnProductos(selectedUser._id);
+  console.log(selectedUser._id);
+  
+  // Información del cliente
+  pdf.text("Nombre del Cliente: " + selectedUser.nombre, 10, 10);
+  pdf.text("Identificación: " + selectedUser.identificacion, 10, 20);
+
+  // Preparar la impresión de los productos
+  let y = 30;
+  const productos = [...selectedUser.bebidas, ...selectedUser.restaurante];
+
+  // Asegurar que los productos a mostrar cumplen con la condición de tu modal
+  productos.forEach((producto, index) => {
+    if (producto.fechaDeMarca === "" || producto.fechaDeMarca === fechaAjustada) {
+      pdf.text(`${producto.nombre} - Cantidad: ${producto.cantidad} - Precio: ${producto.precio}`, 10, y);
+      y += 10;
+    }
+  });
+
+  // Guardar el PDF
+  pdf.save("factura.pdf");
+};
  
  
  
  const totalPages = Math.ceil(datosFiltrados.length / displayLimit + 1 );
  const start = (currentPage - 1) * displayLimit;
  const end = start + displayLimit ;
+
+
+ let fecha = new Date();
+
+fecha.setHours(fecha.getHours() - 5);
+
+const fechaAjustada = fecha.toLocaleString();
+
+let fecha2 = new Date();
+
+fecha2.setHours(fecha2.getHours());
+
+const hours = fecha2.toLocaleString();
  
 
   return (
@@ -1394,6 +1461,32 @@ export default function App() {
 
 
                         <ModalFooter>
+                        <Button color="primary" onClick={() => {
+                            Swal.fire({
+                              title: '¿Estás seguro?',
+                              text: "¿Quieres guardar esto como PDF?",
+                              icon: 'warning',
+                              showCancelButton: true,
+                              confirmButtonColor: '#3085d6',
+                              cancelButtonColor: '#d33',
+                              confirmButtonText: 'Sí, guardar',
+                              cancelButtonText: 'No, cancelar'
+                            }).then((result) => {
+                              if (result.isConfirmed) {
+                                generarPDF(selectedUser._id);
+                                // Muestra un nuevo SweetAlert con el chulito de confirmación
+                                Swal.fire({
+                                  title: '¡Guardado!',
+                                  text: 'El archivo PDF ha sido guardado exitosamente.',
+                                  icon: 'success',
+                                  confirmButtonColor: '#3085d6',
+                                  confirmButtonText: 'Ok'
+                                });
+                              }
+                            })
+                          }}>
+                            Guardar como PDF
+                          </Button>
                           <Button color="danger" variant="light" onClick={closeModal}>
                             Cerrar
                           </Button>

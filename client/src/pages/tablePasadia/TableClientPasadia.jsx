@@ -33,6 +33,7 @@ import Swal from 'sweetalert2';
 // import html2canvas from "html2canvas";
 // import "./tables.css"
 import "../table/table.css"
+import { API_URL } from "../../config";
 //#endregion
 export default function App() {
 
@@ -200,7 +201,7 @@ export default function App() {
 
   const actualizarInventarioBebida = async (bebidaId, cantidad) => {
     try {
-      const response = await axios.post('http://127.0.0.1:3000/api/actualizar-inventario-bebida', {
+      const response = await axios.post(API_URL+'/actualizar-inventario-bebida', {
         id: bebidaId,
         cantidad,
       });
@@ -223,20 +224,18 @@ export default function App() {
     }
   
     const checkStockAndUpdateInventory = async (bebidaId, cantidad) => {
-      const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad/${bebidaId}`);
+      const response = await axios.get(`${API_URL}/verificar-disponibilidad/${bebidaId}`);
      
     
       const cantidadRestante = response.data.cantidadRestante;
 
-      const clienteResponse = await axios.get(`http://127.0.0.1:3000/api/pasadia-clientes/${selectedClientId}`);
+      const clienteResponse = await axios.get(`${API_URL}/pasadia-clientes/${selectedClientId}`);
       const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
    
       const totalPersonas = ninios + adultos;
   
       if (esCortesia) {
         const totalCortesias = cantidadBebida + cantidadBebida1 + cantidadBebida2 + cantidadBebida3 + cantidadBebida4;
-        console.log(totalCortesias)
-        console.log("prueba: "+totalCortesias)
         if (totalCortesias > totalPersonas) {
           alert(`La cantidad de cortesías (${totalCortesias}) no puede exceder la cantidad de personas (${totalPersonas}).`);
           return;
@@ -439,7 +438,7 @@ export default function App() {
 
   const guardarBebida = async (bebida) => {
     try {
-      const response = await axios.post('http://127.0.0.1:3000/api/pasadia-agregar-bebida', {
+      const response = await axios.post(API_URL+'/pasadia-agregar-bebida', {
         id: selectedClientId,
         bebida,
       });
@@ -467,7 +466,7 @@ export default function App() {
   
   const actualizarInventarioFood = async (foodId, cantidad) => {
     try {
-      const response = await axios.post('http://127.0.0.1:3000/api/actualizar-inventario-food', {
+      const response = await axios.post(API_URL+'/actualizar-inventario-food', {
         id: foodId,
         cantidad,
       });
@@ -489,11 +488,11 @@ export default function App() {
     }
   
     const checkStockAndUpdateInventory = async (foodId, cantidad) => {
-      const response = await axios.get(`http://127.0.0.1:3000/api/verificar-disponibilidad/${foodId}`);
+      const response = await axios.get(`${API_URL}/verificar-disponibilidad/${foodId}`);
      
       const cantidadRestante = response.data.cantidadRestante;
       
-      const clienteResponse = await axios.get(`http://127.0.0.1:3000/api/pasadia-clientes/${selectedClientId}`);
+      const clienteResponse = await axios.get(`${API_URL}/pasadia-clientes/${selectedClientId}`);
       const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
       const totalPersonas = ninios + adultos;
       if (esCortesia) {
@@ -706,7 +705,7 @@ export default function App() {
   const guardarFood = async (food) => {
     
     try {
-      const response = await axios.post('http://127.0.0.1:3000/api/pasadia-agregar-food', {
+      const response = await axios.post(API_URL+'/pasadia-agregar-food', {
         id: selectedClientId,
         food,
       });
@@ -727,7 +726,7 @@ export default function App() {
 
     closeModalF();
       closeModalF();
-      const responses = await axios.get("http://127.0.0.1:3000/api/pasadia-clientes");
+      const responses = await axios.get(API_URL+"/pasadia-clientes");
       setUsers(responses.data);
     } catch (error) {
       console.error('Error al guardar la bebida en el cliente:', error.message);
@@ -739,7 +738,7 @@ export default function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:3000/api/pasadia-clientes");
+        const response = await axios.get(API_URL+"/pasadia-clientes");
         setUsers(response.data);
         const usuariosOrdenados = response.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
       } catch (error) {
@@ -804,7 +803,7 @@ export default function App() {
 
       if(formIsValid){
 
-        await axios.post("http://127.0.0.1:3000/api/pasadia-registrar-cliente", formData);
+        await axios.post(API_URL+"/pasadia-registrar-cliente", formData);
         onClose();
         toast.success('Cliente agregado exitosamente!');
         setFormData({
@@ -822,7 +821,7 @@ export default function App() {
           fechaPasadia: ""
 
         });
-        const response = await axios.get("http://127.0.0.1:3000/api/pasadia-clientes");
+        const response = await axios.get(API_URL+"/pasadia-clientes");
         setUsers(response.data);
       }
     } catch (error) {
@@ -832,13 +831,13 @@ export default function App() {
 //#region 
   const handleFormSubmitB = async () => {
     try {
-      await axios.post("http://127.0.0.1:3000/api/pasadia-registrar-cliente", formData);
+      await axios.post(API_URL+"/pasadia-registrar-cliente", formData);
       onClose();
       toast.success('bebida agregada exitosamente');
       setFormData({
         bebidas: ""
       });
-      const response = await axios.get("http://127.0.0.1:3000/api/pasadia-clientes");
+      const response = await axios.get(API_URL+"/pasadia-clientes");
       setUsers(response.data);
     } catch (error) {
       toast.error('Ocurrió un error al agregar el cliente.');
@@ -848,7 +847,7 @@ export default function App() {
   const handleEditUser = async () => {
     try {
       await axios.put(
-        `http://127.0.0.1:3000/api/pasadia/edit/${editedUserId}`,
+        `${API_URL}/pasadia/edit/${editedUserId}`,
         {
           nombre: editedName,
           pagoPendienteTotal: editPago
@@ -878,7 +877,7 @@ export default function App() {
     }
 
     try {
-      await axios.delete(`http://127.0.0.1:3000/api/pasadia/${id}`);
+      await axios.delete(`${API_URL}/pasadia/${id}`);
       const updatedUsers = users.filter((user) => user._id !== id);
       setUsers(updatedUsers);
       toast.success('Successfully toasted!')
@@ -891,7 +890,7 @@ export default function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:3000/api/drinks");
+        const response = await axios.get(API_URL+"/drinks");
         setDrinks(response.data);
         setCantidadDeBebidas(response.data)
       } catch (error) {
@@ -904,7 +903,7 @@ export default function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:3000/api/food");
+        const response = await axios.get(API_URL+"/food");
         setSnacks(response.data);
       } catch (error) {
         console.error("Error al obtener datos del servidor:", error);
@@ -1033,7 +1032,7 @@ export default function App() {
     }
     if (selectedClienteId) {
       try {
-        const response = await axios.put(`http://127.0.0.1:3000/api/pasadia-clientes/${selectedClienteId}/actualizar`, {
+        const response = await axios.put(`${API_URL}/pasadia-clientes/${selectedClienteId}/actualizar`, {
           pagoPendiente: formDatas.pagoPendiente,
           mediosDePagoPendiente: formDatas.mediosDePagoPendiente
         });
@@ -1042,7 +1041,7 @@ export default function App() {
           mediosDePagoPendiente: ''
         });
         toast.success('Datos actualizados exitosamente');
-        const responses = await axios.get("http://127.0.0.1:3000/api/pasadia-clientes");
+        const responses = await axios.get(API_URL+"/pasadia-clientes");
         setUsers(responses.data);
         const usuariosOrdenados = response.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
       } catch (error) {
@@ -1092,17 +1091,12 @@ async function actualizarFechaEnProductos() {
   };
   console.log(datosActualizados)
   try {
-    const response = await axios.put('http://127.0.0.1:3000/api/facturacion', datosActualizados);
+    const response = await axios.put(API_URL+'/facturacion', datosActualizados);
     console.log('Datos actualizados con éxito:', response.data);
   } catch (error) {
     console.error('Error al actualizar los datos:', error);
   }
 }
-
-
-
-
-
 
 
 const generarPDF = async () => {

@@ -125,10 +125,6 @@ export const addBebida = async (req, res) => {
   }
 };
 
-
-
-
-
 export const addFood = async (req, res) => {
   const { id, food } = req.body;
 

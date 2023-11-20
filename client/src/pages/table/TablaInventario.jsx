@@ -16,6 +16,7 @@ import { useAuth } from "../../context/authContext.jsx";
 
 
 import "./table.css"
+import { API_URL } from "../../config.js";
 
 export default function App() {
   const { user } = useAuth();
@@ -64,7 +65,7 @@ export default function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:3000/api/obtener-inventario");
+        const response = await axios.get(API_URL+"/obtener-inventario");
         setUsers(response.data);
       } catch (error) {
         console.error("Error al obtener datos del servidor:", error);
@@ -78,10 +79,10 @@ export default function App() {
 
   const handleFormSubmit = async () => {
     try {
-      await axios.post("http://127.0.0.1:3000/api/inventario", formData);
+      await axios.post(API_URL+"/inventario", formData);
       
       onClose();
-      const response = await axios.get("http://127.0.0.1:3000/api/obtener-inventario");
+      const response = await axios.get(API_URL+"/obtener-inventario");
       setUsers(response.data);
     } catch (error) {
       console.error("Error al agregar el producto: ", error);
@@ -99,7 +100,7 @@ export default function App() {
     }
 
     try {
-      await axios.delete(`http://127.0.0.1:3000/api/eliminar-mekato/${id}`);
+      await axios.delete(`${API_URL}/eliminar-mekato/${id}`);
       const updatedUsers = users.filter((user) => user._id !== id);
       setUsers(updatedUsers);
       toast.success('Successfully toasted!')
@@ -113,7 +114,7 @@ export default function App() {
   const handleEditUser = async (id) => {
     try {
       await axios.put(
-        `http://127.0.0.1:3000/api/update-producto/${id}`,
+        `${API_URL}/update-producto/${id}`,
         { Descripcion: editedName, tipo: editedType, Caducidad: editedDate, CantidadInicial: editedCantidad, ValorUnitario: editedValorUnitario }
       );
       const updatedUsers = users.map((inventario) =>

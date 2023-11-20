@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
+import { API_URL } from '../config';
 
 const MyChart = () => {
   const [chartData, setChartData] = useState({ categories: [], series: [] });
@@ -73,7 +74,7 @@ const MyChart = () => {
   async function fetchData() {
     setLoading(true);
     try {
-      const response = await fetch('http://127.0.0.1:3000/api/cantidad-reservaciones');
+      const response = await fetch(API_URL+'/cantidad-reservaciones');
       const { pasadias, cabanias, habitaciones } = await response.json();
 
       let fechas;

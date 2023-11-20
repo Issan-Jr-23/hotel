@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
+import { API_URL } from '../config';
 
 const GraficaProductos = () => {
     const [productos, setProductos] = useState([]);
 
     useEffect(() => {
-        fetch('http://127.0.0.1:3000/api/productos/mas-vendidos')
+        fetch( API_URL+'/productos/mas-vendidos')
             .then(response => response.json())
             .then(data => setProductos(data))
             .catch(error => console.error('Error al obtener los datos:', error));
