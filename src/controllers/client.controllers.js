@@ -95,27 +95,39 @@ export const addBebida = async (req, res) => {
     if (cliente) {
       let index = -1;
 
-      // Determinar si se busca una bebida de cortesía o normal
+      // Revisa si es una bebida de cortesía o normal
       if (bebida.mensaje === "Cortesía") {
-        // Busca si ya existe una bebida de cortesía igual
         index = cliente.bebidas.findIndex(b => b.id === bebida.id && b.mensaje === "Cortesía");
       } else {
-        // Busca si ya existe la misma bebida pero que no sea de cortesía
         index = cliente.bebidas.findIndex(b => b.id === bebida.id && b.mensaje !== "Cortesía");
       }
 
+      const hoy = new Date().toISOString().split('T')[0]; // Fecha actual en formato yyyy-mm-dd
+
       if (index > -1) {
-        // Si la bebida ya existe (sea cortesía o no), actualiza la cantidad
-        cliente.bebidas[index].cantidad += bebida.cantidad;
+        // Si la bebida ya existe
+        const bebidaExistente = cliente.bebidas[index];
+        console.log("BEBIDA EXISTENTE: "+bebidaExistente)
+
+        if (!bebidaExistente.fechaDeMarca || bebidaExistente.fechaDeMarca === hoy) {
+          // Si fechaDeMarca está vacía o es igual a la fecha actual, actualiza la cantidad
+          bebidaExistente.cantidad += bebida.cantidad;
+        } else {
+          // Si la fechaDeMarca es diferente, crea una nueva bebida
+          if (bebida.mensaje === "Cortesía") {
+            bebida.precio = 0;
+          }
+          cliente.bebidas.push(bebida);
+        }
       } else {
-        // Si la bebida no existe o es un tipo diferente (cortesía o no), la agrega
+        // Si la bebida no existe o es un tipo diferente, la agrega
         if (bebida.mensaje === "Cortesía") {
-          bebida.precio = 0; // Asegura que el precio de la cortesía sea 0
+          bebida.precio = 0;
         }
         cliente.bebidas.push(bebida);
       }
 
-      cliente.markModified('bebidas'); // Indica que el array 'bebidas' ha sido modificado
+      cliente.markModified('bebidas');
       await cliente.save();
       res.status(200).json(cliente);
     } else {
@@ -126,6 +138,9 @@ export const addBebida = async (req, res) => {
     res.status(500).json({ message: 'Error al agregar la bebida al cliente' });
   }
 };
+
+
+
 
 
 

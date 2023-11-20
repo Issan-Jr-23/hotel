@@ -1450,19 +1450,40 @@ const hours = fecha2.toLocaleString();
                                           }
                                         </td>
                                         <td>
-                                        {producto.fechaDeMarca === "" || producto.fechaDeMarca === fechaAjustada ?(
-                                            producto.cantidad
-                                          ): null }
+                                          {
+                                            (() => {
+                                              const cincoHorasEnMilisegundos = 3 * 60 * 60 * 1000; // 5 horas en milisegundos
+                                              const ahora = new Date();
+                                              const fechaDeMarca = new Date(producto.fechaDeMarca);
+                                              const diferenciaEnHoras = (ahora - fechaDeMarca) / cincoHorasEnMilisegundos;
+
+                                              return (producto.fechaDeMarca === "" || diferenciaEnHoras <= 3) ? producto.cantidad : null;
+                                            })()
+                                          }
                                         </td>
                                         <td>
-                                        {producto.fechaDeMarca === "" || producto.fechaDeMarca === fechaAjustada ?(
-                                            producto.precio
-                                          ): null }
-                                          </td>
+                                          {
+                                            (() => {
+                                              const cincoHorasEnMilisegundos = 3 * 60 * 60 * 1000; // 5 horas en milisegundos
+                                              const ahora = new Date();
+                                              const fechaDeMarca = new Date(producto.fechaDeMarca);
+                                              const diferenciaEnHoras = (ahora - fechaDeMarca) / cincoHorasEnMilisegundos;
+
+                                              return (producto.fechaDeMarca === "" || diferenciaEnHoras <= 3) ? producto.precio : null;
+                                            })()
+                                          }
+                                        </td>
                                         <td>
-                                        {producto.fechaDeMarca === "" || producto.fechaDeMarca === fechaAjustada ?(
-                                            producto.cantidad  *  producto.precio
-                                          ): null }
+                                          {
+                                            (() => {
+                                              const cincoHorasEnMilisegundos = 3 * 60 * 60 * 1000; // 5 horas en milisegundos
+                                              const ahora = new Date();
+                                              const fechaDeMarca = new Date(producto.fechaDeMarca);
+                                              const diferenciaEnHoras = (ahora - fechaDeMarca) / cincoHorasEnMilisegundos;
+
+                                              return (producto.fechaDeMarca === "" || diferenciaEnHoras <= 3) ? producto.cantidad * producto.precio : null;
+                                            })()
+                                          }
                                         </td>
                                       </tr>
                                       ))}
@@ -1475,10 +1496,18 @@ const hours = fecha2.toLocaleString();
                                         <td style={{ height: "60px", paddingRight: "20px", width: "150px" }} className="text-right">
                                           Total: {
                                             [...selectedUser.bebidas, ...selectedUser.restaurante]
-                                              .filter(producto => producto.fechaDeMarca === "" || producto.fechaDeMarca === fechaAjustada)
+                                              .filter(producto => {
+                                                const cincoHorasEnMilisegundos = 3 * 60 * 60 * 1000; // 3 horas en milisegundos
+                                                const ahora = new Date();
+                                                const fechaDeMarca = new Date(producto.fechaDeMarca);
+                                                const diferenciaEnHoras = (ahora - fechaDeMarca) / cincoHorasEnMilisegundos;
+
+                                                return producto.fechaDeMarca === "" || diferenciaEnHoras <= 3;
+                                              })
                                               .reduce((acc, producto) => acc + (producto.cantidad * producto.precio), 0)
                                           }
                                         </td>
+
                                       </tr>
                                     </tfoot>
                                   </table>
