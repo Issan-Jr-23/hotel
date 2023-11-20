@@ -27,6 +27,8 @@ import chevron from "../../images/right.png";
 import plus from "../../images/plus.png";
 import plusb from "../../images/plus_blue.png";
 import toast, { Toaster } from 'react-hot-toast';
+import jsPDF from "jspdf";
+import Swal from 'sweetalert2';
 // import "./tables.css"
 import "../table/table.css"
 
@@ -309,7 +311,8 @@ export default function App() {
               nombre: bebidaSeleccionada,
               cantidad: cantidadBebida,
               precio: 0,
-              mensaje: "Cortesía"
+              mensaje: "Cortesía",
+              fechaDeMarca: ""
             };
             await guardarBebida(bebidaCortesia); 
             atLeastOneCortesiaSaved = true;
@@ -323,7 +326,8 @@ export default function App() {
               nombre: bebida1Seleccionada,
               cantidad: cantidadBebida1,
               precio: 0,
-              mensaje: "Cortesía"
+              mensaje: "Cortesía",
+              fechaDeMarca: ""
             };
             await guardarBebida(bebidaCortesia1);
             atLeastOneCortesiaSaved = true;
@@ -337,7 +341,8 @@ export default function App() {
               nombre: bebida2Seleccionada,
               cantidad: cantidadBebida2,
               precio: 0,
-              mensaje: "Cortesía"
+              mensaje: "Cortesía",
+              fechaDeMarca: ""
             };
             await guardarBebida(bebidaCortesia2);
             atLeastOneCortesiaSaved = true;
@@ -351,7 +356,8 @@ export default function App() {
               nombre: bebida3Seleccionada,
               cantidad: cantidadBebida3,
               precio: 0,
-              mensaje: "Cortesía"
+              mensaje: "Cortesía",
+              fechaDeMarca: ""
             };
             await guardarBebida(bebidaCortesia3);
             atLeastOneCortesiaSaved = true;
@@ -365,7 +371,8 @@ export default function App() {
               nombre: bebida4Seleccionada,
               cantidad: cantidadBebida4,
               precio: 0,
-              mensaje: "Cortesía"
+              mensaje: "Cortesía",
+              fechaDeMarca: ""
             };
             await guardarBebida(bebidaCortesia4);
             atLeastOneCortesiaSaved = true;
@@ -386,6 +393,7 @@ export default function App() {
           nombre: bebidaSeleccionada,
           cantidad: cantidadBebida,
           precio: precioBebidaSeleccionada,
+          fechaDeMarca: ""
         };
   
         if (await checkStockAndUpdateInventory(bebidaSeleccionadaId, cantidadBebida)) {
@@ -400,6 +408,7 @@ export default function App() {
           nombre: bebida1Seleccionada,
           cantidad: cantidadBebida1,
           precio: precioBebida1Seleccionada,
+          fechaDeMarca: ""
         };
   
         if (await checkStockAndUpdateInventory(bebida1SeleccionadaId, cantidadBebida1)) {
@@ -414,6 +423,7 @@ export default function App() {
           nombre: bebida2Seleccionada,
           cantidad: cantidadBebida2,
           precio: precioBebida2Seleccionada,
+          fechaDeMarca: ""
         };
   
         if (await checkStockAndUpdateInventory(bebida2SeleccionadaId, cantidadBebida2)) {
@@ -428,6 +438,7 @@ export default function App() {
           nombre: bebida3Seleccionada,
           cantidad: cantidadBebida3,
           precio: precioBebida3Seleccionada,
+          fechaDeMarca: ""
         };
   
         if (await checkStockAndUpdateInventory(bebida3SeleccionadaId, cantidadBebida3)) {
@@ -442,6 +453,7 @@ export default function App() {
           nombre: bebida4Seleccionada,
           cantidad: cantidadBebida4,
           precio: precioBebida4Seleccionada,
+          fechaDeMarca: ""
         };
   
         if (await checkStockAndUpdateInventory(bebida4SeleccionadaId, cantidadBebida4)) {
@@ -1076,7 +1088,62 @@ export default function App() {
    setDisplayLimit(Number(event.target.value));
    setCurrentPage(1); 
  };
+
+
+ async function actualizarFechaEnProductos() {
+  const fechaActual = new Date();
+  fechaActual.setHours(fechaActual.getHours() - 5);
+  const fechaISO = fechaActual.toISOString();
+  selectedUser.bebidas.forEach(bebida => {
+    if (bebida.fechaDeMarca === "") {
+      bebida.fechaDeMarca = fechaISO;
+    }
+  });
+  selectedUser.restaurante.forEach(comida => {
+    if (comida.fechaDeMarca === "") {
+      comida.fechaDeMarca = fechaISO;
+    }
+  });
+  const datosActualizados = {
+    clienteId: selectedUser._id,
+    bebidas: selectedUser.bebidas,
+    restaurante: selectedUser.restaurante
+  };
+  console.log(datosActualizados)
+  try {
+    const response = await axios.put('http://127.0.0.1:3000/api/cabania-facturacion', datosActualizados);
+    console.log('Datos actualizados con éxito:', response.data);
+  } catch (error) {
+    console.error('Error al actualizar los datos:', error);
+  }
+}
  
+
+const generarPDF = async () => {
+  const pdf = new jsPDF();
+
+  await actualizarFechaEnProductos(selectedUser._id);
+  console.log(selectedUser._id);
+  
+  // Información del cliente
+  pdf.text("Nombre del Cliente: " + selectedUser.nombre, 10, 10);
+  pdf.text("Identificación: " + selectedUser.identificacion, 10, 20);
+
+  // Preparar la impresión de los productos
+  let y = 30;
+  const productos = [...selectedUser.bebidas, ...selectedUser.restaurante];
+
+  // Asegurar que los productos a mostrar cumplen con la condición de tu modal
+  productos.forEach((producto, index) => {
+    if (producto.fechaDeMarca === "" || producto.fechaDeMarca === fechaAjustada) {
+      pdf.text(`${producto.nombre} - Cantidad: ${producto.cantidad} - Precio: ${producto.precio}`, 10, y);
+      y += 10;
+    }
+  });
+
+  // Guardar el PDF
+  pdf.save("factura.pdf");
+};
  
  
  const totalPages = Math.ceil(datosFiltrados.length / displayLimit + 1 );
@@ -1394,11 +1461,55 @@ export default function App() {
                                       {/* Muestra los productos (bebidas y comidas) */}
                                       {[...selectedUser.bebidas, ...selectedUser.restaurante].map((producto, index) => (
                                         <tr key={index}>
-                                          <td>{producto.nombre}</td>
-                                          <td>{producto.cantidad}</td>
-                                          <td>{producto.precio}</td>
-                                          <td>{producto.cantidad * producto.precio}</td>
-                                        </tr>
+                                        <td>
+                                          {
+                                            (() => {
+                                              const cincoHorasEnMilisegundos = 3 * 60 * 60 * 1000; // 5 horas en milisegundos
+                                              const ahora = new Date();
+                                              const fechaDeMarca = new Date(producto.fechaDeMarca);
+                                              const diferenciaEnHoras = (ahora - fechaDeMarca) / cincoHorasEnMilisegundos;
+
+                                              return (producto.fechaDeMarca === "" || diferenciaEnHoras <= 3) ? producto.nombre : null;
+                                            })()
+                                          }
+                                        </td>
+                                        <td>
+                                          {
+                                            (() => {
+                                              const cincoHorasEnMilisegundos = 3 * 60 * 60 * 1000; // 5 horas en milisegundos
+                                              const ahora = new Date();
+                                              const fechaDeMarca = new Date(producto.fechaDeMarca);
+                                              const diferenciaEnHoras = (ahora - fechaDeMarca) / cincoHorasEnMilisegundos;
+
+                                              return (producto.fechaDeMarca === "" || diferenciaEnHoras <= 3) ? producto.cantidad : null;
+                                            })()
+                                          }
+                                        </td>
+                                        <td>
+                                          {
+                                            (() => {
+                                              const cincoHorasEnMilisegundos = 3 * 60 * 60 * 1000; // 5 horas en milisegundos
+                                              const ahora = new Date();
+                                              const fechaDeMarca = new Date(producto.fechaDeMarca);
+                                              const diferenciaEnHoras = (ahora - fechaDeMarca) / cincoHorasEnMilisegundos;
+
+                                              return (producto.fechaDeMarca === "" || diferenciaEnHoras <= 3) ? producto.precio : null;
+                                            })()
+                                          }
+                                        </td>
+                                        <td>
+                                          {
+                                            (() => {
+                                              const cincoHorasEnMilisegundos = 3 * 60 * 60 * 1000; // 5 horas en milisegundos
+                                              const ahora = new Date();
+                                              const fechaDeMarca = new Date(producto.fechaDeMarca);
+                                              const diferenciaEnHoras = (ahora - fechaDeMarca) / cincoHorasEnMilisegundos;
+
+                                              return (producto.fechaDeMarca === "" || diferenciaEnHoras <= 3) ? producto.cantidad * producto.precio : null;
+                                            })()
+                                          }
+                                        </td>
+                                      </tr>
                                       ))}
                                     </tbody>
                                     <tfoot className="border-t-3 border-green-500 pt-2">
@@ -1406,11 +1517,20 @@ export default function App() {
                                         <td className="w-6/12 text-left"></td>
                                         <td></td>
                                         <td></td>
-                                        <td style={{ height: "60px", paddingRight: "20px", width: "150px" }} className="text-right">Total: {
-                                          [...selectedUser.bebidas, ...selectedUser.restaurante].reduce((acc, producto) =>
-                                            acc + (producto.cantidad * producto.precio), 0
-                                          )
-                                        }</td>
+                                        <td style={{ height: "60px", paddingRight: "20px", width: "150px" }} className="text-right">
+                                          Total: {
+                                            [...selectedUser.bebidas, ...selectedUser.restaurante]
+                                              .filter(producto => {
+                                                const cincoHorasEnMilisegundos = 3 * 60 * 60 * 1000; // 3 horas en milisegundos
+                                                const ahora = new Date();
+                                                const fechaDeMarca = new Date(producto.fechaDeMarca);
+                                                const diferenciaEnHoras = (ahora - fechaDeMarca) / cincoHorasEnMilisegundos;
+
+                                                return producto.fechaDeMarca === "" || diferenciaEnHoras <= 3;
+                                              })
+                                              .reduce((acc, producto) => acc + (producto.cantidad * producto.precio), 0)
+                                          }
+                                        </td>
                                       </tr>
                                     </tfoot>
                                   </table>
@@ -1425,6 +1545,32 @@ export default function App() {
 
 
                         <ModalFooter>
+                        <Button color="primary" onClick={() => {
+                            Swal.fire({
+                              title: '¿Estás seguro?',
+                              text: "¿Quieres guardar esto como PDF?",
+                              icon: 'warning',
+                              showCancelButton: true,
+                              confirmButtonColor: '#3085d6',
+                              cancelButtonColor: '#d33',
+                              confirmButtonText: 'Sí, guardar',
+                              cancelButtonText: 'No, cancelar'
+                            }).then((result) => {
+                              if (result.isConfirmed) {
+                                generarPDF(selectedUser._id);
+                                // Muestra un nuevo SweetAlert con el chulito de confirmación
+                                Swal.fire({
+                                  title: '¡Guardado!',
+                                  text: 'El archivo PDF ha sido guardado exitosamente.',
+                                  icon: 'success',
+                                  confirmButtonColor: '#3085d6',
+                                  confirmButtonText: 'Ok'
+                                });
+                              }
+                            })
+                          }}>
+                            Guardar como PDF
+                          </Button>
                           <Button color="danger" variant="light" onClick={closeModal}>
                             Cerrar
                           </Button>

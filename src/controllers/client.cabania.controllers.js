@@ -92,29 +92,23 @@ export const addBebida = async (req, res) => {
     const cliente = await Cabania.findById(id);
 
     if (cliente) {
-      let index = -1;
+      const hoy = new Date().toISOString().split('T')[0];
 
-      // Determinar si se busca una bebida de cortesía o normal
-      if (bebida.mensaje === "Cortesía") {
-        // Busca si ya existe una bebida de cortesía igual
-        index = cliente.bebidas.findIndex(b => b.id === bebida.id && b.mensaje === "Cortesía");
-      } else {
-        // Busca si ya existe la misma bebida pero que no sea de cortesía
-        index = cliente.bebidas.findIndex(b => b.id === bebida.id && b.mensaje !== "Cortesía");
-      }
+      const index = cliente.bebidas.findIndex(b => 
+        b.id === bebida.id && 
+        (b.fechaDeMarca === hoy || !b.fechaDeMarca)
+      );
 
       if (index > -1) {
-        // Si la bebida ya existe (sea cortesía o no), actualiza la cantidad
         cliente.bebidas[index].cantidad += bebida.cantidad;
       } else {
-        // Si la bebida no existe o es un tipo diferente (cortesía o no), la agrega
         if (bebida.mensaje === "Cortesía") {
-          bebida.precio = 0; // Asegura que el precio de la cortesía sea 0
+          bebida.precio = 0;
         }
         cliente.bebidas.push(bebida);
       }
 
-      cliente.markModified('bebidas'); // Indica que el array 'bebidas' ha sido modificado
+      cliente.markModified('bebidas');
       await cliente.save();
       res.status(200).json(cliente);
     } else {

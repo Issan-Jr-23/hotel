@@ -4,6 +4,7 @@ import {crearCliente} from "../controllers/client.cabania.controllers.js";
 import {deleteClient} from "../controllers/client.cabania.controllers.js";
 import {updateClient} from "../controllers/client.cabania.controllers.js";
 import {addBebida} from "../controllers/client.cabania.controllers.js";
+import { actualizarFacturacion } from "../controllers/client.controllers.js";
 
 const router = Router();
 
@@ -16,5 +17,6 @@ router.post("/cabania-agregar-food", addFood);
 router.get('/cabania-clientes/:id', obtenerCPI)
 router.put('/cabania-clientes/:id/actualizar', updatePP)
 router.put("/cabania-clientes/:id/cortesias", updateClientCts);
+router.put("/cabania-facturacion", actualizarFacturacion)
 
 export default router;

@@ -93,36 +93,34 @@ export const addBebida = async (req, res) => {
     const cliente = await Cliente.findById(id);
 
     if (cliente) {
-      let index = -1;
+      const hoy = new Date().toISOString().split('T')[0];
 
-      // Revisa si es una bebida de cortesía o normal
+      let index = -1;
       if (bebida.mensaje === "Cortesía") {
-        index = cliente.bebidas.findIndex(b => b.id === bebida.id && b.mensaje === "Cortesía");
+        // Buscar una bebida de cortesía existente con la misma ID y que la fechaDeMarca sea hoy o esté vacía
+        index = cliente.bebidas.findIndex(b => 
+          b.id === bebida.id && b.mensaje === "Cortesía" &&
+          (b.fechaDeMarca === hoy || !b.fechaDeMarca)
+        );
       } else {
-        index = cliente.bebidas.findIndex(b => b.id === bebida.id && b.mensaje !== "Cortesía");
+        // Buscar una bebida normal existente con la misma ID y que la fechaDeMarca sea hoy o esté vacía
+        index = cliente.bebidas.findIndex(b => 
+          b.id === bebida.id && b.mensaje !== "Cortesía" &&
+          (b.fechaDeMarca === hoy || !b.fechaDeMarca)
+        );
       }
 
-      const hoy = new Date().toISOString().split('T')[0]; // Fecha actual en formato yyyy-mm-dd
-
       if (index > -1) {
-        // Si la bebida ya existe
-        const bebidaExistente = cliente.bebidas[index];
-        console.log("BEBIDA EXISTENTE: "+bebidaExistente)
-
-        if (!bebidaExistente.fechaDeMarca || bebidaExistente.fechaDeMarca === hoy) {
-          // Si fechaDeMarca está vacía o es igual a la fecha actual, actualiza la cantidad
-          bebidaExistente.cantidad += bebida.cantidad;
-        } else {
-          // Si la fechaDeMarca es diferente, crea una nueva bebida
-          if (bebida.mensaje === "Cortesía") {
-            bebida.precio = 0;
-          }
-          cliente.bebidas.push(bebida);
-        }
+        // Si la bebida ya existe (ya sea cortesía o normal), sumar la cantidad
+        cliente.bebidas[index].cantidad += bebida.cantidad;
       } else {
-        // Si la bebida no existe o es un tipo diferente, la agrega
+        // Si la bebida no existe, agregarla como nueva
         if (bebida.mensaje === "Cortesía") {
           bebida.precio = 0;
+          // No asignar fechaDeMarca para nuevas bebidas de cortesía
+        } else {
+          // Para bebidas normales, si quieres asignar la fecha actual cuando se crea una nueva, descomenta la siguiente línea
+          // bebida.fechaDeMarca = hoy;
         }
         cliente.bebidas.push(bebida);
       }
@@ -138,6 +136,12 @@ export const addBebida = async (req, res) => {
     res.status(500).json({ message: 'Error al agregar la bebida al cliente' });
   }
 };
+
+
+
+
+
+
 
 
 

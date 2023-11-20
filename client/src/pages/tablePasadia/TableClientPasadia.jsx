@@ -30,7 +30,7 @@ import plusb from "../../images/plus_blue.png";
 import toast, { Toaster } from 'react-hot-toast';
 import jsPDF from "jspdf";
 import Swal from 'sweetalert2';
-import html2canvas from "html2canvas";
+// import html2canvas from "html2canvas";
 // import "./tables.css"
 import "../table/table.css"
 //#endregion
@@ -1072,36 +1072,25 @@ const end = start + displayLimit ;
  
 
 async function actualizarFechaEnProductos() {
-  // Obten la fecha y hora actual
   const fechaActual = new Date();
-
-  // Resta 5 horas
   fechaActual.setHours(fechaActual.getHours() - 5);
-
-  // Convierte a formato ISO si es necesario
   const fechaISO = fechaActual.toISOString();
-
   selectedUser.bebidas.forEach(bebida => {
-    // Solo actualiza si fechaDeMarca está vacía
     if (bebida.fechaDeMarca === "") {
       bebida.fechaDeMarca = fechaISO;
     }
   });
   selectedUser.restaurante.forEach(comida => {
-    // Solo actualiza si fechaMarca está vacía
     if (comida.fechaDeMarca === "") {
       comida.fechaDeMarca = fechaISO;
     }
   });
-
   const datosActualizados = {
     clienteId: selectedUser._id,
     bebidas: selectedUser.bebidas,
     restaurante: selectedUser.restaurante
   };
-
   console.log(datosActualizados)
-
   try {
     const response = await axios.put('http://127.0.0.1:3000/api/facturacion', datosActualizados);
     console.log('Datos actualizados con éxito:', response.data);
