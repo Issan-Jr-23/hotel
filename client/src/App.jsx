@@ -11,6 +11,7 @@ import Cabanias from "./pages/Cabanias.jsx";
 import InvBebidas from "./pages/inventario.jsx";
 import Habitaciones from "./pages/Habitaciones.jsx";
 import Hotel_graphs from "./graphs/LinearCharts.jsx";
+import FincaVisualizacion from "./pages/FincaVisualizacion.jsx";
 
 function App() {
   return (
@@ -28,8 +29,9 @@ function App() {
                 <Route path="/inventario" element={<InvBebidas />} />
                 <Route path="/habitaciones" element={<Habitaciones />} />
               </Route>
-              <Route element={<ProtectedRoute allowedRoles={["editor"]} />}>
-                <Route path="/Hotel-graphs" element={<Hotel_graphs />} />
+              <Route element={<ProtectedRoute allowedRoles={["editor"]}/>}>
+                <Route path="/hotel-graphs" element={<Hotel_graphs />}/>
+                <Route path="/finca" element={<FincaVisualizacion/>}/>
               </Route>
               <Route element={<ProtectedRoute allowedRoles={["editor"]} />}>
                 <Route path="/Register" element={<Register />} />

@@ -76,7 +76,7 @@ export default function Navbars() {
           </DropdownMenu>
         </Dropdown>
         <NavbarItem isActive>
-          <Link className="text-white font-medium text-base" href="#" aria-current="page" color="warning">
+          <Link className="text-white font-medium text-base" to={'/finca'} aria-current="page" color="warning">
             Finca
           </Link>
         </NavbarItem>
