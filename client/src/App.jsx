@@ -34,7 +34,7 @@ function App() {
                 <Route path="/finca" element={<FincaVisualizacion/>}/>
               </Route>
               <Route element={<ProtectedRoute allowedRoles={["editor"]} />}>
-                <Route path="/Register" element={<Register />} />
+                <Route path="/Register" element={<Register/>} />
               </Route>
             </Routes>
           </BrowserRouter>

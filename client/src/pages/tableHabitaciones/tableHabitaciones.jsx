@@ -539,7 +539,7 @@ export default function App() {
   
     try {
       if (!selectedClientId || (!foodSeleccionadaId && !food1SeleccionadaId && !food2SeleccionadaId && !food3SeleccionadaId && !food4SeleccionadaId)) {
-        throw new Error('No se ha seleccionado un cliente o una bebida.');
+        throw new Error('No se ha seleccionado un cliente o una comida.');
       }
   
       if (esCortesia) {
@@ -1644,16 +1644,6 @@ const hours = fecha2.toLocaleString();
 
 
                 <TableCell>
-                  {/* {cliente._id === editedUserId ? (
-                    <div className="flex">
-                      <Input
-                        value={editedName}
-                        onChange={(e) => setEditedName(e.target.value)}
-                      />
-                    </div>
-                  ) : (
-                    cliente.nombre
-                  )} */}
 
                   <Popover placement="bottom" offset={20} showArrow>
                         <PopoverTrigger>
@@ -1684,8 +1674,6 @@ const hours = fecha2.toLocaleString();
                       month: 'long'  ,
                       day: 'numeric' ,
                     })}</TableCell>
-                {/* <TableCell>{cliente.mediosDePagoPendiente}</TableCell>
-                <TableCell>{cliente.pagoPendiente}</TableCell> */}
 
 
 

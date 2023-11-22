@@ -9,18 +9,12 @@ import grahps from "./routes/grahps.routes.js"
 import grahpsStock from "./routes/grahps.stock.routes.js"
 import authRoutes from "./routes/auth.routes.js";
 import bebidasRoutes from "./routes/inventario.routes.js";
-import { FRONTEND_URL } from "./config.js";
 
 const app = express();
 
-app.use(
-  cors({
-    credentials: true,
-    origin: ["https://www.hotelmeqo.com/","https://hotelmeqo.com/",
-    "https://www.hotelmeqo.com/meqo/","https://hotelmeqo.com/meqo/"
-    ,"http://localhost:5173"], 
-  })
-);
+if (process.env.NODE_ENV !== 'production') {
+  app.use(cors());
+}
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(cookieParser());
