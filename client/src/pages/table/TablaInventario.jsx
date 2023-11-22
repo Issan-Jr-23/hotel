@@ -305,7 +305,7 @@ export default function App() {
               <TableColumn className="text-center">fecha de caducidad</TableColumn>
               <TableColumn className="text-center">Cantidad</TableColumn>
               {/* --------------------------------------------------------------- */}
-              <TableColumn className="text-center">Valor Unitario</TableColumn>
+              <TableColumn className="text-center">Valor De Venta</TableColumn>
               <TableColumn className="text-center">Productos Vendidos</TableColumn>
               {/* --------------------------------------------------------------- */}
               <TableColumn className="text-center">Total de la venta</TableColumn>

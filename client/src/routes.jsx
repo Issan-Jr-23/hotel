@@ -6,8 +6,9 @@ export const ProtectedRoute = ({ allowedRoles }) => {
   const { isAuthenticated, loading, user } = useAuth();
 
   if (loading) {
-    return <div className="w-full min-h-screen flex justify-center items-center">
-      <CircularProgress label="Loading..." />
+    return <div className="w-full min-h-screen flex justify-center items-center flex-col">
+      <CircularProgress label="" />
+      <p className="text-white">CARGANDO RECURSOS</p>
     </div>;
   }
 
