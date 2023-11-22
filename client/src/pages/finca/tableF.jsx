@@ -14,7 +14,7 @@ import {
   DropdownItem,
   Chip,
   User,
-  Pagination,
+  Pagination,Popover, PopoverTrigger, PopoverContent
 } from "@nextui-org/react";
 import {PlusIcon} from "./PlusIcon.jsx";
 import {VerticalDotsIcon} from "./VerticalDotsIcon";
@@ -229,6 +229,8 @@ export default function tableF() {
                 ))}
               </DropdownMenu>
             </Dropdown>
+            <Popover placement="button"showArrow={true}>
+              <PopoverTrigger>
             <Button
               className="bg-foreground text-background"
               endContent={<PlusIcon />}
@@ -236,6 +238,23 @@ export default function tableF() {
             >
               Add New
             </Button>
+
+              </PopoverTrigger>
+              <PopoverContent className="bg-neutral-800">
+                <div>
+                  <h2 className="w-full text-center mt-2 mb-2 text-white">CONTENIDO</h2>
+                  <form>
+                    <Input radius="none" className="h-12 w-80 p-1" label="campo one"  labelPlacement="outside"/>
+                    <Input radius="none" className="h-12 w-80 p-1" label="campo one"/>
+                    <Input radius="none" className="h-12 w-80 p-1" label="campo one"/>
+                    <Input radius="none" className="h-12 w-80 p-1" label="campo one"/>
+                    <Input radius="none" className="h-12 w-80 p-1" label="campo one"/>
+                  </form>
+                    <Button color="primary" className="h-10 w-28 ml-1 mt-1 mb-5">Enviar</Button>
+                </div>
+              </PopoverContent>
+
+            </Popover>
           </div>
         </div>
         {/* row page */}

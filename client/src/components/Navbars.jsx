@@ -1,23 +1,39 @@
-import {Navbar,DropdownItem,Dropdown,DropdownTrigger,DropdownMenu,Avatar, NavbarBrand,NavbarMenu, NavbarContent, NavbarItem, Button} from "@nextui-org/react";
+import React from "react";
+import {Navbar,DropdownItem,Dropdown,DropdownTrigger,DropdownMenu,Avatar, NavbarBrand,NavbarMenu, NavbarContent, NavbarItem, Button, NavbarMenuItem, NavbarMenuToggle,Accordion, AccordionItem} from "@nextui-org/react";
 import { Link } from "react-router-dom";
 import './navbars.css'
 import { useAuth } from "../context/authContext";
 import logo from "../images/logo.png"
-export default function Navbars() {
 
+export default function Navbars() {
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   const { isAuthenticated, logout, user } = useAuth();
   const isAdmin = user && user.role === 'admin';
   const isEditor = user && user.role == "editor";
 
 
+  // const menuItems = [
+  //   "Profile",
+  //   "Dashboard",
+  //   "Activity",
+  //   "Analytics",
+  //   "System",
+  //   "Deployments",
+  //   "My Settings",
+  //   "Team Settings",
+  //   "Help & Feedback",
+  //   "Log Out",
+  // ];
+
   return (
-    <Navbar isBordered className="bg-zinc-800 h-20 justify-beetween">
+    <Navbar isBordered className="bg-zinc-800 h-20 justify-beetween" onMenuOpenChange={setIsMenuOpen}>
 
       <NavbarContent className="sm:hidden pr-3" justify="center">
-        <NavbarBrand>
-          <Link to={isAuthenticated ? "/home" : "/"}>Obraix</Link>
-        </NavbarBrand>
+      <NavbarMenuToggle
+          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+          className="sm:hidden text-white"
+        />
       </NavbarContent>
 
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
@@ -122,8 +138,81 @@ export default function Navbars() {
         </Dropdown>
       </NavbarContent>
 
-      <NavbarMenu>
+      <NavbarMenu className="">
+        <NavbarContent className=" flex flex-col mt-5">
+        {/* <NavbarBrand>
+        </NavbarBrand> */}
+        <NavbarItem>
+
+        </NavbarItem>
+        <NavbarItem>
+        <Link className="w-80 pl-2 text-blue-600 font-medium text-lg " to={isAuthenticated ? "/home" : "/"}>Inicio</Link>
+
+        <Accordion isCompact className="border-b-2 border-blue-400 w-80 font-medium text-lg" >
+        <AccordionItem key="1" aria-label="Hotel" title="Hotel" className="">
+          
+        <Link className="link_nav" to='/pasadia'>
+            Pasadia
+        </Link>
+        <Link className="link_nav" to='/cabanias'>
+            Cabañas
+            </Link>
+            <Link className="link_nav" to='/habitaciones'>
+            Habitaciones
+            </Link>
+            <Link className="link_nav" to='/inventario'>
+            Inventario
+            </Link>
+      </AccordionItem>
+        </Accordion>
+        </NavbarItem>
+
+        <NavbarItem isActive className="w-80 text-black">
+          <Link className="text-black font-medium text-lg pl-2" to={'/finca'} aria-current="page" color="warning">
+            Finca
+          </Link>
+        </NavbarItem>
+
+
+        <NavbarItem className="w-80">
+          <Link className="text-black pl-2 font-medium text-lg" color="foreground" href="#">
+            Energia Renovable
+          </Link>
+        </NavbarItem>
+
+        {isEditor && (
+        <NavbarItem className="w-80" >
+          <Link to='/hotel-graphs' className="text-black pl-2 font-medium text-lg" color="foreground" >
+            grapsh
+          </Link>
+        </NavbarItem>
+
+            )}
+        {isEditor && (
         
+        <NavbarItem className="w-80">
+          <Link to="/Register" className="text-red-500 pl-2 font-medium text-lg">
+            Registrar
+          </Link>
+        </NavbarItem>
+        )}
+
+        </NavbarContent>
+
+        {/* {menuItems.map((item, index) => (
+          <NavbarMenuItem key={`${item}-${index}`}>
+            <Link
+              color={
+                index === 2 ? "primary" : index === menuItems.length - 1 ? "danger" : "foreground"
+              }
+              className="w-full"
+              href="#"
+              size="lg"
+            >
+              {item}
+            </Link>
+          </NavbarMenuItem>
+        ))} */}
       </NavbarMenu>
     </Navbar>
   );
