@@ -216,7 +216,7 @@ export const updateCB = async (req, res) => {
         return res.status(404).send({ error: 'Bebida no encontrada.' });
     }
 
-    const cantidadRestante = bebida.CantidadInicial - bebida.ProductosVendidos;
+    const cantidadRestante = bebida.CantidadInicial;
 
     if (cantidad > cantidadRestante) {
         return res.status(400).send({ error: `Solo quedan ${cantidadRestante} unidades de ${bebida.Descripcion} disponibles en el inventario.` });
@@ -241,7 +241,7 @@ export const validCB = async (req, res) => {
           return res.status(404).send({ error: 'Bebida no encontrada.' });
       }
 
-      const cantidadRestante = bebida.CantidadInicial - bebida.ProductosVendidos;
+      const cantidadRestante = bebida.CantidadInicial;
       res.status(200).send({ cantidadRestante });
   } catch (error) {
       console.error('Error al verificar la disponibilidad:', error);
@@ -319,10 +319,8 @@ export const updateCF = async (req, res) => {
         return res.status(404).send({ error: 'Bebida no encontrada.' });
     }
 
-    // Calcula la cantidad restante en el inventario
-    const cantidadRestante = bebida.CantidadInicial - bebida.ProductosVendidos;
+    const cantidadRestante = bebida.CantidadInicial;
 
-    // Verifica si hay suficiente cantidad en el inventario
     if (cantidad > cantidadRestante) {
         return res.status(400).send({ error: `Solo quedan ${cantidadRestante} unidades de ${bebida.Descripcion} disponibles en el inventario.` });
     }
@@ -347,13 +345,99 @@ export const validCF = async (req, res) => {
           return res.status(404).send({ error: 'Bebida no encontrada.' });
       }
 
-      const cantidadRestante = bebida.CantidadInicial - bebida.ProductosVendidos
+      const cantidadRestante = bebida.CantidadInicial
       res.status(200).send({ cantidadRestante });
   } catch (error) {
       console.error('Error al verificar la disponibilidad:', error);
       res.status(500).send({ error: 'Error interno del servidor.' });
   }
 }; 
+
+export const updateCSTOCKB = async (req, res) => {
+  const bebidaId = req.params.id;
+  const { cantidad } = req.body;
+  console.log("cantidad a restar: "+cantidad)
+
+  // Validación básica
+  if (!bebidaId || cantidad === undefined) {
+    return res.status(400).send({ message: 'Faltan datos requeridos (bebidaId y cantidad).' });
+  }
+
+  if (cantidad < 0) {
+    return res.status(400).send({ message: 'La cantidad no puede ser negativa.' });
+  }
+
+  try {
+    // Obtener la bebida actual de la base de datos
+    const bebida = await Bebida.findById(bebidaId);
+
+    if (!bebida) {
+      return res.status(404).send({ message: 'Bebida no encontrada.' });
+    }
+
+    // Calcular la nueva cantidad inicial
+    const nuevaCantidadInicial = bebida.CantidadInicial - cantidad;
+    console.log("nueva cantidad: "+nuevaCantidadInicial)
+
+    // Verificar que la nueva cantidad no sea negativa
+    if (nuevaCantidadInicial < 0) {
+      return res.status(400).send({ message: 'La cantidad a restar excede el stock inicial.' });
+    }
+
+    // Actualizar el stock inicial en la base de datos
+    const bebidaActualizada = await Bebida.findByIdAndUpdate(bebidaId, { $set: { CantidadInicial: nuevaCantidadInicial } }, { new: true });
+    console.log("2 log"+bebidaActualizada)
+
+    res.status(200).send({ message: 'Stock inicial actualizado correctamente', bebida: bebidaActualizada });
+  } catch (error) {
+    console.error('Error al actualizar el stock inicial:', error);
+    res.status(500).send({ message: 'Error interno del servidor' });
+  }
+};
+
+export const updateCSTOCKF = async (req, res) => {
+  const foodId = req.params.id;
+  const { cantidad } = req.body;
+  console.log("cantidad a restar: " + cantidad);
+
+  // Validación básica
+  if (!foodId || cantidad === undefined) {
+    return res.status(400).send({ message: 'Faltan datos requeridos (alimentoId y cantidad).' });
+  }
+
+  if (cantidad < 0) {
+    return res.status(400).send({ message: 'La cantidad no puede ser negativa.' });
+  }
+
+  try {
+    // Obtener el alimento actual de la base de datos
+    const alimento = await Bebida.findById(foodId);
+
+    if (!alimento) {
+      return res.status(404).send({ message: 'Alimento no encontrado.' });
+    }
+
+    // Calcular la nueva cantidad inicial
+    const nuevaCantidadInicial = alimento.CantidadInicial - cantidad;
+    console.log("nueva cantidad: " + nuevaCantidadInicial);
+
+    // Verificar que la nueva cantidad no sea negativa
+    if (nuevaCantidadInicial < 0) {
+      return res.status(400).send({ message: 'La cantidad a restar excede el stock inicial.' });
+    }
+
+    // Actualizar el stock inicial en la base de datos
+    const alimentoActualizado = await Bebida.findByIdAndUpdate(foodId, { $set: { CantidadInicial: nuevaCantidadInicial } }, { new: true });
+    console.log("2 log" + alimentoActualizado);
+
+    res.status(200).send({ message: 'Stock inicial actualizado correctamente', alimento: alimentoActualizado });
+  } catch (error) {
+    console.error('Error al actualizar el stock inicial:', error);
+    res.status(500).send({ message: 'Error interno del servidor' });
+  }
+};
+
+
 
 
 

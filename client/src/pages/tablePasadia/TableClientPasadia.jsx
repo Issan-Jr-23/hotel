@@ -203,7 +203,7 @@ export default function App() {
     try {
       const response = await axios.post(API_URL+'/actualizar-inventario-bebida', {
         id: bebidaId,
-        cantidad,
+        cantidad, 
       });
 
       if (response.status < 200 || response.status >= 300) {
@@ -214,8 +214,18 @@ export default function App() {
       throw error;  
     }
   };
-
-
+  const actualizarStockInicialBebida = async (bebidaId, cantidad) => {
+    try {
+      const response = await axios.post(`${API_URL}/actualizar-stock-inicial/${bebidaId}`, { cantidad });
+      if (response.status < 200 || response.status >= 300) {
+        throw new Error(`Error al actualizar el stock inicial. Estado de la respuesta: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Error al actualizar el stock inicial:', error.message);
+      throw error;
+    }
+  };
+  
   const handleGuardarBebida = async () => {
     if (!selectedClientId || (!bebidaSeleccionadaId && !bebida1SeleccionadaId && !bebida2SeleccionadaId && !bebida3SeleccionadaId && !bebida4SeleccionadaId)) { 
       toast.error('No se ha seleccionado un cliente o una Bebida.');
@@ -248,6 +258,7 @@ export default function App() {
       }
   
       await actualizarInventarioBebida(bebidaId, cantidad);
+      await actualizarStockInicialBebida(bebidaId,cantidad);
       return true;
     };
   
@@ -435,7 +446,6 @@ export default function App() {
     }
   };
   
-
   const guardarBebida = async (bebida) => {
     try {
       const response = await axios.post(API_URL+'/pasadia-agregar-bebida', {
@@ -454,7 +464,13 @@ export default function App() {
       setBebida1SeleccionadaId('');
   
       setEsCortesia(false); 
-  
+      const responses = await axios.get(API_URL + "/pasadia-clientes");
+        
+      // Ordena los datos de la respuesta de la petición GET, no del PUT
+      const usuariosOrdenados = responses.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
+      
+      // Actualiza el estado con los usuarios ordenados
+      setUsers(usuariosOrdenados);
       closeModalM();
     } catch (error) {
       console.error('Error al guardar la bebida en el cliente:', error.message);
@@ -479,6 +495,17 @@ export default function App() {
       throw error;
     }
   };
+  const actualizarStockInicialFood = async (foodId, cantidad) => {
+    try {
+      const response = await axios.post(`${API_URL}/actualizar-stock-inicial-food/${foodId}`, { cantidad });
+      if (response.status < 200 || response.status >= 300) {
+        throw new Error(`Error al actualizar el stock inicial. Estado de la respuesta: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Error al actualizar el stock inicial:', error.message);
+      throw error;
+    }
+  };
 
   const handleGuardarFood = async () => {
     if (!selectedClientId || (!foodSeleccionadaId && !food1SeleccionadaId && food2SeleccionadaId && food3SeleccionadaId && food4SeleccionadaId)) {
@@ -491,6 +518,7 @@ export default function App() {
       const response = await axios.get(`${API_URL}/verificar-disponibilidad/${foodId}`);
      
       const cantidadRestante = response.data.cantidadRestante;
+      console.log(cantidadRestante)
       
       const clienteResponse = await axios.get(`${API_URL}/pasadia-clientes/${selectedClientId}`);
       const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
@@ -508,7 +536,9 @@ export default function App() {
         alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
         return false;
       }
+
       await actualizarInventarioFood(foodId, cantidad);
+      await actualizarStockInicialFood(foodId,cantidad);
       return true;
     };
 
@@ -726,8 +756,13 @@ export default function App() {
 
     closeModalF();
       closeModalF();
-      const responses = await axios.get(API_URL+"/pasadia-clientes");
-      setUsers(responses.data);
+      const responses = await axios.get(API_URL + "/pasadia-clientes");
+        
+      // Ordena los datos de la respuesta de la petición GET, no del PUT
+      const usuariosOrdenados = responses.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
+      
+      // Actualiza el estado con los usuarios ordenados
+      setUsers(usuariosOrdenados);
     } catch (error) {
       console.error('Error al guardar la bebida en el cliente:', error.message);
       throw error; 
@@ -823,6 +858,7 @@ export default function App() {
         });
         const response = await axios.get(API_URL+"/pasadia-clientes");
         setUsers(response.data);
+        const usuariosOrdenados = response.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
       }
     } catch (error) {
       toast.error('Ocurrió un error al agregar el cliente o el registro ya existe.');
@@ -953,15 +989,30 @@ export default function App() {
     setAncho(ancho);
     setSelectedClientId(userId);
     openModalM();
-        setCantidadBebida(""); 
-      setBebidaSeleccionada(''); 
-      setPrecioBebidaSeleccionada("");
-      setBebidaSeleccionadaId('');
-  
-      setCantidadBebida1(""); 
-      setBebida1Seleccionada(''); 
-      setPrecioBebida1Seleccionada(""); 
-      setBebida1SeleccionadaId('');
+    setCantidadBebida(""); // o '' si quieres que el campo esté completamente vacío
+    setBebidaSeleccionada(''); 
+    setPrecioBebidaSeleccionada("");
+    setBebidaSeleccionadaId('');
+
+    setCantidadBebida1(""); 
+    setBebida1Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
+    setPrecioBebida1Seleccionada(""); // o el valor por defecto inicial
+    setBebida1SeleccionadaId('');
+    
+    setCantidadBebida2(""); 
+    setBebida2Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
+    setPrecioBebida2Seleccionada(""); // o el valor por defecto inicial
+    setBebida2SeleccionadaId('');
+    
+    setCantidadBebida3(""); 
+    setBebida3Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
+    setPrecioBebida3Seleccionada(""); // o el valor por defecto inicial
+    setBebida3SeleccionadaId('');
+    
+    setCantidadBebida4(""); 
+    setBebida4Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
+    setPrecioBebida4Seleccionada(""); // o el valor por defecto inicial
+    setBebida4SeleccionadaId('');
   };
 
   const [selectedSize, setSelectedSize] = React.useState('md');
@@ -970,6 +1021,37 @@ export default function App() {
     setSelectedSize(size);
     setSelectedClientId(userId);
     openModalF();
+
+    // Sin números
+setCantidadFood(""); 
+setFoodSeleccionada(''); // Establecer como vacío o el valor por defecto que desees
+setPrecioFoodSeleccionada(""); // o el valor por defecto inicial
+setFoodSeleccionadaId('');
+
+// Con número 1
+setCantidadFood1(""); 
+setFood1Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
+setPrecioFood1Seleccionada(""); // o el valor por defecto inicial
+setFood1SeleccionadaId('');
+
+// Con número 2
+setCantidadFood2(""); 
+setFood2Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
+setPrecioFood2Seleccionada(""); // o el valor por defecto inicial
+setFood2SeleccionadaId('');
+
+// Con número 3
+setCantidadFood3(""); 
+setFood3Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
+setPrecioFood3Seleccionada(""); // o el valor por defecto inicial
+setFood3SeleccionadaId('');
+
+// Con número 4
+setCantidadFood4(""); 
+setFood4Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
+setPrecioFood4Seleccionada(""); // o el valor por defecto inicial
+setFood4SeleccionadaId('');
+
     
   };
 
@@ -1041,16 +1123,23 @@ export default function App() {
           mediosDePagoPendiente: ''
         });
         toast.success('Datos actualizados exitosamente');
-        const responses = await axios.get(API_URL+"/pasadia-clientes");
-        setUsers(responses.data);
-        const usuariosOrdenados = response.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
+
+        const responses = await axios.get(API_URL + "/pasadia-clientes");
+        
+        // Ordena los datos de la respuesta de la petición GET, no del PUT
+        const usuariosOrdenados = responses.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
+        
+        // Actualiza el estado con los usuarios ordenados
+        setUsers(usuariosOrdenados);
+        
       } catch (error) {
         console.error('Hubo un problema con la petición Axios:', error);
       }
     } else {
       console.error('No hay un cliente seleccionado para actualizar');
     }
-  };
+};
+
  //#endregion
 
  const [displayLimit, setDisplayLimit] = useState(5);
@@ -1655,7 +1744,7 @@ const hours = fecha2.toLocaleString();
                               type="number"
                               value={isNaN(cantidadBebida) ? '' : cantidadBebida}
                               onChange={(e) => {
-                                const value = parseInt(e.target.value, 10);
+                                const value = parseInt(e.target.value);
                                 setCantidadBebida(isNaN(value) ? "" : value);
                               }}
                             />
@@ -1691,7 +1780,7 @@ const hours = fecha2.toLocaleString();
                               type="number"
                               value={isNaN(cantidadBebida1) ? '' : cantidadBebida1}
                               onChange={(e) => {
-                                const value = parseInt(e.target.value, 10);
+                                const value = parseInt(e.target.value);
                                 setCantidadBebida1(isNaN(value) ? "" : value);
                               }}
                             />
@@ -1727,7 +1816,7 @@ const hours = fecha2.toLocaleString();
                               type="number"
                               value={isNaN(cantidadBebida2) ? '' : cantidadBebida2}
                               onChange={(e) => {
-                                const value = parseInt(e.target.value, 10);
+                                const value = parseInt(e.target.value);
                                 setCantidadBebida2(isNaN(value) ? "" : value);
                               }}
                             />
@@ -1763,7 +1852,7 @@ const hours = fecha2.toLocaleString();
                               type="number"
                               value={isNaN(cantidadBebida3) ? '' : cantidadBebida3}
                               onChange={(e) => {
-                                const value = parseInt(e.target.value, 10);
+                                const value = parseInt(e.target.value);
                                 setCantidadBebida3(isNaN(value) ? "" : value);
                               }}
                             />
@@ -1799,7 +1888,7 @@ const hours = fecha2.toLocaleString();
                               type="number"
                               value={isNaN(cantidadBebida4) ? '' : cantidadBebida4}
                               onChange={(e) => {
-                                const value = parseInt(e.target.value, 10);
+                                const value = parseInt(e.target.value);
                                 setCantidadBebida4(isNaN(value) ? "" : value);
                               }}
                             />
@@ -1845,6 +1934,7 @@ const hours = fecha2.toLocaleString();
                 </div>
 
                 </TableCell>
+
                 <TableCell key={cliente.id} className="text-center flex justify-center items-center">
                   <div className="flex flex-wrap gap-3">
                     {sizesm.map((size) => (
@@ -1878,8 +1968,8 @@ const hours = fecha2.toLocaleString();
                               type="number"
                               value={isNaN(cantidadFood) ? '' : cantidadFood}
                               onChange={(e) => {
-                                const value = parseInt(e.target.value, 10);
-                                setCantidadFood(isNaN(value) ? 0 : value);
+                                const value = parseInt(e.target.value);
+                                setCantidadFood(isNaN(value) ? '' : value);
                               }}
                             />
                             <Select
@@ -1915,8 +2005,8 @@ const hours = fecha2.toLocaleString();
                               type="number"
                               value={isNaN(cantidadFood1) ? '' : cantidadFood1}
                               onChange={(e) => {
-                                const value = parseInt(e.target.value, 10);
-                                setCantidadFood1(isNaN(value) ? 0 : value);
+                                const value = parseInt(e.target.value);
+                                setCantidadFood1(isNaN(value) ? '' : value);
                               }}
                             />
                             <Select
@@ -1951,8 +2041,8 @@ const hours = fecha2.toLocaleString();
                               type="number"
                               value={isNaN(cantidadFood2) ? '' : cantidadFood2}
                               onChange={(e) => {
-                                const value = parseInt(e.target.value, 10);
-                                setCantidadFood2(isNaN(value) ? 0 : value);
+                                const value = parseInt(e.target.value);
+                                setCantidadFood2(isNaN(value) ? '' : value);
                               }}
                             />
                             <Select
@@ -1987,8 +2077,8 @@ const hours = fecha2.toLocaleString();
                               type="number"
                               value={isNaN(cantidadFood3) ? '' : cantidadFood3}
                               onChange={(e) => {
-                                const value = parseInt(e.target.value, 10);
-                                setCantidadFood3(isNaN(value) ? 0 : value);
+                                const value = parseInt(e.target.value);
+                                setCantidadFood3(isNaN(value) ? '' : value);
                               }}
                             />
                             <Select
@@ -2023,8 +2113,8 @@ const hours = fecha2.toLocaleString();
                               type="number"
                               value={isNaN(cantidadFood4) ? '' : cantidadFood4}
                               onChange={(e) => {
-                                const value = parseInt(e.target.value, 10);
-                                setCantidadFood4(isNaN(value) ? 0 : value);
+                                const value = parseInt(e.target.value);
+                                setCantidadFood4(isNaN(value) ? '' : value);
                               }}
                             />
                             <Select

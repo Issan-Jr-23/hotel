@@ -374,18 +374,33 @@ export default function App() {
                     })
                   )}
                 </TableCell>
-                  <TableCell>
-                  {inventario._id === editedUserId ? (
-                    <div className="flex">
-                      <Input
-                        value={editedCantidad}
-                        onChange={(e) => setEditedCantidad(e.target.value)}
-                      />
-                    </div>
-                  ) : (
-                    inventario.CantidadInicial
-                  )}
+                <TableCell>
+                    {inventario._id === editedUserId ? (
+                        <div className="flex">
+                            <Input
+                                value={editedCantidad}
+                                onChange={(e) => setEditedCantidad(e.target.value)}
+                            />
+                        </div>
+                    ) : (
+                        <span style={{ 
+                            color: inventario.CantidadInicial <= 7 ? 'red' : 'inherit',
+                            border: inventario.CantidadInicial >= 0 && inventario.CantidadInicial <= 7 ? '1px solid red' : 'none',
+                            borderRadius: '50%',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: inventario.CantidadInicial >= 0 && inventario.CantidadInicial <= 7 ? '30px' : 'auto',
+                            height: inventario.CantidadInicial >= 0 && inventario.CantidadInicial <= 7 ? '30px' : 'auto',
+                        }}>
+                            {inventario.CantidadInicial}
+                        </span>
+                    )}
                 </TableCell>
+
+
+
+
                   <TableCell>
                   {inventario._id === editedUserId ? (
                     <div className="flex">
@@ -401,7 +416,7 @@ export default function App() {
                   
                   <TableCell>{inventario.ProductosVendidos}</TableCell>
                   <TableCell>{inventario.ProductosVendidos * inventario.ValorUnitario}</TableCell>
-                  <TableCell>{ inventario.CantidadInicial - inventario.ProductosVendidos}</TableCell>
+                  <TableCell>{ inventario.CantidadInicial}</TableCell>
                   <TableCell>
                     {isAdmin || isEditor ? (
                       <div>

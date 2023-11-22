@@ -236,15 +236,22 @@ export default function App() {
       throw error;  
     }
   };
-
-
-
-
+  const actualizarStockInicialBebida = async (bebidaId, cantidad) => {
+    try {
+      const response = await axios.post(`${API_URL}/actualizar-stock-inicial/${bebidaId}`, { cantidad });
+      if (response.status < 200 || response.status >= 300) {
+        throw new Error(`Error al actualizar el stock inicial. Estado de la respuesta: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Error al actualizar el stock inicial:', error.message);
+      throw error;
+    }
+  };
 
   const handleGuardarBebida = async () => {
-
-    if (!selectedClientId || (!bebidaSeleccionadaId && !bebida1SeleccionadaId)) {
-      toast.error('No se ha seleccionado un cliente o una bebida.');
+    if (!selectedClientId || (!bebidaSeleccionadaId && !bebida1SeleccionadaId && !bebida2SeleccionadaId && !bebida3SeleccionadaId && !bebida4SeleccionadaId)) { 
+      toast.error('No se ha seleccionado un cliente o una Bebida.');
+      toast.
       return;
     }
   
@@ -273,11 +280,12 @@ export default function App() {
       }
   
       await actualizarInventarioBebida(bebidaId, cantidad);
+      await actualizarStockInicialBebida(bebidaId,cantidad);
       return true;
     };
   
     try {
-      if (!selectedClientId || (!bebidaSeleccionadaId && !bebida1SeleccionadaId)) {
+      if (!selectedClientId || (!bebidaSeleccionadaId && !bebida1SeleccionadaId && !bebida2SeleccionadaId && !bebida3SeleccionadaId && !bebida4SeleccionadaId)) {
         throw new Error('No se ha seleccionado un cliente o una bebida.');
       }
   
@@ -460,7 +468,6 @@ export default function App() {
         id: selectedClientId,
         bebida,
       });
-      const responses = await axios.get(API_URL+"/cabania-clientes");
       toast.success('Bebida guardada exitosamente!');
       setCantidadBebida(""); 
       setBebidaSeleccionada(''); 
@@ -475,6 +482,14 @@ export default function App() {
       setEsCortesia(false); 
   
       closeModalM();
+
+      const responses = await axios.get(API_URL + "/cabania-clientes");
+        
+      // Ordena los datos de la respuesta de la petición GET, no del PUT
+      const usuariosOrdenados = responses.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
+      
+      // Actualiza el estado con los usuarios ordenados
+      setUsers(usuariosOrdenados);
     } catch (error) {
       console.error('Error al guardar la bebida en el cliente:', error.message);
       throw error;  
@@ -496,10 +511,23 @@ export default function App() {
       throw error;
     }
   };
+  const actualizarStockInicialFood = async (foodId, cantidad) => {
+    try {
+      const response = await axios.post(`${API_URL}/actualizar-stock-inicial-food/${foodId}`, { cantidad });
+      if (response.status < 200 || response.status >= 300) {
+        throw new Error(`Error al actualizar el stock inicial. Estado de la respuesta: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Error al actualizar el stock inicial:', error.message);
+      throw error;
+    }
+  };
+
+
 
   const handleGuardarFood = async () => {
   
-    if (!selectedClientId || (!foodSeleccionadaId && !food1SeleccionadaId)) {
+    if (!selectedClientId || (!foodSeleccionadaId && !food1SeleccionadaId && food2SeleccionadaId && food3SeleccionadaId && food4SeleccionadaId)) {
       toast.error('No se ha seleccionado un cliente o una comida.');
       toast.
       return;
@@ -528,12 +556,14 @@ export default function App() {
         alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
         return false;
       }
+
       await actualizarInventarioFood(foodId, cantidad);
+      await actualizarStockInicialFood(foodId, cantidad);
       return true;
     };
   
     try {
-      if (!selectedClientId || (!foodSeleccionadaId && !food1SeleccionadaId)) {
+      if (!selectedClientId || (!foodSeleccionadaId && !food1SeleccionadaId && !food2SeleccionadaId && !food3SeleccionadaId && !food4SeleccionadaId)) {
         throw new Error('No se ha seleccionado un cliente o una bebida.');
       }
   
@@ -716,7 +746,6 @@ export default function App() {
         id: selectedClientId,
         food,
       });
-      const responses = await axios.get(API_URL+"/cabania-clientes");
       toast.success('Comida guardada exitosamente!');
         setCantidadFood(""); 
         setFoodSeleccionada(''); 
@@ -733,6 +762,13 @@ export default function App() {
       setEsCortesia(false); 
 
       closeModalF();
+      const responses = await axios.get(API_URL + "/cabania-clientes");
+        
+      // Ordena los datos de la respuesta de la petición GET, no del PUT
+      const usuariosOrdenados = responses.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
+      
+      // Actualiza el estado con los usuarios ordenados
+      setUsers(usuariosOrdenados);
       
     } catch (error) {
       console.error('Error al guardar la bebida en el cliente:', error.message);
@@ -837,6 +873,7 @@ export default function App() {
       });
       const response = await axios.get(API_URL+"/cabania-clientes");
       setUsers(response.data);
+      const usuariosOrdenados = response.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
     }
     } catch (error) {
       toast.error('Ocurrió un error al agregar el cliente.');
@@ -969,12 +1006,67 @@ export default function App() {
     setAncho(size);
     setSelectedClientId(userId);
     openModalM();
+    setCantidadBebida(""); // o '' si quieres que el campo esté completamente vacío
+    setBebidaSeleccionada(''); 
+    setPrecioBebidaSeleccionada("");
+    setBebidaSeleccionadaId('');
+
+    setCantidadBebida1(""); 
+    setBebida1Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
+    setPrecioBebida1Seleccionada(""); // o el valor por defecto inicial
+    setBebida1SeleccionadaId('');
+    
+    setCantidadBebida2(""); 
+    setBebida2Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
+    setPrecioBebida2Seleccionada(""); // o el valor por defecto inicial
+    setBebida2SeleccionadaId('');
+    
+    setCantidadBebida3(""); 
+    setBebida3Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
+    setPrecioBebida3Seleccionada(""); // o el valor por defecto inicial
+    setBebida3SeleccionadaId('');
+    
+    setCantidadBebida4(""); 
+    setBebida4Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
+    setPrecioBebida4Seleccionada(""); // o el valor por defecto inicial
+    setBebida4SeleccionadaId('');
   };
 
   const handleOpenmf = (size, userId) => {
     setAncho(size);
     setSelectedClientId(userId);
     openModalF();
+
+    // Sin números
+setCantidadFood(""); 
+setFoodSeleccionada(''); // Establecer como vacío o el valor por defecto que desees
+setPrecioFoodSeleccionada(""); // o el valor por defecto inicial
+setFoodSeleccionadaId('');
+
+// Con número 1
+setCantidadFood1(""); 
+setFood1Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
+setPrecioFood1Seleccionada(""); // o el valor por defecto inicial
+setFood1SeleccionadaId('');
+
+// Con número 2
+setCantidadFood2(""); 
+setFood2Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
+setPrecioFood2Seleccionada(""); // o el valor por defecto inicial
+setFood2SeleccionadaId('');
+
+// Con número 3
+setCantidadFood3(""); 
+setFood3Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
+setPrecioFood3Seleccionada(""); // o el valor por defecto inicial
+setFood3SeleccionadaId('');
+
+// Con número 4
+setCantidadFood4(""); 
+setFood4Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
+setPrecioFood4Seleccionada(""); // o el valor por defecto inicial
+setFood4SeleccionadaId('');
+
   };
 
 
@@ -1045,8 +1137,14 @@ export default function App() {
           mediosDePagoPendiente: ''
         });
         toast.success('Datos actualizados exitosamente');
-        const responses = await axios.get(API_URL+"/cabania-clientes");
-        setUsers(responses.data);
+        const responses = await axios.get(API_URL + "/cabania-clientes");
+        
+        // Ordena los datos de la respuesta de la petición GET, no del PUT
+        const usuariosOrdenados = responses.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
+        
+        // Actualiza el estado con los usuarios ordenados
+        setUsers(usuariosOrdenados);
+
 
       } catch (error) {
         console.error('Hubo un problema con la petición Axios:', error);
