@@ -8,6 +8,7 @@ import clienteHabitacionesModel from "./routes/cliente.habitaciones.routes.js";
 import grahps from "./routes/grahps.routes.js"
 import grahpsStock from "./routes/grahps.stock.routes.js"
 import authRoutes from "./routes/auth.routes.js";
+import ranchRoutes from "./routes/ranch.routes.js";
 import bebidasRoutes from "./routes/inventario.routes.js";
 import { FRONTEND_URL } from "./config.js";
 
@@ -26,7 +27,7 @@ app.use(morgan("dev"));
 app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
-app.use("/api", clientRoutes);
+app.use("/api", clientRoutes,ranchRoutes);
 app.use("/api", clienteHabitacionesModel);
 app.use("/api", clientCabaniasRoutes);
 app.use("/api", bebidasRoutes);

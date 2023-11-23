@@ -1,375 +1,206 @@
-import React from "react";
-import {
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
-  Input,
-  Button,
-  DropdownTrigger,
-  Dropdown,
-  DropdownMenu,
-  DropdownItem,
-  Chip,
-  User,
-  Pagination,Popover, PopoverTrigger, PopoverContent
-} from "@nextui-org/react";
-import {PlusIcon} from "./PlusIcon.jsx";
-import {VerticalDotsIcon} from "./VerticalDotsIcon";
-import {SearchIcon} from "./SearchIcon";
-import {ChevronDownIcon} from "./ChevronDownIcon";
-import {columns, users, statusOptions} from "./data";
-import {capitalize} from "./utils";
+import React, { useEffect, useState } from "react";
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Pagination, getKeyValue, Button, Popover, PopoverContent, PopoverTrigger, Input,Listbox, ListboxItem, Textarea } from "@nextui-org/react";
+import {ListboxWrapper} from "./ListboxWrapper";
+// import { users } from "./data";
+import { PlusIcon } from "./PlusIcon";
+import { ChevronDownIcon } from "./ChevronDownIcon";
+import { registrarProduction, obtenerData } from "../../api/ranch.api";
 
-const statusColorMap = {
-  active: "success",
-  paused: "danger",
-  vacation: "warning",
-};
+export default function App() {
 
-const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "actions"];
+  const [showPopover, setShowPopover] = useState(false);
+  const [ranchData, setRanchData] = useState([])
+  const [formData, setFormData] = React.useState({
+    nombre: "",
+    tipo: "",
+    cantidadProducida: "",
+    areaDeProduccion: "",
+    notasEspeciales: ""
 
-export default function tableF() {
-  const [filterValue, setFilterValue] = React.useState("");
-  const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
-  const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
-  const [statusFilter, setStatusFilter] = React.useState("all");
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [sortDescriptor, setSortDescriptor] = React.useState({
-    column: "age",
-    direction: "ascending",
-  });
+  })
   const [page, setPage] = React.useState(1);
+  const rowsPerPage = 4;
 
-  const pages = Math.ceil(users.length / rowsPerPage);
-
-  const hasSearchFilter = Boolean(filterValue);
-
-  const headerColumns = React.useMemo(() => {
-    if (visibleColumns === "all") return columns;
-
-    return columns.filter((column) => Array.from(visibleColumns).includes(column.uid));
-  }, [visibleColumns]);
-
-  const filteredItems = React.useMemo(() => {
-    let filteredUsers = [...users];
-
-    if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter((user) =>
-        user.name.toLowerCase().includes(filterValue.toLowerCase()),
-      );
-    }
-    if (statusFilter !== "all" && Array.from(statusFilter).length !== statusOptions.length) {
-      filteredUsers = filteredUsers.filter((user) =>
-        Array.from(statusFilter).includes(user.status),
-      );
-    }
-
-    return filteredUsers;
-  }, [users, filterValue, statusFilter]);
+  const pages = Math.ceil(ranchData.length / rowsPerPage);
 
   const items = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
 
-    return filteredItems.slice(start, end);
-  }, [page, filteredItems, rowsPerPage]);
+    return ranchData.slice(start, end);
+  }, [page, ranchData]);
 
-  const sortedItems = React.useMemo(() => {
-    return [...items].sort((a, b) => {
-      const first = a[sortDescriptor.column];
-      const second = b[sortDescriptor.column];
-      const cmp = first < second ? -1 : first > second ? 1 : 0;
+  const [selectedKeys, setSelectedKeys] = React.useState(new Set(["text"]));
 
-      return sortDescriptor.direction === "descending" ? -cmp : cmp;
-    });
-  }, [sortDescriptor, items]);
-
-  const renderCell = React.useCallback((user, columnKey) => {
-    const cellValue = user[columnKey];
-
-    switch (columnKey) {
-      case "name":
-        return (
-          <User
-            avatarProps={{radius: "full", size: "sm", src: user.avatar}}
-            classNames={{
-              description: "text-default-500",
-            }}
-            description={user.email}
-            name={cellValue}
-          >
-            {user.email}
-          </User>
-        );
-      case "role":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{cellValue}</p>
-            <p className="text-bold text-tiny capitalize text-default-500">{user.team}</p>
-          </div>
-        );
-      case "status":
-        return (
-          <Chip
-            className="capitalize border-none gap-1 text-default-600"
-            color={statusColorMap[user.status]}
-            size="sm"
-            variant="dot"
-          >
-            {cellValue}
-          </Chip>
-        );
-      case "actions":
-        return (
-          <div className="relative flex justify-end items-center gap-2">
-            <Dropdown className="bg-background border-1 border-default-200">
-              <DropdownTrigger>
-                <Button isIconOnly radius="full" size="sm" variant="light">
-                  <VerticalDotsIcon className="text-default-400" />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu>
-                <DropdownItem>View</DropdownItem>
-                <DropdownItem>Edit</DropdownItem>
-                <DropdownItem>Delete</DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </div>
-        );
-      default:
-        return cellValue;
-    }
-  }, []);
-
-  const onRowsPerPageChange = React.useCallback((e) => {
-    setRowsPerPage(Number(e.target.value));
-    setPage(1);
-  }, []);
-
-
-  const onSearchChange = React.useCallback((value) => {
-    if (value) {
-      setFilterValue(value);
-      setPage(1);
-    } else {
-      setFilterValue("");
-    }
-  }, []);
-
-  //filtrar
-  const topContent = React.useMemo(() => {
-    return (
-      <div className="flex flex-col gap-4">
-        <div className="flex justify-between gap-3 items-end">
-          <Input
-            isClearable
-            classNames={{
-              base: "w-full sm:max-w-[44%]",
-              inputWrapper: "border-1",
-            }}
-            placeholder="Search by name..."
-            size="sm"
-            startContent={<SearchIcon className="text-default-300" />}
-            value={filterValue}
-            variant="bordered"
-            onClear={() => setFilterValue("")}
-            onValueChange={onSearchChange}
-          />
-          <div className="flex gap-3">
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button
-                  endContent={<ChevronDownIcon className="text-small" />}
-                  size="sm"
-                  variant="flat"
-                >
-                  Status
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={statusFilter}
-                selectionMode="multiple"
-                onSelectionChange={setStatusFilter}
-              >
-                {statusOptions.map((status) => (
-                  <DropdownItem key={status.uid} className="capitalize">
-                    {capitalize(status.name)}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button
-                  endContent={<ChevronDownIcon className="text-small" />}
-                  size="sm"
-                  variant="flat"
-                >
-                  Columns
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={visibleColumns}
-                selectionMode="multiple"
-                onSelectionChange={setVisibleColumns}
-              >
-                {columns.map((column) => (
-                  <DropdownItem key={column.uid} className="capitalize">
-                    {capitalize(column.name)}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-            <Popover placement="button"showArrow={true}>
-              <PopoverTrigger>
-            <Button
-              className="bg-foreground text-background"
-              endContent={<PlusIcon />}
-              size="sm"
-            >
-              Add New
-            </Button>
-
-              </PopoverTrigger>
-              <PopoverContent className="bg-neutral-800">
-                <div>
-                  <h2 className="w-full text-center mt-2 mb-2 text-white">CONTENIDO</h2>
-                  <form>
-                    <Input radius="none" className="h-12 w-80 p-1" label="campo one"  labelPlacement="outside"/>
-                    <Input radius="none" className="h-12 w-80 p-1" label="campo one"/>
-                    <Input radius="none" className="h-12 w-80 p-1" label="campo one"/>
-                    <Input radius="none" className="h-12 w-80 p-1" label="campo one"/>
-                    <Input radius="none" className="h-12 w-80 p-1" label="campo one"/>
-                  </form>
-                    <Button color="primary" className="h-10 w-28 ml-1 mt-1 mb-5">Enviar</Button>
-                </div>
-              </PopoverContent>
-
-            </Popover>
-          </div>
-        </div>
-        {/* row page */}
-        <div className="flex justify-between items-center">
-          <span className="text-default-400 text-small">Total {users.length} users</span>
-          <label className="flex items-center text-default-400 text-small">
-            Rows per page:
-            <select
-              className="bg-transparent outline-none text-default-400 text-small"
-              onChange={onRowsPerPageChange}
-            >
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="15">15</option>
-            </select>
-          </label>
-        </div>
-        {/* row page */}
-      </div>
-    );
-  }, [
-    filterValue,
-    statusFilter,
-    visibleColumns,
-    onSearchChange,
-    onRowsPerPageChange,
-    users.length,
-    hasSearchFilter,
-  ]);
-  //filtrar 
-
-  //controllers
-  const bottomContent = React.useMemo(() => {
-    return (
-      <div className="py-2 px-2 flex justify-between items-center">
-        <Pagination
-          showControls
-          classNames={{
-            cursor: "bg-foreground text-background",
-          }}
-          color="default"
-          isDisabled={hasSearchFilter}
-          page={page}
-          total={pages}
-          variant="light"
-          onChange={setPage}
-        />
-        <span className="text-small text-default-400">
-          {selectedKeys === "all"
-            ? "All items selected"
-            : `${selectedKeys.size} of ${items.length} selected`}
-        </span>
-      </div>
-    );
-  }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
-  //controllers
-
-  const classNames = React.useMemo(
-    () => ({
-      wrapper: ["max-h-[382px]", "max-w-3xl"],
-      th: ["bg-transparent", "text-default-500", "border-b", "border-divider"],
-      td: [
-        // changing the rows border radius
-        // first
-        "group-data-[first=true]:first:before:rounded-none",
-        "group-data-[first=true]:last:before:rounded-none",
-        // middle
-        "group-data-[middle=true]:before:rounded-none",
-        // last
-        "group-data-[last=true]:first:before:rounded-none",
-        "group-data-[last=true]:last:before:rounded-none",
-      ],
-    }),
-    [],
+  const selectedValue = React.useMemo(
+    () => Array.from(selectedKeys).join(", "),
+    [selectedKeys]
   );
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  }
+
+  const handdleFormSubmit = async () => {
+    try {
+      await registrarProduction(formData);
+      const getData = await obtenerData(); 
+      setRanchData(getData);
+    } catch (error) {
+      console.log("Error al registrar la producción: " + error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+     try {
+      const getData = await obtenerData(); 
+      setRanchData(getData);
+      console.log("My data: "+ getData)
+     } catch (error) {
+      console.log("los datos no se pudieron obtener en este momento")
+     }
+    }
+    fetchData();
+  }, [])
+
   return (
-    <Table
-      isCompact
-      removeWrapper
-      aria-label="Example table with custom cells, pagination and sorting"
-      bottomContent={bottomContent}
-      bottomContentPlacement="outside"
-      checkboxesProps={{
-        classNames: {
-          wrapper: "after:bg-foreground after:text-background text-background",
-        },
-      }}
-      classNames={classNames}
-      selectedKeys={selectedKeys}
-      selectionMode="multiple"
-      sortDescriptor={sortDescriptor}
-      topContent={topContent}
-      topContentPlacement="outside"
-      onSelectionChange={setSelectedKeys}
-      onSortChange={setSortDescriptor}
-    >
-      <TableHeader columns={headerColumns}>
-        {(column) => (
-          <TableColumn
-            key={column.uid}
-            align={column.uid === "actions" ? "center" : "start"}
-            allowsSorting={column.sortable}
+
+    <div>
+
+    <div className="flex justify-between">
+      <article>
+      <Button
+        endContent={<ChevronDownIcon className="text-small" />}
+        size="sm"
+        variant="flat"
+        className="mr-2"
+      >
+        Columns
+      </Button>
+
+      <Popover placement="bottom" showArrow={true}>
+      <PopoverTrigger>
+      <Button
+        endContent={<ChevronDownIcon className="text-small" />}
+        size="sm"
+        variant="flat"
+        className="mr-2"
+      >
+        Columns
+      </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-60">
+      <div className="flex flex-col ">
+      <ListboxWrapper>
+        <Listbox 
+          aria-label="Multiple selection example"
+          variant="flat"
+          disallowEmptySelection
+          selectionMode="multiple"
+          selectedKeys={selectedKeys}
+          onSelectionChange={setSelectedKeys}
+        >
+          <ListboxItem key="text">Text</ListboxItem>
+          <ListboxItem key="number">Number</ListboxItem>
+          <ListboxItem key="date">Date</ListboxItem>
+          <ListboxItem key="single_date">Single Date</ListboxItem>
+          <ListboxItem key="iteration">Iteration</ListboxItem>
+        </Listbox>
+      </ListboxWrapper>
+    </div>
+      </PopoverContent>
+    </Popover>
+      </article>
+      <Popover placement="button" showArrow={true}>
+        <PopoverTrigger>
+          <Button
+            className="bg-foreground text-background"
+            endContent={<PlusIcon />}
+            size="sm"
           >
-            {column.name}
-          </TableColumn>
-        )}
-      </TableHeader>
-      <TableBody emptyContent={"No users found"} items={sortedItems}>
-        {(item) => (
-          <TableRow key={item.id}>
-            {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+            Add New
+          </Button>
+
+        </PopoverTrigger>
+        <PopoverContent className="bg-white">
+          <div>
+            <h2 className="w-full text-center mt-2 mb-2 text-black">CONTENIDO</h2>
+            <div>
+              <Input
+                id="nombre"
+                name="nombre"
+                type="text"
+                radius="none" 
+                value={formData.nombre}
+                onChange={handleChange}
+                label="Nombre" 
+                className="h-12 w-80 p-1"/>
+              <Input name="tipo" type="text" onChange={handleChange} value={formData.tipo} radius="none" className="h-12 w-80 p-1" label="Tipo" />
+              <Input name="cantidadProducida" onChange={handleChange} value={formData.cantidadProducida} radius="none" className="h-12 w-80 p-1" label="Cantidad producida" />
+              <Input name="areaDeProduccion" onChange={handleChange} value={formData.areaDeProduccion} radius="none" className="h-12 w-80 p-1" label="area de produccion" />
+              <Textarea
+              name="notasEspeciales"
+              label="Description"
+              placeholder="Enter your description"
+                value={formData.notasEspeciales}
+                onChange={handleChange}
+                radius="none" className=" w-80 p-1"/>
+            </div>
+            <Button onClick={handdleFormSubmit} color="primary" className="h-10 w-20 ml-1 mt-1 mb-5 mr-2">Enviar</Button>
+            <Button className="text-red-500 font-bolt">Cerrar</Button>
+          </div>
+        </PopoverContent>
+
+      </Popover>
+    </div>
+
+
+      <Table
+        aria-label="Example table with client side pagination"
+        bottomContent={
+          <div className="flex w-full justify-center">
+            <Pagination
+              isCompact
+              showControls
+              showShadow
+              color="secondary"
+              page={page}
+              total={pages}
+              onChange={(page) => setPage(page)}
+            />
+          </div>
+        }
+        classNames={{
+          wrapper: "min-h-[222px]",
+        }}
+      >
+        <TableHeader>
+          <TableColumn className="text-center" key="name">DESCRIPCIÓN</TableColumn>
+          <TableColumn className="text-center" key="role">TIPO</TableColumn>
+          <TableColumn className="text-center" key="stat">CANTIDAD</TableColumn>
+          <TableColumn className="text-center" key="statu">AREA</TableColumn>
+          <TableColumn className="text-center" key="status">OBSERVACIONES</TableColumn>
+          <TableColumn className="text-center">OPERACIÓN</TableColumn>
+        </TableHeader>
+        <TableBody >
+          {ranchData.map((ranch) => (
+            <TableRow key={ranch._id} className="text-center uppercase">
+              <TableCell>{ranch.nombre}</TableCell>
+              <TableCell>{ranch.tipo}</TableCell>
+              <TableCell className="text-blue-500 font-semibold">{ranch.cantidadProducida}</TableCell>
+              <TableCell>{ranch.areaDeProduccion}</TableCell>
+              <TableCell>{ranch.notasEspeciales}</TableCell>
+              <TableCell>RESULTADO</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+
+    </div>
   );
 }

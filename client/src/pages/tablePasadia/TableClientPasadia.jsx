@@ -41,7 +41,7 @@ export default function App() {
   const [esCortesia, setEsCortesia] = useState(false);
 
   const handleCortesiaChange = (event) => {
-    setEsCortesia(event.target.checked);
+    setEsCortesia(event.target.checked); 
   };
   
   const [users, setUsers] = useState([]);
@@ -159,7 +159,8 @@ export default function App() {
   };
 
 
-  const handleInputChange = (event, fieldName) => {
+  const 
+  handleInputChange = (event, fieldName) => {
     const { name, value } = event.target;
 
     if (name === 'identificacion') {
