@@ -7,3 +7,57 @@
     transform: rotate(180deg);
     transition: transform 0.3s ease-in-out;
   }
+
+
+  .search-button{
+    width: 200px;
+    height: 50px;
+    border-radius: 40px;
+  }
+  .container{
+    width: 200px;
+    position: relative;
+    margin-left: 10px;
+  }
+  .container .lupa{
+    position: absolute;
+    margin-left: 20px;
+    margin-top: 20px;
+    color: #FFF;
+    -webkit-transition: 0.3s ease-out;
+            transition: 0.3s ease-out;
+  }
+  #search{
+    overflow: hidden;
+    width: 55px;
+    height: 55px;
+    border-radius: 40px;
+    border: solid blue 3px;
+    background-color: #235465;
+    color: #FFF;
+    border: none;
+    font-size: 0.9em;
+    float: left;
+    padding-left: 44px;
+    -webkit-transition: 0.6s ease-out;
+            transition: 0.6s ease-out;
+  }
+  /*eventos*/
+  #search:focus, 
+  #search:active{
+    outline:none;
+    width: 180px;
+    padding-right: 20px;
+  }
+  .container:hover #search{
+    width: 200px;
+    background-color:#3299BB;
+  }
+  .container:hover .lupa{
+    color: #f7f7f7;
+  }
+  /*placeholder*/
+  ::-webkit-input-placeholder { color: #CCC; }
+  :-moz-placeholder { color: #CCC; }
+  ::-moz-placeholder { color: #CCC; }
+  :-ms-input-placeholder { color: #CCC; }

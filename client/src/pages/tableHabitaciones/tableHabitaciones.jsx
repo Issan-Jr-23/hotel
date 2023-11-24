@@ -15,7 +15,7 @@ import {
   ModalFooter,
   useDisclosure,
   Select,
-  SelectItem, Checkbox,Popover, PopoverTrigger, PopoverContent, Pagination
+  SelectItem, Checkbox, Popover, PopoverTrigger, PopoverContent, Pagination
 } from "@nextui-org/react";
 
 import axios from "axios";
@@ -25,6 +25,7 @@ import download from "../../images/download.png";
 import chevron from "../../images/right.png";
 import plus from "../../images/plus.png";
 import plusb from "../../images/plus_blue.png";
+import { SearchIcon } from "../tablePasadia/SearchIcon";
 import toast, { Toaster } from 'react-hot-toast';
 import jsPDF from "jspdf";
 import Swal from 'sweetalert2';
@@ -39,7 +40,7 @@ export default function App() {
   const handleCortesiaChange = (event) => {
     setEsCortesia(event.target.checked);
   };
-  
+
   const [users, setUsers] = useState([]);
   const [drinks, setDrinks] = useState([]);
   const [snacks, setSnacks] = useState([]);
@@ -71,14 +72,14 @@ export default function App() {
   const [precioBebida4Seleccionada, setPrecioBebida4Seleccionada] = useState(0);
   const [bebida4SeleccionadaId, setBebida4SeleccionadaId] = useState(null);
 
- //comida 1
+  //comida 1
 
   const [cantidadFood, setCantidadFood] = useState("");
   const [foodSeleccionada, setFoodSeleccionada] = useState('');
   const [precioFoodSeleccionada, setPrecioFoodSeleccionada] = useState(0);
   const [foodSeleccionadaId, setFoodSeleccionadaId] = useState(null);
 
-//comida 2
+  //comida 2
 
   const [cantidadFood1, setCantidadFood1] = useState("");
   const [food1Seleccionada, setFood1Seleccionada] = useState('');
@@ -107,7 +108,7 @@ export default function App() {
   const [editedName, setEditedName] = useState("");
   const [editPago, setEditPago] = useState("");
 
-  
+
   const [errorFechaPasadia, setErrorFechaPasadia] = useState(false);
   const [errorIdentificacion, setErrorIdentificacion] = useState(false);
   const [errorNombre, setErrorNombre] = useState(false);
@@ -120,7 +121,7 @@ export default function App() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [backdrop, setBackdrop] = useState("blur");
   const [formData, setFormData] = useState({
-    identificacion:"",
+    identificacion: "",
     nombre: "",
     reserva: "",
     cantidadPersonas: {
@@ -132,7 +133,7 @@ export default function App() {
     mediosDePagoPendiente: "",
     pagoPendiente: "",
     fechaPasadia: "",
-    habitaciones:""
+    habitaciones: ""
 
   });
 
@@ -140,7 +141,7 @@ export default function App() {
 
 
 
-  
+
   const [busqueda, setBusqueda] = useState('');
 
   const datosFiltrados = useMemo(() => {
@@ -151,7 +152,7 @@ export default function App() {
     });
   }, [busqueda, users]);
 
-  
+
 
 
   const handleSearchChange = (event) => {
@@ -167,22 +168,22 @@ export default function App() {
     } else if (name === 'nombre') {
       setErrorNombre(!value);
     } else if (name === 'fechaPasadia') {
-      setErrorFechaPasadia(!value); 
-    }else if(name === 'reserva'){
+      setErrorFechaPasadia(!value);
+    } else if (name === 'reserva') {
       setErrorReserva(!value);
     } else if (name === 'adultos') {
       setErrorAdultos(!value)
-    }else if(name === 'habitaciones'){
+    } else if (name === 'habitaciones') {
 
     }
-    
+
     const totalCosto = (valorHabitaciones);
     console.log(totalCosto)
-  
-    const totalPendiente = totalCosto; 
-  
+
+    const totalPendiente = totalCosto;
+
     if ((name === 'pagoPendiente' && parseFloat(value) > totalPendiente) ||
-        (name === 'pagoAnticipado' && parseFloat(value) > totalCosto)) {
+      (name === 'pagoAnticipado' && parseFloat(value) > totalCosto)) {
       alert('El monto no puede ser mayor que el costo total o el monto pendiente.');
     } else {
       setFormData({
@@ -192,7 +193,7 @@ export default function App() {
       });
     }
   };
-  
+
 
   const handleReservaChange = (selectedSize) => {
     setFormData({
@@ -203,7 +204,7 @@ export default function App() {
 
   const actualizarInventarioBebida = async (bebidaId, cantidad) => {
     try {
-      const response = await axios.post(API_URL+'/actualizar-inventario-bebida', {
+      const response = await axios.post(API_URL + '/actualizar-inventario-bebida', {
         id: bebidaId,
         cantidad,
       });
@@ -213,7 +214,7 @@ export default function App() {
       }
     } catch (error) {
       console.error('Error al actualizar el inventario de bebidas:', error.message);
-      throw error;  
+      throw error;
     }
   };
   const actualizarStockInicialBebida = async (bebidaId, cantidad) => {
@@ -230,50 +231,50 @@ export default function App() {
 
 
   const handleGuardarBebida = async () => {
-    if (!selectedClientId || (!bebidaSeleccionadaId && !bebida1SeleccionadaId && !bebida2SeleccionadaId && !bebida3SeleccionadaId && !bebida4SeleccionadaId)) { 
+    if (!selectedClientId || (!bebidaSeleccionadaId && !bebida1SeleccionadaId && !bebida2SeleccionadaId && !bebida3SeleccionadaId && !bebida4SeleccionadaId)) {
       toast.error('No se ha seleccionado un cliente o una Bebida.');
       toast.
-      return;
+        return;
     }
-  
+
     const checkStockAndUpdateInventory = async (bebidaId, cantidad) => {
       const response = await axios.get(`${API_URL}/verificar-disponibilidad/${bebidaId}`);
-     
-    
+
+
       const cantidadRestante = response.data.cantidadRestante;
 
       const clienteResponse = await axios.get(`${API_URL}/habitaciones-clientes/${selectedClientId}`);
       const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
-   
+
       const totalPersonas = ninios + adultos;
-  
+
       if (esCortesia) {
         const totalCortesias = cantidadBebida + cantidadBebida1 + cantidadBebida2 + cantidadBebida3 + cantidadBebida4;
         if (totalCortesias > totalPersonas) {
           alert(`La cantidad de cortesías (${totalCortesias}) no puede exceder la cantidad de personas (${totalPersonas}).`);
           return;
         }
-       
+
       }
-     if (cantidad > cantidadRestante) {
+      if (cantidad > cantidadRestante) {
         alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
         return false;
       }
-  
+
 
       await actualizarInventarioBebida(bebidaId, cantidad);
-      await actualizarStockInicialBebida(bebidaId,cantidad);
+      await actualizarStockInicialBebida(bebidaId, cantidad);
       return true;
     };
-  
+
     try {
       if (!selectedClientId || (!bebidaSeleccionadaId && !bebida1SeleccionadaId && !bebida2SeleccionadaId && !bebida3SeleccionadaId && !bebida4SeleccionadaId)) {
         throw new Error('No se ha seleccionado un cliente o una bebida.');
       }
-  
+
       if (esCortesia) {
         let atLeastOneCortesiaSaved = false;
-  
+
         if (cantidadBebida > 0 && bebidaSeleccionadaId) {
           if (await checkStockAndUpdateInventory(bebidaSeleccionadaId, cantidadBebida)) {
             const bebidaCortesia = {
@@ -284,11 +285,11 @@ export default function App() {
               mensaje: "Cortesía",
               fechaDeMarca: ""
             };
-            await guardarBebida(bebidaCortesia); 
+            await guardarBebida(bebidaCortesia);
             atLeastOneCortesiaSaved = true;
           }
         }
-  
+
         if (cantidadBebida1 > 0 && bebida1SeleccionadaId) {
           if (await checkStockAndUpdateInventory(bebida1SeleccionadaId, cantidadBebida1)) {
             const bebidaCortesia1 = {
@@ -303,7 +304,7 @@ export default function App() {
             atLeastOneCortesiaSaved = true;
           }
         }
-  
+
         if (cantidadBebida2 > 0 && bebida2SeleccionadaId) {
           if (await checkStockAndUpdateInventory(bebida2SeleccionadaId, cantidadBebida2)) {
             const bebidaCortesia2 = {
@@ -318,7 +319,7 @@ export default function App() {
             atLeastOneCortesiaSaved = true;
           }
         }
-  
+
         if (cantidadBebida3 > 0 && bebida3SeleccionadaId) {
           if (await checkStockAndUpdateInventory(bebida3SeleccionadaId, cantidadBebida3)) {
             const bebidaCortesia3 = {
@@ -333,7 +334,7 @@ export default function App() {
             atLeastOneCortesiaSaved = true;
           }
         }
-  
+
         if (cantidadBebida4 > 0 && bebida4SeleccionadaId) {
           if (await checkStockAndUpdateInventory(bebida4SeleccionadaId, cantidadBebida4)) {
             const bebidaCortesia4 = {
@@ -348,15 +349,15 @@ export default function App() {
             atLeastOneCortesiaSaved = true;
           }
         }
-  
+
         if (atLeastOneCortesiaSaved) {
           onClose();
         }
-        return; 
+        return;
       }
-  
+
       let isBebidaAdded = false;
-  
+
       if (cantidadBebida > 0 && bebidaSeleccionadaId) {
         const bebidaAdultos = {
           id: bebidaSeleccionadaId,
@@ -365,13 +366,13 @@ export default function App() {
           precio: precioBebidaSeleccionada,
           fechaDeMarca: ""
         };
-  
+
         if (await checkStockAndUpdateInventory(bebidaSeleccionadaId, cantidadBebida)) {
           await guardarBebida(bebidaAdultos);
           isBebidaAdded = true;
         }
       }
-  
+
       if (cantidadBebida1 > 0 && bebida1SeleccionadaId) {
         const bebidaAdultos1 = {
           id: bebida1SeleccionadaId,
@@ -380,13 +381,13 @@ export default function App() {
           precio: precioBebida1Seleccionada,
           fechaDeMarca: ""
         };
-  
+
         if (await checkStockAndUpdateInventory(bebida1SeleccionadaId, cantidadBebida1)) {
           await guardarBebida(bebidaAdultos1);
           isBebidaAdded = true;
         }
       }
-  
+
       if (cantidadBebida2 > 0 && bebida2SeleccionadaId) {
         const bebidaAdultos2 = {
           id: bebida2SeleccionadaId,
@@ -395,13 +396,13 @@ export default function App() {
           precio: precioBebida2Seleccionada,
           fechaDeMarca: ""
         };
-  
+
         if (await checkStockAndUpdateInventory(bebida2SeleccionadaId, cantidadBebida2)) {
           await guardarBebida(bebidaAdultos2);
           isBebidaAdded = true;
         }
       }
-  
+
       if (cantidadBebida3 > 0 && bebida3SeleccionadaId) {
         const bebidaAdultos3 = {
           id: bebida3SeleccionadaId,
@@ -410,13 +411,13 @@ export default function App() {
           precio: precioBebida3Seleccionada,
           fechaDeMarca: ""
         };
-  
+
         if (await checkStockAndUpdateInventory(bebida3SeleccionadaId, cantidadBebida3)) {
           await guardarBebida(bebidaAdultos3);
           isBebidaAdded = true;
         }
       }
-  
+
       if (cantidadBebida4 > 0 && bebida4SeleccionadaId) {
         const bebidaAdultos4 = {
           id: bebida4SeleccionadaId,
@@ -425,59 +426,59 @@ export default function App() {
           precio: precioBebida4Seleccionada,
           fechaDeMarca: ""
         };
-  
+
         if (await checkStockAndUpdateInventory(bebida4SeleccionadaId, cantidadBebida4)) {
           await guardarBebida(bebidaAdultos4);
           isBebidaAdded = true;
         }
       }
-  
+
       if (!isBebidaAdded) {
         alert("No se ha agregado ninguna bebida");
       } else {
-        onClose(); 
+        onClose();
       }
     } catch (error) {
       console.error('Error al guardar las bebidas en el cliente:', error.message);
     }
   };
-  
+
   const guardarBebida = async (bebida) => {
     try {
-      const response = await axios.post(API_URL+'/habitaciones-agregar-bebida', {
+      const response = await axios.post(API_URL + '/habitaciones-agregar-bebida', {
         id: selectedClientId,
         bebida,
       });
       toast.success('Bebida guardada exitosamente!');
-      setCantidadBebida(""); 
-      setBebidaSeleccionada(''); 
-      setPrecioBebidaSeleccionada(""); 
-      setBebidaSeleccionadaId(''); 
-  
-      setCantidadBebida1(""); 
+      setCantidadBebida("");
+      setBebidaSeleccionada('');
+      setPrecioBebidaSeleccionada("");
+      setBebidaSeleccionadaId('');
+
+      setCantidadBebida1("");
       setBebida1Seleccionada('');
       setPrecioBebida1Seleccionada("");
       setBebida1SeleccionadaId('');
-  
-      setEsCortesia(false); 
-  
+
+      setEsCortesia(false);
+
       closeModalM();
       const responses = await axios.get(API_URL + "/habitaciones-clientes");
-        
+
       // Ordena los datos de la respuesta de la petición GET, no del PUT
       const usuariosOrdenados = responses.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
-      
+
       // Actualiza el estado con los usuarios ordenados
       setUsers(usuariosOrdenados);
     } catch (error) {
       console.error('Error al guardar la bebida en el cliente:', error.message);
-      throw error;  
+      throw error;
     }
   };
 
   const actualizarInventarioFood = async (foodId, cantidad) => {
     try {
-      const response = await axios.post(API_URL+'/actualizar-inventario-food', {
+      const response = await axios.post(API_URL + '/actualizar-inventario-food', {
         id: foodId,
         cantidad,
       });
@@ -506,14 +507,14 @@ export default function App() {
     if (!selectedClientId || (!foodSeleccionadaId && !food1SeleccionadaId && food2SeleccionadaId && food3SeleccionadaId && food4SeleccionadaId)) {
       toast.error('No se ha seleccionado un cliente o una comida.');
       toast.
-      return;
+        return;
     }
-  
+
     const checkStockAndUpdateInventory = async (foodId, cantidad) => {
       const response = await axios.get(`${API_URL}/verificar-disponibilidad/${foodId}`);
-     
+
       const cantidadRestante = response.data.cantidadRestante;
-      
+
       const clienteResponse = await axios.get(`${API_URL}/habitaciones-clientes/${selectedClientId}`);
       const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
       const totalPersonas = ninios + adultos;
@@ -532,19 +533,19 @@ export default function App() {
       }
 
       await actualizarInventarioFood(foodId, cantidad);
-      await actualizarStockInicialFood(foodId,cantidad);
+      await actualizarStockInicialFood(foodId, cantidad);
       return true;
     };
 
-  
+
     try {
       if (!selectedClientId || (!foodSeleccionadaId && !food1SeleccionadaId && !food2SeleccionadaId && !food3SeleccionadaId && !food4SeleccionadaId)) {
         throw new Error('No se ha seleccionado un cliente o una comida.');
       }
-  
+
       if (esCortesia) {
         let atLeastOneCortesiaSaved = false;
-  
+
         if (cantidadFood > 0 && foodSeleccionadaId) {
           if (await checkStockAndUpdateInventory(foodSeleccionadaId, cantidadFood)) {
             const foodCortesia = {
@@ -559,7 +560,7 @@ export default function App() {
             atLeastOneCortesiaSaved = true;
           }
         }
-  
+
         if (cantidadFood1 > 0 && food1SeleccionadaId) {
           if (await checkStockAndUpdateInventory(food1SeleccionadaId, cantidadFood1)) {
             const foodCortesia1 = {
@@ -574,7 +575,7 @@ export default function App() {
             atLeastOneCortesiaSaved = true;
           }
         }
-  
+
         if (cantidadFood2 > 0 && food2SeleccionadaId) {
           if (await checkStockAndUpdateInventory(food2SeleccionadaId, cantidadFood2)) {
             const foodCortesia2 = {
@@ -589,7 +590,7 @@ export default function App() {
             atLeastOneCortesiaSaved = true;
           }
         }
-  
+
         if (cantidadFood3 > 0 && food3SeleccionadaId) {
           if (await checkStockAndUpdateInventory(food3SeleccionadaId, cantidadFood3)) {
             const foodCortesia3 = {
@@ -604,7 +605,7 @@ export default function App() {
             atLeastOneCortesiaSaved = true;
           }
         }
-  
+
         if (cantidadFood4 > 0 && food4SeleccionadaId) {
           if (await checkStockAndUpdateInventory(food4SeleccionadaId, cantidadFood4)) {
             const foodCortesia4 = {
@@ -619,15 +620,15 @@ export default function App() {
             atLeastOneCortesiaSaved = true;
           }
         }
-  
+
         if (atLeastOneCortesiaSaved) {
           onClose();
         }
-        return; 
+        return;
       }
-  
+
       let isBebidaAdded = false;
-  
+
       if (cantidadFood > 0 && foodSeleccionadaId) {
         const foodAdultos = {
           id: foodSeleccionadaId,
@@ -636,13 +637,13 @@ export default function App() {
           precio: precioFoodSeleccionada,
           fechaDeMarca: ""
         };
-  
+
         if (await checkStockAndUpdateInventory(foodSeleccionadaId, cantidadFood)) {
           await guardarFood(foodAdultos);
           isBebidaAdded = true;
         }
       }
-  
+
       if (cantidadFood1 > 0 && food1SeleccionadaId) {
         const foodAdultos1 = {
           id: food1SeleccionadaId,
@@ -651,13 +652,13 @@ export default function App() {
           precio: precioFood1Seleccionada,
           fechaDeMarca: ""
         };
-  
+
         if (await checkStockAndUpdateInventory(food1SeleccionadaId, cantidadFood1)) {
           await guardarFood(foodAdultos1);
           isBebidaAdded = true;
         }
       }
-  
+
       if (cantidadFood2 > 0 && food2SeleccionadaId) {
         const foodAdultos2 = {
           id: food2SeleccionadaId,
@@ -666,13 +667,13 @@ export default function App() {
           precio: precioFood2Seleccionada,
           fechaDeMarca: ""
         };
-  
+
         if (await checkStockAndUpdateInventory(food2SeleccionadaId, cantidadFood2)) {
           await guardarFood(foodAdultos2);
           isBebidaAdded = true;
         }
       }
-  
+
       if (cantidadFood3 > 0 && food3SeleccionadaId) {
         const foodAdultos3 = {
           id: food3SeleccionadaId,
@@ -681,13 +682,13 @@ export default function App() {
           precio: precioFood3Seleccionada,
           fechaDeMarca: ""
         };
-  
+
         if (await checkStockAndUpdateInventory(food3SeleccionadaId, cantidadFood3)) {
           await guardarFood(foodAdultos3);
           isBebidaAdded = true;
         }
       }
-  
+
       if (cantidadFood4 > 0 && food4SeleccionadaId) {
         const foodAdultos4 = {
           id: food4SeleccionadaId,
@@ -696,13 +697,13 @@ export default function App() {
           precio: precioFood4Seleccionada,
           fechaDeMarca: ""
         };
-  
+
         if (await checkStockAndUpdateInventory(food4SeleccionadaId, cantidadFood4)) {
           await guardarFood(foodAdultos4);
           isBebidaAdded = true;
         }
       }
-  
+
       if (!isBebidaAdded) {
         alert("No se ha agregado ninguna comida");
       } else {
@@ -712,41 +713,41 @@ export default function App() {
       console.error('Error al guardar las bebidas en el cliente:', error.message);
     }
   };
-  
+
   const guardarFood = async (food) => {
-    
+
     try {
-      const response = await axios.post(API_URL+'/habitaciones-agregar-food', {
+      const response = await axios.post(API_URL + '/habitaciones-agregar-food', {
         id: selectedClientId,
         food,
       });
       toast.success('Comida guardada exitosamente!');
-         setCantidadFood(""); 
-    setFoodSeleccionada(''); 
-    setPrecioFoodSeleccionada(""); 
-    setFoodSeleccionadaId(''); 
+      setCantidadFood("");
+      setFoodSeleccionada('');
+      setPrecioFoodSeleccionada("");
+      setFoodSeleccionadaId('');
 
-    
-    setCantidadFood1(""); 
-    setFood1Seleccionada(''); 
-    setPrecioFood1Seleccionada(""); 
-    setFood1SeleccionadaId(''); 
 
-    
-    setEsCortesia(false); 
+      setCantidadFood1("");
+      setFood1Seleccionada('');
+      setPrecioFood1Seleccionada("");
+      setFood1SeleccionadaId('');
 
-    closeModalF();
+
+      setEsCortesia(false);
+
+      closeModalF();
       closeModalF();
       const responses = await axios.get(API_URL + "/habitaciones-clientes");
-        
+
       // Ordena los datos de la respuesta de la petición GET, no del PUT
       const usuariosOrdenados = responses.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
-      
+
       // Actualiza el estado con los usuarios ordenados
       setUsers(usuariosOrdenados);
     } catch (error) {
       console.error('Error al guardar la bebida en el cliente:', error.message);
-      throw error; 
+      throw error;
     }
   };
 
@@ -755,7 +756,7 @@ export default function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(API_URL+"/habitaciones-clientes");
+        const response = await axios.get(API_URL + "/habitaciones-clientes");
         setUsers(response.data);
         const usuariosOrdenados = response.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
       } catch (error) {
@@ -771,7 +772,7 @@ export default function App() {
 
       event.preventDefault();
       let formIsValid = true;
-    
+
       //fecha pasadia 
 
       if (!formData.fechaPasadia) {
@@ -782,7 +783,7 @@ export default function App() {
       }
 
       //identificacion
-    
+
       if (!formData.identificacion) {
         setErrorIdentificacion(true);
         formIsValid = false;
@@ -792,68 +793,68 @@ export default function App() {
 
       //nombre
 
-      if(!formData.nombre){
+      if (!formData.nombre) {
         setErrorNombre(true)
-        formIsValid=false
-      }else{
+        formIsValid = false
+      } else {
         setErrorNombre(false)
       }
 
       //reserva
 
-      if(!formData.reserva){
+      if (!formData.reserva) {
         setErrorReserva(true)
-        formIsValid=false
-      }else{
+        formIsValid = false
+      } else {
         setErrorReserva(false)
       }
-      
+
       //adultos
 
-      if(!formData.cantidadPersonas.adultos){
+      if (!formData.cantidadPersonas.adultos) {
         setErrorAdultos(true)
-        formIsValid=false
-      }else{
+        formIsValid = false
+      } else {
         setErrorAdultos(false)
       }
 
-      if(!formData.habitaciones){
+      if (!formData.habitaciones) {
         setErrorHabitacion(true)
-        formIsValid=false
-      }else{
+        formIsValid = false
+      } else {
         setErrorHabitacion(false)
       }
 
-      if(formIsValid){
+      if (formIsValid) {
 
 
 
-      await axios.post(API_URL+"/habitaciones-registrar-cliente", formData);
-      onClose();
-      toast.success('Cliente agregado exitosamente!');
-      setFormData({
-        identificacion:"",
-        nombre: "",
-        reserva: "",
-        cantidadPersonas: {
-          adultos: "",
-          ninios: "",
-        },
-        mediosDePago: "",
-        pagoAnticipado: "",
-        mediosDePagoPendiente: "",
-        pagoPendiente: "",
-        fechaPasadia: "",
-        habitaciones:""
-      });
-      const responses = await axios.get(API_URL + "/habitaciones-clientes");
-        
-      // Ordena los datos de la respuesta de la petición GET, no del PUT
-      const usuariosOrdenados = responses.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
-      
-      // Actualiza el estado con los usuarios ordenados
-      setUsers(usuariosOrdenados);
-    }
+        await axios.post(API_URL + "/habitaciones-registrar-cliente", formData);
+        onClose();
+        toast.success('Cliente agregado exitosamente!');
+        setFormData({
+          identificacion: "",
+          nombre: "",
+          reserva: "",
+          cantidadPersonas: {
+            adultos: "",
+            ninios: "",
+          },
+          mediosDePago: "",
+          pagoAnticipado: "",
+          mediosDePagoPendiente: "",
+          pagoPendiente: "",
+          fechaPasadia: "",
+          habitaciones: ""
+        });
+        const responses = await axios.get(API_URL + "/habitaciones-clientes");
+
+        // Ordena los datos de la respuesta de la petición GET, no del PUT
+        const usuariosOrdenados = responses.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
+
+        // Actualiza el estado con los usuarios ordenados
+        setUsers(usuariosOrdenados);
+      }
     } catch (error) {
       toast.error('Ocurrió un error al agregar el cliente.');
     }
@@ -861,13 +862,13 @@ export default function App() {
 
   const handleFormSubmitB = async () => {
     try {
-      await axios.post(API_URL+"/habitaciones-registrar-cliente", formData);
+      await axios.post(API_URL + "/habitaciones-registrar-cliente", formData);
       onClose();
       toast.success('bebida agregada exitosamente');
       setFormData({
         bebidas: ""
       });
-      const response = await axios.get(API_URL+"/habitaciones-clientes");
+      const response = await axios.get(API_URL + "/habitaciones-clientes");
       setUsers(response.data);
     } catch (error) {
       toast.error('Ocurrió un error al agregar el cliente.');
@@ -920,7 +921,7 @@ export default function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(API_URL+"/drinks");
+        const response = await axios.get(API_URL + "/drinks");
         setDrinks(response.data);
         setCantidadDeBebidas(response.data)
       } catch (error) {
@@ -933,7 +934,7 @@ export default function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(API_URL+"/food");
+        const response = await axios.get(API_URL + "/food");
         setSnacks(response.data);
       } catch (error) {
         console.error("Error al obtener datos del servidor:", error);
@@ -970,7 +971,7 @@ export default function App() {
   const sizess = ["5xl",];
 
   const handleOpenM = (size) => {
-  setSize(size)
+    setSize(size)
   }
 
   const { isOpen: isModalOpenM, onOpen: openModalM, onClose: closeModalM } = useDisclosure();
@@ -983,30 +984,36 @@ export default function App() {
     setAncho(ancho);
     setSelectedClientId(userId);
     openModalM();
-        setCantidadBebida(""); // o '' si quieres que el campo esté completamente vacío
-      setBebidaSeleccionada(''); 
-      setPrecioBebidaSeleccionada("");
-      setBebidaSeleccionadaId('');
-  
-      setCantidadBebida1(""); 
-      setBebida1Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
-      setPrecioBebida1Seleccionada(""); // o el valor por defecto inicial
-      setBebida1SeleccionadaId('');
-      
-      setCantidadBebida2(""); 
-      setBebida2Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
-      setPrecioBebida2Seleccionada(""); // o el valor por defecto inicial
-      setBebida2SeleccionadaId('');
-      
-      setCantidadBebida3(""); 
-      setBebida3Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
-      setPrecioBebida3Seleccionada(""); // o el valor por defecto inicial
-      setBebida3SeleccionadaId('');
-      
-      setCantidadBebida4(""); 
-      setBebida4Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
-      setPrecioBebida4Seleccionada(""); // o el valor por defecto inicial
-      setBebida4SeleccionadaId('');
+    setCantidadBebida(""); // o '' si quieres que el campo esté completamente vacío
+    setBebidaSeleccionada('');
+    setPrecioBebidaSeleccionada("");
+    setBebidaSeleccionadaId('');
+
+    setCantidadBebida1("");
+    setBebida1Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
+    setPrecioBebida1Seleccionada(""); // o el valor por defecto inicial
+    setBebida1SeleccionadaId('');
+
+    setCantidadBebida2("");
+    setBebida2Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
+    setPrecioBebida2Seleccionada(""); // o el valor por defecto inicial
+    setBebida2SeleccionadaId('');
+
+    setCantidadBebida3("");
+    setBebida3Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
+    setPrecioBebida3Seleccionada(""); // o el valor por defecto inicial
+    setBebida3SeleccionadaId('');
+
+    setCantidadBebida4("");
+    setBebida4Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
+    setPrecioBebida4Seleccionada(""); // o el valor por defecto inicial
+    setBebida4SeleccionadaId('');
+
+    setFiltro("")
+    setFiltro2("")
+    setFiltro3("")
+    setFiltro4("")
+    setFiltro5("")
   };
 
   const [selectedSize, setSelectedSize] = React.useState('md');
@@ -1016,36 +1023,42 @@ export default function App() {
     setSelectedClientId(userId);
     openModalF();
     // Sin números
-setCantidadFood(""); 
-setFoodSeleccionada(''); // Establecer como vacío o el valor por defecto que desees
-setPrecioFoodSeleccionada(""); // o el valor por defecto inicial
-setFoodSeleccionadaId('');
+    setCantidadFood("");
+    setFoodSeleccionada(''); // Establecer como vacío o el valor por defecto que desees
+    setPrecioFoodSeleccionada(""); // o el valor por defecto inicial
+    setFoodSeleccionadaId('');
 
-// Con número 1
-setCantidadFood1(""); 
-setFood1Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
-setPrecioFood1Seleccionada(""); // o el valor por defecto inicial
-setFood1SeleccionadaId('');
+    // Con número 1
+    setCantidadFood1("");
+    setFood1Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
+    setPrecioFood1Seleccionada(""); // o el valor por defecto inicial
+    setFood1SeleccionadaId('');
 
-// Con número 2
-setCantidadFood2(""); 
-setFood2Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
-setPrecioFood2Seleccionada(""); // o el valor por defecto inicial
-setFood2SeleccionadaId('');
+    // Con número 2
+    setCantidadFood2("");
+    setFood2Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
+    setPrecioFood2Seleccionada(""); // o el valor por defecto inicial
+    setFood2SeleccionadaId('');
 
-// Con número 3
-setCantidadFood3(""); 
-setFood3Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
-setPrecioFood3Seleccionada(""); // o el valor por defecto inicial
-setFood3SeleccionadaId('');
+    // Con número 3
+    setCantidadFood3("");
+    setFood3Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
+    setPrecioFood3Seleccionada(""); // o el valor por defecto inicial
+    setFood3SeleccionadaId('');
 
-// Con número 4
-setCantidadFood4(""); 
-setFood4Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
-setPrecioFood4Seleccionada(""); // o el valor por defecto inicial
-setFood4SeleccionadaId('');
+    // Con número 4
+    setCantidadFood4("");
+    setFood4Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
+    setPrecioFood4Seleccionada(""); // o el valor por defecto inicial
+    setFood4SeleccionadaId('');
 
-    
+    setFoodFiltro("");
+    setFoodFiltro2("");
+    setFoodFiltro3("");
+    setFoodFiltro4("");
+    setFoodFiltro5("");
+
+
   };
 
 
@@ -1116,10 +1129,10 @@ setFood4SeleccionadaId('');
         });
         toast.success('Datos actualizados exitosamente');
         const responses = await axios.get(API_URL + "/habitaciones-clientes");
-        
+
         // Ordena los datos de la respuesta de la petición GET, no del PUT
         const usuariosOrdenados = responses.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
-        
+
         // Actualiza el estado con los usuarios ordenados
         setUsers(usuariosOrdenados);
       } catch (error) {
@@ -1133,89 +1146,152 @@ setFood4SeleccionadaId('');
 
   const [displayLimit, setDisplayLimit] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
- 
+
   const handleChangeDisplayLimit = (event) => {
-   setDisplayLimit(Number(event.target.value));
-   setCurrentPage(1); 
- };
-
-
-
-
- async function actualizarFechaEnProductos() {
-  const fechaActual = new Date();
-  fechaActual.setHours(fechaActual.getHours() - 5);
-  const fechaISO = fechaActual.toISOString();
-  selectedUser.bebidas.forEach(bebida => {
-    if (bebida.fechaDeMarca === "") {
-      bebida.fechaDeMarca = fechaISO;
-    }
-  });
-  selectedUser.restaurante.forEach(comida => {
-    if (comida.fechaDeMarca === "") {
-      comida.fechaDeMarca = fechaISO;
-    }
-  });
-  const datosActualizados = {
-    clienteId: selectedUser._id,
-    bebidas: selectedUser.bebidas,
-    restaurante: selectedUser.restaurante
+    setDisplayLimit(Number(event.target.value));
+    setCurrentPage(1);
   };
-  console.log(datosActualizados)
-  try {
-    const response = await axios.put(API_URL+'/habitaciones-facturacion', datosActualizados);
-    console.log('Datos actualizados con éxito:', response.data);
-  } catch (error) {
-    console.error('Error al actualizar los datos:', error);
-  }
-}
- 
 
-const generarPDF = async () => {
-  const pdf = new jsPDF();
 
-  await actualizarFechaEnProductos(selectedUser._id);
-  console.log(selectedUser._id);
-  
-  // Información del cliente
-  pdf.text("Nombre del Cliente: " + selectedUser.nombre, 10, 10);
-  pdf.text("Identificación: " + selectedUser.identificacion, 10, 20);
 
-  // Preparar la impresión de los productos
-  let y = 30;
-  const productos = [...selectedUser.bebidas, ...selectedUser.restaurante];
 
-  // Asegurar que los productos a mostrar cumplen con la condición de tu modal
-  productos.forEach((producto, index) => {
-    if (producto.fechaDeMarca === "" || producto.fechaDeMarca === fechaAjustada) {
-      pdf.text(`${producto.nombre} - Cantidad: ${producto.cantidad} - Precio: ${producto.precio}`, 10, y);
-      y += 10;
+  async function actualizarFechaEnProductos() {
+    const fechaActual = new Date();
+    fechaActual.setHours(fechaActual.getHours() - 5);
+    const fechaISO = fechaActual.toISOString();
+    selectedUser.bebidas.forEach(bebida => {
+      if (bebida.fechaDeMarca === "") {
+        bebida.fechaDeMarca = fechaISO;
+      }
+    });
+    selectedUser.restaurante.forEach(comida => {
+      if (comida.fechaDeMarca === "") {
+        comida.fechaDeMarca = fechaISO;
+      }
+    });
+    const datosActualizados = {
+      clienteId: selectedUser._id,
+      bebidas: selectedUser.bebidas,
+      restaurante: selectedUser.restaurante
+    };
+    console.log(datosActualizados)
+    try {
+      const response = await axios.put(API_URL + '/habitaciones-facturacion', datosActualizados);
+      console.log('Datos actualizados con éxito:', response.data);
+    } catch (error) {
+      console.error('Error al actualizar los datos:', error);
     }
-  });
-
-  // Guardar el PDF
-  pdf.save("factura.pdf");
-};
- 
- 
- 
- const totalPages = Math.ceil(datosFiltrados.length / displayLimit + 1 );
- const start = (currentPage - 1) * displayLimit;
- const end = start + displayLimit ;
+  }
 
 
- let fecha = new Date();
+  const generarPDF = async () => {
+    const pdf = new jsPDF();
 
-fecha.setHours(fecha.getHours() - 5);
+    await actualizarFechaEnProductos(selectedUser._id);
+    console.log(selectedUser._id);
 
-const fechaAjustada = fecha.toLocaleString();
+    // Información del cliente
+    pdf.text("Nombre del Cliente: " + selectedUser.nombre, 10, 10);
+    pdf.text("Identificación: " + selectedUser.identificacion, 10, 20);
 
-let fecha2 = new Date();
+    // Preparar la impresión de los productos
+    let y = 30;
+    const productos = [...selectedUser.bebidas, ...selectedUser.restaurante];
 
-fecha2.setHours(fecha2.getHours());
+    // Asegurar que los productos a mostrar cumplen con la condición de tu modal
+    productos.forEach((producto, index) => {
+      if (producto.fechaDeMarca === "" || producto.fechaDeMarca === fechaAjustada) {
+        pdf.text(`${producto.nombre} - Cantidad: ${producto.cantidad} - Precio: ${producto.precio}`, 10, y);
+        y += 10;
+      }
+    });
 
-const hours = fecha2.toLocaleString();
- 
+    // Guardar el PDF
+    pdf.save("factura.pdf");
+  };
+
+
+
+  const totalPages = Math.ceil(datosFiltrados.length / displayLimit + 1);
+  const start = (currentPage - 1) * displayLimit;
+  const end = start + displayLimit;
+
+
+  let fecha = new Date();
+
+  fecha.setHours(fecha.getHours() - 5);
+
+  const fechaAjustada = fecha.toLocaleString();
+
+  let fecha2 = new Date();
+
+  fecha2.setHours(fecha2.getHours());
+
+  const hours = fecha2.toLocaleString();
+
+
+
+
+  const [filtro, setFiltro] = useState('');
+  const [filtro2, setFiltro2] = useState('');
+  const [filtro3, setFiltro3] = useState('');
+  const [filtro4, setFiltro4] = useState('');
+  const [filtro5, setFiltro5] = useState('');
+
+  const [foodFiltro, setFoodFiltro] = useState('');
+  const [foodFiltro2, setFoodFiltro2] = useState('');
+  const [foodFiltro3, setFoodFiltro3] = useState('');
+  const [foodFiltro4, setFoodFiltro4] = useState('');
+  const [foodFiltro5, setFoodFiltro5] = useState('');
+
+  const bebidasFiltradas = drinks.filter(bebida =>
+    bebida.Descripcion.toLowerCase().includes(filtro.toLowerCase())
+  );
+
+  const bebidasFiltradas2 = drinks.filter(bebida =>
+    bebida.Descripcion.toLowerCase().includes(filtro2.toLowerCase())
+  );
+
+  const bebidasFiltradas3 = drinks.filter(bebida =>
+    bebida.Descripcion.toLowerCase().includes(filtro3.toLowerCase())
+  );
+
+  const bebidasFiltradas4 = drinks.filter(bebida =>
+    bebida.Descripcion.toLowerCase().includes(filtro4.toLowerCase())
+  );
+
+  const bebidasFiltradas5 = drinks.filter(bebida =>
+    bebida.Descripcion.toLowerCase().includes(filtro5.toLowerCase())
+  );
+
+
+
+  const foodFiltradas = snacks.filter(food =>
+    food.Descripcion.toLowerCase().includes(foodFiltro.toLowerCase())
+  );
+
+  const foodFiltradas2 = snacks.filter(food =>
+    food.Descripcion.toLowerCase().includes(foodFiltro2.toLowerCase())
+  );
+
+  const foodFiltradas3 = snacks.filter(food =>
+    food.Descripcion.toLowerCase().includes(foodFiltro3.toLowerCase())
+  );
+
+  const foodFiltradas4 = snacks.filter(food =>
+    food.Descripcion.toLowerCase().includes(foodFiltro4.toLowerCase())
+  );
+
+  const foodFiltradas5 = snacks.filter(food =>
+    food.Descripcion.toLowerCase().includes(foodFiltro5.toLowerCase())
+  );
+
+  const handleItemClick = (e) => {
+    e.stopPropagation();
+  };
+
+
+
 
   return (
     <div className="max-w-full w-98 mx-auto">
@@ -1234,7 +1310,7 @@ const hours = fecha2.toLocaleString();
               Agregar Cliente
             </Button>
           </div>
-          
+
           <Modal backdrop={backdrop} isOpen={isOpen} onClose={onClose}>
             <ModalContent>
               {(onClose) => (
@@ -1295,68 +1371,68 @@ const hours = fecha2.toLocaleString();
                       <option value="Descanso">DESCANSO</option>
                       <option value="Jardin_Secreto">JARDIN SECRETO</option>
                       <option value="Arcoiris">ARCOIRIS</option>
-                     
+
                     </select>
                     <div className="flex">
 
+                      <Input
+                        isRequired
+                        id="adultos"
+                        name="adultos"
+                        type="number"
+                        variant="flat"
+                        label="CANTIDAD DE ADULTOS"
+                        value={formData.cantidadPersonas.adultos}
+                        onChange={(event) => handleInputChange(event, "adultos")}
+                        className={`rounded-xl border-2 ${errorAdultos ? 'border-red-500' : 'border-blue-400'}`}
+                      />
+
+                      <Input
+                        required
+                        id="ninios"
+                        name="ninios"
+                        type="number"
+                        variant="flat"
+                        label="CANTIDAD DE NIÑOS"
+                        value={formData.cantidadPersonas.ninios}
+                        onChange={(event) => handleInputChange(event, "ninios")}
+                        className="ml-3 border-green-400 border-2 rounded-xl"
+
+                      />
+                    </div>
+                    <div className="flex">
+
+                      <select
+                        id="mediosDePago"
+                        name="mediosDePago"
+
+                        value={formData.mediosDePago}
+                        onChange={(event) => handleInputChange(event)}
+                        className="mr-3 w-6/12 outline-none border-2 rounded-xl border-blue-400"
+                      >
+                        <option value="">METODO DE PAGO</option>
+                        <option value="efectivo">Efectivo</option>
+                        <option value="nequi">Nequi</option>
+                        <option value="daviplata">Daviplata</option>
+                        <option value="pse">PSE</option>
+                        <option value="efecty">Efecty</option>
+                        <option value="transferencia">Transferencia</option>
+                      </select>
+                      <Input
+                        required
+                        id="pagoAnticipado"
+                        name="pagoAnticipado"
+                        className="w-6/12 ml-3 rounded-xl border-2  border-blue-400"
+                        type="number"
+                        variant="flat"
+                        label="PAGO ANTICIPADO"
+                        value={formData.pagoAnticipado}
+                        onChange={handleInputChange}
+
+                      />
+                    </div>
                     <Input
                       isRequired
-                      id="adultos"
-                      name="adultos"
-                      type="number"
-                      variant="flat"
-                      label="CANTIDAD DE ADULTOS"
-                      value={formData.cantidadPersonas.adultos}
-                      onChange={(event) => handleInputChange(event, "adultos")}
-                      className={`rounded-xl border-2 ${errorAdultos ? 'border-red-500' : 'border-blue-400'}`}
-                    />
-
-                    <Input
-                      required
-                      id="ninios"
-                      name="ninios"
-                      type="number"
-                      variant="flat"
-                      label="CANTIDAD DE NIÑOS"
-                      value={formData.cantidadPersonas.ninios}
-                      onChange={(event) => handleInputChange(event, "ninios")}
-                      className="ml-3 border-green-400 border-2 rounded-xl" 
-                       
-                    />
-                    </div>
-                    <div className="flex">
-
-                    <select
-                      id="mediosDePago"
-                      name="mediosDePago"
-                      
-                      value={formData.mediosDePago}
-                      onChange={(event) => handleInputChange(event)}
-                      className="mr-3 w-6/12 outline-none border-2 rounded-xl border-blue-400"
-                    >
-                      <option value="">METODO DE PAGO</option>
-                      <option value="efectivo">Efectivo</option>
-                      <option value="nequi">Nequi</option>
-                      <option value="daviplata">Daviplata</option>
-                      <option value="pse">PSE</option>
-                      <option value="efecty">Efecty</option>
-                      <option value="transferencia">Transferencia</option>
-                    </select>
-                    <Input
-                      required
-                      id="pagoAnticipado"
-                      name="pagoAnticipado"
-                      className="w-6/12 ml-3 rounded-xl border-2  border-blue-400"
-                      type="number"
-                      variant="flat"
-                      label="PAGO ANTICIPADO"
-                      value={formData.pagoAnticipado}
-                      onChange={handleInputChange}
-                      
-                    />
-                    </div>
-                    <Input
-                    isRequired
                       name="fechaPasadia"
                       type="date"
                       label="FECHA EN LA QUE DESEA DISFRUTAR DE LA HABITACIÓN"
@@ -1366,31 +1442,31 @@ const hours = fecha2.toLocaleString();
                       onChange={handleInputChange}
                     />
                     <div className="flex">
-                    <select
-                    className="w-6/12 mr-3 outline-none rounded-xl border-2 border-blue-400"
-                      id="mediosDePagoPendiente"
-                      name="mediosDePagoPendiente"
-                      value={formData.mediosDePagoPendiente}
-                      onChange={(event) => handleInputChange(event)}
-                    >
-                      <option value="">METODO DE PAGO</option>
-                      <option value="efectivo">Efectivo</option>
-                      <option value="nequi">Nequi</option>
-                      <option value="daviplata">Daviplata</option>
-                      <option value="pse">PSE</option>
-                      <option value="efecty">Efecty</option>
-                      <option value="transferencia">Transferencia</option>
-                    </select>
-                    <Input
-                      id="pagoPendiente"
-                      name="pagoPendiente"
-                      className="w-6/12 ml-3 border-2 border-blue-400 rounded-xl"
-                      type="number"
-                      variant="flat"
-                      label="PAGO ANTICIPADO"
-                      value={formData.pagoPendiente}
-                      onChange={handleInputChange}
-                    />
+                      <select
+                        className="w-6/12 mr-3 outline-none rounded-xl border-2 border-blue-400"
+                        id="mediosDePagoPendiente"
+                        name="mediosDePagoPendiente"
+                        value={formData.mediosDePagoPendiente}
+                        onChange={(event) => handleInputChange(event)}
+                      >
+                        <option value="">METODO DE PAGO</option>
+                        <option value="efectivo">Efectivo</option>
+                        <option value="nequi">Nequi</option>
+                        <option value="daviplata">Daviplata</option>
+                        <option value="pse">PSE</option>
+                        <option value="efecty">Efecty</option>
+                        <option value="transferencia">Transferencia</option>
+                      </select>
+                      <Input
+                        id="pagoPendiente"
+                        name="pagoPendiente"
+                        className="w-6/12 ml-3 border-2 border-blue-400 rounded-xl"
+                        type="number"
+                        variant="flat"
+                        label="PAGO ANTICIPADO"
+                        value={formData.pagoPendiente}
+                        onChange={handleInputChange}
+                      />
                     </div>
 
                   </ModalBody>
@@ -1409,15 +1485,15 @@ const hours = fecha2.toLocaleString();
         </div>
         <div className="w-52 flex justify-center">
 
-        <input
-        id="s"
-        type="search"
-        label="busca el producto"
-        value={busqueda}
-        onChange={handleSearchChange}
-        className="w-10 h-10"
-        >
-      </input>
+          <input
+            id="s"
+            type="search"
+            label="busca el producto"
+            value={busqueda}
+            onChange={handleSearchChange}
+            className="w-10 h-10"
+          >
+          </input>
         </div>
         <div className="flex items-center justify-center  w-32 ml-3">
           <img
@@ -1427,25 +1503,25 @@ const hours = fecha2.toLocaleString();
           />
         </div>
       </div>
-        
+
       <section className="flex mt-5 mx-5 rounded-t-2xl flex-col">
-          {/* Input de búsqueda */}
+        {/* Input de búsqueda */}
 
-          <div className="flex justify-end">
-      <select className="w-28 h-10 rounded-xl mb-1 outline-blue-500" onChange={handleChangeDisplayLimit} value={displayLimit}>
-        <option value="1">Mostrar 1</option>
-        <option value="5">Mostrar 5</option>
-        <option value="10">Mostrar 10</option>
-        <option value="15">Mostrar 15</option>
-        <option value="50">Mostrar 50</option>
-        <option value="100">Mostrar 100</option>
-      </select>
+        <div className="flex justify-end">
+          <select className="w-28 h-10 rounded-xl mb-1 outline-blue-500" onChange={handleChangeDisplayLimit} value={displayLimit}>
+            <option value="1">Mostrar 1</option>
+            <option value="5">Mostrar 5</option>
+            <option value="10">Mostrar 10</option>
+            <option value="15">Mostrar 15</option>
+            <option value="50">Mostrar 50</option>
+            <option value="100">Mostrar 100</option>
+          </select>
 
-          </div>
+        </div>
         <Table className=" text-center uppercase" aria-label="Lista de Usuarios"
-                
-          
-                    
+
+
+
         >
           <TableHeader className="text-center">
             <TableColumn className="text-center">+</TableColumn>
@@ -1480,17 +1556,17 @@ const hours = fecha2.toLocaleString();
 
                 <TableCell>
                   {sizess.map((size) => (
-                    
+
                     <Button className="bg-white" key={size} onPress={() => handleOpenM(size)} onClick={() => handleOpenModal(cliente)}>
                       <img className="w-4" src={chevron} alt="" />
                     </Button>
                   ))}
                   {selectedUser && (
                     <Modal size={size} isOpen={isModalOpen} onClose={closeModal} className="w-8/12"
-                    classNames={{
-                      body: "py-6",
-                      backdrop: "bg-inherit",
-                    }}
+                      classNames={{
+                        body: "py-6",
+                        backdrop: "bg-inherit",
+                      }}
                     >
                       <ModalContent >
                         <ModalHeader className="border-b-3 border-blue-500 text-3xl flex  justify-between">
@@ -1553,7 +1629,7 @@ const hours = fecha2.toLocaleString();
 
 
                         <ModalFooter>
-                        <Button color="primary" onClick={() => {
+                          <Button color="primary" onClick={() => {
                             Swal.fire({
                               title: '¿Estás seguro?',
                               text: "¿Quieres guardar esto como PDF?",
@@ -1592,309 +1668,389 @@ const hours = fecha2.toLocaleString();
 
 
                 <TableCell className="w-2/12">
-                <Popover placement="top">
-                  <PopoverTrigger>
-                  <p onClick={() => seleccionarCliente(cliente.identificacion)}>{cliente.identificacion}</p>
-                  </PopoverTrigger>
-                  <PopoverContent >
-                    { cliente.reserva === "Si" && ((valorHabitaciones) - (cliente.pagoAnticipado + cliente.pagoPendiente)) !== 0 || cliente.reserva === "No" && ((valorHabitaciones) - (cliente.pagoAnticipado + cliente.pagoPendiente)) !== 0 ?
-                    <div className="px-1 py-2">
-                      <div className="text-small font-bold">Información</div>
-                      <div className="text-red-500">Datos del usuario</div>
-                      <div>Identificacion: {cliente.identificacion}</div>
-                      <div className="text-tiny">Nombre: {cliente.nombre}</div>
-                      <div className="text-red-500 text-small font-bold">Pago pendiente</div>
-                      <div>{((valorHabitaciones) - (cliente.pagoAnticipado + cliente.pagoPendiente))}</div>
-                      <Input
-                        type="number"
-                        name="pagoPendiente"
-                        placeholder="Ingrse la cantidad"
-                        className="border-2 border-blue-500 rounded-xl mt-2"
-                        disabled
-                        value={formDatas.pagoPendiente}
-                      onChange={handleInputChanges}
-                      />
-                    
-                      <div><select
-                    className="w-full h-10 mt-2 outline-none rounded-xl border-2 border-blue-400"
-                      id="mediosDePagoPendiente"
-                      name="mediosDePagoPendiente"
-                      value={formDatas.mediosDePagoPendiente}
-                      onChange={handleInputChanges}
-                    >
-                      <option value="">METODO DE PAGO</option>
-                      <option value="efectivo">Efectivo</option>
-                      <option value="nequi">Nequi</option>
-                      <option value="daviplata">Daviplata</option>
-                      <option value="pse">PSE</option>
-                      <option value="efecty">Efecty</option>
-                      <option value="transferencia">Transferencia</option>
-                    </select></div>
-                    <div className=" flex justify-end mt-2">
+                  <Popover placement="top">
+                    <PopoverTrigger>
+                      <p onClick={() => seleccionarCliente(cliente.identificacion)}>{cliente.identificacion}</p>
+                    </PopoverTrigger>
+                    <PopoverContent >
+                      {cliente.reserva === "Si" && ((valorHabitaciones) - (cliente.pagoAnticipado + cliente.pagoPendiente)) !== 0 || cliente.reserva === "No" && ((valorHabitaciones) - (cliente.pagoAnticipado + cliente.pagoPendiente)) !== 0 ?
+                        <div className="px-1 py-2">
+                          <div className="text-small font-bold">Información</div>
+                          <div className="text-red-500">Datos del usuario</div>
+                          <div>Identificacion: {cliente.identificacion}</div>
+                          <div className="text-tiny">Nombre: {cliente.nombre}</div>
+                          <div className="text-red-500 text-small font-bold">Pago pendiente</div>
+                          <div>{((valorHabitaciones) - (cliente.pagoAnticipado + cliente.pagoPendiente))}</div>
+                          <Input
+                            type="number"
+                            name="pagoPendiente"
+                            placeholder="Ingrse la cantidad"
+                            className="border-2 border-blue-500 rounded-xl mt-2"
+                            disabled
+                            value={formDatas.pagoPendiente}
+                            onChange={handleInputChanges}
+                          />
 
-                    <Button color="danger" onClick={actualizarDatosCliente}>Guardar</Button>
-                    </div>
-                    </div>
-                    :  "Pago completado🤩" 
-                    }
-                  </PopoverContent>
-                </Popover>
-                </TableCell> 
+                          <div><select
+                            className="w-full h-10 mt-2 outline-none rounded-xl border-2 border-blue-400"
+                            id="mediosDePagoPendiente"
+                            name="mediosDePagoPendiente"
+                            value={formDatas.mediosDePagoPendiente}
+                            onChange={handleInputChanges}
+                          >
+                            <option value="">METODO DE PAGO</option>
+                            <option value="efectivo">Efectivo</option>
+                            <option value="nequi">Nequi</option>
+                            <option value="daviplata">Daviplata</option>
+                            <option value="pse">PSE</option>
+                            <option value="efecty">Efecty</option>
+                            <option value="transferencia">Transferencia</option>
+                          </select></div>
+                          <div className=" flex justify-end mt-2">
+
+                            <Button color="danger" onClick={actualizarDatosCliente}>Guardar</Button>
+                          </div>
+                        </div>
+                        : "Pago completado🤩"
+                      }
+                    </PopoverContent>
+                  </Popover>
+                </TableCell>
 
 
 
                 <TableCell>
 
                   <Popover placement="bottom" offset={20} showArrow>
-                        <PopoverTrigger>
-                          <p>{cliente.nombre}</p>
-                        </PopoverTrigger>
-                        <PopoverContent>
-                        <div className="px-1 py-2">
-                            <div className="text-small font-bold">Información</div>
-                            <div className="text-red-500">Cantidad de personas</div>
-                            <div className="text-tiny">Adultos: {cliente.cantidadPersonas.adultos}</div>
-                            <div>Niños: {cliente.cantidadPersonas.ninios}</div>
-                            <div className="text-red-500">Anticipo de pasadia</div>
-                            <div>Metodo de pago: {cliente.mediosDePago}</div>
-                            <div>Anticipo: {cliente.pagoAnticipado}</div>
-                            <div className="text-red-500">pago pendienete o total</div>
-                            <div>Metodo de pago: {cliente.mediosDePagoPendiente}</div>
-                            <div>Pago pendiente: {cliente.pagoPendiente}</div>
-                            <div>pendiente: {((valorHabitaciones) - (cliente.pagoAnticipado + cliente.pagoPendiente))}</div>
-                          </div>
-                        </PopoverContent>
-                      </Popover>
+                    <PopoverTrigger>
+                      <p>{cliente.nombre}</p>
+                    </PopoverTrigger>
+                    <PopoverContent>
+                      <div className="px-1 py-2">
+                        <div className="text-small font-bold">Información</div>
+                        <div className="text-red-500">Cantidad de personas</div>
+                        <div className="text-tiny">Adultos: {cliente.cantidadPersonas.adultos}</div>
+                        <div>Niños: {cliente.cantidadPersonas.ninios}</div>
+                        <div className="text-red-500">Anticipo de pasadia</div>
+                        <div>Metodo de pago: {cliente.mediosDePago}</div>
+                        <div>Anticipo: {cliente.pagoAnticipado}</div>
+                        <div className="text-red-500">pago pendienete o total</div>
+                        <div>Metodo de pago: {cliente.mediosDePagoPendiente}</div>
+                        <div>Pago pendiente: {cliente.pagoPendiente}</div>
+                        <div>pendiente: {((valorHabitaciones) - (cliente.pagoAnticipado + cliente.pagoPendiente))}</div>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
 
                 </TableCell>
                 <TableCell>{cliente.reserva}</TableCell>
                 <TableCell>{cliente.habitaciones}</TableCell>
                 <TableCell>{new Date(cliente.fechaPasadia).toLocaleDateString('es-ES', {
-                      year: 'numeric',
-                      month: 'long'  ,
-                      day: 'numeric' ,
-                    })}</TableCell>
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}</TableCell>
 
 
 
                 <TableCell key={cliente._id} className=" ">
 
-                <div className=" flex justify-center">
-                  <div className="flex flex-wrap gap-3">
-                    {sizesm.map((ancho) => (
-                      <Button className="bg-white-100" key={ancho} onPress={() => handleOpenm(ancho, cliente._id)}>
-                        <img className="w-7 h-7" src={plus} alt="" />
-                      </Button>
-                    ))}
+                  <div className=" flex justify-center">
+                    <div className="flex flex-wrap gap-3">
+                      {sizesm.map((ancho) => (
+                        <Button className="bg-white-100" key={ancho} onPress={() => handleOpenm(ancho, cliente._id)}>
+                          <img className="w-7 h-7" src={plus} alt="" />
+                        </Button>
+                      ))}
+                    </div>
+
+                    <Modal
+                      classNames={{
+                        backdrop: "bg-inherit",
+                      }}
+                      size={ancho} isOpen={isModalOpenM} onClose={closeModalM}>
+                      <ModalContent>
+                        {(closeModalM) => (
+                          <>
+                            <ModalHeader className="flex flex-col gap-1">BEBIDAS</ModalHeader>
+                            <ModalBody>
+                              <Checkbox
+                                checked={esCortesia}
+                                onChange={handleCortesiaChange}
+                                name="esCortesia"
+                                color="primary"
+                              >Cortesia pasadia</Checkbox>
+                              <div className="flex">
+                                <Input
+                                  className="mr-2"
+                                  name="bebidas"
+                                  label="Ingrese la cantidad"
+                                  type="number"
+                                  value={isNaN(cantidadBebida) ? '' : cantidadBebida}
+                                  onChange={(e) => {
+                                    const value = parseInt(e.target.value, 10);
+                                    setCantidadBebida(isNaN(value) ? "" : value);
+                                  }}
+                                />
+                                <Select
+                                  className="ml-2"
+                                  name="bebidas"
+                                  label="Seleccionar bebida"
+                                  value={bebidaSeleccionada}
+                                  onChange={(e) => {
+                                    const selectedBebida = e.target.value;
+                                    setBebidaSeleccionada(selectedBebida);
+
+                                    const bebidaSeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida);
+                                    if (bebidaSeleccionadaInfo) {
+                                      setPrecioBebidaSeleccionada(bebidaSeleccionadaInfo.ValorUnitario);
+                                      setBebidaSeleccionadaId(bebidaSeleccionadaInfo._id);
+                                    }
+                                  }}
+                                >
+                                  {bebidasFiltradas.map((bebida) => (
+                                    <SelectItem key={bebida.Descripcion}>
+                                      {bebida.Descripcion}
+                                    </SelectItem>
+                                  ))}
+                                </Select>
+                                <aside className="search-button">
+                                  <div className="container">
+                                    <span className="lupa">
+                                      <SearchIcon />
+                                    </span>
+                                    <input
+                                      type="search"
+                                      id="search"
+                                      placeholder="¿Qué quieres buscar?"
+                                      value={filtro}
+                                      onClick={handleItemClick}
+                                      onChange={(e) => {// También detiene la propagación aquí para mayor seguridad
+                                        setFiltro(e.target.value);
+                                      }} />
+                                  </div>
+                                </aside>
+                              </div>
+                              <div className="flex">
+                                <Input
+                                  className="mr-2"
+                                  name="bebidas"
+                                  label="Ingrese la cantidad"
+                                  type="number"
+                                  value={isNaN(cantidadBebida1) ? '' : cantidadBebida1}
+                                  onChange={(e) => {
+                                    const value = parseInt(e.target.value, 10);
+                                    setCantidadBebida1(isNaN(value) ? "" : value);
+                                  }}
+                                />
+                                <Select
+                                  className="ml-2"
+                                  name="bebidas"
+                                  label="Seleccionar bebida"
+                                  value={bebida1Seleccionada}
+                                  onChange={(e) => {
+                                    const selectedBebida1 = e.target.value;
+                                    setBebida1Seleccionada(selectedBebida1);
+
+                                    const bebida1SeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida1);
+                                    if (bebida1SeleccionadaInfo) {
+                                      setPrecioBebida1Seleccionada(bebida1SeleccionadaInfo.ValorUnitario);
+                                      setBebida1SeleccionadaId(bebida1SeleccionadaInfo._id);
+                                    }
+                                  }}
+                                >
+                                  {bebidasFiltradas2.map((bebida) => (
+                                    <SelectItem key={bebida.Descripcion}>
+                                      {bebida.Descripcion}
+                                    </SelectItem>
+                                  ))}
+                                </Select>
+                                <aside className="search-button">
+                                  <div className="container">
+                                    <span className="lupa">
+                                      <SearchIcon />
+                                    </span>
+                                    <input
+                                      type="search"
+                                      id="search"
+                                      placeholder="¿Qué quieres buscar?"
+                                      value={filtro2}
+                                      onClick={handleItemClick}
+                                      onChange={(e) => { // También detiene la propagación aquí para mayor seguridad
+                                        setFiltro2(e.target.value);
+                                      }} />
+                                  </div>
+                                </aside>
+                              </div>
+                              <div className="flex">
+                                <Input
+                                  className="mr-2"
+                                  name="bebidas"
+                                  label="Ingrese la cantidad"
+                                  type="number"
+                                  value={isNaN(cantidadBebida2) ? '' : cantidadBebida2}
+                                  onChange={(e) => {
+                                    const value = parseInt(e.target.value, 10);
+                                    setCantidadBebida2(isNaN(value) ? "" : value);
+                                  }}
+                                />
+                                <Select
+                                  className="ml-2"
+                                  name="bebidas"
+                                  label="Seleccionar bebida"
+                                  value={bebida2Seleccionada}
+                                  onChange={(e) => {
+                                    const selectedBebida2 = e.target.value;
+                                    setBebida2Seleccionada(selectedBebida2);
+
+                                    const bebida2SeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida2);
+                                    if (bebida2SeleccionadaInfo) {
+                                      setPrecioBebida2Seleccionada(bebida2SeleccionadaInfo.ValorUnitario);
+                                      setBebida2SeleccionadaId(bebida2SeleccionadaInfo._id);
+                                    }
+                                  }}
+                                >
+                                  {bebidasFiltradas3.map((bebida) => (
+                                    <SelectItem key={bebida.Descripcion}>
+                                      {bebida.Descripcion}
+                                    </SelectItem>
+                                  ))}
+                                </Select>
+                                <aside className="search-button">
+                                  <div className="container">
+                                    <span className="lupa">
+                                      <SearchIcon />
+                                    </span>
+                                    <input
+                                      type="search"
+                                      id="search"
+                                      placeholder="¿Qué quieres buscar?"
+                                      value={filtro3}
+                                      onClick={handleItemClick}
+                                      onChange={(e) => { // También detiene la propagación aquí para mayor seguridad
+                                        setFiltro3(e.target.value);
+                                      }} />
+                                  </div>
+                                </aside>
+                              </div>
+                              <div className="flex">
+                                <Input
+                                  className="mr-2"
+                                  name="bebidas"
+                                  label="Ingrese la cantidad"
+                                  type="number"
+                                  value={isNaN(cantidadBebida3) ? '' : cantidadBebida3}
+                                  onChange={(e) => {
+                                    const value = parseInt(e.target.value, 10);
+                                    setCantidadBebida3(isNaN(value) ? "" : value);
+                                  }}
+                                />
+                                <Select
+                                  className="ml-2"
+                                  name="bebidas"
+                                  label="Seleccionar bebida"
+                                  value={bebida3Seleccionada}
+                                  onChange={(e) => {
+                                    const selectedBebida3 = e.target.value;
+                                    setBebida3Seleccionada(selectedBebida3);
+
+                                    const bebida3SeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida3);
+                                    if (bebida3SeleccionadaInfo) {
+                                      setPrecioBebida3Seleccionada(bebida3SeleccionadaInfo.ValorUnitario);
+                                      setBebida3SeleccionadaId(bebida3SeleccionadaInfo._id);
+                                    }
+                                  }}
+                                >
+                                  {bebidasFiltradas4.map((bebida) => (
+                                    <SelectItem key={bebida.Descripcion}>
+                                      {bebida.Descripcion}
+                                    </SelectItem>
+                                  ))}
+                                </Select>
+                                <aside className="search-button">
+                                  <div className="container">
+                                    <span className="lupa">
+                                      <SearchIcon />
+                                    </span>
+                                    <input
+                                      type="search"
+                                      id="search"
+                                      placeholder="¿Qué quieres buscar?"
+                                      value={filtro4}
+                                      onClick={handleItemClick}
+                                      onChange={(e) => {// También detiene la propagación aquí para mayor seguridad
+                                        setFiltro4(e.target.value);
+                                      }} />
+                                  </div>
+                                </aside>
+                              </div>
+                              <div className="flex">
+                                <Input
+                                  className="mr-2"
+                                  name="bebidas"
+                                  label="Ingrese la cantidad"
+                                  type="number"
+                                  value={isNaN(cantidadBebida4) ? '' : cantidadBebida4}
+                                  onChange={(e) => {
+                                    const value = parseInt(e.target.value, 10);
+                                    setCantidadBebida4(isNaN(value) ? "" : value);
+                                  }}
+                                />
+                                <Select
+                                  className="ml-2"
+                                  name="bebidas"
+                                  label="Seleccionar bebida"
+                                  value={bebida4Seleccionada}
+                                  onChange={(e) => {
+                                    const selectedBebida4 = e.target.value;
+                                    setBebida4Seleccionada(selectedBebida4);
+
+                                    const bebida4SeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida4);
+                                    if (bebida4SeleccionadaInfo) {
+                                      setPrecioBebida4Seleccionada(bebida4SeleccionadaInfo.ValorUnitario);
+                                      setBebida4SeleccionadaId(bebida4SeleccionadaInfo._id);
+                                    }
+                                  }}
+                                >
+                                  {bebidasFiltradas5.map((bebida) => (
+                                    <SelectItem key={bebida.Descripcion}>
+                                      {bebida.Descripcion}
+                                    </SelectItem>
+                                  ))}
+                                </Select>
+                                <aside className="search-button">
+                                  <div className="container">
+                                    <span className="lupa">
+                                      <SearchIcon />
+                                    </span>
+                                    <input
+                                      type="search"
+                                      id="search"
+                                      placeholder="¿Qué quieres buscar?"
+                                      value={filtro5}
+                                      onClick={handleItemClick}
+                                      onChange={(e) => {// También detiene la propagación aquí para mayor seguridad
+                                        setFiltro5(e.target.value);
+                                      }} />
+                                  </div>
+                                </aside>
+                              </div>
+                            </ModalBody>
+                            <ModalFooter>
+                              <Button color="danger" variant="light" onPress={closeModalM}>
+                                Close
+                              </Button>
+                              <Button color="primary" onClick={handleGuardarBebida}>
+                                Ahorrar
+                              </Button>
+                            </ModalFooter>
+                          </>
+                        )}
+                      </ModalContent>
+                    </Modal>
+
+
                   </div>
-
-                  <Modal
-                  classNames={{
-                    backdrop: "bg-inherit",
-                  }}
-                  size={ancho} isOpen={isModalOpenM} onClose={closeModalM}>
-                    <ModalContent>
-                      {(closeModalM) => (
-                        <>
-                          <ModalHeader className="flex flex-col gap-1">BEBIDAS</ModalHeader>
-                          <ModalBody>
-                          <Checkbox
-                            checked={esCortesia}
-                            onChange={handleCortesiaChange}
-                            name="esCortesia"
-                            color="primary"
-                          >Cortesia pasadia</Checkbox>
-                          <div className="flex">
-                            <Input
-                            className="mr-2"
-                              name="bebidas"
-                              label="Ingrese la cantidad"
-                              type="number"
-                              value={isNaN(cantidadBebida) ? '' : cantidadBebida}
-                              onChange={(e) => {
-                                const value = parseInt(e.target.value, 10);
-                                setCantidadBebida(isNaN(value) ? "" : value);
-                              }}
-                            />
-                            <Select
-                            className="ml-2"
-                              name="bebidas"
-                              label="Seleccionar bebida"
-                              value={bebidaSeleccionada}
-                              onChange={(e) => {
-                                const selectedBebida = e.target.value;
-                                setBebidaSeleccionada(selectedBebida);
-
-                                const bebidaSeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida);
-                                if (bebidaSeleccionadaInfo) {
-                                  setPrecioBebidaSeleccionada(bebidaSeleccionadaInfo.ValorUnitario);
-                                  setBebidaSeleccionadaId(bebidaSeleccionadaInfo._id);
-                                }
-                              }}
-                            >
-                              {drinks.map((bebida) => (
-                                <SelectItem key={bebida.Descripcion}>
-                                  {bebida.Descripcion}
-                                </SelectItem>
-                              ))}
-                            </Select>
-                          </div>
-                          <div className="flex">
-                            <Input
-                            className="mr-2"
-                              name="bebidas"
-                              label="Ingrese la cantidad"
-                              type="number"
-                              value={isNaN(cantidadBebida1) ? '' : cantidadBebida1}
-                              onChange={(e) => {
-                                const value = parseInt(e.target.value, 10);
-                                setCantidadBebida1(isNaN(value) ? "" : value);
-                              }}
-                            />
-                            <Select
-                            className="ml-2"
-                              name="bebidas"
-                              label="Seleccionar bebida"
-                              value={bebida1Seleccionada}
-                              onChange={(e) => {
-                                const selectedBebida1 = e.target.value;
-                                setBebida1Seleccionada(selectedBebida1);
-
-                                const bebida1SeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida1);
-                                if (bebida1SeleccionadaInfo) {
-                                  setPrecioBebida1Seleccionada(bebida1SeleccionadaInfo.ValorUnitario);
-                                  setBebida1SeleccionadaId(bebida1SeleccionadaInfo._id);
-                                }
-                              }}
-                            >
-                              {drinks.map((bebida) => (
-                                <SelectItem key={bebida.Descripcion}>
-                                  {bebida.Descripcion}
-                                </SelectItem>
-                              ))}
-                            </Select>
-                          </div>
-                          <div className="flex">
-                            <Input
-                            className="mr-2"
-                              name="bebidas"
-                              label="Ingrese la cantidad"
-                              type="number"
-                              value={isNaN(cantidadBebida2) ? '' : cantidadBebida2}
-                              onChange={(e) => {
-                                const value = parseInt(e.target.value, 10);
-                                setCantidadBebida2(isNaN(value) ? "" : value);
-                              }}
-                            />
-                            <Select
-                            className="ml-2"
-                              name="bebidas"
-                              label="Seleccionar bebida"
-                              value={bebida2Seleccionada}
-                              onChange={(e) => {
-                                const selectedBebida2 = e.target.value;
-                                setBebida2Seleccionada(selectedBebida2);
-
-                                const bebida2SeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida2);
-                                if (bebida2SeleccionadaInfo) {
-                                  setPrecioBebida2Seleccionada(bebida2SeleccionadaInfo.ValorUnitario);
-                                  setBebida2SeleccionadaId(bebida2SeleccionadaInfo._id);
-                                }
-                              }}
-                            >
-                              {drinks.map((bebida) => (
-                                <SelectItem key={bebida.Descripcion}>
-                                  {bebida.Descripcion}
-                                </SelectItem>
-                              ))}
-                            </Select>
-                          </div>
-                          <div className="flex">
-                            <Input
-                            className="mr-2"
-                              name="bebidas"
-                              label="Ingrese la cantidad"
-                              type="number"
-                              value={isNaN(cantidadBebida3) ? '' : cantidadBebida3}
-                              onChange={(e) => {
-                                const value = parseInt(e.target.value, 10);
-                                setCantidadBebida3(isNaN(value) ? "" : value);
-                              }}
-                            />
-                            <Select
-                            className="ml-2"
-                              name="bebidas"
-                              label="Seleccionar bebida"
-                              value={bebida3Seleccionada}
-                              onChange={(e) => {
-                                const selectedBebida3 = e.target.value;
-                                setBebida3Seleccionada(selectedBebida3);
-
-                                const bebida3SeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida3);
-                                if (bebida3SeleccionadaInfo) {
-                                  setPrecioBebida3Seleccionada(bebida3SeleccionadaInfo.ValorUnitario);
-                                  setBebida3SeleccionadaId(bebida3SeleccionadaInfo._id);
-                                }
-                              }}
-                            >
-                              {drinks.map((bebida) => (
-                                <SelectItem key={bebida.Descripcion}>
-                                  {bebida.Descripcion}
-                                </SelectItem>
-                              ))}
-                            </Select>
-                          </div>
-                          <div className="flex">
-                            <Input
-                            className="mr-2"
-                              name="bebidas"
-                              label="Ingrese la cantidad"
-                              type="number"
-                              value={isNaN(cantidadBebida4) ? '' : cantidadBebida4}
-                              onChange={(e) => {
-                                const value = parseInt(e.target.value, 10);
-                                setCantidadBebida4(isNaN(value) ? "" : value);
-                              }}
-                            />
-                            <Select
-                            className="ml-2"
-                              name="bebidas"
-                              label="Seleccionar bebida"
-                              value={bebida4Seleccionada}
-                              onChange={(e) => {
-                                const selectedBebida4 = e.target.value;
-                                setBebida4Seleccionada(selectedBebida4);
-
-                                const bebida4SeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida4);
-                                if (bebida4SeleccionadaInfo) {
-                                  setPrecioBebida4Seleccionada(bebida4SeleccionadaInfo.ValorUnitario);
-                                  setBebida4SeleccionadaId(bebida4SeleccionadaInfo._id);
-                                }
-                              }}
-                            >
-                              {drinks.map((bebida) => (
-                                <SelectItem key={bebida.Descripcion}>
-                                  {bebida.Descripcion}
-                                </SelectItem>
-                              ))}
-                            </Select>
-                          </div>
-                          </ModalBody>
-                          <ModalFooter>
-                            <Button color="danger" variant="light" onPress={closeModalM}>
-                              Close
-                            </Button>
-                            <Button color="primary" onClick={handleGuardarBebida}>
-                              Ahorrar
-                            </Button>
-                          </ModalFooter>
-                        </>
-                      )}
-                    </ModalContent>
-                  </Modal>
-
-
-                </div>
 
                 </TableCell>
 
@@ -1918,187 +2074,267 @@ const hours = fecha2.toLocaleString();
                         <>
                           <ModalHeader className="flex flex-col gap-1">COMIDAS</ModalHeader>
                           <ModalBody>
-                          <Checkbox
-                            checked={esCortesia}
-                            onChange={handleCortesiaChange}
-                          >
-                            Cortesía pasadia
-                          </Checkbox>
-                          <div className="flex">
-                            <Input
-                            className="mr-2"
-                              name="bebidas"
-                              label="Ingrese la cantidad"
-                              type="number"
-                              value={isNaN(cantidadFood) ? '' : cantidadFood}
-                              onChange={(e) => {
-                                const value = parseInt(e.target.value, 10);
-                                setCantidadFood(isNaN(value) ? 0 : value);
-                              }}
-                            />
-                            <Select
-                            className="ml-2"
-                              name="restaurante"
-                              label="Seleccionar comida"
-                              value={foodSeleccionada}
-                              onChange={(e) => {
-                                const selectedFood = e.target.value;
-                                setFoodSeleccionada(selectedFood);
-
-                                const foodSeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood);
-                                if (foodSeleccionadaInfo) {
-                                  setPrecioFoodSeleccionada(foodSeleccionadaInfo.ValorUnitario);
-                                  setFoodSeleccionadaId(foodSeleccionadaInfo._id);
-                                }
-                              }}
+                            <Checkbox
+                              checked={esCortesia}
+                              onChange={handleCortesiaChange}
                             >
-                              {snacks.map((food) => (
-                                <SelectItem key={food.Descripcion}>
-                                  {food.Descripcion}
-                                </SelectItem>
-                              ))}
-                            </Select>
-                          </div>
-                          <div className="flex">
-                            <Input
-                            className="mr-2"
-                              name="restaurante"
-                              label="Ingrese la cantidad"
-                              type="number"
-                              value={isNaN(cantidadFood1) ? '' : cantidadFood1}
-                              onChange={(e) => {
-                                const value = parseInt(e.target.value, 10);
-                                setCantidadFood1(isNaN(value) ? 0 : value);
-                              }}
-                            />
-                            <Select
-                            className="ml-2"
-                              name="restaurante"
-                              label="Seleccionar comida"
-                              value={food1Seleccionada}
-                              onChange={(e) => {
-                                const selectedFood1 = e.target.value;
-                                setFood1Seleccionada(selectedFood1);
+                              Cortesía pasadia
+                            </Checkbox>
+                            <div className="flex">
+                              <Input
+                                className="mr-2"
+                                name="bebidas"
+                                label="Ingrese la cantidad"
+                                type="number"
+                                value={isNaN(cantidadFood) ? '' : cantidadFood}
+                                onChange={(e) => {
+                                  const value = parseInt(e.target.value, 10);
+                                  setCantidadFood(isNaN(value) ? 0 : value);
+                                }}
+                              />
+                              <Select
+                                className="ml-2"
+                                name="restaurante"
+                                label="Seleccionar comida"
+                                value={foodSeleccionada}
+                                onChange={(e) => {
+                                  const selectedFood = e.target.value;
+                                  setFoodSeleccionada(selectedFood);
 
-                                const food1SeleccionadaInfo = snacks.find(bebida => bebida.Descripcion === selectedFood1);
-                                if (food1SeleccionadaInfo) {
-                                  setPrecioFood1Seleccionada(food1SeleccionadaInfo.ValorUnitario);
-                                  setFood1SeleccionadaId(food1SeleccionadaInfo._id);
-                                }
-                              }}
-                            >
-                              {snacks.map((food) => (
-                                <SelectItem key={food.Descripcion}>
-                                  {food.Descripcion}
-                                </SelectItem>
-                              ))}
-                            </Select>
-                          </div>
-                          <div className="flex">
-                            <Input
-                            className="mr-2"
-                              name="restaurante"
-                              label="Ingrese la cantidad"
-                              type="number"
-                              value={isNaN(cantidadFood2) ? '' : cantidadFood2}
-                              onChange={(e) => {
-                                const value = parseInt(e.target.value, 10);
-                                setCantidadFood2(isNaN(value) ? 0 : value);
-                              }}
-                            />
-                            <Select
-                            className="ml-2"
-                              name="restaurante"
-                              label="Seleccionar comida"
-                              value={food2Seleccionada}
-                              onChange={(e) => {
-                                const selectedFood2 = e.target.value;
-                                setFood2Seleccionada(selectedFood2);
+                                  const foodSeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood);
+                                  if (foodSeleccionadaInfo) {
+                                    setPrecioFoodSeleccionada(foodSeleccionadaInfo.ValorUnitario);
+                                    setFoodSeleccionadaId(foodSeleccionadaInfo._id);
+                                  }
+                                }}
+                              >
+                                {foodFiltradas.map((food) => (
+                                  <SelectItem key={food.Descripcion}>
+                                    {food.Descripcion}
+                                  </SelectItem>
+                                ))}
+                              </Select>
+                              <aside className="search-button">
+                                <div className="container">
+                                  <span className="lupa">
+                                    <SearchIcon />
+                                  </span>
+                                  <input
+                                    type="search"
+                                    id="search"
+                                    placeholder="¿Qué quieres buscar?"
+                                    value={foodFiltro}
+                                    onClick={handleItemClick}
+                                    onChange={(e) => {
+                                      setFoodFiltro(e.target.value);
+                                    }} />
+                                </div>
+                              </aside>
+                            </div>
+                            <div className="flex">
+                              <Input
+                                className="mr-2"
+                                name="restaurante"
+                                label="Ingrese la cantidad"
+                                type="number"
+                                value={isNaN(cantidadFood1) ? '' : cantidadFood1}
+                                onChange={(e) => {
+                                  const value = parseInt(e.target.value, 10);
+                                  setCantidadFood1(isNaN(value) ? 0 : value);
+                                }}
+                              />
+                              <Select
+                                className="ml-2"
+                                name="restaurante"
+                                label="Seleccionar comida"
+                                value={food1Seleccionada}
+                                onChange={(e) => {
+                                  const selectedFood1 = e.target.value;
+                                  setFood1Seleccionada(selectedFood1);
 
-                                const food2SeleccionadaInfo = snacks.find(bebida => bebida.Descripcion === selectedFood2);
-                                if (food2SeleccionadaInfo) {
-                                  setPrecioFood2Seleccionada(food2SeleccionadaInfo.ValorUnitario);
-                                  setFood2SeleccionadaId(food2SeleccionadaInfo._id);
-                                }
-                              }}
-                            >
-                              {snacks.map((food) => (
-                                <SelectItem key={food.Descripcion}>
-                                  {food.Descripcion}
-                                </SelectItem>
-                              ))}
-                            </Select>
-                          </div>
-                          <div className="flex">
-                            <Input
-                            className="mr-2"
-                              name="restaurante"
-                              label="Ingrese la cantidad"
-                              type="number"
-                              value={isNaN(cantidadFood3) ? '' : cantidadFood3}
-                              onChange={(e) => {
-                                const value = parseInt(e.target.value, 10);
-                                setCantidadFood3(isNaN(value) ? 0 : value);
-                              }}
-                            />
-                            <Select
-                            className="ml-2"
-                              name="restaurante"
-                              label="Seleccionar comida"
-                              value={food3Seleccionada}
-                              onChange={(e) => {
-                                const selectedFood3 = e.target.value;
-                                setFood3Seleccionada(selectedFood3);
+                                  const food1SeleccionadaInfo = snacks.find(bebida => bebida.Descripcion === selectedFood1);
+                                  if (food1SeleccionadaInfo) {
+                                    setPrecioFood1Seleccionada(food1SeleccionadaInfo.ValorUnitario);
+                                    setFood1SeleccionadaId(food1SeleccionadaInfo._id);
+                                  }
+                                }}
+                              >
+                                {foodFiltradas2.map((food) => (
+                                  <SelectItem key={food.Descripcion}>
+                                    {food.Descripcion}
+                                  </SelectItem>
+                                ))}
+                              </Select>
+                              <aside className="search-button">
+                                <div className="container">
+                                  <span className="lupa">
+                                    <SearchIcon />
+                                  </span>
+                                  <input
+                                    type="search"
+                                    id="search"
+                                    placeholder="¿Qué quieres buscar?"
+                                    value={foodFiltro2}
+                                    onClick={handleItemClick}
+                                    onChange={(e) => {// También detiene la propagación aquí para mayor seguridad
+                                      setFoodFiltro2(e.target.value);
+                                    }} />
+                                </div>
+                              </aside>
+                            </div>
+                            <div className="flex">
+                              <Input
+                                className="mr-2"
+                                name="restaurante"
+                                label="Ingrese la cantidad"
+                                type="number"
+                                value={isNaN(cantidadFood2) ? '' : cantidadFood2}
+                                onChange={(e) => {
+                                  const value = parseInt(e.target.value, 10);
+                                  setCantidadFood2(isNaN(value) ? 0 : value);
+                                }}
+                              />
+                              <Select
+                                className="ml-2"
+                                name="restaurante"
+                                label="Seleccionar comida"
+                                value={food2Seleccionada}
+                                onChange={(e) => {
+                                  const selectedFood2 = e.target.value;
+                                  setFood2Seleccionada(selectedFood2);
 
-                                const food3SeleccionadaInfo = snacks.find(bebida => bebida.Descripcion === selectedFood3);
-                                if (food3SeleccionadaInfo) {
-                                  setPrecioFood3Seleccionada(food3SeleccionadaInfo.ValorUnitario);
-                                  setFood3SeleccionadaId(food3SeleccionadaInfo._id);
-                                }
-                              }}
-                            >
-                              {snacks.map((food) => (
-                                <SelectItem key={food.Descripcion}>
-                                  {food.Descripcion}
-                                </SelectItem>
-                              ))}
-                            </Select>
-                          </div>
-                          <div className="flex">
-                            <Input
-                            className="mr-2"
-                              name="restaurante"
-                              label="Ingrese la cantidad"
-                              type="number"
-                              value={isNaN(cantidadFood4) ? '' : cantidadFood4}
-                              onChange={(e) => {
-                                const value = parseInt(e.target.value, 10);
-                                setCantidadFood4(isNaN(value) ? 0 : value);
-                              }}
-                            />
-                            <Select
-                            className="ml-2"
-                              name="restaurante"
-                              label="Seleccionar comida"
-                              value={food4Seleccionada}
-                              onChange={(e) => {
-                                const selectedFood4 = e.target.value;
-                                setFood4Seleccionada(selectedFood4);
+                                  const food2SeleccionadaInfo = snacks.find(bebida => bebida.Descripcion === selectedFood2);
+                                  if (food2SeleccionadaInfo) {
+                                    setPrecioFood2Seleccionada(food2SeleccionadaInfo.ValorUnitario);
+                                    setFood2SeleccionadaId(food2SeleccionadaInfo._id);
+                                  }
+                                }}
+                              >
+                                {foodFiltradas3.map((food) => (
+                                  <SelectItem key={food.Descripcion}>
+                                    {food.Descripcion}
+                                  </SelectItem>
+                                ))}
+                              </Select>
+                              <aside className="search-button">
+                                <div className="container">
+                                  <span className="lupa">
+                                    <SearchIcon />
+                                  </span>
+                                  <input
+                                    type="search"
+                                    id="search"
+                                    placeholder="¿Qué quieres buscar?"
+                                    value={foodFiltro3}
+                                    onClick={handleItemClick}
+                                    onChange={(e) => { // También detiene la propagación aquí para mayor seguridad
+                                      setFoodFiltro3(e.target.value);
+                                    }} />
+                                </div>
+                              </aside>
+                            </div>
+                            <div className="flex">
+                              <Input
+                                className="mr-2"
+                                name="restaurante"
+                                label="Ingrese la cantidad"
+                                type="number"
+                                value={isNaN(cantidadFood3) ? '' : cantidadFood3}
+                                onChange={(e) => {
+                                  const value = parseInt(e.target.value, 10);
+                                  setCantidadFood3(isNaN(value) ? 0 : value);
+                                }}
+                              />
+                              <Select
+                                className="ml-2"
+                                name="restaurante"
+                                label="Seleccionar comida"
+                                value={food3Seleccionada}
+                                onChange={(e) => {
+                                  const selectedFood3 = e.target.value;
+                                  setFood3Seleccionada(selectedFood3);
 
-                                const food4SeleccionadaInfo = snacks.find(bebida => bebida.Descripcion === selectedFood4);
-                                if (food4SeleccionadaInfo) {
-                                  setPrecioFood4Seleccionada(food4SeleccionadaInfo.ValorUnitario);
-                                  setFood4SeleccionadaId(food4SeleccionadaInfo._id);
-                                }
-                              }}
-                            >
-                              {snacks.map((food) => (
-                                <SelectItem key={food.Descripcion}>
-                                  {food.Descripcion}
-                                </SelectItem>
-                              ))}
-                            </Select>
-                          </div>
+                                  const food3SeleccionadaInfo = snacks.find(bebida => bebida.Descripcion === selectedFood3);
+                                  if (food3SeleccionadaInfo) {
+                                    setPrecioFood3Seleccionada(food3SeleccionadaInfo.ValorUnitario);
+                                    setFood3SeleccionadaId(food3SeleccionadaInfo._id);
+                                  }
+                                }}
+                              >
+                                {foodFiltradas4.map((food) => (
+                                  <SelectItem key={food.Descripcion}>
+                                    {food.Descripcion}
+                                  </SelectItem>
+                                ))}
+                              </Select>
+                              <aside className="search-button">
+                                <div className="container">
+                                  <span className="lupa">
+                                    <SearchIcon />
+                                  </span>
+                                  <input
+                                    type="search"
+                                    id="search"
+                                    placeholder="¿Qué quieres buscar?"
+                                    value={foodFiltro4}
+                                    onClick={handleItemClick}
+                                    onChange={(e) => {// También detiene la propagación aquí para mayor seguridad
+                                      setFoodFiltro4(e.target.value);
+                                    }} />
+                                </div>
+                              </aside>
+                            </div>
+                            <div className="flex">
+                              <Input
+                                className="mr-2"
+                                name="restaurante"
+                                label="Ingrese la cantidad"
+                                type="number"
+                                value={isNaN(cantidadFood4) ? '' : cantidadFood4}
+                                onChange={(e) => {
+                                  const value = parseInt(e.target.value, 10);
+                                  setCantidadFood4(isNaN(value) ? 0 : value);
+                                }}
+                              />
+                              <Select
+                                className="ml-2"
+                                name="restaurante"
+                                label="Seleccionar comida"
+                                value={food4Seleccionada}
+                                onChange={(e) => {
+                                  const selectedFood4 = e.target.value;
+                                  setFood4Seleccionada(selectedFood4);
+
+                                  const food4SeleccionadaInfo = snacks.find(bebida => bebida.Descripcion === selectedFood4);
+                                  if (food4SeleccionadaInfo) {
+                                    setPrecioFood4Seleccionada(food4SeleccionadaInfo.ValorUnitario);
+                                    setFood4SeleccionadaId(food4SeleccionadaInfo._id);
+                                  }
+                                }}
+                              >
+                                {foodFiltradas5.map((food) => (
+                                  <SelectItem key={food.Descripcion}>
+                                    {food.Descripcion}
+                                  </SelectItem>
+                                ))}
+                              </Select>
+                              <aside className="search-button">
+                                <div className="container">
+                                  <span className="lupa">
+                                    <SearchIcon />
+                                  </span>
+                                  <input
+                                    type="search"
+                                    id="search"
+                                    placeholder="¿Qué quieres buscar?"
+                                    value={foodFiltro5}
+                                    onClick={handleItemClick}
+                                    onChange={(e) => { // También detiene la propagación aquí para mayor seguridad
+                                      setFoodFiltro5(e.target.value);
+                                    }} />
+                                </div>
+                              </aside>
+                            </div>
                           </ModalBody>
                           <ModalFooter>
                             <Button color="danger" variant="light" onPress={closeModalF}>
