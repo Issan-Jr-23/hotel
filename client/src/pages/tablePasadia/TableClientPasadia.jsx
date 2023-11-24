@@ -35,8 +35,33 @@ import Swal from 'sweetalert2';
 import "./tables.css"
 import "../table/table.css"
 import { API_URL } from "../../config";
+import logo from "../../images/logo.png"
+import wave from "../../images/wave.png"
+import svg from "../../images/svg.png"
 //#endregion
 export default function App() {
+
+  const toBase64 = (url) => new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.onload = () => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            resolve(reader.result);
+        };
+        reader.readAsDataURL(xhr.response);
+    };
+    xhr.open('GET', url);
+    xhr.responseType = 'blob';
+    xhr.send();
+});
+
+
+
+
+
+
+
+
 
   //#region 
   const [esCortesia, setEsCortesia] = useState(false);
@@ -1202,39 +1227,104 @@ export default function App() {
   }
 
 
+  let fecha = new Date();
+
+  fecha.setHours(fecha.getHours());
+
+  const fechaAjustada = fecha.toLocaleString();
+  console.log(fechaAjustada)
+
   const generarPDF = async () => {
     const pdf = new jsPDF();
 
     await actualizarFechaEnProductos(selectedUser._id);
     console.log(selectedUser._id);
 
-    // Información del cliente
-    pdf.text("Nombre del Cliente: " + selectedUser.nombre, 10, 10);
-    pdf.text("Identificación: " + selectedUser.identificacion, 10, 20);
+    try {
+      const svgBase64 = await toBase64(svg);
+      pdf.addImage(svgBase64, 'JPEG', 0, 0, 220, 80); 
+  } catch (error) {
+      console.error("Error al cargar la imagen", error);
+  }
 
-    // Preparar la impresión de los productos
-    let y = 30;
+    try {
+      const waveBase64 = await toBase64(wave);
+      pdf.addImage(waveBase64, 'JPEG', 0, 240, 220, 80); 
+  } catch (error) {
+      console.error("Error al cargar la imagen", error);
+  }
+  
+    try {
+      const logoBase64 = await toBase64(logo);
+      pdf.addImage(logoBase64, 'JPEG', 10, 10, 40, 40);
+  } catch (error) {
+      console.error("Error al cargar la imagen", error);
+  }
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(16);
+    pdf.setTextColor("#FFFFFF");
+    pdf.text("HOTEL MEQO", 105, 20, null, null, 'center');
+
+    pdf.setTextColor(0, 0, 0); 
+
+    pdf.setFontSize(12);
+    pdf.text('Datos de la empresa', 157, 54);
+
+    pdf.setFontSize(10);
+    pdf.text('Nombre: Hotel Meqo', 164, 63)
+    pdf.text('Numero: 3022785526', 164, 70)
+
+    pdf.setFontSize(12);
+    pdf.text('Datos del cliente', 10, 54);
+    pdf.setFontSize(10);
+    pdf.text(`Nombre: ${selectedUser.nombre}`, 10, 63);
+    pdf.text(`Identificación: ${selectedUser.identificacion}`, 10, 70);
+
+    // Encabezados de la tabla de productos
+    pdf.setFontSize(12);
+    pdf.text("Descripción", 10, 80);
+    pdf.text("Cantidad", 80, 80);
+    pdf.text("Precio", 150, 80);
+    pdf.line(10, 82, 200, 82);
+
+    // Lista de productos
+    let y = 90;
+    const cincoHorasEnMilisegundos = 3 * 60 * 60 * 1000;
     const productos = [...selectedUser.bebidas, ...selectedUser.restaurante];
 
-    // Asegurar que los productos a mostrar cumplen con la condición de tu modal
-    productos.forEach((producto, index) => {
-      if (producto.fechaDeMarca === "" || producto.fechaDeMarca === fechaAjustada) {
-        pdf.text(`${producto.nombre} - Cantidad: ${producto.cantidad} - Precio: ${producto.precio}`, 10, y);
+    const ahora = new Date();
+    const total = productos.filter(producto => {
+      const fechaDeMarca = new Date(producto.fechaDeMarca);
+      const diferenciaEnHoras = (ahora - fechaDeMarca) / cincoHorasEnMilisegundos;
+      return producto.fechaDeMarca === "" || diferenciaEnHoras <= 3;
+  }).reduce((acc, producto) => acc + (producto.cantidad * producto.precio), 0);
+    
+    productos.forEach((producto) => {
+      const ahora = new Date();
+      const fechaDeMarca = new Date(producto.fechaDeMarca);
+      const diferenciaEnHoras = (ahora - fechaDeMarca) / cincoHorasEnMilisegundos;
+
+      if (producto.fechaDeMarca === "" || diferenciaEnHoras <= 3) {
+        pdf.text(producto.nombre, 10, y);
+        pdf.text(producto.cantidad.toString(), 88, y);
+        pdf.text(`$${producto.precio.toFixed(2)}`, 150, y);
         y += 10;
       }
     });
 
-    // Guardar el PDF
+    pdf.setFontSize(12);
+    pdf.text(`Total: ${total.toFixed(2)}`, 137.5, y); 
+    console.log("TOTAL DE LA VENTA"+total)
+    // Total
+    // Aquí puedes calcular y agregar el subtotal, impuestos y total
+
     pdf.save("factura.pdf");
-  };
+};
 
 
 
-  let fecha = new Date();
 
-  fecha.setHours(fecha.getHours() - 5);
 
-  const fechaAjustada = fecha.toLocaleString();
 
   let fecha2 = new Date();
 
@@ -1556,8 +1646,8 @@ export default function App() {
                     >
                       <ModalContent >
                         <ModalHeader className="border-b-3 border-blue-500 text-3xl flex  justify-between">
-                          <div className="mb-0.5">History</div>
-                          <div className="uppercase"> {selectedUser.nombre} - {selectedUser.identificacion} - {selectedUser.fechaDeMarca}</div>
+                          <div className="mb-0.5 text-2xl">History</div>
+                          <div className="uppercase text-lg"> {selectedUser.nombre} - {selectedUser.identificacion}</div>
                         </ModalHeader>
                         <ModalBody className="uppercase flex">
                           <div className="flex w-full">
@@ -1565,8 +1655,6 @@ export default function App() {
 
                               {/* Sección de Productos (Bebidas + Comidas) */}
                               <div className="mx-5 my-1  w-full">
-                                <h4 className="text-green-600">Productos (Bebidas y Comidas)</h4>
-
                                 {/* Combina ambos arrays (bebidas y comidas) y verifica si tiene elementos */}
                                 {selectedUser.bebidas && selectedUser.restaurante &&
                                   Array.isArray(selectedUser.bebidas) && Array.isArray(selectedUser.restaurante) &&
