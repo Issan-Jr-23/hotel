@@ -298,7 +298,7 @@ export default function App() {
             
         </div>
         <section className="flex coluns-2  mx-5">
-          <Table  className=" text-center uppercase" aria-label="Lista de Usuarios">
+          <Table  className=" text-center uppercase max-w-full overflow-y-auto" aria-label="Lista de Usuarios">
             <TableHeader className="text-center bg-blue-500">
               <TableColumn className="text-center">descripcion del producto</TableColumn>
               <TableColumn className="text-center">Tipo</TableColumn>
@@ -384,14 +384,14 @@ export default function App() {
                         </div>
                     ) : (
                         <span style={{ 
-                            color: inventario.CantidadInicial <= 7 ? 'red' : 'inherit',
-                            border: inventario.CantidadInicial >= 0 && inventario.CantidadInicial <= 7 ? '1px solid red' : 'none',
+                            color: inventario.CantidadInicial <= 10 ? 'red' : 'inherit',
+                            border: inventario.CantidadInicial >= 0 && inventario.CantidadInicial <= 10 ? '1px solid red' : 'none',
                             borderRadius: '50%',
                             display: 'inline-flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            width: inventario.CantidadInicial >= 0 && inventario.CantidadInicial <= 7 ? '30px' : 'auto',
-                            height: inventario.CantidadInicial >= 0 && inventario.CantidadInicial <= 7 ? '30px' : 'auto',
+                            width: inventario.CantidadInicial >= 0 && inventario.CantidadInicial <= 10 ? '30px' : 'auto',
+                            height: inventario.CantidadInicial >= 0 && inventario.CantidadInicial <= 10 ? '30px' : 'auto',
                         }}>
                             {inventario.CantidadInicial}
                         </span>

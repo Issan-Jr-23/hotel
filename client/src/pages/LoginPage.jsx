@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Card, Message, Button, Input, Label } from "../components/ui";
 import { loginSchema } from "../schemas/auth";
 import logo from "../images/logo.png"
+import "../App.css"
 
 export function LoginPage() {
   const {
@@ -27,7 +28,7 @@ export function LoginPage() {
   }, [isAuthenticated]);
 
   return (
-    <div className="w-full  min-h-screen flex flex-col items-center justify-center">
+    <div className="logoImg w-full  min-h-screen flex flex-col items-center justify-center">
       <div className="w-72 h-72 flex flex-col items-center justify-center">
 
         <h3 className="text-4xl text-white font-medium font-sans">BIENVENIDO</h3>
@@ -37,7 +38,7 @@ export function LoginPage() {
         {loginErrors.map((error, i) => (
           <Message message={error} key={i} />
         ))}
-        <h1 className="text-2xl font-bold">Login</h1>
+        <h1 className="text-2xl font-bold text-slate-200">Login</h1>
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <Label htmlFor="email">Email:</Label>
@@ -45,7 +46,7 @@ export function LoginPage() {
             label="Write your email"
             type="email"
             name="email"
-            placeholder="youremail@domain.tld"
+            placeholder="youremail@meqo.com"
             {...register("email", { required: true })}
           />
           <p>{errors.email?.message}</p>

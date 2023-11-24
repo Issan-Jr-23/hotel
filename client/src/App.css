@@ -1,3 +1,23 @@
 .micont{
     z-index: 100;
 }
+
+.logoImg {
+    position: relative;
+    z-index: 1;
+}
+
+.logoImg::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url("./images/globos.webp");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    opacity: 0.5; /* Ajusta este valor para controlar la opacidad */
+    z-index: -1;
+}

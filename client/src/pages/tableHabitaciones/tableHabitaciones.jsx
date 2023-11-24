@@ -1226,13 +1226,13 @@ export default function App() {
   
     try {
       const logoBase64 = await toBase64(logo);
-      pdf.addImage(logoBase64, 'JPEG', 10, 10, 40, 40);
+      pdf.addImage(logoBase64, 'JPEG', 85, 25, 40, 40);
     } catch (error) {
       console.error("Error al cargar la imagen", error);
     }
 
     pdf.setFont("helvetica", "bold");
-    pdf.setFontSize(16);
+    pdf.setFontSize(20);
     pdf.setTextColor("#FFFFFF");
     pdf.text("HOTEL MEQO", 105, 20, null, null, 'center');
 
@@ -1614,8 +1614,8 @@ export default function App() {
             <TableColumn className="text-center ">Reserva</TableColumn>
             <TableColumn className="text-center ">HABITACIONES</TableColumn>
             <TableColumn className="text-center tables_im">fecha de inicio habitaciones</TableColumn>
-            <TableColumn className="text-center">add bebida</TableColumn>
-            <TableColumn className="text-center">add comida</TableColumn>
+            <TableColumn className="text-center">agregar bebida</TableColumn>
+            <TableColumn className="text-center">agregar comida</TableColumn>
             <TableColumn className="text-center">Pago pendiente</TableColumn>
             {/* <TableColumn className="text-center">Acción</TableColumn> */}
           </TableHeader>
@@ -1652,10 +1652,10 @@ export default function App() {
                         backdrop: "bg-inherit",
                       }}
                     >
-                      <ModalContent >
+                      <ModalContent className="max-h-96 overflow-y-auto">
                         <ModalHeader className="border-b-3 border-blue-500 text-3xl flex  justify-between">
-                          <div className="mb-0.5">History</div>
-                          <div className="uppercase"> {selectedUser.nombre} - {selectedUser.identificacion}</div>
+                          <div className="mb-0.5 text-2xl">History</div>
+                          <div className="uppercase text-lg"> {selectedUser.nombre} - {selectedUser.identificacion}</div>
                         </ModalHeader>
                         <ModalBody className="uppercase flex">
                           <div className="flex w-full">

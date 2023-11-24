@@ -1234,30 +1234,30 @@ export default function App() {
     try {
       const svgBase64 = await toBase64(svg);
       pdf.addImage(svgBase64, 'JPEG', 0, 0, 220, 80); 
-  } catch (error) {
+    } catch (error) {
       console.error("Error al cargar la imagen", error);
-  }
+    }
 
     try {
       const waveBase64 = await toBase64(wave);
       pdf.addImage(waveBase64, 'JPEG', 0, 240, 220, 80); 
-  } catch (error) {
+    } catch (error) {
       console.error("Error al cargar la imagen", error);
-  }
+    }
   
     try {
       const logoBase64 = await toBase64(logo);
-      pdf.addImage(logoBase64, 'JPEG', 10, 10, 40, 40);
-  } catch (error) {
+      pdf.addImage(logoBase64, 'JPEG', 85, 25, 40, 40);
+    } catch (error) {
       console.error("Error al cargar la imagen", error);
-  }
+    }
+
     pdf.setFont("helvetica", "bold");
-    pdf.setFontSize(16);
+    pdf.setFontSize(20);
     pdf.setTextColor("#FFFFFF");
     pdf.text("HOTEL MEQO", 105, 20, null, null, 'center');
 
     pdf.setTextColor(0, 0, 0); 
-
     pdf.setFontSize(12);
     pdf.text('Datos de la empresa', 157, 54);
 
@@ -1276,6 +1276,7 @@ export default function App() {
     pdf.text("Descripción", 10, 80);
     pdf.text("Cantidad", 80, 80);
     pdf.text("Precio", 150, 80);
+    pdf.text("Total", 180, 80); // Added column header for total
     pdf.line(10, 82, 200, 82);
 
     // Lista de productos
@@ -1284,30 +1285,31 @@ export default function App() {
     const productos = [...selectedUser.bebidas, ...selectedUser.restaurante];
 
     const ahora = new Date();
-    const total = productos.filter(producto => {
+    const totalGeneral = productos.filter(producto => {
       const fechaDeMarca = new Date(producto.fechaDeMarca);
       const diferenciaEnHoras = (ahora - fechaDeMarca) / cincoHorasEnMilisegundos;
       return producto.fechaDeMarca === "" || diferenciaEnHoras <= 3;
-  }).reduce((acc, producto) => acc + (producto.cantidad * producto.precio), 0);
+    }).reduce((acc, producto) => acc + (producto.cantidad * producto.precio), 0);
     
     productos.forEach((producto) => {
-      const ahora = new Date();
       const fechaDeMarca = new Date(producto.fechaDeMarca);
       const diferenciaEnHoras = (ahora - fechaDeMarca) / cincoHorasEnMilisegundos;
 
       if (producto.fechaDeMarca === "" || diferenciaEnHoras <= 3) {
+        const productoTotal = producto.cantidad * producto.precio;
         pdf.text(producto.nombre, 10, y);
         pdf.text(producto.cantidad.toString(), 88, y);
         pdf.text(`$${producto.precio.toFixed(2)}`, 150, y);
+        pdf.text(`$${productoTotal.toFixed(2)}`, 180, y); // Display the total for each product
         y += 10;
       }
     });
 
+    // Display the total general
     pdf.setFontSize(12);
-    pdf.text(`Total: ${total.toFixed(2)}`, 137.5, y); 
-    console.log("TOTAL DE LA VENTA"+total)
-    // Total
-    // Aquí puedes calcular y agregar el subtotal, impuestos y total
+    pdf.text(`Total General: ${totalGeneral.toFixed(2)}`, 150, y);
+
+    console.log("TOTAL DE LA VENTA: " + totalGeneral);
 
     pdf.save("factura.pdf");
 };
@@ -1636,8 +1638,8 @@ export default function App() {
             <TableColumn className="text-center tables_im">fecha de inicio cabaña</TableColumn>
             {/* <TableColumn className="text-center tables_im">Metodo de pago</TableColumn>
             <TableColumn className="text-center tables_im">Pago pendiente o total</TableColumn> */}
-            <TableColumn className="text-center">add bebida</TableColumn>
-            <TableColumn className="text-center">add comida</TableColumn>
+            <TableColumn className="text-center">agregar bebida</TableColumn>
+            <TableColumn className="text-center">agregar comida</TableColumn>
             <TableColumn className="text-center">Pago pendiente</TableColumn>
             {/* <TableColumn className="text-center">Acción</TableColumn> */}
           </TableHeader>
@@ -1670,16 +1672,15 @@ export default function App() {
                         backdrop: "bg-inherit",
                       }}
                     >
-                      <ModalContent >
+                      <ModalContent className="max-h-96 overflow-y-auto">
                         <ModalHeader className="border-b-3 border-blue-500 text-3xl flex  justify-between">
-                          <div className="mb-0.5">History</div>
-                          <div className="uppercase"> {selectedUser.nombre} - {selectedUser.identificacion}</div>
+                          <div className="mb-0.5 text-2xl">History</div>
+                          <div className="uppercase text-lg"> {selectedUser.nombre} - {selectedUser.identificacion}</div>
                         </ModalHeader>
                         <ModalBody className="uppercase flex">
                           <div className="flex w-full">
-                            <section className="flex justify-between w-full flex-wrap border-3">
+                            <section className="flex justify-between w-full flex-wrap">
 
-                              {/* Sección de Productos (Bebidas + Comidas) */}
                               <div className="mx-5 my-1  w-full">
 
 
@@ -1776,7 +1777,7 @@ export default function App() {
                                     </tfoot>
                                   </table>
                                 ) : (
-                                  <p className="border-4 w-full text-center">No hay productos que mostrar😔</p>
+                                  <p className=" w-full text-center">No hay productos que mostrar😔</p>
                                 )}
                               </div>
 
