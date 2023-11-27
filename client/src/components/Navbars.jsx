@@ -27,7 +27,7 @@ export default function Navbars() {
   // ];
 
   return (
-    <Navbar isBordered className="bg-zinc-800 h-20 justify-beetween" onMenuOpenChange={setIsMenuOpen}>
+    <Navbar isBordered className="bg-slate-900 h-20 justify-beetween" onMenuOpenChange={setIsMenuOpen}>
 
       <NavbarContent className="sm:hidden pr-3" justify="center">
       <NavbarMenuToggle

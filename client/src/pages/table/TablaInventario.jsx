@@ -16,7 +16,7 @@ import { useAuth } from "../../context/authContext.jsx";
 
 
 import "./table.css"
-import { API_URL } from "../../config.js";
+import  AxiosInstance  from "../../api/axios.js";
 
 export default function App() {
   const { user } = useAuth();
@@ -66,7 +66,7 @@ export default function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(API_URL+"/obtener-inventario");
+        const response = await AxiosInstance.get("/obtener-inventario");
         setUsers(response.data);
       } catch (error) {
         console.error("Error al obtener datos del servidor:", error);
@@ -80,10 +80,10 @@ export default function App() {
 
   const handleFormSubmit = async () => {
     try {
-      await axios.post(API_URL+"/inventario", formData);
+      await AxiosInstance.post("/inventario", formData);
       
       onClose();
-      const response = await axios.get(API_URL+"/obtener-inventario");
+      const response = await AxiosInstance.get("/obtener-inventario");
       setUsers(response.data);
     } catch (error) {
       console.error("Error al agregar el producto: ", error);
@@ -94,8 +94,7 @@ export default function App() {
   const registrarEliminacion = async (productName) => {
     try {
       const mensaje = `${user.username} ha eliminado el ${productName}`;
-      console.log(mensaje)
-      await axios.post(`${API_URL}/registrar-eliminacion`, { mensaje });
+      await AxiosInstance.post(`/registrar-eliminacion`, { mensaje });
     } catch (error) {
       console.error("Error al registrar la eliminación:", error);
     }
@@ -112,7 +111,7 @@ export default function App() {
     }
 
     try {
-      await axios.delete(`${API_URL}/eliminar-mekato/${id}`);
+      await AxiosInstance.delete(`/eliminar-mekato/${id}`);
       const updatedUsers = users.filter((user) => user._id !== id);
       await registrarEliminacion(productName);
       setUsers(updatedUsers);
@@ -127,7 +126,7 @@ export default function App() {
     try {
       const mensaje = `${user.username} ha editado el producto con ID ${idProducto}. Cambios: ${cambios.join(', ')}.`;
   
-      await axios.post(`${API_URL}/registrar-edicion`, { mensaje });
+      await AxiosInstance.post(`/registrar-edicion`, { mensaje });
     } catch (error) {
       console.error("Error al registrar la edición:", error);
     }
@@ -148,8 +147,8 @@ export default function App() {
   
       // Realiza la actualización solo si hay cambios
       if (detallesCambios.length > 0) {
-        await axios.put(
-          `${API_URL}/update-producto/${id}`,
+        await AxiosInstance.put(
+          `/update-producto/${id}`,
           { Descripcion: editedName, tipo: editedType, Caducidad: editedDate, CantidadInicial: editedCantidad, ValorUnitario: editedValorUnitario }
         );
   

@@ -234,7 +234,7 @@ export const updateClientCts = async (req, res) => {
   try {
     const cortesias = await Cabania.findOneAndUpdate(
       { _id: identificacion },
-      { cantidadDeCortesias, cantidadDeCortesiasF },
+      { cantidadDeCortesias, cantidadDeCortesiasF }, 
       { new: true }
     );
 

@@ -4,8 +4,7 @@ import HC_accessibility from 'highcharts/modules/accessibility';
 import {
   Input
 } from "@nextui-org/react";
-import axios from 'axios';
-
+import AxiosInstance from '../api/axios.js';
 HC_accessibility(Highcharts);
 
 const DoughnutChart = () => {
@@ -17,13 +16,11 @@ const DoughnutChart = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:3000/api/grahps-reservas?tipo=${selectedCategory}&fechaInicio=${startDate}&fechaFin=${endDate}`);
-        console.log('Datos recibidos:', response.data);
+        const response = await AxiosInstance.get(`/grahps-reservas?tipo=${selectedCategory}&fechaInicio=${startDate}&fechaFin=${endDate}`);
         const transformedData = response.data.flatMap(item => ([
           { name: `${item.tipo} - Si`, y: item.reserva === 'Si' ? 1 : 0 },
           { name: `${item.tipo} - No`, y: item.reserva === 'No' ? 1 : 0 }
         ]));
-        console.log('Datos transformados:', transformedData);
         setData(transformedData);
       } catch (error) {
         console.error('Error al obtener los datos: ', error);
@@ -44,7 +41,6 @@ const DoughnutChart = () => {
       return acc;
     }, []);
 
-    console.log('Datos procesados para el gráfico:', processedData);
     
     const options = {
       chart: { type: 'pie', backgroundColor: "transparent", },

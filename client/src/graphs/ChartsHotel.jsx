@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
-import { API_URL } from '../config';
+import AxiosInstance from '../api/axios.js';
 
 const GraficaProductos = () => {
     const [productos, setProductos] = useState([]);
 
     useEffect(() => {
-        fetch( API_URL+'/productos/mas-vendidos')
-            .then(response => response.json())
-            .then(data => setProductos(data))
+        AxiosInstance.get('/productos/mas-vendidos')
+            .then(response => {
+                // Accediendo directamente a response.data
+                setProductos(response.data);
+            })
             .catch(error => console.error('Error al obtener los datos:', error));
     }, []);
+    
 
     const opcionesGrafica = {
         chart: {

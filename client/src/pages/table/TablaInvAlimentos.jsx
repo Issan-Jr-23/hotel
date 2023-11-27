@@ -5,7 +5,7 @@ import CardDesplegable from './CardAlimentos.jsx'
 import editar from "../../images/boligrafo.png";
 import borrar from "../../images/borrar.png";
 import download from "../../images/download.png";
-import { API_URL } from "../../config.js";
+import  AxiosInstance  from "../../api/axios.js";
 
 export default function App() {
   const [users, setUsers] = useState([]);
@@ -13,7 +13,7 @@ export default function App() {
   useEffect(() => {
     const fetchData = async (newFoodData) => {
       try {
-        const response = await axios.get(API_URL+"/obtener-alimentos", newFoodData);
+        const response = await AxiosInstance.get("/obtener-alimentos", newFoodData);
         setUsers(response.data);
       } catch (error) {
         console.error("Error al obtener datos del servidor:", error);

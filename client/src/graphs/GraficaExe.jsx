@@ -9,13 +9,10 @@ const ProductosMasVendidos = () => {
   const [endDate, setEndDate] = useState(new Date());
   const [filteredData, setFilteredData] = useState([]);
 
-  // Datos de ejemplo para los productos más vendidos con fechas
   const data = [
     { fecha: new Date('2023-01-01'), producto: 'Producto A', ventas: 100 },
-    // ... más datos aquí
   ];
 
-  // Filtro de datos basado en el rango de fechas seleccionado
   const filtrarDatosPorFecha = () => {
     const filtered = data.filter(d => 
       d.fecha >= startDate && d.fecha <= endDate
@@ -23,7 +20,6 @@ const ProductosMasVendidos = () => {
     setFilteredData(filtered);
   };
 
-  // Configuración de la gráfica
   const options = {
     chart: {
       type: 'column'

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
-import { API_URL } from '../config';
+import  AxiosInstance  from "../api/axios.js";
 
 const MyChart = () => {
   const [chartData, setChartData] = useState({ categories: [], series: [] });
@@ -74,8 +74,8 @@ const MyChart = () => {
   async function fetchData() {
     setLoading(true);
     try {
-      const response = await fetch(API_URL+'/cantidad-reservaciones');
-      const { pasadias, cabanias, habitaciones } = await response.json();
+      const response = await AxiosInstance.get('/cantidad-reservaciones');
+      const { pasadias, cabanias, habitaciones } = response.data;
 
       let fechas;
       let contarReservaciones;
@@ -99,7 +99,8 @@ const MyChart = () => {
     } finally {
       setLoading(false);
     }
-  }
+}
+
 
   useEffect(() => {
     fetchData();

@@ -32,7 +32,6 @@ import jsPDF from "jspdf";
 import Swal from 'sweetalert2';
 // import "./tables.css"
 import "../table/table.css"
-import { API_URL } from "../../config";
 import logo from "../../images/logo.png"
 import wave from "../../images/wave.png"
 import svg from "../../images/svg.png"
@@ -192,46 +191,64 @@ export default function App() {
   const handleInputChange = (event, fieldName) => {
     const { name, value } = event.target;
 
-
     if (name === 'identificacion') {
-      setErrorIdentificacion(!value);
+        setErrorIdentificacion(!value);
     } else if (name === 'nombre') {
-      setErrorNombre(!value);
+        setErrorNombre(!value);
     } else if (name === 'fechaPasadia') {
-      setErrorFechaPasadia(!value);
+        setErrorFechaPasadia(!value);
     } else if (name === 'reserva') {
-      setErrorReserva(!value);
+        setErrorReserva(!value);
     } else if (name === 'adultos') {
-      setErrorAdultos(!value)
+        setErrorAdultos(!value);
     } else if (name === 'tipo_cabania') {
-
+        // Lógica específica para tipo_cabania
     }
-
 
     let totalCosto;
-
-    if (event.target.name === "tipo_cabania") {
-      totalCosto = value === "Mayapo" ? valorCabaniaM : valorCabania;
+    if (name === "tipo_cabania") {
+        totalCosto = value === "Mayapo" ? valorCabaniaM : valorCabania;
     } else {
-      totalCosto = formData.tipo_cabania === "Mayapo" ? valorCabaniaM : valorCabania;
+        totalCosto = formData.tipo_cabania === "Mayapo" ? valorCabaniaM : valorCabania;
     }
+
+    const cantidadDeClientes = formData.cantidadPersonas.ninios + formData.cantidadPersonas.adultos;
+    if (cantidadDeClientes > 4) {
+        totalCosto += ((cantidadDeClientes - 4) * valorPorPersonaAdicional);
+    }
+
+    console.log("total de personas: " + formData.cantidadPersonas.ninios);
+    console.log("total costo 3: " + totalCosto);
 
     const totalPendiente = totalCosto;
-    console.log(totalCosto)
+    console.log("total costo 2: " + totalCosto);
 
     if ((name === 'pagoPendiente' && parseFloat(value) > totalPendiente) ||
-      (name === 'pagoAnticipado' && parseFloat(value) > totalCosto)) {
-      alert('El monto no puede ser mayor que el costo total o el monto pendiente.');
+        (name === 'pagoAnticipado' && parseFloat(value) > totalCosto)) {
+        alert('El monto no puede ser mayor que el costo total o el monto pendiente.');
     } else {
-      setFormData({
-        ...formData,
-        [name]: value,
-        totalCosto,
-        ...(name === "tipo_cabania" && { [name]: value }),
-        ...(fieldName ? { cantidadPersonas: { ...formData.cantidadPersonas, [fieldName]: parseInt(value, 10) } } : {})
-      });
+        if ((name === 'ninios' || name === 'adultos')) {
+            const nuevosValores = {
+                ...formData.cantidadPersonas,
+                [fieldName]: parseInt(value, 10)
+            };
+            const nuevoTotalClientes = nuevosValores.ninios + nuevosValores.adultos;
+
+            if (nuevoTotalClientes !== cantidadDeClientes) {
+                formData.pagoAnticipado = "";
+            }
+        }
+
+        setFormData({
+            ...formData,
+            [name]: value,
+            totalCosto,
+            ...(name === "tipo_cabania" && { [name]: value }),
+            ...(fieldName ? { cantidadPersonas: { ...formData.cantidadPersonas, [fieldName]: parseInt(value, 10) } } : {})
+        });
     }
-  };
+};
+
 
 
   const handleReservaChange = (selectedSize) => {
@@ -243,7 +260,7 @@ export default function App() {
 
   const actualizarInventarioBebida = async (bebidaId, cantidad) => {
     try {
-      const response = await axios.post(API_URL + '/actualizar-inventario-bebida', {
+      const response = await AxiosInstance.post('/actualizar-inventario-bebida', {
         id: bebidaId,
         cantidad,
       });
@@ -258,7 +275,7 @@ export default function App() {
   };
   const actualizarStockInicialBebida = async (bebidaId, cantidad) => {
     try {
-      const response = await axios.post(`${API_URL}/actualizar-stock-inicial/${bebidaId}`, { cantidad });
+      const response = await AxiosInstance.post(`/actualizar-stock-inicial/${bebidaId}`, { cantidad });
       if (response.status < 200 || response.status >= 300) {
         throw new Error(`Error al actualizar el stock inicial. Estado de la respuesta: ${response.status}`);
       }
@@ -276,12 +293,12 @@ export default function App() {
     }
 
     const checkStockAndUpdateInventory = async (bebidaId, cantidad) => {
-      const response = await axios.get(`${API_URL}/verificar-disponibilidad/${bebidaId}`);
+      const response = await AxiosInstance.get(`/verificar-disponibilidad/${bebidaId}`);
 
 
       const cantidadRestante = response.data.cantidadRestante;
 
-      const clienteResponse = await axios.get(`${API_URL}/cabania-clientes/${selectedClientId}`);
+      const clienteResponse = await AxiosInstance.get(`/cabania-clientes/${selectedClientId}`);
       const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
 
       const totalPersonas = ninios + adultos;
@@ -484,7 +501,7 @@ export default function App() {
 
   const guardarBebida = async (bebida) => {
     try {
-      const response = await axios.post(API_URL + '/cabania-agregar-bebida', {
+      const response = await AxiosInstance.post('/cabania-agregar-bebida', {
         id: selectedClientId,
         bebida,
       });
@@ -503,7 +520,7 @@ export default function App() {
 
       closeModalM();
 
-      const responses = await axios.get(API_URL + "/cabania-clientes");
+      const responses = await AxiosInstance.get("/cabania-clientes");
 
       // Ordena los datos de la respuesta de la petición GET, no del PUT
       const usuariosOrdenados = responses.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
@@ -518,7 +535,7 @@ export default function App() {
 
   const actualizarInventarioFood = async (foodId, cantidad) => {
     try {
-      const response = await axios.post(API_URL + '/actualizar-inventario-food', {
+      const response = await AxiosInstance.post('/actualizar-inventario-food', {
         id: foodId,
         cantidad,
       });
@@ -533,7 +550,7 @@ export default function App() {
   };
   const actualizarStockInicialFood = async (foodId, cantidad) => {
     try {
-      const response = await axios.post(`${API_URL}/actualizar-stock-inicial-food/${foodId}`, { cantidad });
+      const response = await AxiosInstance.post(`/actualizar-stock-inicial-food/${foodId}`, { cantidad });
       if (response.status < 200 || response.status >= 300) {
         throw new Error(`Error al actualizar el stock inicial. Estado de la respuesta: ${response.status}`);
       }
@@ -554,11 +571,11 @@ export default function App() {
     }
 
     const checkStockAndUpdateInventory = async (foodId, cantidad) => {
-      const response = await axios.get(`${API_URL}/verificar-disponibilidad/${foodId}`);
+      const response = await AxiosInstance.get(`/verificar-disponibilidad/${foodId}`);
 
       const cantidadRestante = response.data.cantidadRestante;
 
-      const clienteResponse = await axios.get(`${API_URL}/cabania-clientes/${selectedClientId}`);
+      const clienteResponse = await AxiosInstance.get(`/cabania-clientes/${selectedClientId}`);
       const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
       const totalPersonas = ninios + adultos;
 
@@ -762,7 +779,7 @@ export default function App() {
   const guardarFood = async (food) => {
 
     try {
-      const response = await axios.post(API_URL + '/cabania-agregar-food', {
+      const response = await AxiosInstance.post('/cabania-agregar-food', {
         id: selectedClientId,
         food,
       });
@@ -782,7 +799,7 @@ export default function App() {
       setEsCortesia(false);
 
       closeModalF();
-      const responses = await axios.get(API_URL + "/cabania-clientes");
+      const responses = await AxiosInstance.get("/cabania-clientes");
 
       // Ordena los datos de la respuesta de la petición GET, no del PUT
       const usuariosOrdenados = responses.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
@@ -876,7 +893,7 @@ export default function App() {
 
 
 
-        await axios.post(API_URL + "/cabania-registrar-cliente", formData);
+        await AxiosInstance.post("/cabania-registrar-cliente", formData);
         onClose();
         toast.success('Cliente agregado exitosamente!');
         setFormData({
@@ -891,7 +908,7 @@ export default function App() {
           },
           tipo_cabania: ""
         });
-        const response = await axios.get(API_URL + "/cabania-clientes");
+        const response = await AxiosInstance.get("/cabania-clientes");
         setUsers(response.data);
         const usuariosOrdenados = response.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
       }
@@ -902,13 +919,13 @@ export default function App() {
 
   const handleFormSubmitB = async () => {
     try {
-      await axios.post(API_URL + "/cabania-registrar-cliente", formData);
+      await AxiosInstance.post("/cabania-registrar-cliente", formData);
       onClose();
       toast.success('bebida agregada exitosamente');
       setFormData({
         bebidas: ""
       });
-      const response = await axios.get(API_URL + "/cabania-clientes");
+      const response = await AxiosInstance.get("/cabania-clientes");
       setUsers(response.data);
     } catch (error) {
       toast.error('Ocurrió un error al agregar el cliente.');
@@ -917,8 +934,8 @@ export default function App() {
 
   const handleEditUser = async () => {
     try {
-      await axios.put(
-        `${API_URL}/cabania/edit/${editedUserId}`,
+      await AxiosInstance.put(
+        `/cabania/edit/${editedUserId}`,
         {
           nombre: editedName,
           pagoPendienteTotal: editPago
@@ -948,7 +965,7 @@ export default function App() {
     }
 
     try {
-      await axios.delete(`${API_URL}/cabania/${id}`);
+      await AxiosInstance.delete(`/cabania/${id}`);
       const updatedUsers = users.filter((user) => user._id !== id);
       setUsers(updatedUsers);
       toast.success('Successfully toasted!')
@@ -961,7 +978,7 @@ export default function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(API_URL + "/drinks");
+        const response = await AxiosInstance.get("/drinks");
         setDrinks(response.data);
         setCantidadDeBebidas(response.data)
       } catch (error) {
@@ -974,7 +991,7 @@ export default function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(API_URL + "/food");
+        const response = await AxiosInstance.get("/food");
         setSnacks(response.data);
       } catch (error) {
         console.error("Error al obtener datos del servidor:", error);
@@ -1121,6 +1138,7 @@ export default function App() {
 
   const valorCabania = 400000
   const valorCabaniaM = 500000
+  const valorPorPersonaAdicional = 50000; 
 
   const [formDatas, setFormDatas] = useState({
     pagoPendiente: '',
@@ -1160,7 +1178,7 @@ export default function App() {
 
     if (selectedClienteId) {
       try {
-        const response = await axios.put(`${API_URL}/cabania-clientes/${selectedClienteId}/actualizar`, {
+        const response = await AxiosInstance.put(`/cabania-clientes/${selectedClienteId}/actualizar`, {
           pagoPendiente: formDatas.pagoPendiente,
           mediosDePagoPendiente: formDatas.mediosDePagoPendiente
         });
@@ -1169,12 +1187,10 @@ export default function App() {
           mediosDePagoPendiente: ''
         });
         toast.success('Datos actualizados exitosamente');
-        const responses = await axios.get(API_URL + "/cabania-clientes");
+        const responses = await AxiosInstance.get("/cabania-clientes");
 
-        // Ordena los datos de la respuesta de la petición GET, no del PUT
         const usuariosOrdenados = responses.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
 
-        // Actualiza el estado con los usuarios ordenados
         setUsers(usuariosOrdenados);
 
 
@@ -1216,10 +1232,8 @@ export default function App() {
       bebidas: selectedUser.bebidas,
       restaurante: selectedUser.restaurante
     };
-    console.log(datosActualizados)
     try {
-      const response = await axios.put(API_URL+'/cabania-facturacion', datosActualizados);
-      console.log('Datos actualizados con éxito:', response.data);
+      const response = await AxiosInstance.put('/cabania-facturacion', datosActualizados);
     } catch (error) {
       console.error('Error al actualizar los datos:', error);
     }
@@ -1230,7 +1244,6 @@ export default function App() {
     await actualizarFechaEnProductos(selectedUser._id);
     const pdf = new jsPDF();
 
-    console.log(selectedUser._id);
 
     try {
       const svgBase64 = await toBase64(svg);
@@ -1310,7 +1323,6 @@ export default function App() {
     pdf.setFontSize(12);
     pdf.text(`Total General: ${totalGeneral.toFixed(2)}`, 150, y);
 
-    console.log("TOTAL DE LA VENTA: " + totalGeneral);
 
     pdf.save("factura.pdf");
 };
@@ -1365,8 +1377,6 @@ export default function App() {
   const bebidasFiltradas5 = drinks.filter(bebida =>
     bebida.Descripcion.toLowerCase().includes(filtro5.toLowerCase())
   );
-
-
 
   const foodFiltradas = snacks.filter(food =>
     food.Descripcion.toLowerCase().includes(foodFiltro.toLowerCase())
@@ -1707,7 +1717,6 @@ export default function App() {
                                               (() => {
                                                 const cincoHorasEnMilisegundos = 3 * 60 * 60 * 1000; // 5 horas en milisegundos
                                                 const ahora = new Date();
-                                                console.log("hora de marca: "+ahora)
                                                 const fechaDeMarca = new Date(producto.fechaDeMarca);
                                                 const diferenciaEnHoras = (ahora - fechaDeMarca) / cincoHorasEnMilisegundos;
 
@@ -1717,7 +1726,7 @@ export default function App() {
                                           </td>
                                           <td>
                                             {
-                                              (() => {
+                                              (() => { 
                                                 const cincoHorasEnMilisegundos = 3 * 60 * 60 * 1000; // 5 horas en milisegundos
                                                 const ahora = new Date();
                                                 const fechaDeMarca = new Date(producto.fechaDeMarca);

@@ -34,7 +34,6 @@ import Swal from 'sweetalert2';
 // import html2canvas from "html2canvas";
 import "./tables.css"
 import "../table/table.css"
-// import { API_URL } from "../../config";
 import logo from "../../images/logo.png"
 import wave from "../../images/wave.png"
 import svg from "../../images/svg.png"
@@ -540,7 +539,6 @@ export default function App() {
       const response = await AxiosInstances.get(`/verificar-disponibilidad/${foodId}`);
 
       const cantidadRestante = response.data.cantidadRestante;
-      console.log(cantidadRestante)
 
       const clienteResponse = await AxiosInstances.get(`/pasadia-clientes/${selectedClientId}`);
       const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
@@ -1213,10 +1211,8 @@ export default function App() {
       bebidas: selectedUser.bebidas,
       restaurante: selectedUser.restaurante
     };
-    console.log(datosActualizados)
     try {
       const response = await AxiosInstances.put('/facturacion', datosActualizados);
-      console.log('Datos actualizados con éxito:', response.data);
     } catch (error) {
       console.error('Error al actualizar los datos:', error);
     }
@@ -1228,13 +1224,11 @@ export default function App() {
   fecha.setHours(fecha.getHours());
 
   const fechaAjustada = fecha.toLocaleString();
-  console.log(fechaAjustada)
 
   const generarPDF = async () => {
     const pdf = new jsPDF();
 
     await actualizarFechaEnProductos(selectedUser._id);
-    console.log(selectedUser._id);
 
     try {
       const svgBase64 = await toBase64(svg);
@@ -1314,7 +1308,6 @@ export default function App() {
     pdf.setFontSize(12);
     pdf.text(`Total General: ${totalGeneral.toFixed(2)}`, 150, y);
 
-    console.log("TOTAL DE LA VENTA: " + totalGeneral);
 
     pdf.save("factura.pdf");
 };
