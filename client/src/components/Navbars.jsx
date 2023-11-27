@@ -89,6 +89,20 @@ export default function Navbars() {
             Inventario
             </Link>
             </DropdownItem>
+            <DropdownItem aria-label="prueba"
+              key="100_uptime_inv"
+            >
+              <Link className="link_nav" to='/message'>
+            Mensajes
+            </Link>
+            </DropdownItem>
+            <DropdownItem aria-label="prueba"
+              key="101_uptime_inv"
+            >
+              <Link className="link_nav" to='/hotel-graphs'>
+            Graph
+            </Link>
+            </DropdownItem>
           </DropdownMenu>
         </Dropdown>
         <NavbarItem isActive>
@@ -162,6 +176,12 @@ export default function Navbars() {
             </Link>
             <Link className="link_nav" to='/inventario'>
             Inventario
+            </Link>
+            <Link className="link_nav" to='/message'>
+            Mensajes
+            </Link>
+            <Link className="link_nav" to='/hotel-graphs'>
+            Graph
             </Link>
       </AccordionItem>
         </Accordion>

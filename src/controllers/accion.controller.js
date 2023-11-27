@@ -1,5 +1,18 @@
 import Accion from "../models/acciones.model.js"
 
+
+
+export const obtenerMessage = async (req, res) => {
+  try {
+    const mensajesObtenidos = await Accion.find();
+    res.status(200).json(mensajesObtenidos);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error al obtener los clientes desde la base de datos");
+  }
+};
+
+
 export const registrarEliminacion = async (req, res) => {
     try {
       const { mensaje } = req.body;

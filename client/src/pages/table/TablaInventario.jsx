@@ -122,9 +122,9 @@ export default function App() {
     }
   };
 
-  const registrarEdicion = async (idProducto, cambios) => {
+  const registrarEdicion = async (idProducto,nombreProducto, cambios) => {
     try {
-      const mensaje = `${user.username} ha editado el producto con ID ${idProducto}. Cambios: ${cambios.join(', ')}.`;
+      const mensaje = `${user.username} ha editado el producto ${nombreProducto} con ID ${idProducto} . Cambios: ${cambios.join(', ')}.`;
   
       await AxiosInstance.post(`/registrar-edicion`, { mensaje });
     } catch (error) {
@@ -134,10 +134,8 @@ export default function App() {
 
   const handleEditUser = async (id) => {
     try {
-      // Obtiene el inventario actual antes de la edición
       const inventarioActual = users.find(inventario => inventario._id === id);
   
-      // Comprueba los cambios y registra los detalles específicos
       const detallesCambios = [];
       if (inventarioActual.Descripcion !== editedName) detallesCambios.push(`Descripcion: de '${inventarioActual.Descripcion}' a '${editedName}'`);
       if (inventarioActual.tipo !== editedType) detallesCambios.push(`Tipo: de '${inventarioActual.tipo}' a '${editedType}'`);
@@ -145,24 +143,20 @@ export default function App() {
       if (inventarioActual.CantidadInicial !== editedCantidad) detallesCambios.push(`CantidadInicial: de '${inventarioActual.CantidadInicial}' a '${editedCantidad}'`);
       if (inventarioActual.ValorUnitario !== editedValorUnitario) detallesCambios.push(`ValorUnitario: de '${inventarioActual.ValorUnitario}' a '${editedValorUnitario}'`);
   
-      // Realiza la actualización solo si hay cambios
       if (detallesCambios.length > 0) {
         await AxiosInstance.put(
           `/update-producto/${id}`,
           { Descripcion: editedName, tipo: editedType, Caducidad: editedDate, CantidadInicial: editedCantidad, ValorUnitario: editedValorUnitario }
         );
   
-        // Registra la edición
-        await registrarEdicion(id, detallesCambios);
+        await registrarEdicion(id,inventarioActual.Descripcion, detallesCambios);
   
-        // Actualiza la lista de usuarios
         const updatedUsers = users.map((inventario) =>
           inventario._id === id ? { ...inventario, Descripcion: editedName, tipo: editedType, Caducidad: editedDate, CantidadInicial: editedCantidad, ValorUnitario: editedValorUnitario } : inventario
         );
         setUsers(updatedUsers);
       }
   
-      // Resetea los estados de edición
       setEditedName(""); 
       setEditedType("")
       setEditedDate("")
@@ -289,7 +283,7 @@ export default function App() {
                   onChange={handleInputChange}
                 />
                 <select
-                  
+                  className="outline-none h-16 border-3 rounded-xl border-blue-500"
                   name="tipo"
                   value={formData.tipo}
                   onChange={(event) => handleInputChange(event)} 
@@ -320,7 +314,7 @@ export default function App() {
                   className="input_form"
                   type="number"
                   variant="flat"
-                  label="Valor unitario"
+                  label="Precio de venta"
                   onChange={handleInputChange}
                 />
               </ModalBody>
@@ -382,6 +376,7 @@ export default function App() {
                   {inventario._id === editedUserId ? (
                     <div className="flex">
                       <Input
+                      className="w-52"
                         value={editedName}
                         onChange={(e) => setEditedName(e.target.value)}
                       />
@@ -395,6 +390,7 @@ export default function App() {
                   {inventario._id === editedUserId ? (
                     <div className="flex">
                       <Input
+                        className="w-52"
                         value={editedType}
                         onChange={(e) => setEditedType(e.target.value)}
                       />
@@ -407,6 +403,7 @@ export default function App() {
                   {inventario._id === editedUserId ? (
                     <div className="flex">
                       <Input
+                      className="w-52"
                         value={editedDate}
                         onChange={(e) => setEditedDate(e.target.value)}
                       />
@@ -423,6 +420,7 @@ export default function App() {
                     {inventario._id === editedUserId ? (
                         <div className="flex">
                             <Input
+                            className="w-32"
                                 value={editedCantidad}
                                 onChange={(e) => setEditedCantidad(e.target.value)}
                             />
@@ -450,6 +448,7 @@ export default function App() {
                   {inventario._id === editedUserId ? (
                     <div className="flex">
                       <Input
+                       className="w-32"
                         value={editedValorUnitario}
                         onChange={(e) => setEditedValorUnitario(e.target.value)}
                       />
