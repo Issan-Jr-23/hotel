@@ -36,6 +36,7 @@ import { API_URL } from "../../config";
 import logo from "../../images/logo.png"
 import wave from "../../images/wave.png"
 import svg from "../../images/svg.png"
+import  AxiosInstance  from "../../api/axios.js";
 
 export default function App() {
 
@@ -800,7 +801,7 @@ export default function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(API_URL + "/cabania-clientes");
+        const response = await AxiosInstance.get("/cabania-clientes");
         setUsers(response.data);
         const usuariosOrdenados = response.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
       } catch (error) {
@@ -1217,7 +1218,7 @@ export default function App() {
     };
     console.log(datosActualizados)
     try {
-      const response = await axios.put(API_URL + '/facturacion', datosActualizados);
+      const response = await axios.put(API_URL+'/cabania-facturacion', datosActualizados);
       console.log('Datos actualizados con éxito:', response.data);
     } catch (error) {
       console.error('Error al actualizar los datos:', error);
@@ -1226,9 +1227,9 @@ export default function App() {
 
 
   const generarPDF = async () => {
+    await actualizarFechaEnProductos(selectedUser._id);
     const pdf = new jsPDF();
 
-    await actualizarFechaEnProductos(selectedUser._id);
     console.log(selectedUser._id);
 
     try {

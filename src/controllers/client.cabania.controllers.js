@@ -250,7 +250,27 @@ export const updateClientCts = async (req, res) => {
 }; 
 
       
+export const actualizarFacturacion = async (req, res) => {
+  try {
+    const { bebidas, restaurante,clienteId } = req.body;
+    
+    const cliente = await Cabania.findById(clienteId);
+    if (!cliente) {
+      return res.status(404).json({ message: "Cliente no encontrado: "+clienteId });
+    }
 
+    cliente.bebidas = bebidas;
+    cliente.restaurante = restaurante;
+    console.log(restaurante)
+
+    await cliente.save();
+
+    res.status(200).json({ message: "Facturación actualizada con éxito" });
+  } catch (error) {
+    console.error('Error al actualizar la facturación:', error);
+    res.status(500).json({ message: "Error al actualizar la facturación" });
+  }
+};
 
 
  

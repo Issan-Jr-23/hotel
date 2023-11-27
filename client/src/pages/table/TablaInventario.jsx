@@ -40,6 +40,7 @@ export default function App() {
     
   });
 
+
   const handleInputChange = (event) => {
     const { name, value } = event.target;
 
@@ -90,7 +91,18 @@ export default function App() {
   };
 
 
-  const handleDelete = async (id) => {
+  const registrarEliminacion = async (productName) => {
+    try {
+      const mensaje = `${user.username} ha eliminado el ${productName}`;
+      console.log(mensaje)
+      await axios.post(`${API_URL}/registrar-eliminacion`, { mensaje });
+    } catch (error) {
+      console.error("Error al registrar la eliminación:", error);
+    }
+  };
+
+
+  const handleDelete = async (id, productName) => {
     const confirmDelete = window.confirm(
       "¿Estás seguro de que deseas eliminar este usuario?"
     );
@@ -102,6 +114,7 @@ export default function App() {
     try {
       await axios.delete(`${API_URL}/eliminar-mekato/${id}`);
       const updatedUsers = users.filter((user) => user._id !== id);
+      await registrarEliminacion(productName);
       setUsers(updatedUsers);
       toast.success('Successfully toasted!')
     } catch (error) {
@@ -110,29 +123,62 @@ export default function App() {
     }
   };
 
+  const registrarEdicion = async (idProducto, cambios) => {
+    try {
+      const mensaje = `${user.username} ha editado el producto con ID ${idProducto}. Cambios: ${cambios.join(', ')}.`;
+  
+      await axios.post(`${API_URL}/registrar-edicion`, { mensaje });
+    } catch (error) {
+      console.error("Error al registrar la edición:", error);
+    }
+  };
 
   const handleEditUser = async (id) => {
     try {
-      await axios.put(
-        `${API_URL}/update-producto/${id}`,
-        { Descripcion: editedName, tipo: editedType, Caducidad: editedDate, CantidadInicial: editedCantidad, ValorUnitario: editedValorUnitario }
-      );
-      const updatedUsers = users.map((inventario) =>
-        inventario._id === editedUserId ? { ...inventario, Descripcion: editedName, tipo: editedType, Caducidad: editedDate, CantidadInicial: editedCantidad, ValorUnitario: editedValorUnitario } : inventario
-      );
-      setUsers(updatedUsers);
+      // Obtiene el inventario actual antes de la edición
+      const inventarioActual = users.find(inventario => inventario._id === id);
+  
+      // Comprueba los cambios y registra los detalles específicos
+      const detallesCambios = [];
+      if (inventarioActual.Descripcion !== editedName) detallesCambios.push(`Descripcion: de '${inventarioActual.Descripcion}' a '${editedName}'`);
+      if (inventarioActual.tipo !== editedType) detallesCambios.push(`Tipo: de '${inventarioActual.tipo}' a '${editedType}'`);
+      if (inventarioActual.Caducidad !== editedDate) detallesCambios.push(`Caducidad: de '${inventarioActual.Caducidad}' a '${editedDate}'`);
+      if (inventarioActual.CantidadInicial !== editedCantidad) detallesCambios.push(`CantidadInicial: de '${inventarioActual.CantidadInicial}' a '${editedCantidad}'`);
+      if (inventarioActual.ValorUnitario !== editedValorUnitario) detallesCambios.push(`ValorUnitario: de '${inventarioActual.ValorUnitario}' a '${editedValorUnitario}'`);
+  
+      // Realiza la actualización solo si hay cambios
+      if (detallesCambios.length > 0) {
+        await axios.put(
+          `${API_URL}/update-producto/${id}`,
+          { Descripcion: editedName, tipo: editedType, Caducidad: editedDate, CantidadInicial: editedCantidad, ValorUnitario: editedValorUnitario }
+        );
+  
+        // Registra la edición
+        await registrarEdicion(id, detallesCambios);
+  
+        // Actualiza la lista de usuarios
+        const updatedUsers = users.map((inventario) =>
+          inventario._id === id ? { ...inventario, Descripcion: editedName, tipo: editedType, Caducidad: editedDate, CantidadInicial: editedCantidad, ValorUnitario: editedValorUnitario } : inventario
+        );
+        setUsers(updatedUsers);
+      }
+  
+      // Resetea los estados de edición
       setEditedName(""); 
       setEditedType("")
       setEditedDate("")
       setEditedCantidad("")
       setEditedValorUnitario("")
       setEditedUserId(null); 
-      toast.success('Cliente actualizado exitosamente!');
+  
+      toast.success('Producto actualizado exitosamente!');
     } catch (error) {
-      console.error("Error al editar usuario:", error);
-      alert("Error al editar usuario. Por favor, inténtalo de nuevo más tarde.");
+      console.error("Error al editar producto:", error);
+      alert("Error al editar el producto. Por favor, inténtalo de nuevo más tarde.");
     }
   };
+  
+  
 
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -454,7 +500,7 @@ export default function App() {
                           className="w-8 h-8 cursor-pointer"
                           src={borrar}
                           alt="Delete"
-                          onClick={() => handleDelete(inventario._id)}
+                          onClick={() => handleDelete(inventario._id, inventario.Descripcion)}
                         />
                       </div>
                     ) : null}
