@@ -38,6 +38,7 @@ import logo from "../../images/logo.png"
 import wave from "../../images/wave.png"
 import svg from "../../images/svg.png"
 import AxiosInstances from "../../api/axios.js";
+import { PlusIcon } from "../finca/PlusIcon.jsx";
 //#endregion
 export default function App() {
 
@@ -53,7 +54,7 @@ export default function App() {
     xhr.open('GET', url);
     xhr.responseType = 'blob';
     xhr.send();
-});
+}); 
 
 
 
@@ -1388,7 +1389,44 @@ export default function App() {
   return (
     <div className="max-w-full w-98 mx-auto">
       <Toaster />
-      <div className="flex justify-between px-5">
+      <div className="flex justify-between flex-row-reverse px-5">
+
+        <div>
+        <Input
+        label="Search"
+        value={busqueda}
+            onChange={handleSearchChange}
+        isClearable
+        radius="lg"
+        className="w-72 h-12"
+        classNames={{
+          label: "text-black/50 dark:text-white/90",
+          input: [
+            "bg-transparent",
+            "text-black/90 dark:text-black/90",
+            "placeholder:text-black/60 dark:placeholder:text-black/60",
+          ],
+          innerWrapper: "bg-transparent",
+          inputWrapper: [
+            "shadow-xl",
+            "bg-default-200/50",
+            "dark:bg-default/60",
+            "backdrop-blur-xl",
+            "backdrop-saturate-200",
+            "hover:bg-default-200/70",
+            "dark:hover:bg-default/70",
+            "group-data-[focused=true]:bg-default-200/50",
+            "dark:group-data-[focused=true]:bg-default/60",
+            "!cursor-text",
+          ],
+        }}
+        placeholder="Type to search..."
+        startContent={
+          <SearchIcon className="text-black/50 mb-0.5 dark:text-black/90 text-black pointer-events-none flex-shrink-0" />
+        }
+      />
+        </div>
+
         <div className=" ">
           <div className="flex flex-wrap gap-3">
             <Button
@@ -1397,10 +1435,20 @@ export default function App() {
                 setBackdrop("blur");
                 onOpen();
               }}
-              className="capitalize text-white bg-gradient-to-r from-emerald-400 to-cyan-500"
+              className="capitalize text-white bg-black"
             >
-              Agregar Cliente
+              <PlusIcon/>Agregar
             </Button>
+            <div className="flex items-center justify-center ml-7">
+          <Button className="bg-blue-500 w-28 text-white">
+          Exportar
+          {/* <img
+            className="w-10 h-10 cursor-pointer flex items-center justify-center "
+            src={download}
+            alt="actualizar"
+          /> */}
+          </Button>
+        </div>
           </div>
 
           <Modal backdrop={backdrop} isOpen={isOpen} onClose={onClose}>
@@ -1561,37 +1609,17 @@ export default function App() {
             </ModalContent>
           </Modal>
         </div>
-        <div className="w-52 flex justify-center">
-
-          <input
-            id="s"
-            type="search"
-            label="busca el producto"
-            value={busqueda}
-            onChange={handleSearchChange}
-            className="w-10 h-10"
-          >
-          </input>
-        </div>
-        <div className="flex items-center justify-center  w-32 ml-3">
-          <img
-            className="w-10 h-10 cursor-pointer flex items-center justify-center "
-            src={download}
-            alt="actualizar"
-          />
-        </div>
+        
       </div>
 
-      <section className="flex mt-5 mx-5 rounded-t-2xl flex-col">
+      <section className="flex mx-5 rounded-t-2xl flex-col">
         {/* Input de búsqueda */}
         <div className="flex justify-end">
-          <select className="w-28 h-10 rounded-xl mb-1 outline-blue-500" onChange={handleChangeDisplayLimit} value={displayLimit}>
-            <option value="1">Mostrar 1</option>
-            <option value="5">Mostrar 5</option>
-            <option value="10">Mostrar 10</option>
-            <option value="15">Mostrar 15</option>
-            <option value="50">Mostrar 50</option>
-            <option value="100">Mostrar 100</option>
+          <select className="w-40 pl-2 h-8 rounded-xl outline-none bg-white/0 text-white" onChange={handleChangeDisplayLimit} value={displayLimit}>
+            <option className="text-black" value="1">Mostrar 1</option>
+            <option className="text-black" value="5">Mostrar 5</option>
+            <option className="text-black" value="15">Mostrar 15</option>
+            <option className="text-black" value="50">Mostrar 20</option>
           </select>
 
         </div>

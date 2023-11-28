@@ -300,16 +300,37 @@ export default function App() {
 
       const clienteResponse = await AxiosInstance.get(`/cabania-clientes/${selectedClientId}`);
       const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
-
+      const  numeroDebebidas = clienteResponse.data.cantidadDeBebidas.filter(bebida => bebida.mensaje === "Cortesía");
+      const cantidadTotalCortesia = numeroDebebidas.reduce((total, bebida) => total + bebida.cantidad, 0);
+      console.log("numero de cortesias: "+cantidadTotalCortesia)
+      console.log("cantidad de bebidas del usuario"+JSON.stringify(numeroDebebidas, null, 2))
       const totalPersonas = ninios + adultos;
 
       if (esCortesia) {
-        const totalCortesias = cantidadBebida + cantidadBebida1 + cantidadBebida2 + cantidadBebida3 + cantidadBebida4;
-        if (totalCortesias > totalPersonas) {
-          alert(`La cantidad de cortesías (${totalCortesias}) no puede exceder la cantidad de personas (${totalPersonas}).`);
-          return;
-        }
+        const nuevaCantidadTotalCortesia = cantidadTotalCortesia + cantidad;
+        const cantidadRestante = nuevaCantidadTotalCortesia - cantidadTotalCortesia;
+        console.log("cantidad restante: "+cantidadRestante)
+        console.log("supuesta nueva cantidad: "+nuevaCantidadTotalCortesia)
 
+        if(cantidad > cantidadRestante){
+          alert(`solo te tienes ${cantidadRestante} cortesias disponibles`)
+          return
+        }
+    
+        if (nuevaCantidadTotalCortesia > totalPersonas) {
+          alert(`La cantidad de cortesías (${nuevaCantidadTotalCortesia}) no puede exceder la cantidad de personas (${totalPersonas}).`);
+          return false;
+        }
+    
+        if (cantidad > cantidadRestante) {
+          alert(`Solo puedes agregar hasta ${cantidadRestante} cortesías adicionales.`);
+          return false;
+        }
+      } else {
+        if (cantidad > cantidadRestante) {
+          alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
+          return false;
+        }
       }
       if (cantidad > cantidadRestante) {
         alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
@@ -578,6 +599,8 @@ export default function App() {
       const clienteResponse = await AxiosInstance.get(`/cabania-clientes/${selectedClientId}`);
       const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
       const totalPersonas = ninios + adultos;
+      console.log("cantidad de personas: "+totalPersonas)
+      console.log("cliente response: "+clienteResponse)
 
 
       if (esCortesia) {

@@ -188,9 +188,11 @@ export const obtenerCPI = async (req, res) => {
     res.json({
       cantidadPersonas: cliente.cantidadPersonas,
       cantidadDeCortesias: cliente.cantidadDeCortesias,
-      cantidadDeCortesiasF: cliente.cantidadDeCortesiasF
+      cantidadDeCortesiasF: cliente.cantidadDeCortesiasF,
+      cantidadDeBebidas: cliente.bebidas
     });
 
+    
 
   } catch (error) {
     res.status(500).send('Error al obtener los datos del cliente: ' + error.message);
