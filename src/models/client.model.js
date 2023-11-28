@@ -64,18 +64,10 @@ const clienteSchema = new mongoose.Schema({
     required: false,
     default: [],
   },
-  consumoTotal: {
+  nuevoTotal: {
     type: Number,
     default: 0
   },
-  cantidadDeCortesias: {
-    type: Number,
-    default: 0
-  },
-  cantidadDeCortesiasF: {
-    type: Number,
-    default: 0
-  }
 });
 
 

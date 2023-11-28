@@ -259,27 +259,58 @@ export default function App() {
     const checkStockAndUpdateInventory = async (bebidaId, cantidad) => {
       const response = await AxiosInstance.get(`/verificar-disponibilidad/${bebidaId}`);
 
+      let fecha = new Date();
 
-      const cantidadRestante = response.data.cantidadRestante;
+      fecha.setHours(fecha.getHours() - 5);
+    
+      const fechaAjustada = fecha.toLocaleString();
+
+      const disponibleInventario = response.data.cantidadRestante;
 
       const clienteResponse = await AxiosInstance.get(`/habitaciones-clientes/${selectedClientId}`);
       const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
-
+      const  numeroDebebidas = clienteResponse.data.cantidadDeBebidas.filter(bebida => bebida.mensaje === "Cortesía" && bebida.fechaDeMarca === "");
+      const cantidadTotalCortesia = numeroDebebidas.reduce((total, bebida) => total + bebida.cantidad, 0);
+      console.log("numero de cortesias: "+cantidadTotalCortesia)
+      console.log("cantidad de bebidas del usuario"+JSON.stringify(numeroDebebidas, null, 2))
       const totalPersonas = ninios + adultos;
 
       if (esCortesia) {
-        const totalCortesias = cantidadBebida + cantidadBebida1 + cantidadBebida2 + cantidadBebida3 + cantidadBebida4;
-        if (totalCortesias > totalPersonas) {
-          alert(`La cantidad de cortesías (${totalCortesias}) no puede exceder la cantidad de personas (${totalPersonas}).`);
-          return;
+       
+        const nuevaCantidadTotalCortesia = cantidadTotalCortesia;
+        const cantidadRestante = totalPersonas - cantidadTotalCortesia;
+        console.log("cantidad restante: "+cantidadRestante)
+        console.log("supuesta nueva cantidad: "+nuevaCantidadTotalCortesia)
+
+        if (cantidad > disponibleInventario ) {
+          alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
+          return false;
         }
 
+        if(cantidad > cantidadRestante){
+          alert(`el usuario tiene ${cantidadRestante} cortesias disponibles`)
+          return;
+        }
+    
+        if (nuevaCantidadTotalCortesia > totalPersonas) {
+          alert(`La cantidad de cortesías (${nuevaCantidadTotalCortesia}) no puede exceder la cantidad de personas (${totalPersonas}).`);
+          return false;
+        }
+    
+        if (cantidad > cantidadRestante) {
+          alert(`Solo puedes agregar hasta ${cantidadRestante} cortesías adicionales.`);
+          return false;
+        }
+      } else {
+        if (cantidad > disponibleInventario ) {
+          alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
+          return false;
+        }
       }
-      if (cantidad > cantidadRestante) {
+      if (cantidad > disponibleInventario ) {
         alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
         return false;
       }
-
 
       await actualizarInventarioBebida(bebidaId, cantidad);
       await actualizarStockInicialBebida(bebidaId, cantidad);
@@ -532,27 +563,67 @@ export default function App() {
     const checkStockAndUpdateInventory = async (foodId, cantidad) => {
       const response = await AxiosInstance.get(`/verificar-disponibilidad/${foodId}`);
 
-      const cantidadRestante = response.data.cantidadRestante;
+      let fecha = new Date();
+
+      fecha.setHours(fecha.getHours() - 5);
+    
+      const fechaAjustada = fecha.toLocaleString();
+
+      const disponibleInventario = response.data.cantidadRestante;
 
       const clienteResponse = await AxiosInstance.get(`/habitaciones-clientes/${selectedClientId}`);
       const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
+      const  numeroDeFood = clienteResponse.data.cantidadDeFood.filter(food => food.mensaje === "Cortesía" && food.fechaDeMarca === "");
+      const cantidadTotalCortesia = numeroDeFood.reduce((total, food) => total + food.cantidad, 0);
+      console.log("numero de cortesias: "+cantidadTotalCortesia)
+      console.log("cantidad de bebidas del usuario"+JSON.stringify(numeroDeFood, null, 2))
       const totalPersonas = ninios + adultos;
+      
       if (esCortesia) {
-        const totalCortesias = cantidadFood + cantidadFood1 + cantidadFood2 + cantidadFood3 + cantidadFood4;
-        if (totalCortesias > totalPersonas) {
-          alert(`La cantidad de cortesías (${totalCortesias}) no puede exceder la cantidad de personas (${totalPersonas}).`);
+        
+        const nuevaCantidadTotalCortesia = cantidadTotalCortesia;
+        const cantidadRestante = totalPersonas - cantidadTotalCortesia;
+        console.log("cantidad restante: "+cantidadRestante)
+        console.log("supuesta nueva cantidad: "+nuevaCantidadTotalCortesia)
+        
+        if(cantidad > totalPersonas){
+          alert(`La cantidad de cortesias ${cantidad} no debe superar a la cantidad de personas ${totalPersonas} `)
           return;
         }
+
+        if (cantidad > disponibleInventario ) {
+          alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
+          return false;
+        }
+
+
+        if(cantidad > cantidadRestante){
+          alert(`el usuario tiene ${cantidadRestante} cortesias disponibles`)
+          return;
+        }
+    
+        if (nuevaCantidadTotalCortesia > totalPersonas) {
+          alert(`La cantidad de cortesías (${nuevaCantidadTotalCortesia}) no puede exceder la cantidad de personas (${totalPersonas}).`);
+          return false;
+        }
+    
+        if (cantidad > cantidadRestante) {
+          alert(`Solo puedes agregar hasta ${cantidadRestante} cortesías adicionales.`);
+          return false;
+        }
+      } else {
+        if (cantidad > disponibleInventario ) {
+          alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
+          return false;
+        }
       }
-
-
-      if (cantidad > cantidadRestante) {
+      if (cantidad > disponibleInventario ) {
         alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
         return false;
       }
 
-      await actualizarInventarioFood(foodId, cantidad);
-      await actualizarStockInicialFood(foodId, cantidad);
+      await actualizarInventarioBebida(foodId, cantidad);
+      await actualizarStockInicialBebida(foodId, cantidad);
       return true;
     };
 

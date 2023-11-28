@@ -23,7 +23,7 @@ export const Home = () => {
           <Link to="/pasadia">
           <article className='rounded-xl article_cont_images text-center '>
             <img className=' img_home_h' src={pasadia} alt="imagen"/>
-            <h2 className='text-3xl'>pasadia</h2>
+            <h2 className='text-3xl'>Pasadia</h2>
           </article>
           </Link>
           <Link to="/cabanias">

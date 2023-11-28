@@ -189,7 +189,8 @@ export const obtenerCPI = async (req, res) => {
       cantidadPersonas: cliente.cantidadPersonas,
       cantidadDeCortesias: cliente.cantidadDeCortesias,
       cantidadDeCortesiasF: cliente.cantidadDeCortesiasF,
-      cantidadDeBebidas: cliente.bebidas
+      cantidadDeBebidas: cliente.bebidas,
+      cantidadDeFood: cliente.restaurante
     });
 
     

@@ -160,8 +160,8 @@ export default function App() {
     mediosDePagoPendiente: "",
     pagoPendiente: "",
     fechaPasadia: "",
-    tipo_cabania: ""
-
+    tipo_cabania: "",
+    nuevoT: ""
   });
 
 
@@ -202,7 +202,7 @@ export default function App() {
     } else if (name === 'adultos') {
         setErrorAdultos(!value);
     } else if (name === 'tipo_cabania') {
-        // Lógica específica para tipo_cabania
+        setErrorCabania(!value)
     }
 
     let totalCosto;
@@ -217,11 +217,37 @@ export default function App() {
         totalCosto += ((cantidadDeClientes - 4) * valorPorPersonaAdicional);
     }
 
+   
+    let nuevoTotal = 0;
+    if (name === 'pagoPendiente' || name === 'pagoAnticipado') {
+      const pagoPendiente = name === 'pagoPendiente' ? parseFloat(value) : parseFloat(formData.pagoPendiente || 0);
+      const pagoAnticipado = name === 'pagoAnticipado' ? parseFloat(value) : parseFloat(formData.pagoAnticipado || 0);
+      const totalPagos = pagoPendiente + pagoAnticipado;
+
+      if (totalPagos > totalCosto) {
+          alert('La suma de los montos no puede ser mayor que el costo total.');
+      } else {
+          nuevoTotal = totalCosto - totalPagos;
+
+          console.log("el total que debe pagar la persona: "+nuevoTotal)
+
+         
+          if (nuevoTotal > 0) {
+            
+
+          }
+      }
+  }
+
+
+  console.log("alerta de nuevo total: "+nuevoTotal)
+ 
+
     console.log("total de personas: " + formData.cantidadPersonas.ninios);
     console.log("total costo 3: " + totalCosto);
 
     const totalPendiente = totalCosto;
-    console.log("total costo 2: " + totalCosto);
+    console.log("total costo 2: " + totalPendiente);
 
     if ((name === 'pagoPendiente' && parseFloat(value) > totalPendiente) ||
         (name === 'pagoAnticipado' && parseFloat(value) > totalCosto)) {
@@ -243,6 +269,7 @@ export default function App() {
             ...formData,
             [name]: value,
             totalCosto,
+            nuevoTotal,
             ...(name === "tipo_cabania" && { [name]: value }),
             ...(fieldName ? { cantidadPersonas: { ...formData.cantidadPersonas, [fieldName]: parseInt(value, 10) } } : {})
         });
@@ -295,26 +322,37 @@ export default function App() {
     const checkStockAndUpdateInventory = async (bebidaId, cantidad) => {
       const response = await AxiosInstance.get(`/verificar-disponibilidad/${bebidaId}`);
 
+      let fecha = new Date();
 
-      const cantidadRestante = response.data.cantidadRestante;
+      fecha.setHours(fecha.getHours() - 5);
+    
+      const fechaAjustada = fecha.toLocaleString();
+
+      const disponibleInventario = response.data.cantidadRestante;
 
       const clienteResponse = await AxiosInstance.get(`/cabania-clientes/${selectedClientId}`);
       const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
-      const  numeroDebebidas = clienteResponse.data.cantidadDeBebidas.filter(bebida => bebida.mensaje === "Cortesía");
+      const  numeroDebebidas = clienteResponse.data.cantidadDeBebidas.filter(bebida => bebida.mensaje === "Cortesía" && bebida.fechaDeMarca === "");
       const cantidadTotalCortesia = numeroDebebidas.reduce((total, bebida) => total + bebida.cantidad, 0);
       console.log("numero de cortesias: "+cantidadTotalCortesia)
       console.log("cantidad de bebidas del usuario"+JSON.stringify(numeroDebebidas, null, 2))
       const totalPersonas = ninios + adultos;
 
       if (esCortesia) {
-        const nuevaCantidadTotalCortesia = cantidadTotalCortesia + cantidad;
-        const cantidadRestante = nuevaCantidadTotalCortesia - cantidadTotalCortesia;
+       
+        const nuevaCantidadTotalCortesia = cantidadTotalCortesia;
+        const cantidadRestante = totalPersonas - cantidadTotalCortesia;
         console.log("cantidad restante: "+cantidadRestante)
         console.log("supuesta nueva cantidad: "+nuevaCantidadTotalCortesia)
 
+        if (cantidad > disponibleInventario ) {
+          alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
+          return false;
+        }
+
         if(cantidad > cantidadRestante){
-          alert(`solo te tienes ${cantidadRestante} cortesias disponibles`)
-          return
+          alert(`el usuario tiene ${cantidadRestante} cortesias disponibles`)
+          return;
         }
     
         if (nuevaCantidadTotalCortesia > totalPersonas) {
@@ -327,12 +365,12 @@ export default function App() {
           return false;
         }
       } else {
-        if (cantidad > cantidadRestante) {
+        if (cantidad > disponibleInventario ) {
           alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
           return false;
         }
       }
-      if (cantidad > cantidadRestante) {
+      if (cantidad > disponibleInventario ) {
         alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
         return false;
       }
@@ -594,34 +632,69 @@ export default function App() {
     const checkStockAndUpdateInventory = async (foodId, cantidad) => {
       const response = await AxiosInstance.get(`/verificar-disponibilidad/${foodId}`);
 
-      const cantidadRestante = response.data.cantidadRestante;
+      let fecha = new Date();
+
+      fecha.setHours(fecha.getHours() - 5);
+    
+      const fechaAjustada = fecha.toLocaleString();
+
+      const disponibleInventario = response.data.cantidadRestante;
 
       const clienteResponse = await AxiosInstance.get(`/cabania-clientes/${selectedClientId}`);
       const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
+      const  numeroDeFood = clienteResponse.data.cantidadDeFood.filter(food => food.mensaje === "Cortesía" && food.fechaDeMarca === "");
+      const cantidadTotalCortesia = numeroDeFood.reduce((total, food) => total + food.cantidad, 0);
+      console.log("numero de cortesias: "+cantidadTotalCortesia)
+      console.log("cantidad de bebidas del usuario"+JSON.stringify(numeroDeFood, null, 2))
       const totalPersonas = ninios + adultos;
-      console.log("cantidad de personas: "+totalPersonas)
-      console.log("cliente response: "+clienteResponse)
-
-
+      
       if (esCortesia) {
-        const totalCortesias = cantidadFood + cantidadFood1 + cantidadFood2 + cantidadFood3 + cantidadFood4;
-        if (totalCortesias > totalPersonas) {
-          alert(`La cantidad de cortesías (${totalCortesias}) no puede exceder la cantidad de personas (${totalPersonas}).`);
+        
+        const nuevaCantidadTotalCortesia = cantidadTotalCortesia;
+        const cantidadRestante = totalPersonas - cantidadTotalCortesia;
+        console.log("cantidad restante: "+cantidadRestante)
+        console.log("supuesta nueva cantidad: "+nuevaCantidadTotalCortesia)
+        
+        if(cantidad > totalPersonas){
+          alert(`La cantidad de cortesias ${cantidad} no debe superar a la cantidad de personas ${totalPersonas} `)
           return;
         }
+
+        if (cantidad > disponibleInventario ) {
+          alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
+          return false;
+        }
+
+
+        if(cantidad > cantidadRestante){
+          alert(`el usuario tiene ${cantidadRestante} cortesias disponibles`)
+          return;
+        }
+    
+        if (nuevaCantidadTotalCortesia > totalPersonas) {
+          alert(`La cantidad de cortesías (${nuevaCantidadTotalCortesia}) no puede exceder la cantidad de personas (${totalPersonas}).`);
+          return false;
+        }
+    
+        if (cantidad > cantidadRestante) {
+          alert(`Solo puedes agregar hasta ${cantidadRestante} cortesías adicionales.`);
+          return false;
+        }
+      } else {
+        if (cantidad > disponibleInventario ) {
+          alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
+          return false;
+        }
       }
-
-
-      if (cantidad > cantidadRestante) {
+      if (cantidad > disponibleInventario ) {
         alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
         return false;
       }
 
-      await actualizarInventarioFood(foodId, cantidad);
-      await actualizarStockInicialFood(foodId, cantidad);
+      await actualizarInventarioBebida(foodId, cantidad);
+      await actualizarStockInicialBebida(foodId, cantidad);
       return true;
     };
-
     try {
       if (!selectedClientId || (!foodSeleccionadaId && !food1SeleccionadaId && !food2SeleccionadaId && !food3SeleccionadaId && !food4SeleccionadaId)) {
         throw new Error('No se ha seleccionado un cliente o una bebida.');
@@ -1357,11 +1430,7 @@ export default function App() {
   const end = start + displayLimit;
 
 
-  let fecha = new Date();
 
-  fecha.setHours(fecha.getHours() - 5);
-
-  const fechaAjustada = fecha.toLocaleString();
 
   let fecha2 = new Date();
 
