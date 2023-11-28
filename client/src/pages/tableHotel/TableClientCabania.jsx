@@ -27,6 +27,7 @@ import chevron from "../../images/right.png";
 import plus from "../../images/plus.png";
 import plusb from "../../images/plus_blue.png";
 import { SearchIcon } from "../tablePasadia/SearchIcon";
+import { PlusIcon } from "../finca/PlusIcon.jsx";
 import toast, { Toaster } from 'react-hot-toast';
 import jsPDF from "jspdf";
 import Swal from 'sweetalert2';
@@ -161,7 +162,7 @@ export default function App() {
     pagoPendiente: "",
     fechaPasadia: "",
     tipo_cabania: "",
-    nuevoT: ""
+    nuevoTotal: ""
   });
 
 
@@ -190,6 +191,8 @@ export default function App() {
 
   const handleInputChange = (event, fieldName) => {
     const { name, value } = event.target;
+    let nuevoTotal, totalCosto;
+    
 
     if (name === 'identificacion') {
         setErrorIdentificacion(!value);
@@ -205,7 +208,7 @@ export default function App() {
         setErrorCabania(!value)
     }
 
-    let totalCosto;
+   
     if (name === "tipo_cabania") {
         totalCosto = value === "Mayapo" ? valorCabaniaM : valorCabania;
     } else {
@@ -218,7 +221,6 @@ export default function App() {
     }
 
    
-    let nuevoTotal = 0;
     if (name === 'pagoPendiente' || name === 'pagoAnticipado') {
       const pagoPendiente = name === 'pagoPendiente' ? parseFloat(value) : parseFloat(formData.pagoPendiente || 0);
       const pagoAnticipado = name === 'pagoAnticipado' ? parseFloat(value) : parseFloat(formData.pagoAnticipado || 0);
@@ -228,6 +230,7 @@ export default function App() {
           alert('La suma de los montos no puede ser mayor que el costo total.');
       } else {
           nuevoTotal = totalCosto - totalPagos;
+          formData.nuevoTotal = nuevoTotal;
 
           console.log("el total que debe pagar la persona: "+nuevoTotal)
 
@@ -240,7 +243,7 @@ export default function App() {
   }
 
 
-  console.log("alerta de nuevo total: "+nuevoTotal)
+  console.log("alerta de nuevo total: "+formData.nuevoTotal)
  
 
     console.log("total de personas: " + formData.cantidadPersonas.ninios);
@@ -269,7 +272,7 @@ export default function App() {
             ...formData,
             [name]: value,
             totalCosto,
-            nuevoTotal,
+            nuevoTotal: formData.nuevoTotal,
             ...(name === "tipo_cabania" && { [name]: value }),
             ...(fieldName ? { cantidadPersonas: { ...formData.cantidadPersonas, [fieldName]: parseInt(value, 10) } } : {})
         });
@@ -1256,8 +1259,8 @@ export default function App() {
   const calcularPagoPendiente = (identificacion) => {
     const clienteSeleccionado = users.find(user => user.identificacion === identificacion);
     if (clienteSeleccionado) {
-      const valorCabaniaActual = clienteSeleccionado.tipo_cabania === "Mayapo" ? valorCabaniaM : valorCabania;
-      const pagoPendienteCalculado = valorCabaniaActual - (clienteSeleccionado.pagoAnticipado + clienteSeleccionado.pagoPendiente);
+      const valorCabaniaActual = clienteSeleccionado.nuevoTotal
+      const pagoPendienteCalculado = valorCabaniaActual;
       setFormDatas({
         ...formDatas,
         pagoPendiente: pagoPendienteCalculado.toString()
@@ -1266,30 +1269,36 @@ export default function App() {
   };
 
   const actualizarDatosCliente = async () => {
-
     if (!formDatas.pagoPendiente || !formDatas.mediosDePagoPendiente) {
       toast.error('Debe llenar todos los campos');
       return;
     }
-
+  
     if (selectedClienteId) {
+      console.log("identificacion del cliente: "+selectedClienteId)
       try {
+        const clienteResponse = await AxiosInstance.get(`/cabania-clientes-identificacion/${selectedClienteId}`);
+        const clienteData = clienteResponse.data;
+  
+        const nuevoValorTotal = clienteData.valorTotal - formDatas.pagoPendiente;
+  
         const response = await AxiosInstance.put(`/cabania-clientes/${selectedClienteId}/actualizar`, {
+          valorTotal: nuevoValorTotal,
           pagoPendiente: formDatas.pagoPendiente,
           mediosDePagoPendiente: formDatas.mediosDePagoPendiente
         });
+        
         setFormDatas({
           pagoPendiente: '',
           mediosDePagoPendiente: ''
         });
+  
         toast.success('Datos actualizados exitosamente');
+  
         const responses = await AxiosInstance.get("/cabania-clientes");
-
         const usuariosOrdenados = responses.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
-
         setUsers(usuariosOrdenados);
-
-
+  
       } catch (error) {
         console.error('Hubo un problema con la petición Axios:', error);
       }
@@ -1297,7 +1306,7 @@ export default function App() {
       console.error('No hay un cliente seleccionado para actualizar');
     }
   };
-
+  
   //#endregion
 
   const [displayLimit, setDisplayLimit] = useState(5);
@@ -1498,7 +1507,7 @@ export default function App() {
     <div className="max-w-full w-98 mx-auto">
       <Toaster />
       <div className="flex justify-between px-5">
-        <div className=" ">
+        <div className="flex items-center">
           <div className="flex flex-wrap gap-3">
             <Button
               variant="flat"
@@ -1506,11 +1515,16 @@ export default function App() {
                 setBackdrop("blur");
                 onOpen();
               }}
-              className="capitalize text-white bg-gradient-to-r from-emerald-400 to-cyan-500"
+              className="capitalize text-white bg-black"
             >
-              Agregar Cliente
+              <PlusIcon/> Agregar
             </Button>
           </div>
+          <div className="flex items-center justify-center w-32 ml-3 ">
+        <Button className="bg-blue-500 w-28 text-white">
+          Exportar
+          </Button>
+        </div>
 
           <Modal backdrop={backdrop} isOpen={isOpen} onClose={onClose}>
             <ModalContent>
@@ -1684,37 +1698,55 @@ export default function App() {
             </ModalContent>
           </Modal>
         </div>
-        <div className="w-52 flex justify-center">
 
-          <input
-            id="s"
-            type="search"
-            label="busca el producto"
-            value={busqueda}
-            onChange={handleSearchChange}
-            className="w-10 h-10"
-          >
-          </input>
+        <div>
+        <Input
+        label="Search"
+        value={busqueda}
+        onChange={handleSearchChange}
+        isClearable
+        radius="lg"
+        className="w-72 h-12"
+        classNames={{
+          label: "text-black/50 dark:text-white/90",
+          input: [
+            "bg-transparent",
+            "text-black/90 dark:text-black/90",
+            "placeholder:text-black/60 dark:placeholder:text-black/60",
+          ],
+          innerWrapper: "bg-transparent",
+          inputWrapper: [
+            "shadow-xl",
+            "bg-default-200/50",
+            "dark:bg-default/60",
+            "backdrop-blur-xl",
+            "backdrop-saturate-200",
+            "hover:bg-default-200/70",
+            "dark:hover:bg-default/70",
+            "group-data-[focused=true]:bg-default-200/50",
+            "dark:group-data-[focused=true]:bg-default/60",
+            "!cursor-text",
+          ],
+        }}
+        placeholder="Type to search..."
+        startContent={
+          <SearchIcon className="text-black/50 mb-0.5 dark:text-black/90 text-black pointer-events-none flex-shrink-0" />
+        }
+      />
         </div>
-        <div className="flex items-center justify-center w-32 ml-3 ">
-          <img
-            className="w-10 h-10 cursor-pointer flex items-center justify-center "
-            src={download}
-            alt="actualizar"
-          />
-        </div>
+
       </div>
 
-      <section className="flex mt-5 mx-5 rounded-t-2xl flex-col">
+      <section className="flex mx-5 rounded-t-2xl flex-col">
         {/* Input de búsqueda */}
         <div className="flex justify-end">
-          <select className="w-28 h-10 rounded-xl mb-1 outline-blue-500" onChange={handleChangeDisplayLimit} value={displayLimit}>
-            <option value="1">Mostrar 1</option>
-            <option value="5">Mostrar 5</option>
-            <option value="10">Mostrar 10</option>
-            <option value="15">Mostrar 15</option>
-            <option value="50">Mostrar 50</option>
-            <option value="100">Mostrar 100</option>
+          <select className="w-28 h-8 outline-none text-white bg-white/0 rounded-xl mb-1" onChange={handleChangeDisplayLimit} value={displayLimit}>
+            <option className="text-black" value="1">Mostrar 1</option>
+            <option className="text-black" value="5">Mostrar 5</option>
+            <option className="text-black" value="10">Mostrar 10</option>
+            <option className="text-black" value="15">Mostrar 15</option>
+            <option className="text-black" value="50">Mostrar 50</option>
+            <option className="text-black" value="100">Mostrar 100</option>
           </select>
 
         </div>
@@ -1933,16 +1965,16 @@ export default function App() {
                       <p onClick={() => seleccionarCliente(cliente.identificacion)}>{cliente.identificacion}</p>
                     </PopoverTrigger>
                     <PopoverContent >
-                      {cliente.reserva === "Si" && cliente.tipo_cabania !== "Mayapo" && ((valorCabania) - (cliente.pagoAnticipado + cliente.pagoPendiente)) || cliente.reserva === "Si" && cliente.tipo_cabania === "Mayapo" && ((valorCabaniaM) - (cliente.pagoAnticipado + cliente.pagoPendiente)) ||
-                        cliente.reserva === "No" && cliente.tipo_cabania === "Mayapo" && ((valorCabaniaM) - (cliente.pagoAnticipado + cliente.pagoPendiente)) !== 0 ?
+                      {cliente.reserva === "Si" && cliente.tipo_cabania !== "Mayapo" && ((cliente.nuevoTotal)) || cliente.reserva === "Si" && cliente.tipo_cabania === "Mayapo" && ((cliente.nuevoTotal)) ||
+                        cliente.reserva === "No" && cliente.tipo_cabania === "Mayapo" && ((cliente.nuevoTotal)) !== 0 ?
                         <div className="px-1 py-2">
                           <div className="text-small font-bold">Información</div>
                           <div className="text-red-500">Datos del usuario</div>
                           <div>Identificacion: {cliente.identificacion}</div>
                           <div className="text-tiny">Nombre: {cliente.nombre}</div>
                           <div className="text-red-500 text-small font-bold">Pago pendiente</div>
-                          <div>{cliente.tipo_cabania === "Mayapo" ? ((valorCabaniaM) - (cliente.pagoAnticipado + cliente.pagoPendiente))
-                            : ((valorCabania) - (cliente.pagoAnticipado + cliente.pagoPendiente))}</div>
+                          <div>{cliente.tipo_cabania === "Mayapo" ? ((cliente.nuevoTotal))
+                            : ((cliente.nuevoTotal))}</div>
                           <Input
                             disabled
                             type="number"
@@ -2010,8 +2042,8 @@ export default function App() {
                         <div className="text-red-500">pago pendienete o total</div>
                         <div>Metodo de pago: {cliente.mediosDePagoPendiente}</div>
                         <div>Pago pendiente: {cliente.pagoPendiente}</div>
-                        <div>pendiente: {cliente.tipo_cabania === "Mayapo" ? ((valorCabaniaM) - (cliente.pagoAnticipado + cliente.pagoPendiente))
-                          : ((valorCabania) - (cliente.pagoAnticipado + cliente.pagoPendiente))}</div>
+                        <div>pendiente: {cliente.tipo_cabania === "Mayapo" ? ((cliente.nuevoTotal))
+                          : ((cliente.nuevoTotal))}</div>
                       </div>
 
                     </PopoverContent>
@@ -2658,43 +2690,14 @@ export default function App() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                 {/* {cliente.bebidas.map((bebida, index) => (
                   <TableCell key={index}>{bebida?.nombre || "aun no hay bebidas"}</TableCell>
                 ))} */}
                 {/* {cliente.restaurante.map((food, index) => (
                   <TableCell key={index}>{food?.nombre || "aun no hay bebidas"}</TableCell>
                 ))} */}
-                <TableCell>{cliente.tipo_cabania === "Mayapo" ? ((valorCabaniaM) - (cliente.pagoAnticipado + cliente.pagoPendiente))
-                  : ((valorCabania) - (cliente.pagoAnticipado + cliente.pagoPendiente))}</TableCell>
+                <TableCell>{cliente.tipo_cabania === "Mayapo" ? (( cliente.nuevoTotal ) )
+                  : ((cliente.nuevoTotal))}</TableCell>
                 {/* <TableCell className="flex justify-center align-center pr-5 w-60">
                   {cliente.identificacion === editedUserId && (
                     <div className="flex">

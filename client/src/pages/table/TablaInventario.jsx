@@ -10,6 +10,8 @@ import axios from "axios";
 import editar from "../../images/boligrafo.png";
 import borrar from "../../images/borrar.png";
 import download from "../../images/download.png";
+import { PlusIcon } from "../finca/PlusIcon.jsx";
+import { SearchIcon } from "../tablePasadia/SearchIcon.jsx";
 import toast, {Toaster} from 'react-hot-toast';
 import * as XLSX from 'xlsx';
 import { useAuth } from "../../context/authContext.jsx";
@@ -44,12 +46,6 @@ export default function App() {
   const handleInputChange = (event) => {
     const { name, value } = event.target;
 
-    // let finalValue = value;
-
-    // if (name === "Caducidad") {
-    //     const fecha = new Date(value);
-    //     finalValue = `${fecha.getFullYear()}-${fecha.getMonth() + 1}-${fecha.getDate()}`;
-    // }
 
     setFormData({
       ...formData,
@@ -217,51 +213,78 @@ export default function App() {
   return (
     <div className="w-full ">
       <Toaster/>
-        <div className='flex  justify-between mt-5 mb-5'>
+        <div className='flex  justify-between mt-5 '>
             <div className='w-full '>
         {/* <CardDesplegable /> */}
         <>
-      <div className="flex justify-between w-12/12 gap-3">
-      <img  className="h-10 w-10 ml-5 cursor-pointer" onClick={() => exportToExcel(filteredProducts)} src={download} alt="" />
-
-
-    
+      <div className="flex justify-between w-12/12 gap-3 flex-col">
+        <div className=" flex flex justify-between">
+        <div className="flex ml-5">
+        <Button className="bg-blue-500 w-28 text-white" onClick={() => exportToExcel(filteredProducts)}>
+            Exportar
+        </Button>
         <Button
           variant="flat"
-          color="primary"
-          
           onClick={() => {
             setBackdrop("blur");
             onOpen();
           }}
-          className="capitalize ml-5 text-white bg-gradient-to-r from-emerald-400 to-cyan-500"
+          className="capitalize ml-5 text-white bg-black"
         >
-          Agregar producto
+        <PlusIcon/>  Agregar
         </Button>
+        </div>
+
+        <div className="mr-5">
+        <Input
+        label="Search"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        isClearable
+        radius="lg"
+        className="w-72 h-12"
+        classNames={{
+          label: "text-black/50 dark:text-white/90",
+          input: [
+            "bg-transparent",
+            "text-black/90 dark:text-black/90",
+            "placeholder:text-black/60 dark:placeholder:text-black/60",
+          ],
+          innerWrapper: "bg-transparent",
+          inputWrapper: [
+            "shadow-xl",
+            "bg-default-200/50",
+            "dark:bg-default/60",
+            "backdrop-blur-xl",
+            "backdrop-saturate-200",
+            "hover:bg-default-200/70",
+            "dark:hover:bg-default/70",
+            "group-data-[focused=true]:bg-default-200/50",
+            "dark:group-data-[focused=true]:bg-default/60",
+            "!cursor-text",
+          ],
+        }}
+        placeholder="Type to search..."
+        startContent={
+          <SearchIcon className="text-black/50 mb-0.5 dark:text-black/90 text-black pointer-events-none flex-shrink-0" />
+        }
+      />
+        </div>
+
+        </div>
       
 
 
-        
-  <div className=" w-52 flex justify-center">
-        <input
-        id="s"
-        type="search"
-        label="busca el producto"
-        value={searchTerm}
-    onChange={(e) => setSearchTerm(e.target.value)}
-    className="w-52 h-10 "
-        >
-          
-      </input>
+      <div className=" flex justify-end mr-5 ml-5">
+        <select className="outline-0 h-8 w-32 px-2 rounded-2xl mr-5  text-white bg-white/0" value={selectedType} onChange={(e) => setSelectedType(e.target.value)}>
+        <option id="p" className="w-52 text-black"  value="">Todos</option>
+        <option className="w-52 text-black" value="Bebida">Bebidas</option>
+        <option className="w-52 text-black"  value="comida">Comidas</option>
+        <option className="w-52 text-black"  value="utensilios">Utensilios</option>
+        </select>
+
       </div>
        
-        <select className="outline-0 h-10 w-32 px-2 rounded-2xl mr-5  text-white bg-gradient-to-r from-emerald-400 to-cyan-500" value={selectedType} onChange={(e) => setSelectedType(e.target.value)}>
-
-        <option id="p" className="w-52 text-white bg-emerald-400  "  value="">Todos</option>
-        <option className="w-52 text-white bg-emerald-400  " value="Bebida">Bebidas</option>
-        <option className="w-52 text-white bg-emerald-400  "  value="comida">Comidas</option>
-
-      </select>
 
 
 
@@ -289,8 +312,9 @@ export default function App() {
                   onChange={(event) => handleInputChange(event)} 
                 >
                   <option value="">Seleccione un tipo</option>
-                  <option value="Bebida">Bebidas</option>
+                  <option value="bebida">Bebidas</option>
                   <option value="comida">Comidas</option>
+                  <option value="utensilios">Utensilios</option>
                 </select>
                 <Input
                   name="Caducidad"
