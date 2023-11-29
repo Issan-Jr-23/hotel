@@ -141,6 +141,8 @@ export default function App() {
   const [errorAdultos, setErrorAdultos] = useState(false);
   const [errorCabania, setErrorCabania] = useState(false);
 
+  const [preciosData,setPreciosData] = useState([])
+
 
 
 
@@ -1233,6 +1235,20 @@ export default function App() {
     // setSelectedClientId(cliente._id);
     setModalOpen(true);
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      console.log("ingrese a la funcion")
+      try {
+        const response = await AxiosInstance.get("/table-precios");
+        console.log("Datos recibidos:", response.data); 
+        setPreciosData(response.data);
+      } catch (error) {
+        console.error("Error al obtener datos del servidor:", error);
+      }
+    };
+    fetchData();
+  }, []);
 
 
   const valorCabania = 400000
