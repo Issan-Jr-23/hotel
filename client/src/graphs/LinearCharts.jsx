@@ -7,9 +7,8 @@ import Navbars from '../components/Navbars.jsx';
 const App = () => {
 
   return (
-    <div className='' style={{backgroundColor: "#0f111a"}}>
+    <div className=''>
       <Navbars/>
-      <h1>Ventas Mensuales</h1>
       <div className='ml-5 mr-5 w-12/12 flex justify-center'>
         <article className='w-9/12 '>
       <PeopleReservations/>

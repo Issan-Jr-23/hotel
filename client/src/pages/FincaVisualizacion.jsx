@@ -4,7 +4,7 @@ import Navbars from '../components/Navbars'
 
 const FincaVisualizacion = () => {
   return (
-    <div className='min-h-screen bg-white flex flex-col'>
+    <div className='min-h-screen flex flex-col'>
         <Navbars/>
         <div className='m-5 overflow-x-auto overflow-y-hidden'>
 

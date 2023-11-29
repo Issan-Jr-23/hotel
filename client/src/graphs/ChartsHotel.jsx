@@ -26,15 +26,23 @@ const GraficaProductos = () => {
             }
         },
         xAxis: {
-            categories: productos.map(producto => producto.Descripcion)
+            categories: productos.map(producto => producto.Descripcion),
+            style: {
+                color: '#fff' // Replace with your desired color
+              }
         },
         yAxis: {
             title: {
-                text: 'Ventas'
+                text: 'Ventas',
+                style: {
+                    color: '#fff' // Replace with your desired color
+                  }
+                
             }
         },
         series: [{
             name: 'Ventas',
+         
             data: productos.map(producto => producto.ProductosVendidos)
         }]
     };
