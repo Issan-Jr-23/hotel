@@ -27,7 +27,8 @@ export default function Navbars() {
   // ];
 
   return (
-    <Navbar isBordered className="bg-slate-900 h-20 justify-beetween" onMenuOpenChange={setIsMenuOpen}>
+    <div className=" flex justify-center mt-10">
+    <Navbar isBordered className="bg-white/30 h-20 justify-beetween w-10/12 rounded-3xl" onMenuOpenChange={setIsMenuOpen}>
 
       <NavbarContent className="sm:hidden pr-3" justify="center">
       <NavbarMenuToggle
@@ -103,6 +104,13 @@ export default function Navbars() {
             Graph
             </Link>
             </DropdownItem>
+            <DropdownItem aria-label="prueba"
+              key="102_uptime_inv"
+            >
+              <Link className="link_nav" to='/price'>
+            Precios
+            </Link>
+            </DropdownItem>
           </DropdownMenu>
         </Dropdown>
         <NavbarItem isActive>
@@ -134,7 +142,7 @@ export default function Navbars() {
       </NavbarContent>
 
       <NavbarContent as="div" className="items-center" justify="">
-      <p className="font-semibold text-white "> Welcome {user.username}</p>
+      <p className="font-semibold text-white ">{user.username}</p>
         <Dropdown placement="bottom-end">
           <DropdownTrigger>
               <Avatar className="cursor-pointer" showFallback/>
@@ -235,5 +243,7 @@ export default function Navbars() {
         ))} */}
       </NavbarMenu>
     </Navbar>
+
+    </div>
   );
 }

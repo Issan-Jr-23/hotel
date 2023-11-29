@@ -6,6 +6,7 @@ import cabania from '../images/beach-cabana.png'
 import change from '../images/change.png'
 import inventory from '../images/inventory.png'
 import technical from '../images/technical.png'
+import  DoughnutChart from "../graphs/DoughnutAndPie.jsx"
 import './global.css'
 import Navbars from '../components/Navbars.jsx'
 import { Link } from 'react-router-dom'
@@ -13,13 +14,14 @@ export const Home = () => {
   return (
     <div className='flex flex-col'>
         <Navbars/>
-        <div className='flex justify-center flex-col items-center'>
+        <div className='flex justify-center flex-col items-center mb-5'>
         <h1 className='text-6xl text-white uppercase mt-10'>Meqo soft</h1>
         <p className='text-white uppercase'>Software admnistrativo</p>
 
         </div>
-
-        <section className='flex flex-wrap  justify-around'>
+        <DoughnutChart/>
+        <div className='flex w-12/12 border'>
+        {/* <section className='flex flex-wrap  justify-around'>
           <Link to="/pasadia">
           <article className='rounded-xl article_cont_images text-center '>
             <img className=' img_home_h' src={pasadia} alt="imagen"/>
@@ -38,8 +40,12 @@ export const Home = () => {
             <h2 className='text-3xl'>Cabañas</h2>
           </article>
           </Link>
-        </section>
-        <section className='flex flex-wrap  justify-around'>
+        </section> */}
+        {/* <section className=' flex '>
+        <DoughnutChart/>
+        </section> */}
+        </div>
+        {/* <section className='flex flex-wrap  justify-around'>
           <Link to="/inventario">
           <article className='rounded-xl article_cont_images text-center '>
             <img className=' img_home_h' src={inventory} alt="imagen"/>
@@ -58,7 +64,7 @@ export const Home = () => {
             <h2 className='text-3xl'>Soporte</h2>
           </article>
           </Link>
-        </section>
+        </section> */}
     </div>
   )
 }

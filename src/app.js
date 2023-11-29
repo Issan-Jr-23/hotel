@@ -10,6 +10,7 @@ import grahpsStock from "./routes/grahps.stock.routes.js"
 import authRoutes from "./routes/auth.routes.js";
 import ranchRoutes from "./routes/ranch.routes.js";
 import bebidasRoutes from "./routes/inventario.routes.js";
+import preciosRoutes from "./routes/precios.routes.js";
 import mensajeRoutes from "./routes/mesaje.routes.js"
 import { FRONTEND_URL } from "./config.js";
 
@@ -28,7 +29,7 @@ app.use(morgan("dev"));
 app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
-app.use("/api", clientRoutes,ranchRoutes,mensajeRoutes);
+app.use("/api", clientRoutes,ranchRoutes,mensajeRoutes, preciosRoutes);
 app.use("/api", clienteHabitacionesModel);
 app.use("/api", clientCabaniasRoutes);
 app.use("/api", bebidasRoutes);

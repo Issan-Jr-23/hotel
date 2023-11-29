@@ -10,6 +10,7 @@ import Pasadia from "./pages/Pasadia.jsx";
 import Cabanias from "./pages/Cabanias.jsx";
 import InvBebidas from "./pages/inventario.jsx";
 import Habitaciones from "./pages/Habitaciones.jsx";
+import Precios from "./pages/Price.jsx";
 import Hotel_graphs from "./graphs/LinearCharts.jsx";
 import FincaVisualizacion from "./pages/FincaVisualizacion.jsx";
 import Message from "./pages/Mesagge.jsx";
@@ -34,6 +35,7 @@ function App() {
                 <Route path="/hotel-graphs" element={<Hotel_graphs />}/>
                 <Route path="/finca" element={<FincaVisualizacion/>}/>
                 <Route path="/message" element={<Message/>}/>
+                <Route path="/price" element={<Precios/>}/>
               </Route>
               <Route element={<ProtectedRoute allowedRoles={["editor"]} />}>
                 <Route path="/Register" element={<Register/>} />
