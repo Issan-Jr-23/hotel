@@ -18,7 +18,7 @@ const preciosSchema = new mongoose.Schema({
       },
     servicio: {
         type: String,
-        enum: ["pasadia","cabanias","habitaciones","cabaniaMayapo","adicional"]
+        enum: ["pasadia","habitaciones","cabanias","cabaniaMayapo","adicional"]
       },
       fecha: {
         type: Date,

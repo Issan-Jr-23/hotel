@@ -171,7 +171,9 @@ export default function App() {
 
 
 
-
+  const [valorCabania, setValorCabania] = useState(null);
+  const [valorCabaniaM, setValorCabaniaM] = useState(null);
+  const [valorPorPersonaAdicional, setValorPorPersonaAdicional] = useState(null);
 
   const [busqueda, setBusqueda] = useState('');
 
@@ -184,6 +186,41 @@ export default function App() {
   }, [busqueda, users]);
 
 
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await AxiosInstance.get("/table-precios");
+        const cabanias = response.data.find(item => item.servicio === "cabanias");
+        const cabaniasm = response.data.find(item => item.servicio === "cabaniaMayapo");
+        const cabaniasmAdicional = response.data.find(item => item.servicio === "adicional");
+
+        if (cabanias) {
+          setValorCabania(cabanias.precio);
+        } else {
+          console.log("No se encontró el servicio de 'cabanias'");
+        }
+
+        if (cabaniasm){
+          setValorCabaniaM(cabaniasm.precio);
+        }else{
+          console.log("No se encontró el servicio de 'cabanias mayapo'");
+        }
+
+        if(cabaniasmAdicional){
+          setValorPorPersonaAdicional(cabaniasmAdicional.precio)
+        }else{
+          console.log("No se encontró el servicio de 'cabanias adicionales'");
+        }
+
+      } catch (error) {
+        console.error("Error al obtener datos del servidor:", error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  console.log("precio de cabanias: "+valorCabania)
 
 
   const handleSearchChange = (event) => {
@@ -1236,24 +1273,8 @@ export default function App() {
     setModalOpen(true);
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      console.log("ingrese a la funcion")
-      try {
-        const response = await AxiosInstance.get("/table-precios");
-        console.log("Datos recibidos:", response.data); 
-        setPreciosData(response.data);
-      } catch (error) {
-        console.error("Error al obtener datos del servidor:", error);
-      }
-    };
-    fetchData();
-  }, []);
 
 
-  const valorCabania = 400000
-  const valorCabaniaM = 500000
-  const valorPorPersonaAdicional = 50000; 
 
   const [formDatas, setFormDatas] = useState({
     pagoPendiente: '',
