@@ -27,7 +27,7 @@ export default function App() {
             <Navbars/>
         </div>
         <div className="flex justify-center items-center mt-10 flex-col">
-            <h2 className="text-white text-5xl mb-5">CAMBIOS REALIZADOS EN EL INVENTARIO</h2>
+            <h2 className="text-white text-4xl mb-5">CAMBIOS REALIZADOS EN EL INVENTARIO</h2>
             <div className="w-2/3 flex justify-end">
         <div >
                     <label htmlFor="rows" className="text-white">Filas a mostrar: </label>

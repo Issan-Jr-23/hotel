@@ -163,6 +163,26 @@ export default function App() {
 
 
   const [busqueda, setBusqueda] = useState('');
+  const [valorHabitaciones, setValorHabitaciones] = useState(null)
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await AxiosInstance.get("/table-precios");
+        const habitacionesPrice = response.data.find(item => item.servicio === "habitaciones");
+        
+
+        if (habitacionesPrice) {
+          setValorHabitaciones(habitacionesPrice.precio);
+        } else {
+          console.log("No se encontró el servicio de 'cabanias'");
+        }
+
+      } catch (error) {
+        console.error("Error al obtener datos del servidor:", error);
+      }
+    };
+    fetchData();
+  }, []);
 
   const datosFiltrados = useMemo(() => {
     if (!busqueda) return users;
@@ -1170,7 +1190,6 @@ export default function App() {
 
 
 
-  const valorHabitaciones = 300000;
 
   const [selectedClienteId, setSelectedClienteId] = useState(null);
 
@@ -1490,7 +1509,7 @@ export default function App() {
                       label="IDENTIFICACIÓN DE USUARIO"
                       value={formData.identificacion}
                       onChange={handleInputChange}
-                      className={`rounded-xl border-2 ${errorIdentificacion ? 'border-red-500' : 'border-blue-400'}`}
+                      className={`rounded-xl h-12 border-2 ${errorIdentificacion ? 'border-red-500' : 'border-blue-400'}`}
                     />
                     <Input
                       isRequired
@@ -1502,7 +1521,7 @@ export default function App() {
                       label="NOMBRE DE USUARIO"
                       value={formData.nombre}
                       onChange={handleInputChange}
-                      className={`rounded-xl border-2 ${errorNombre ? 'border-red-500' : 'border-blue-400'}`}
+                      className={`rounded-xl h-12 border-2 ${errorNombre ? 'border-red-500' : 'border-blue-400'}`}
                     />
 
                     <Select
@@ -1546,7 +1565,7 @@ export default function App() {
                         label="CANTIDAD DE ADULTOS"
                         value={formData.cantidadPersonas.adultos}
                         onChange={(event) => handleInputChange(event, "adultos")}
-                        className={`rounded-xl border-2 ${errorAdultos ? 'border-red-500' : 'border-blue-400'}`}
+                        className={`rounded-xl h-12 border-2 ${errorAdultos ? 'border-red-500' : 'border-blue-400'}`}
                       />
 
                       <Input
@@ -1558,7 +1577,7 @@ export default function App() {
                         label="CANTIDAD DE NIÑOS"
                         value={formData.cantidadPersonas.ninios}
                         onChange={(event) => handleInputChange(event, "ninios")}
-                        className="ml-3 border-green-400 border-2 rounded-xl"
+                        className="ml-3 h-12 border-green-400 border-2 rounded-xl"
 
                       />
                     </div>

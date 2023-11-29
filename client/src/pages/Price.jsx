@@ -93,6 +93,7 @@ export default function App() {
       <div>
         <Navbars />
       </div>
+      <h1 className="uppercase text-4xl mt-6 text-white w-ful flex justify-center">precios de los servicios</h1>
       <div className="flex justify-evenly mt-10">
 
         <Table aria-label="Example empty table" className="w-8/12">
@@ -156,7 +157,7 @@ export default function App() {
                     })
                   }
                 </TableCell>
-                <TableCell className="text-3xl flex  border text-center justify-center items-center">
+                <TableCell className="text-3xl flex text-center justify-center items-center">
                   <div className="flex w-28 justify-center items-center">
                     {price._id === editedUserId && (
                   <div className="h-10 w-10 border-2 flex justify-center items-center rounded-full border-green-400 cursor-pointer mr-2">
@@ -199,7 +200,7 @@ export default function App() {
               size="md"
               aria-label="Tabs form"
             >
-              <Tab key="pasadia" title="Pasadia">
+              <Tab key="pasadia" title="REGISTRO">
                 <form className="flex flex-col gap-4">
                   <select
                     className="outline-none h-14 border-blue-500 border-3 rounded-xl"

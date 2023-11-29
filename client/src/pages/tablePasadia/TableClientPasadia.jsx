@@ -138,6 +138,7 @@ export default function App() {
   const [errorNombre, setErrorNombre] = useState(false);
   const [errorReserva, setErrorReserva] = useState(false);
   const [errorAdultos, setErrorAdultos] = useState(false);
+  const [errorNinios, setErrorNinios] = useState(false);
 
 
 
@@ -166,6 +167,36 @@ export default function App() {
 
 
   const [busqueda, setBusqueda] = useState('');
+  const [pasadiaAdultos, setPasadiaAdultos] = useState(null)
+  const [pasadiaNinios, setPasadiaNinios] = useState(null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await AxiosInstances.get("/table-precios");
+        const pasadiaN = response.data.find(item => item.servicio === "pasadia" && item.tipo === "ninios");
+        const pasadiaA = response.data.find(item => item.servicio === "pasadia" && item.tipo === "adultos");
+        
+
+        if (pasadiaN) {
+          setPasadiaNinios(pasadiaN.precio);
+        } else {
+          console.log("No se encontró el servicio de 'cabanias'");
+        }
+
+        if (pasadiaA){
+          setPasadiaAdultos(pasadiaA.precio);
+        }else{
+          console.log("No se encontró el servicio de 'cabanias mayapo'");
+        }
+
+      } catch (error) {
+        console.error("Error al obtener datos del servidor:", error);
+      }
+    };
+    fetchData();
+  }, []);
+
 
   const datosFiltrados = useMemo(() => {
     if (!busqueda) return users;
@@ -194,6 +225,13 @@ export default function App() {
         setErrorReserva(!value);
       } else if (name === 'adultos') {
         setErrorAdultos(!value)
+      } else if (name === 'ninios'){
+        setErrorNinios(!value)
+      }
+
+      let newValue = parseInt(value, 10);
+      if (isNaN(newValue)) {
+        newValue = 0;
       }
 
       const totalCosto = (formData.cantidadPersonas.ninios * pasadiaNinios) +
@@ -201,14 +239,26 @@ export default function App() {
 
       const totalPendiente = totalCosto;
 
+      const cantidadDeClientes = formData.cantidadPersonas.ninios + formData.cantidadPersonas.adultos;
       if ((name === 'pagoPendiente' && parseFloat(value) > totalPendiente) ||
         (name === 'pagoAnticipado' && parseFloat(value) > totalCosto)) {
         alert('El monto no puede ser mayor que el costo total o el monto pendiente.');
-      } else {
+      }else {
+        if ((name === 'ninios' || name === 'adultos')) {
+          const nuevosValores = {
+              ...formData.cantidadPersonas,
+              [fieldName]: parseInt(value, 10)
+          };
+          const nuevoTotalClientes = nuevosValores.ninios + nuevosValores.adultos;
+
+          if (nuevoTotalClientes !== cantidadDeClientes) {
+              formData.pagoAnticipado = "";
+          }
+      }
         setFormData({
           ...formData,
           [name]: value,
-          ...(fieldName ? { cantidadPersonas: { ...formData.cantidadPersonas, [fieldName]: parseInt(value, 10) } } : {})
+          ...(fieldName && (name === 'ninios' || name === 'adultos') ? { cantidadPersonas: { ...formData.cantidadPersonas, [fieldName]: newValue } } : {})
         });
       }
     };
@@ -1178,10 +1228,6 @@ export default function App() {
   };
 
 
-
-  const pasadiaAdultos = 60000;
-  const pasadiaNinios = 50000;
-
   const [selectedClienteId, setSelectedClienteId] = useState(null);
 
   const [formDatas, setFormDatas] = useState({
@@ -1461,9 +1507,9 @@ export default function App() {
   return (
     <div className="max-w-full w-98 mx-auto">
       <Toaster />
-      <div className="flex justify-between flex-row-reverse px-5">
+      <div className="flex justify-between flex-row-reverse px-5 flex-wrap">
 
-        <div>
+        <div className="">
         <Input
         label="Search"
         value={busqueda}
@@ -1540,19 +1586,18 @@ export default function App() {
                       label="IDENTIFICACIÓN DE USUARIO"
                       value={formData.identificacion}
                       onChange={handleInputChange}
-                      className={`rounded-xl border-2 ${errorIdentificacion ? 'border-red-500' : 'border-blue-400'}`}
+                      className={`rounded-xl h-12 border-2 ${errorIdentificacion ? 'border-red-500' : 'border-blue-400'}`}
                     />
                     <Input
                       isRequired
                       id="nombre"
                       name="nombre"
                       type="text"
-
                       variant="flat"
                       label="NOMBRE DE USUARIO"
                       value={formData.nombre}
                       onChange={handleInputChange}
-                      className={`rounded-xl border-2 ${errorNombre ? 'border-red-500' : 'border-blue-400'}`}
+                      className={`rounded-xl h-12 border-2 ${errorNombre ? 'border-red-500' : 'border-blue-400'}`}
                     />
 
                     <Select
@@ -1581,7 +1626,7 @@ export default function App() {
                         label="CANTIDAD DE ADULTOS"
                         value={formData.cantidadPersonas.adultos}
                         onChange={(event) => handleInputChange(event, "adultos")}
-                        className={`rounded-xl border-2 ${errorAdultos ? 'border-red-500' : 'border-green-400'}`}
+                        className={`rounded-xl h-12 border-2 ${errorAdultos ? 'border-red-500' : 'border-green-400'}`}
                       />
 
                       <Input
@@ -1593,7 +1638,7 @@ export default function App() {
                         label="CANTIDAD DE NIÑOS"
                         value={formData.cantidadPersonas.ninios}
                         onChange={(event) => handleInputChange(event, "ninios")}
-                        className="ml-3 border-green-400 border-2 rounded-xl"
+                        className={`rounded-xl h-12 border-2 ${errorNinios ? 'border-red-500' : 'border-green-400'}`}
 
                       />
                     </div>
@@ -1638,7 +1683,6 @@ export default function App() {
                       value={formData.fechaPasadia}
                       onChange={handleInputChange}
                     />
-                    {/* {showError && <div style={{ color: 'red' }}>Este campo es requerido.</div>} */}
                     <div className="flex">
                       <select
                         className="w-6/12 mr-3 outline-none rounded-xl border-2 border-blue-400"

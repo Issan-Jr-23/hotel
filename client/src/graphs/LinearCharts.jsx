@@ -10,8 +10,8 @@ const App = () => {
     <div className='' style={{backgroundColor: "#0f111a"}}>
       <Navbars/>
       <h1>Ventas Mensuales</h1>
-      <div className='ml-5 mr-5 w-12/12 flex justify-center border-3 border-white'>
-        <article className='w-9/12  border-3 border-white'>
+      <div className='ml-5 mr-5 w-12/12 flex justify-center'>
+        <article className='w-9/12 '>
       <PeopleReservations/>
 
         </article>

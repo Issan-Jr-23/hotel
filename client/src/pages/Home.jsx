@@ -12,7 +12,7 @@ import Navbars from '../components/Navbars.jsx'
 import { Link } from 'react-router-dom'
 export const Home = () => {
   return (
-    <div className='flex flex-col'>
+    <div className='flex flex-col pb-10'>
         <Navbars/>
         <div className='flex justify-center flex-col items-center mb-5'>
         <h1 className='text-6xl text-white uppercase mt-10'>Meqo soft</h1>
@@ -20,7 +20,7 @@ export const Home = () => {
 
         </div>
         <DoughnutChart/>
-        <div className='flex w-12/12 border'>
+        <div className='flex w-12/12 '>
         {/* <section className='flex flex-wrap  justify-around'>
           <Link to="/pasadia">
           <article className='rounded-xl article_cont_images text-center '>

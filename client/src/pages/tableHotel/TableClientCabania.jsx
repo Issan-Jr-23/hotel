@@ -1575,12 +1575,11 @@ export default function App() {
                       id="identificacion"
                       name="identificacion"
                       type="number"
-
                       variant="flat"
                       label="IDENTIFICACIÓN DE USUARIO"
                       value={formData.identificacion}
                       onChange={handleInputChange}
-                      className={`rounded-xl border-2 ${errorIdentificacion ? 'border-red-500' : 'border-blue-400'}`}
+                      className={`rounded-xl border-2 h-12 ${errorIdentificacion ? 'border-red-500' : 'border-blue-400'}`}
                     />
                     <Input
                       isRequired
@@ -1592,7 +1591,7 @@ export default function App() {
                       label="NOMBRE DE USUARIO"
                       value={formData.nombre}
                       onChange={handleInputChange}
-                      className={`rounded-xl border-2 ${errorNombre ? 'border-red-500' : 'border-blue-400'}`}
+                      className={`rounded-xl border-2 h-12  ${errorNombre ? 'border-red-500' : 'border-blue-400'}`}
                     />
 
                     <Select
@@ -1600,7 +1599,7 @@ export default function App() {
                       id="reserva"
                       name="reserva"
                       label="¿LA RESERVA FUE REALIZADA?"
-                      className={`rounded-xl border-2 ${errorReserva ? 'border-red-500' : 'border-blue-400'}`}
+                      className={`rounded-xl border-2  ${errorReserva ? 'border-red-500' : 'border-blue-400'}`}
                       value={formData.reserva}
                       onChange={(event) => handleReservaChange(event.target.value)}
                     >
@@ -1637,7 +1636,7 @@ export default function App() {
                         label="CANTIDAD DE ADULTOS"
                         value={formData.cantidadPersonas.adultos}
                         onChange={(event) => handleInputChange(event, "adultos")}
-                        className={` rounded-xl border-2 ${errorAdultos ? 'border-red-500' : 'border-blue-400'}`}
+                        className={` rounded-xl border-2 h-12  ${errorAdultos ? 'border-red-500' : 'border-blue-400'}`}
                       />
                       <Input
                         required
@@ -1648,7 +1647,7 @@ export default function App() {
                         label="CANTIDAD DE NIÑOS"
                         value={formData.cantidadPersonas.ninios}
                         onChange={(event) => handleInputChange(event, "ninios")}
-                        className="ml-3 border-green-400 border-2 rounded-xl"
+                        className="ml-3 h-12  border-green-400 border-2 rounded-xl"
 
                       />
                     </div>

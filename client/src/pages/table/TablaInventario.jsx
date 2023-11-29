@@ -281,6 +281,7 @@ export default function App() {
         <option className="w-52 text-black" value="Bebida">Bebidas</option>
         <option className="w-52 text-black"  value="comida">Comidas</option>
         <option className="w-52 text-black"  value="utensilios">Utensilios</option>
+        <option className="w-52 text-black"  value="despensa">Despensa</option>
         </select>
 
       </div>
@@ -315,6 +316,7 @@ export default function App() {
                   <option value="bebida">Bebidas</option>
                   <option value="comida">Comidas</option>
                   <option value="utensilios">Utensilios</option>
+                  <option value="despensa">Despensa</option>
                 </select>
                 <Input
                   name="Caducidad"

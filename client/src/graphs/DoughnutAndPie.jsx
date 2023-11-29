@@ -56,7 +56,7 @@ const DoughnutChart = () => {
             enabled: true,
             format: '{point.name}: {point.percentage:.1f} %',
             style: {
-              color: 'white' // This will change the font color of the labels
+              color: 'black' // This will change the font color of the labels
             }
           },
         },
@@ -136,7 +136,7 @@ const DoughnutChart = () => {
     <option value="habitaciones">Habitaciones</option>
   </select>
     </div>
-    <div style={{ backdropFilter: "blur(10px) saturate(90%) brightness(130%)", border:"1px solid #272c3d", borderRadius: "15px", color:"white" }}>
+    <div style={{ backdropFilter: "blur(15px) saturate(90%) brightness(130%)", borderRadius: "15px", color:"white" }}>
   <div id="chart-container"
   ></div>
 

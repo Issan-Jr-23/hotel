@@ -90,6 +90,7 @@ export default function Navbars() {
             Inventario
             </Link>
             </DropdownItem>
+            {isEditor && (
             <DropdownItem aria-label="prueba"
               key="100_uptime_inv"
             >
@@ -97,6 +98,8 @@ export default function Navbars() {
             Mensajes
             </Link>
             </DropdownItem>
+            )}
+            {isEditor && (
             <DropdownItem aria-label="prueba"
               key="101_uptime_inv"
             >
@@ -104,6 +107,8 @@ export default function Navbars() {
             Graph
             </Link>
             </DropdownItem>
+            )}
+              {isEditor && (
             <DropdownItem aria-label="prueba"
               key="102_uptime_inv"
             >
@@ -111,6 +116,7 @@ export default function Navbars() {
             Precios
             </Link>
             </DropdownItem>
+              )}
           </DropdownMenu>
         </Dropdown>
         <NavbarItem isActive>
@@ -123,14 +129,6 @@ export default function Navbars() {
             Energia Renovable
           </Link>
         </NavbarItem>
-            {isEditor && (
-        <NavbarItem >
-          <Link to='/hotel-graphs' className="text-white ml-4 font-medium text-base" color="foreground" >
-            grapsh
-          </Link>
-        </NavbarItem>
-
-            )}
         {isEditor && (
         
         <NavbarItem>
