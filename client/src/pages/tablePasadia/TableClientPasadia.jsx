@@ -47,16 +47,16 @@ export default function App() {
   const toBase64 = (url) => new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.onload = () => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            resolve(reader.result);
-        };
-        reader.readAsDataURL(xhr.response);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        resolve(reader.result);
+      };
+      reader.readAsDataURL(xhr.response);
     };
     xhr.open('GET', url);
     xhr.responseType = 'blob';
     xhr.send();
-}); 
+  });
 
 
 
@@ -192,7 +192,7 @@ export default function App() {
         const response = await AxiosInstances.get("/table-precios");
         const pasadiaN = response.data.find(item => item.servicio === "pasadia" && item.tipo === "ninios");
         const pasadiaA = response.data.find(item => item.servicio === "pasadia" && item.tipo === "adultos");
-        
+
 
         if (pasadiaN) {
           setPasadiaNinios(pasadiaN.precio);
@@ -200,9 +200,9 @@ export default function App() {
           console.log("No se encontró el servicio de 'cabanias'");
         }
 
-        if (pasadiaA){
+        if (pasadiaA) {
           setPasadiaAdultos(pasadiaA.precio);
-        }else{
+        } else {
           console.log("No se encontró el servicio de 'cabanias mayapo'");
         }
 
@@ -229,55 +229,55 @@ export default function App() {
 
 
   const handleInputChange = (event, fieldName) => {
-      const { name, value } = event.target;
+    const { name, value } = event.target;
 
-      if (name === 'identificacion') {
-        setErrorIdentificacion(!value);
-      } else if (name === 'nombre') {
-        setErrorNombre(!value);
-      } else if (name === 'fechaPasadia') {
-        setErrorFechaPasadia(!value);
-      } else if (name === 'reserva') {
-        setErrorReserva(!value);
-      } else if (name === 'adultos') {
-        setErrorAdultos(!value)
-      } else if (name === 'ninios'){
-        setErrorNinios(!value)
+    if (name === 'identificacion') {
+      setErrorIdentificacion(!value);
+    } else if (name === 'nombre') {
+      setErrorNombre(!value);
+    } else if (name === 'fechaPasadia') {
+      setErrorFechaPasadia(!value);
+    } else if (name === 'reserva') {
+      setErrorReserva(!value);
+    } else if (name === 'adultos') {
+      setErrorAdultos(!value)
+    } else if (name === 'ninios') {
+      setErrorNinios(!value)
+    }
+
+    let newValue = parseInt(value, 10);
+    if (isNaN(newValue)) {
+      newValue = 0;
+    }
+
+    const totalCosto = (formData.cantidadPersonas.ninios * pasadiaNinios) +
+      (formData.cantidadPersonas.adultos * pasadiaAdultos);
+
+    const totalPendiente = totalCosto;
+
+    const cantidadDeClientes = formData.cantidadPersonas.ninios + formData.cantidadPersonas.adultos;
+    if ((name === 'pagoPendiente' && parseFloat(value) > totalPendiente) ||
+      (name === 'pagoAnticipado' && parseFloat(value) > totalCosto)) {
+      alert('El monto no puede ser mayor que el costo total o el monto pendiente.');
+    } else {
+      if ((name === 'ninios' || name === 'adultos')) {
+        const nuevosValores = {
+          ...formData.cantidadPersonas,
+          [fieldName]: parseInt(value, 10)
+        };
+        const nuevoTotalClientes = nuevosValores.ninios + nuevosValores.adultos;
+
+        if (nuevoTotalClientes !== cantidadDeClientes) {
+          formData.pagoAnticipado = "";
+        }
       }
-
-      let newValue = parseInt(value, 10);
-      if (isNaN(newValue)) {
-        newValue = 0;
-      }
-
-      const totalCosto = (formData.cantidadPersonas.ninios * pasadiaNinios) +
-        (formData.cantidadPersonas.adultos * pasadiaAdultos);
-
-      const totalPendiente = totalCosto;
-
-      const cantidadDeClientes = formData.cantidadPersonas.ninios + formData.cantidadPersonas.adultos;
-      if ((name === 'pagoPendiente' && parseFloat(value) > totalPendiente) ||
-        (name === 'pagoAnticipado' && parseFloat(value) > totalCosto)) {
-        alert('El monto no puede ser mayor que el costo total o el monto pendiente.');
-      }else {
-        if ((name === 'ninios' || name === 'adultos')) {
-          const nuevosValores = {
-              ...formData.cantidadPersonas,
-              [fieldName]: parseInt(value, 10)
-          };
-          const nuevoTotalClientes = nuevosValores.ninios + nuevosValores.adultos;
-
-          if (nuevoTotalClientes !== cantidadDeClientes) {
-              formData.pagoAnticipado = "";
-          }
-      }
-        setFormData({
-          ...formData,
-          [name]: value,
-          ...(fieldName && (name === 'ninios' || name === 'adultos') ? { cantidadPersonas: { ...formData.cantidadPersonas, [fieldName]: newValue } } : {})
-        });
-      }
-    };
+      setFormData({
+        ...formData,
+        [name]: value,
+        ...(fieldName && (name === 'ninios' || name === 'adultos') ? { cantidadPersonas: { ...formData.cantidadPersonas, [fieldName]: newValue } } : {})
+      });
+    }
+  };
 
   //#region 
   const handleReservaChange = (selectedSize) => {
@@ -327,53 +327,71 @@ export default function App() {
       let fecha = new Date();
 
       fecha.setHours(fecha.getHours() - 5);
-    
+
       const fechaAjustada = fecha.toLocaleString();
 
       const disponibleInventario = response.data.cantidadRestante;
 
       const clienteResponse = await AxiosInstances.get(`/pasadia-clientes/${selectedClientId}`);
       const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
-      const  numeroDebebidas = clienteResponse.data.cantidadDeBebidas.filter(bebida => bebida.mensaje === "Cortesía" && bebida.fechaDeMarca === "");
+      const numeroDebebidas = clienteResponse.data.cantidadDeBebidas.filter(bebida => bebida.mensaje === "Cortesía" && bebida.fechaDeMarca === "");
       const cantidadTotalCortesia = numeroDebebidas.reduce((total, bebida) => total + bebida.cantidad, 0);
-      console.log("numero de cortesias: "+cantidadTotalCortesia)
-      console.log("cantidad de bebidas del usuario"+JSON.stringify(numeroDebebidas, null, 2))
+      console.log("numero de cortesias: " + cantidadTotalCortesia)
+      console.log("cantidad de bebidas del usuario" + JSON.stringify(numeroDebebidas, null, 2))
       const totalPersonas = ninios + adultos;
 
+
+
+
+      if (bebidaSeleccionada && disponibleInventario === 0) {
+        // alert(`Producto agotado ${foodSeleccionada} en el stock ( ${disponibleInventario} ) `);
+        toast.error('Algun producto esta agotado',
+          {
+            style: {
+              borderRadius: '10px',
+              background: '#333',
+              color: '#fff',
+            },
+          }
+        );
+        return false;
+      }
+
+
       if (esCortesia) {
-       
+
         const nuevaCantidadTotalCortesia = cantidadTotalCortesia;
         const cantidadRestante = totalPersonas - cantidadTotalCortesia;
         setCcDisponibles(cantidadRestante)
-        console.log("cantidad restante: "+cantidadRestante)
-        console.log("supuesta nueva cantidad: "+nuevaCantidadTotalCortesia)
+        console.log("cantidad restante: " + cantidadRestante)
+        console.log("supuesta nueva cantidad: " + nuevaCantidadTotalCortesia)
 
-        if (cantidad > disponibleInventario ) {
+        if (cantidad > disponibleInventario) {
           alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
           return false;
         }
 
-        if(cantidad > cantidadRestante){
+        if (cantidad > cantidadRestante) {
           alert(`el usuario tiene ${cantidadRestante} cortesias disponibles`)
           return;
         }
-    
+
         if (nuevaCantidadTotalCortesia > totalPersonas) {
           alert(`La cantidad de cortesías (${nuevaCantidadTotalCortesia}) no puede exceder la cantidad de personas (${totalPersonas}).`);
           return false;
         }
-    
+
         if (cantidad > cantidadRestante) {
           alert(`Solo puedes agregar hasta ${cantidadRestante} cortesías adicionales.`);
           return false;
         }
       } else {
-        if (cantidad > disponibleInventario ) {
+        if (cantidad > disponibleInventario) {
           alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
           return false;
         }
       }
-      if (cantidad > disponibleInventario ) {
+      if (cantidad > disponibleInventario) {
         alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
         return false;
       }
@@ -642,30 +660,30 @@ export default function App() {
       let fecha = new Date();
 
       fecha.setHours(fecha.getHours() - 5);
-    
+
       const fechaAjustada = fecha.toLocaleString();
 
       const disponibleInventario = response.data.cantidadRestante;
 
       const clienteResponse = await AxiosInstances.get(`/pasadia-clientes/${selectedClientId}`);
       const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
-      const  numeroDeFood = clienteResponse.data.cantidadDeFood.filter(food => food.mensaje === "Cortesía" && food.fechaDeMarca === "");
+      const numeroDeFood = clienteResponse.data.cantidadDeFood.filter(food => food.mensaje === "Cortesía" && food.fechaDeMarca === "");
       const cantidadTotalCortesia = numeroDeFood.reduce((total, food) => total + food.cantidad, 0);
-      console.log("numero de cortesias: "+cantidadTotalCortesia)
-      console.log("cantidad de bebidas del usuario"+JSON.stringify(numeroDeFood, null, 2))
+      console.log("numero de cortesias: " + cantidadTotalCortesia)
+      console.log("cantidad de bebidas del usuario" + JSON.stringify(numeroDeFood, null, 2))
       const totalPersonas = ninios + adultos;
 
-      if(foodSeleccionada && disponibleInventario === 0){
+      if (foodSeleccionada && disponibleInventario === 0) {
         // alert(`Producto agotado ${foodSeleccionada} en el stock ( ${disponibleInventario} ) `);
         toast.error('Algun producto esta agotado',
-        {
-          style: {
-            borderRadius: '10px',
-            background: '#333',
-            color: '#fff',
-          },
-        }
-      );
+          {
+            style: {
+              borderRadius: '10px',
+              background: '#333',
+              color: '#fff',
+            },
+          }
+        );
         return false;
       }
 
@@ -673,7 +691,7 @@ export default function App() {
       //   alert(`Producto agotado ${food1Seleccionada} en el stock ( ${disponibleInventario} ) `);
       //   return false;
       // }
-      
+
       // if(food2Seleccionada || disponibleInventario === 0){
       //   alert(`Producto agotado ${food2Seleccionada} en el stock ( ${disponibleInventario} ) `);
       //  return false;
@@ -681,65 +699,65 @@ export default function App() {
 
 
 
-        
-
-        
-        
-        if (esCortesia) {
-          
-          const nuevaCantidadTotalCortesia = cantidadTotalCortesia;
-          const cantidadRestante = totalPersonas - cantidadTotalCortesia;
-          console.log("cantidad restante: "+cantidadRestante)
-          console.log("supuesta nueva cantidad: "+nuevaCantidadTotalCortesia)
-          
-          if(cantidad > totalPersonas){
-            alert(`La cantidad de cortesias ${cantidad} no debe superar a la cantidad de personas ${totalPersonas} `)
-            return;
-          }
-  
-          if (cantidad > disponibleInventario ) {
-            alert(`Solo quedan 1 ${disponibleInventario} unidades disponibles en el inventario.`);
-            return false;
-          }
-  
-  
-          if(cantidad > cantidadRestante){
-            alert(`el usuario tiene ${cantidadRestante} cortesias disponibles`)
-            return;
-          }
-      
-          if (nuevaCantidadTotalCortesia > totalPersonas) {
-            alert(`La cantidad de cortesías (${nuevaCantidadTotalCortesia}) no puede exceder la cantidad de personas (${totalPersonas}).`);
-            return false;
-          }
-      
-          if (cantidad > cantidadRestante) {
-            alert(`Solo puedes agregar hasta ${cantidadRestante} cortesías adicionales.`);
-            return false;
-          }
-        } 
 
 
 
-  
 
-      
+      if (esCortesia) {
+
+        const nuevaCantidadTotalCortesia = cantidadTotalCortesia;
+        const cantidadRestante = totalPersonas - cantidadTotalCortesia;
+        console.log("cantidad restante: " + cantidadRestante)
+        console.log("supuesta nueva cantidad: " + nuevaCantidadTotalCortesia)
+
+        if (cantidad > totalPersonas) {
+          alert(`La cantidad de cortesias ${cantidad} no debe superar a la cantidad de personas ${totalPersonas} `)
+          return;
+        }
+
+        if (cantidad > disponibleInventario) {
+          alert(`Solo quedan 1 ${disponibleInventario} unidades disponibles en el inventario.`);
+          return false;
+        }
+
+
+        if (cantidad > cantidadRestante) {
+          alert(`el usuario tiene ${cantidadRestante} cortesias disponibles`)
+          return;
+        }
+
+        if (nuevaCantidadTotalCortesia > totalPersonas) {
+          alert(`La cantidad de cortesías (${nuevaCantidadTotalCortesia}) no puede exceder la cantidad de personas (${totalPersonas}).`);
+          return false;
+        }
+
+        if (cantidad > cantidadRestante) {
+          alert(`Solo puedes agregar hasta ${cantidadRestante} cortesías adicionales.`);
+          return false;
+        }
+      }
 
 
 
-      if (cantidad > disponibleInventario ) {
-        alert(`Solo quedan ${disponibleInventario } unidades disponibles en el inventario.`);
+
+
+
+
+
+
+      if (cantidad > disponibleInventario) {
+        alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
         return;
-      }else if(disponibleInventario === 0 && !foodSeleccionada){
+      } else if (disponibleInventario === 0 && !foodSeleccionada) {
         alert(`Ya no quedan ${foodSeleccionada} disponibles en el inventario `);
         return;
-      }else if(disponibleInventario === 0 && !food1Seleccionada){
+      } else if (disponibleInventario === 0 && !food1Seleccionada) {
         alert(`Ya no quedan ${food1Seleccionada} disponibles en el inventario `);
         return;
       }
 
-      await actualizarInventarioBebida(foodId, cantidad);
-      await actualizarStockInicialBebida(foodId, cantidad);
+      await actualizarInventarioFood(foodId, cantidad);
+      await actualizarStockInicialFood(foodId, cantidad);
       return true;
     };
 
@@ -1184,7 +1202,7 @@ export default function App() {
   const [ancho, setAncho] = React.useState('xl')
   const sizesm = ["xl"];
 
-  const handleOpenm = (ancho, userId) => {
+  const handleOpenm = async (ancho, userId) => {
     setAncho(ancho);
     setSelectedClientId(userId);
     openModalM();
@@ -1220,16 +1238,23 @@ export default function App() {
     setFiltro5("")
 
     setCantidadBebidaDisponible("")
-setCantidadBebida1Disponible("")
-setCantidadBebida2Disponible("")
-setCantidadBebida3Disponible("")
-setCantidadBebida4Disponible("")
+    setCantidadBebida1Disponible("")
+    setCantidadBebida2Disponible("")
+    setCantidadBebida3Disponible("")
+    setCantidadBebida4Disponible("")
+
+    const response = await AxiosInstances.get("/drinks");
+    setDrinks(response.data);
+    
+    const responses = await AxiosInstances.get("/food");
+    setSnacks(responses.data);
+
 
   };
 
   const [selectedSize, setSelectedSize] = React.useState('md');
 
-  const handleOpenmf = (size, userId) => {
+  const handleOpenmf = async (size, userId) => {
     setSelectedSize(size);
     setSelectedClientId(userId);
     openModalF();
@@ -1275,6 +1300,12 @@ setCantidadBebida4Disponible("")
     setCantidadFood2Disponible("")
     setCantidadFood3Disponible("")
     setCantidadFood4Disponible("")
+
+
+    const responses = await AxiosInstances.get("/food");
+    setSnacks(responses.data);
+    const response = await AxiosInstances.get("/drinks");
+    setDrinks(response.data);
 
 
   };
@@ -1419,18 +1450,18 @@ setCantidadBebida4Disponible("")
 
     try {
       const svgBase64 = await toBase64(svg);
-      pdf.addImage(svgBase64, 'JPEG', 0, 0, 220, 80); 
+      pdf.addImage(svgBase64, 'JPEG', 0, 0, 220, 80);
     } catch (error) {
       console.error("Error al cargar la imagen", error);
     }
 
     try {
       const waveBase64 = await toBase64(wave);
-      pdf.addImage(waveBase64, 'JPEG', 0, 240, 220, 80); 
+      pdf.addImage(waveBase64, 'JPEG', 0, 240, 220, 80);
     } catch (error) {
       console.error("Error al cargar la imagen", error);
     }
-  
+
     try {
       const logoBase64 = await toBase64(logo);
       pdf.addImage(logoBase64, 'JPEG', 85, 25, 40, 40);
@@ -1443,7 +1474,7 @@ setCantidadBebida4Disponible("")
     pdf.setTextColor("#FFFFFF");
     pdf.text("HOTEL MEQO", 105, 20, null, null, 'center');
 
-    pdf.setTextColor(0, 0, 0); 
+    pdf.setTextColor(0, 0, 0);
     pdf.setFontSize(12);
     pdf.text('Datos de la empresa', 157, 54);
 
@@ -1476,7 +1507,7 @@ setCantidadBebida4Disponible("")
       const diferenciaEnHoras = (ahora - fechaDeMarca) / cincoHorasEnMilisegundos;
       return producto.fechaDeMarca === "" || diferenciaEnHoras <= 3;
     }).reduce((acc, producto) => acc + (producto.cantidad * producto.precio), 0);
-    
+
     productos.forEach((producto) => {
       const fechaDeMarca = new Date(producto.fechaDeMarca);
       const diferenciaEnHoras = (ahora - fechaDeMarca) / cincoHorasEnMilisegundos;
@@ -1497,7 +1528,7 @@ setCantidadBebida4Disponible("")
 
 
     pdf.save("factura.pdf");
-};
+  };
 
 
 
@@ -1579,39 +1610,39 @@ setCantidadBebida4Disponible("")
       <div className="flex justify-between flex-row-reverse px-5 flex-wrap">
 
         <div className="">
-        <Input
-        label="Search"
-        value={busqueda}
+          <Input
+            label="Search"
+            value={busqueda}
             onChange={handleSearchChange}
-        isClearable
-        radius="lg"
-        className="w-72 h-12"
-        classNames={{
-          label: "text-black/50 dark:text-white/90",
-          input: [
-            "bg-transparent",
-            "text-black/90 dark:text-black/90",
-            "placeholder:text-black/60 dark:placeholder:text-black/60",
-          ],
-          innerWrapper: "bg-transparent",
-          inputWrapper: [
-            "shadow-xl",
-            "bg-default-200/50",
-            "dark:bg-default/60",
-            "backdrop-blur-xl",
-            "backdrop-saturate-200",
-            "hover:bg-default-200/70",
-            "dark:hover:bg-default/70",
-            "group-data-[focused=true]:bg-default-200/50",
-            "dark:group-data-[focused=true]:bg-default/60",
-            "!cursor-text",
-          ],
-        }}
-        placeholder="Type to search..."
-        startContent={
-          <SearchIcon className="text-black/50 mb-0.5 dark:text-black/90 text-black pointer-events-none flex-shrink-0" />
-        }
-      />
+            isClearable
+            radius="lg"
+            className="w-72 h-12"
+            classNames={{
+              label: "text-black/50 dark:text-white/90",
+              input: [
+                "bg-transparent",
+                "text-black/90 dark:text-black/90",
+                "placeholder:text-black/60 dark:placeholder:text-black/60",
+              ],
+              innerWrapper: "bg-transparent",
+              inputWrapper: [
+                "shadow-xl",
+                "bg-default-200/50",
+                "dark:bg-default/60",
+                "backdrop-blur-xl",
+                "backdrop-saturate-200",
+                "hover:bg-default-200/70",
+                "dark:hover:bg-default/70",
+                "group-data-[focused=true]:bg-default-200/50",
+                "dark:group-data-[focused=true]:bg-default/60",
+                "!cursor-text",
+              ],
+            }}
+            placeholder="Type to search..."
+            startContent={
+              <SearchIcon className="text-black/50 mb-0.5 dark:text-black/90 text-black pointer-events-none flex-shrink-0" />
+            }
+          />
         </div>
 
         <div className=" ">
@@ -1624,18 +1655,18 @@ setCantidadBebida4Disponible("")
               }}
               className="capitalize text-white bg-black"
             >
-              <PlusIcon/>Agregar
+              <PlusIcon />Agregar
             </Button>
             <div className="flex items-center justify-center ml-7">
-          <Button className="bg-blue-500 w-28 text-white">
-          Exportar
-          {/* <img
+              <Button className="bg-blue-500 w-28 text-white">
+                Exportar
+                {/* <img
             className="w-10 h-10 cursor-pointer flex items-center justify-center "
             src={download}
             alt="actualizar"
           /> */}
-          </Button>
-        </div>
+              </Button>
+            </div>
           </div>
 
           <Modal backdrop={backdrop} isOpen={isOpen} onClose={onClose}>
@@ -1794,7 +1825,7 @@ setCantidadBebida4Disponible("")
             </ModalContent>
           </Modal>
         </div>
-        
+
       </div>
 
       <section className="flex mx-5 rounded-t-2xl flex-col">
@@ -2097,6 +2128,9 @@ setCantidadBebida4Disponible("")
                           <>
                             <ModalHeader className="flex flex-col gap-1">
                               <h2>BEBIDAS</h2>
+                              <Input
+                                placeholder={`${ccDisponibles}`}
+                              />
 
                             </ModalHeader>
                             <ModalBody>
@@ -2119,8 +2153,12 @@ setCantidadBebida4Disponible("")
                                   }}
                                 />
                                 <Input
-                                  placeholder={`${ccDisponibles}`}
+                                  disabled
+                                  label="Stock"
+                                  className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
+                                  placeholder={` ${cantidadBebidaDisponible}`}
                                 />
+
                                 <Select
                                   className="ml-2"
                                   name="bebidas"
@@ -2134,6 +2172,7 @@ setCantidadBebida4Disponible("")
                                     if (bebidaSeleccionadaInfo) {
                                       setPrecioBebidaSeleccionada(bebidaSeleccionadaInfo.ValorUnitario);
                                       setBebidaSeleccionadaId(bebidaSeleccionadaInfo._id);
+                                      setCantidadBebidaDisponible(bebidaSeleccionadaInfo.CantidadInicial)
                                     }
                                   }}
                                 >
@@ -2149,15 +2188,15 @@ setCantidadBebida4Disponible("")
                                       <SearchIcon />
                                     </span>
                                     <input
-                                     type="search" 
-                                     id="search" 
-                                     placeholder="¿Qué quieres buscar?" 
-                                     value={filtro}
-                                     onClick={handleItemClick}
-                                           onChange={(e) => {
-                                             e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
-                                             setFiltro(e.target.value);
-                                           }}/>
+                                      type="search"
+                                      id="search"
+                                      placeholder="¿Qué quieres buscar?"
+                                      value={filtro}
+                                      onClick={handleItemClick}
+                                      onChange={(e) => {
+                                        e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
+                                        setFiltro(e.target.value);
+                                      }} />
                                   </div>
                                 </aside>
                               </div>
@@ -2173,6 +2212,12 @@ setCantidadBebida4Disponible("")
                                     setCantidadBebida1(isNaN(value) ? "" : value);
                                   }}
                                 />
+                                <Input
+                                  disabled
+                                  label="Stock"
+                                  className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
+                                  placeholder={` ${cantidadBebida1Disponible}`}
+                                />
                                 <Select
                                   className="ml-2"
                                   name="bebidas"
@@ -2186,6 +2231,7 @@ setCantidadBebida4Disponible("")
                                     if (bebida1SeleccionadaInfo) {
                                       setPrecioBebida1Seleccionada(bebida1SeleccionadaInfo.ValorUnitario);
                                       setBebida1SeleccionadaId(bebida1SeleccionadaInfo._id);
+                                      setCantidadBebida1Disponible(bebida1SeleccionadaInfo.CantidadInicial)
                                     }
                                   }}
                                 >
@@ -2201,15 +2247,15 @@ setCantidadBebida4Disponible("")
                                       <SearchIcon />
                                     </span>
                                     <input
-                                     type="search" 
-                                     id="search" 
-                                     placeholder="¿Qué quieres buscar?" 
-                                     value={filtro2}
-                                     onClick={handleItemClick}
-                                           onChange={(e) => {
-                                             e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
-                                             setFiltro2(e.target.value);
-                                           }}/>
+                                      type="search"
+                                      id="search"
+                                      placeholder="¿Qué quieres buscar?"
+                                      value={filtro2}
+                                      onClick={handleItemClick}
+                                      onChange={(e) => {
+                                        e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
+                                        setFiltro2(e.target.value);
+                                      }} />
                                   </div>
                                 </aside>
 
@@ -2226,6 +2272,12 @@ setCantidadBebida4Disponible("")
                                     setCantidadBebida2(isNaN(value) ? "" : value);
                                   }}
                                 />
+                                <Input
+                                  disabled
+                                  label="Stock"
+                                  className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
+                                  placeholder={` ${cantidadBebida2Disponible}`}
+                                />
                                 <Select
                                   className="ml-2"
                                   name="bebidas"
@@ -2239,6 +2291,7 @@ setCantidadBebida4Disponible("")
                                     if (bebida2SeleccionadaInfo) {
                                       setPrecioBebida2Seleccionada(bebida2SeleccionadaInfo.ValorUnitario);
                                       setBebida2SeleccionadaId(bebida2SeleccionadaInfo._id);
+                                      setCantidadBebida2Disponible(bebida2SeleccionadaInfo.CantidadInicial)
                                     }
                                   }}
                                 >
@@ -2254,15 +2307,15 @@ setCantidadBebida4Disponible("")
                                       <SearchIcon />
                                     </span>
                                     <input
-                                     type="search" 
-                                     id="search" 
-                                     placeholder="¿Qué quieres buscar?" 
-                                     value={filtro3}
-                                     onClick={handleItemClick}
-                                           onChange={(e) => {
-                                             e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
-                                             setFiltro3(e.target.value);
-                                           }}/>
+                                      type="search"
+                                      id="search"
+                                      placeholder="¿Qué quieres buscar?"
+                                      value={filtro3}
+                                      onClick={handleItemClick}
+                                      onChange={(e) => {
+                                        e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
+                                        setFiltro3(e.target.value);
+                                      }} />
                                   </div>
                                 </aside>
                               </div>
@@ -2278,6 +2331,12 @@ setCantidadBebida4Disponible("")
                                     setCantidadBebida3(isNaN(value) ? "" : value);
                                   }}
                                 />
+                                <Input
+                                  disabled
+                                  label="Stock"
+                                  className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
+                                  placeholder={` ${cantidadBebida3Disponible}`}
+                                />
                                 <Select
                                   className="ml-2"
                                   name="bebidas"
@@ -2291,6 +2350,7 @@ setCantidadBebida4Disponible("")
                                     if (bebida3SeleccionadaInfo) {
                                       setPrecioBebida3Seleccionada(bebida3SeleccionadaInfo.ValorUnitario);
                                       setBebida3SeleccionadaId(bebida3SeleccionadaInfo._id);
+                                      setCantidadBebida3Disponible(bebida3SeleccionadaInfo.CantidadInicial)
                                     }
                                   }}
                                 >
@@ -2306,15 +2366,15 @@ setCantidadBebida4Disponible("")
                                       <SearchIcon />
                                     </span>
                                     <input
-                                     type="search" 
-                                     id="search" 
-                                     placeholder="¿Qué quieres buscar?" 
-                                     value={filtro4}
-                                     onClick={handleItemClick}
-                                           onChange={(e) => {
-                                             e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
-                                             setFiltro4(e.target.value);
-                                           }}/>
+                                      type="search"
+                                      id="search"
+                                      placeholder="¿Qué quieres buscar?"
+                                      value={filtro4}
+                                      onClick={handleItemClick}
+                                      onChange={(e) => {
+                                        e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
+                                        setFiltro4(e.target.value);
+                                      }} />
                                   </div>
                                 </aside>
                               </div>
@@ -2330,6 +2390,12 @@ setCantidadBebida4Disponible("")
                                     setCantidadBebida4(isNaN(value) ? "" : value);
                                   }}
                                 />
+                                <Input
+                                  disabled
+                                  label="Stock"
+                                  className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
+                                  placeholder={` ${cantidadBebida4Disponible}`}
+                                />
                                 <Select
                                   className="ml-2"
                                   name="bebidas"
@@ -2343,6 +2409,7 @@ setCantidadBebida4Disponible("")
                                     if (bebida4SeleccionadaInfo) {
                                       setPrecioBebida4Seleccionada(bebida4SeleccionadaInfo.ValorUnitario);
                                       setBebida4SeleccionadaId(bebida4SeleccionadaInfo._id);
+                                      setCantidadBebida4Disponible(bebida4SeleccionadaInfo.CantidadInicial)
                                     }
                                   }}
                                 >
@@ -2358,15 +2425,15 @@ setCantidadBebida4Disponible("")
                                       <SearchIcon />
                                     </span>
                                     <input
-                                     type="search" 
-                                     id="search" 
-                                     placeholder="¿Qué quieres buscar?" 
-                                     value={filtro5}
-                                     onClick={handleItemClick}
-                                           onChange={(e) => {
-                                             e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
-                                             setFiltro5(e.target.value);
-                                           }}/>
+                                      type="search"
+                                      id="search"
+                                      placeholder="¿Qué quieres buscar?"
+                                      value={filtro5}
+                                      onClick={handleItemClick}
+                                      onChange={(e) => {
+                                        e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
+                                        setFiltro5(e.target.value);
+                                      }} />
                                   </div>
                                 </aside>
                               </div>
@@ -2426,11 +2493,11 @@ setCantidadBebida4Disponible("")
                                   setCantidadFood(isNaN(value) ? '' : value);
                                 }}
                               />
-                              <Input 
-                              disabled
-                              label="Stock"
-                              className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
-                              placeholder={`   ${cantidadFoodDisponible}`}
+                              <Input
+                                disabled
+                                label="Stock"
+                                className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
+                                placeholder={`   ${cantidadFoodDisponible}`}
                               />
                               <Select
                                 className="ml-2"
@@ -2456,22 +2523,22 @@ setCantidadBebida4Disponible("")
                                 ))}
                               </Select>
                               <aside className="search-button">
-                                  <div className="container">
-                                    <span className="lupa">
-                                      <SearchIcon />
-                                    </span>
-                                    <input
-                                     type="search" 
-                                     id="search" 
-                                     placeholder="¿Qué quieres buscar?" 
-                                     value={foodFiltro}
-                                     onClick={handleItemClick}
-                                           onChange={(e) => {
-                                             e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
-                                             setFoodFiltro(e.target.value);
-                                           }}/>
-                                  </div>
-                                </aside>
+                                <div className="container">
+                                  <span className="lupa">
+                                    <SearchIcon />
+                                  </span>
+                                  <input
+                                    type="search"
+                                    id="search"
+                                    placeholder="¿Qué quieres buscar?"
+                                    value={foodFiltro}
+                                    onClick={handleItemClick}
+                                    onChange={(e) => {
+                                      e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
+                                      setFoodFiltro(e.target.value);
+                                    }} />
+                                </div>
+                              </aside>
                             </div>
                             <div className="flex">
 
@@ -2486,11 +2553,11 @@ setCantidadBebida4Disponible("")
                                   setCantidadFood1(isNaN(value) ? '' : value);
                                 }}
                               />
-                              <Input 
-                              disabled
-                              label="Stock"
-                              className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
-                              placeholder={`   ${cantidadFood1Disponible}`}
+                              <Input
+                                disabled
+                                label="Stock"
+                                className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
+                                placeholder={`   ${cantidadFood1Disponible}`}
                               />
                               <Select
                                 className="ml-2"
@@ -2517,22 +2584,22 @@ setCantidadBebida4Disponible("")
                               </Select>
 
                               <aside className="search-button">
-                                  <div className="container">
-                                    <span className="lupa">
-                                      <SearchIcon />
-                                    </span>
-                                    <input
-                                     type="search" 
-                                     id="search" 
-                                     placeholder="¿Qué quieres buscar?" 
-                                     value={foodFiltro2}
-                                     onClick={handleItemClick}
-                                           onChange={(e) => {
-                                             e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
-                                             setFoodFiltro2(e.target.value);
-                                           }}/>
-                                  </div>
-                                </aside>
+                                <div className="container">
+                                  <span className="lupa">
+                                    <SearchIcon />
+                                  </span>
+                                  <input
+                                    type="search"
+                                    id="search"
+                                    placeholder="¿Qué quieres buscar?"
+                                    value={foodFiltro2}
+                                    onClick={handleItemClick}
+                                    onChange={(e) => {
+                                      e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
+                                      setFoodFiltro2(e.target.value);
+                                    }} />
+                                </div>
+                              </aside>
                             </div>
                             <div className="flex">
 
@@ -2547,11 +2614,11 @@ setCantidadBebida4Disponible("")
                                   setCantidadFood2(isNaN(value) ? '' : value);
                                 }}
                               />
-                              <Input 
-                              disabled
-                              label="Stock"
-                              className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
-                              placeholder={`   ${cantidadFood2Disponible}`}
+                              <Input
+                                disabled
+                                label="Stock"
+                                className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
+                                placeholder={`   ${cantidadFood2Disponible}`}
                               />
                               <Select
                                 className="ml-2"
@@ -2577,22 +2644,22 @@ setCantidadBebida4Disponible("")
                                 ))}
                               </Select>
                               <aside className="search-button">
-                                  <div className="container">
-                                    <span className="lupa">
-                                      <SearchIcon />
-                                    </span>
-                                    <input
-                                     type="search" 
-                                     id="search" 
-                                     placeholder="¿Qué quieres buscar?" 
-                                     value={foodFiltro3}
-                                     onClick={handleItemClick}
-                                           onChange={(e) => {
-                                             e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
-                                             setFoodFiltro3(e.target.value);
-                                           }}/>
-                                  </div>
-                                </aside>
+                                <div className="container">
+                                  <span className="lupa">
+                                    <SearchIcon />
+                                  </span>
+                                  <input
+                                    type="search"
+                                    id="search"
+                                    placeholder="¿Qué quieres buscar?"
+                                    value={foodFiltro3}
+                                    onClick={handleItemClick}
+                                    onChange={(e) => {
+                                      e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
+                                      setFoodFiltro3(e.target.value);
+                                    }} />
+                                </div>
+                              </aside>
                             </div>
                             <div className="flex">
 
@@ -2607,11 +2674,11 @@ setCantidadBebida4Disponible("")
                                   setCantidadFood3(isNaN(value) ? '' : value);
                                 }}
                               />
-                              <Input 
-                              disabled
-                              label="Stock"
-                              className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
-                              placeholder={`   ${cantidadFood3Disponible}`}
+                              <Input
+                                disabled
+                                label="Stock"
+                                className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
+                                placeholder={`   ${cantidadFood3Disponible}`}
                               />
                               <Select
                                 className="ml-2"
@@ -2637,22 +2704,22 @@ setCantidadBebida4Disponible("")
                                 ))}
                               </Select>
                               <aside className="search-button">
-                                  <div className="container">
-                                    <span className="lupa">
-                                      <SearchIcon />
-                                    </span>
-                                    <input
-                                     type="search" 
-                                     id="search" 
-                                     placeholder="¿Qué quieres buscar?" 
-                                     value={foodFiltro4}
-                                     onClick={handleItemClick}
-                                           onChange={(e) => {
-                                             e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
-                                             setFoodFiltro4(e.target.value);
-                                           }}/>
-                                  </div>
-                                </aside>
+                                <div className="container">
+                                  <span className="lupa">
+                                    <SearchIcon />
+                                  </span>
+                                  <input
+                                    type="search"
+                                    id="search"
+                                    placeholder="¿Qué quieres buscar?"
+                                    value={foodFiltro4}
+                                    onClick={handleItemClick}
+                                    onChange={(e) => {
+                                      e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
+                                      setFoodFiltro4(e.target.value);
+                                    }} />
+                                </div>
+                              </aside>
                             </div>
                             <div className="flex">
 
@@ -2667,11 +2734,11 @@ setCantidadBebida4Disponible("")
                                   setCantidadFood4(isNaN(value) ? '' : value);
                                 }}
                               />
-                              <Input 
-                              disabled
-                              label="Stock"
-                              className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
-                              placeholder={`   ${cantidadFood4Disponible}`}
+                              <Input
+                                disabled
+                                label="Stock"
+                                className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
+                                placeholder={`   ${cantidadFood4Disponible}`}
                               />
                               <Select
                                 className="ml-2"
@@ -2697,22 +2764,22 @@ setCantidadBebida4Disponible("")
                                 ))}
                               </Select>
                               <aside className="search-button">
-                                  <div className="container">
-                                    <span className="lupa">
-                                      <SearchIcon />
-                                    </span>
-                                    <input
-                                     type="search" 
-                                     id="search" 
-                                     placeholder="¿Qué quieres buscar?" 
-                                     value={foodFiltro5}
-                                     onClick={handleItemClick}
-                                           onChange={(e) => {
-                                             e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
-                                             setFoodFiltro5(e.target.value);
-                                           }}/>
-                                  </div>
-                                </aside>
+                                <div className="container">
+                                  <span className="lupa">
+                                    <SearchIcon />
+                                  </span>
+                                  <input
+                                    type="search"
+                                    id="search"
+                                    placeholder="¿Qué quieres buscar?"
+                                    value={foodFiltro5}
+                                    onClick={handleItemClick}
+                                    onChange={(e) => {
+                                      e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
+                                      setFoodFiltro5(e.target.value);
+                                    }} />
+                                </div>
+                              </aside>
                             </div>
                           </ModalBody>
                           <ModalFooter>
