@@ -36,7 +36,7 @@ import "../table/table.css"
 import logo from "../../images/logo.png"
 import wave from "../../images/wave.png"
 import svg from "../../images/svg.png"
-import  AxiosInstance  from "../../api/axios.js";
+import AxiosInstance from "../../api/axios.js";
 
 export default function App() {
 
@@ -44,16 +44,16 @@ export default function App() {
   const toBase64 = (url) => new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.onload = () => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            resolve(reader.result);
-        };
-        reader.readAsDataURL(xhr.response);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        resolve(reader.result);
+      };
+      reader.readAsDataURL(xhr.response);
     };
     xhr.open('GET', url);
     xhr.responseType = 'blob';
     xhr.send();
-});
+  });
 
   //#region 
 
@@ -141,7 +141,20 @@ export default function App() {
   const [errorAdultos, setErrorAdultos] = useState(false);
   const [errorCabania, setErrorCabania] = useState(false);
 
-  const [preciosData,setPreciosData] = useState([])
+
+  const [cantidadFoodDisponible, setCantidadFoodDisponible] = useState(0);
+  const [cantidadFood1Disponible, setCantidadFood1Disponible] = useState(0);
+  const [cantidadFood2Disponible, setCantidadFood2Disponible] = useState(0);
+  const [cantidadFood3Disponible, setCantidadFood3Disponible] = useState(0);
+  const [cantidadFood4Disponible, setCantidadFood4Disponible] = useState(0);
+
+  const [cantidadBebidaDisponible, setCantidadBebidaDisponible] = useState(0);
+  const [cantidadBebida1Disponible, setCantidadBebida1Disponible] = useState(0);
+  const [cantidadBebida2Disponible, setCantidadBebida2Disponible] = useState(0);
+  const [cantidadBebida3Disponible, setCantidadBebida3Disponible] = useState(0);
+  const [cantidadBebida4Disponible, setCantidadBebida4Disponible] = useState(0);
+
+
 
 
 
@@ -201,15 +214,15 @@ export default function App() {
           console.log("No se encontró el servicio de 'cabanias'");
         }
 
-        if (cabaniasm){
+        if (cabaniasm) {
           setValorCabaniaM(cabaniasm.precio);
-        }else{
+        } else {
           console.log("No se encontró el servicio de 'cabanias mayapo'");
         }
 
-        if(cabaniasmAdicional){
+        if (cabaniasmAdicional) {
           setValorPorPersonaAdicional(cabaniasmAdicional.precio)
-        }else{
+        } else {
           console.log("No se encontró el servicio de 'cabanias adicionales'");
         }
 
@@ -220,7 +233,7 @@ export default function App() {
     fetchData();
   }, []);
 
-  console.log("precio de cabanias: "+valorCabania)
+  console.log("precio de cabanias: " + valorCabania)
 
 
   const handleSearchChange = (event) => {
@@ -231,59 +244,59 @@ export default function App() {
   const handleInputChange = (event, fieldName) => {
     const { name, value } = event.target;
     let nuevoTotal, totalCosto;
-    
+
 
     if (name === 'identificacion') {
-        setErrorIdentificacion(!value);
+      setErrorIdentificacion(!value);
     } else if (name === 'nombre') {
-        setErrorNombre(!value);
+      setErrorNombre(!value);
     } else if (name === 'fechaPasadia') {
-        setErrorFechaPasadia(!value);
+      setErrorFechaPasadia(!value);
     } else if (name === 'reserva') {
-        setErrorReserva(!value);
+      setErrorReserva(!value);
     } else if (name === 'adultos') {
-        setErrorAdultos(!value);
+      setErrorAdultos(!value);
     } else if (name === 'tipo_cabania') {
-        setErrorCabania(!value)
+      setErrorCabania(!value)
     }
 
-   
+
     if (name === "tipo_cabania") {
-        totalCosto = value === "Mayapo" ? valorCabaniaM : valorCabania;
+      totalCosto = value === "Mayapo" ? valorCabaniaM : valorCabania;
     } else {
-        totalCosto = formData.tipo_cabania === "Mayapo" ? valorCabaniaM : valorCabania;
+      totalCosto = formData.tipo_cabania === "Mayapo" ? valorCabaniaM : valorCabania;
     }
 
     const cantidadDeClientes = formData.cantidadPersonas.ninios + formData.cantidadPersonas.adultos;
     if (cantidadDeClientes > 4) {
-        totalCosto += ((cantidadDeClientes - 4) * valorPorPersonaAdicional);
+      totalCosto += ((cantidadDeClientes - 4) * valorPorPersonaAdicional);
     }
 
-   
+
     if (name === 'pagoPendiente' || name === 'pagoAnticipado') {
       const pagoPendiente = name === 'pagoPendiente' ? parseFloat(value) : parseFloat(formData.pagoPendiente || 0);
       const pagoAnticipado = name === 'pagoAnticipado' ? parseFloat(value) : parseFloat(formData.pagoAnticipado || 0);
       const totalPagos = pagoPendiente + pagoAnticipado;
 
       if (totalPagos > totalCosto) {
-          alert('La suma de los montos no puede ser mayor que el costo total.');
+        alert('La suma de los montos no puede ser mayor que el costo total.');
       } else {
-          nuevoTotal = totalCosto - totalPagos;
-          formData.nuevoTotal = nuevoTotal;
+        nuevoTotal = totalCosto - totalPagos;
+        formData.nuevoTotal = nuevoTotal;
 
-          console.log("el total que debe pagar la persona: "+nuevoTotal)
+        console.log("el total que debe pagar la persona: " + nuevoTotal)
 
-         
-          if (nuevoTotal > 0) {
-            
 
-          }
+        if (nuevoTotal > 0) {
+
+
+        }
       }
-  }
+    }
 
 
-  console.log("alerta de nuevo total: "+formData.nuevoTotal)
- 
+    console.log("alerta de nuevo total: " + formData.nuevoTotal)
+
 
     console.log("total de personas: " + formData.cantidadPersonas.ninios);
     console.log("total costo 3: " + totalCosto);
@@ -292,31 +305,31 @@ export default function App() {
     console.log("total costo 2: " + totalPendiente);
 
     if ((name === 'pagoPendiente' && parseFloat(value) > totalPendiente) ||
-        (name === 'pagoAnticipado' && parseFloat(value) > totalCosto)) {
-        alert('El monto no puede ser mayor que el costo total o el monto pendiente.');
+      (name === 'pagoAnticipado' && parseFloat(value) > totalCosto)) {
+      alert('El monto no puede ser mayor que el costo total o el monto pendiente.');
     } else {
-        if ((name === 'ninios' || name === 'adultos')) {
-            const nuevosValores = {
-                ...formData.cantidadPersonas,
-                [fieldName]: parseInt(value, 10)
-            };
-            const nuevoTotalClientes = nuevosValores.ninios + nuevosValores.adultos;
+      if ((name === 'ninios' || name === 'adultos')) {
+        const nuevosValores = {
+          ...formData.cantidadPersonas,
+          [fieldName]: parseInt(value, 10)
+        };
+        const nuevoTotalClientes = nuevosValores.ninios + nuevosValores.adultos;
 
-            if (nuevoTotalClientes !== cantidadDeClientes) {
-                formData.pagoAnticipado = "";
-            }
+        if (nuevoTotalClientes !== cantidadDeClientes) {
+          formData.pagoAnticipado = "";
         }
+      }
 
-        setFormData({
-            ...formData,
-            [name]: value,
-            totalCosto,
-            nuevoTotal: formData.nuevoTotal,
-            ...(name === "tipo_cabania" && { [name]: value }),
-            ...(fieldName ? { cantidadPersonas: { ...formData.cantidadPersonas, [fieldName]: parseInt(value, 10) } } : {})
-        });
+      setFormData({
+        ...formData,
+        [name]: value,
+        totalCosto,
+        nuevoTotal: formData.nuevoTotal,
+        ...(name === "tipo_cabania" && { [name]: value }),
+        ...(fieldName ? { cantidadPersonas: { ...formData.cantidadPersonas, [fieldName]: parseInt(value, 10) } } : {})
+      });
     }
-};
+  };
 
 
 
@@ -367,52 +380,52 @@ export default function App() {
       let fecha = new Date();
 
       fecha.setHours(fecha.getHours() - 5);
-    
+
       const fechaAjustada = fecha.toLocaleString();
 
       const disponibleInventario = response.data.cantidadRestante;
 
       const clienteResponse = await AxiosInstance.get(`/cabania-clientes/${selectedClientId}`);
       const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
-      const  numeroDebebidas = clienteResponse.data.cantidadDeBebidas.filter(bebida => bebida.mensaje === "Cortesía" && bebida.fechaDeMarca === "");
+      const numeroDebebidas = clienteResponse.data.cantidadDeBebidas.filter(bebida => bebida.mensaje === "Cortesía" && bebida.fechaDeMarca === "");
       const cantidadTotalCortesia = numeroDebebidas.reduce((total, bebida) => total + bebida.cantidad, 0);
-      console.log("numero de cortesias: "+cantidadTotalCortesia)
-      console.log("cantidad de bebidas del usuario"+JSON.stringify(numeroDebebidas, null, 2))
+      console.log("numero de cortesias: " + cantidadTotalCortesia)
+      console.log("cantidad de bebidas del usuario" + JSON.stringify(numeroDebebidas, null, 2))
       const totalPersonas = ninios + adultos;
 
       if (esCortesia) {
-       
+
         const nuevaCantidadTotalCortesia = cantidadTotalCortesia;
         const cantidadRestante = totalPersonas - cantidadTotalCortesia;
-        console.log("cantidad restante: "+cantidadRestante)
-        console.log("supuesta nueva cantidad: "+nuevaCantidadTotalCortesia)
+        console.log("cantidad restante: " + cantidadRestante)
+        console.log("supuesta nueva cantidad: " + nuevaCantidadTotalCortesia)
 
-        if (cantidad > disponibleInventario ) {
+        if (cantidad > disponibleInventario) {
           alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
           return false;
         }
 
-        if(cantidad > cantidadRestante){
+        if (cantidad > cantidadRestante) {
           alert(`el usuario tiene ${cantidadRestante} cortesias disponibles`)
           return;
         }
-    
+
         if (nuevaCantidadTotalCortesia > totalPersonas) {
           alert(`La cantidad de cortesías (${nuevaCantidadTotalCortesia}) no puede exceder la cantidad de personas (${totalPersonas}).`);
           return false;
         }
-    
+
         if (cantidad > cantidadRestante) {
           alert(`Solo puedes agregar hasta ${cantidadRestante} cortesías adicionales.`);
           return false;
         }
       } else {
-        if (cantidad > disponibleInventario ) {
+        if (cantidad > disponibleInventario) {
           alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
           return false;
         }
       }
-      if (cantidad > disponibleInventario ) {
+      if (cantidad > disponibleInventario) {
         alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
         return false;
       }
@@ -677,58 +690,58 @@ export default function App() {
       let fecha = new Date();
 
       fecha.setHours(fecha.getHours() - 5);
-    
+
       const fechaAjustada = fecha.toLocaleString();
 
       const disponibleInventario = response.data.cantidadRestante;
 
       const clienteResponse = await AxiosInstance.get(`/cabania-clientes/${selectedClientId}`);
       const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
-      const  numeroDeFood = clienteResponse.data.cantidadDeFood.filter(food => food.mensaje === "Cortesía" && food.fechaDeMarca === "");
+      const numeroDeFood = clienteResponse.data.cantidadDeFood.filter(food => food.mensaje === "Cortesía" && food.fechaDeMarca === "");
       const cantidadTotalCortesia = numeroDeFood.reduce((total, food) => total + food.cantidad, 0);
-      console.log("numero de cortesias: "+cantidadTotalCortesia)
-      console.log("cantidad de bebidas del usuario"+JSON.stringify(numeroDeFood, null, 2))
+      console.log("numero de cortesias: " + cantidadTotalCortesia)
+      console.log("cantidad de bebidas del usuario" + JSON.stringify(numeroDeFood, null, 2))
       const totalPersonas = ninios + adultos;
-      
+
       if (esCortesia) {
-        
+
         const nuevaCantidadTotalCortesia = cantidadTotalCortesia;
         const cantidadRestante = totalPersonas - cantidadTotalCortesia;
-        console.log("cantidad restante: "+cantidadRestante)
-        console.log("supuesta nueva cantidad: "+nuevaCantidadTotalCortesia)
-        
-        if(cantidad > totalPersonas){
+        console.log("cantidad restante: " + cantidadRestante)
+        console.log("supuesta nueva cantidad: " + nuevaCantidadTotalCortesia)
+
+        if (cantidad > totalPersonas) {
           alert(`La cantidad de cortesias ${cantidad} no debe superar a la cantidad de personas ${totalPersonas} `)
           return;
         }
 
-        if (cantidad > disponibleInventario ) {
+        if (cantidad > disponibleInventario) {
           alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
           return false;
         }
 
 
-        if(cantidad > cantidadRestante){
+        if (cantidad > cantidadRestante) {
           alert(`el usuario tiene ${cantidadRestante} cortesias disponibles`)
           return;
         }
-    
+
         if (nuevaCantidadTotalCortesia > totalPersonas) {
           alert(`La cantidad de cortesías (${nuevaCantidadTotalCortesia}) no puede exceder la cantidad de personas (${totalPersonas}).`);
           return false;
         }
-    
+
         if (cantidad > cantidadRestante) {
           alert(`Solo puedes agregar hasta ${cantidadRestante} cortesías adicionales.`);
           return false;
         }
       } else {
-        if (cantidad > disponibleInventario ) {
+        if (cantidad > disponibleInventario) {
           alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
           return false;
         }
       }
-      if (cantidad > disponibleInventario ) {
+      if (cantidad > disponibleInventario) {
         alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
         return false;
       }
@@ -1175,9 +1188,9 @@ export default function App() {
 
 
   const [ancho, setAncho] = React.useState('md')
-  const sizesm = ["xl"];
+  const sizesm = ["2xl"];
 
-  const handleOpenm = (size, userId) => {
+  const handleOpenm = async (size, userId) => {
     setAncho(size);
     setSelectedClientId(userId);
     openModalM();
@@ -1211,9 +1224,25 @@ export default function App() {
     setFiltro3("")
     setFiltro4("")
     setFiltro5("")
+
+    setCantidadBebidaDisponible("")
+    setCantidadBebida1Disponible("")
+    setCantidadBebida2Disponible("")
+    setCantidadBebida3Disponible("")
+    setCantidadBebida4Disponible("")
+
+
+    const response = await AxiosInstance.get("/food");
+    setSnacks(response.data);
+    const responses = await AxiosInstance.get("/drinks");
+    setDrinks(responses.data);
+
+
+
+
   };
 
-  const handleOpenmf = (size, userId) => {
+  const handleOpenmf = async (size, userId) => {
     setAncho(size);
     setSelectedClientId(userId);
     openModalF();
@@ -1253,6 +1282,17 @@ export default function App() {
     setFoodFiltro3("")
     setFoodFiltro4("")
     setFoodFiltro5("")
+
+    setCantidadFoodDisponible("")
+    setCantidadFood1Disponible("")
+    setCantidadFood2Disponible("")
+    setCantidadFood3Disponible("")
+    setCantidadFood4Disponible("")
+
+    const response = await AxiosInstance.get("/food");
+    setSnacks(response.data);
+    const responses = await AxiosInstance.get("/drinks");
+    setDrinks(responses.data);
 
   };
 
@@ -1310,32 +1350,32 @@ export default function App() {
       toast.error('Debe llenar todos los campos');
       return;
     }
-  
+
     if (selectedClienteId) {
-      console.log("identificacion del cliente: "+selectedClienteId)
+      console.log("identificacion del cliente: " + selectedClienteId)
       try {
         const clienteResponse = await AxiosInstance.get(`/cabania-clientes-identificacion/${selectedClienteId}`);
         const clienteData = clienteResponse.data;
-  
+
         const nuevoValorTotal = clienteData.valorTotal - formDatas.pagoPendiente;
-  
+
         const response = await AxiosInstance.put(`/cabania-clientes/${selectedClienteId}/actualizar`, {
           valorTotal: nuevoValorTotal,
           pagoPendiente: formDatas.pagoPendiente,
           mediosDePagoPendiente: formDatas.mediosDePagoPendiente
         });
-        
+
         setFormDatas({
           pagoPendiente: '',
           mediosDePagoPendiente: ''
         });
-  
+
         toast.success('Datos actualizados exitosamente');
-  
+
         const responses = await AxiosInstance.get("/cabania-clientes");
         const usuariosOrdenados = responses.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
         setUsers(usuariosOrdenados);
-  
+
       } catch (error) {
         console.error('Hubo un problema con la petición Axios:', error);
       }
@@ -1343,7 +1383,7 @@ export default function App() {
       console.error('No hay un cliente seleccionado para actualizar');
     }
   };
-  
+
   //#endregion
 
   const [displayLimit, setDisplayLimit] = useState(5);
@@ -1389,18 +1429,18 @@ export default function App() {
 
     try {
       const svgBase64 = await toBase64(svg);
-      pdf.addImage(svgBase64, 'JPEG', 0, 0, 220, 80); 
+      pdf.addImage(svgBase64, 'JPEG', 0, 0, 220, 80);
     } catch (error) {
       console.error("Error al cargar la imagen", error);
     }
 
     try {
       const waveBase64 = await toBase64(wave);
-      pdf.addImage(waveBase64, 'JPEG', 0, 240, 220, 80); 
+      pdf.addImage(waveBase64, 'JPEG', 0, 240, 220, 80);
     } catch (error) {
       console.error("Error al cargar la imagen", error);
     }
-  
+
     try {
       const logoBase64 = await toBase64(logo);
       pdf.addImage(logoBase64, 'JPEG', 85, 25, 40, 40);
@@ -1413,7 +1453,7 @@ export default function App() {
     pdf.setTextColor("#FFFFFF");
     pdf.text("HOTEL MEQO", 105, 20, null, null, 'center');
 
-    pdf.setTextColor(0, 0, 0); 
+    pdf.setTextColor(0, 0, 0);
     pdf.setFontSize(12);
     pdf.text('Datos de la empresa', 157, 54);
 
@@ -1446,7 +1486,7 @@ export default function App() {
       const diferenciaEnHoras = (ahora - fechaDeMarca) / cincoHorasEnMilisegundos;
       return producto.fechaDeMarca === "" || diferenciaEnHoras <= 3;
     }).reduce((acc, producto) => acc + (producto.cantidad * producto.precio), 0);
-    
+
     productos.forEach((producto) => {
       const fechaDeMarca = new Date(producto.fechaDeMarca);
       const diferenciaEnHoras = (ahora - fechaDeMarca) / cincoHorasEnMilisegundos;
@@ -1467,7 +1507,7 @@ export default function App() {
 
 
     pdf.save("factura.pdf");
-};
+  };
 
 
 
@@ -1554,14 +1594,14 @@ export default function App() {
               }}
               className="capitalize text-white bg-black"
             >
-              <PlusIcon/> Agregar
+              <PlusIcon /> Agregar
             </Button>
           </div>
           <div className="flex items-center justify-center w-32 ml-3 ">
-        <Button className="bg-blue-500 w-28 text-white">
-          Exportar
-          </Button>
-        </div>
+            <Button className="bg-blue-500 w-28 text-white">
+              Exportar
+            </Button>
+          </div>
 
           <Modal backdrop={backdrop} isOpen={isOpen} onClose={onClose}>
             <ModalContent>
@@ -1736,39 +1776,39 @@ export default function App() {
         </div>
 
         <div>
-        <Input
-        label="Search"
-        value={busqueda}
-        onChange={handleSearchChange}
-        isClearable
-        radius="lg"
-        className="w-72 h-12"
-        classNames={{
-          label: "text-black/50 dark:text-white/90",
-          input: [
-            "bg-transparent",
-            "text-black/90 dark:text-black/90",
-            "placeholder:text-black/60 dark:placeholder:text-black/60",
-          ],
-          innerWrapper: "bg-transparent",
-          inputWrapper: [
-            "shadow-xl",
-            "bg-default-200/50",
-            "dark:bg-default/60",
-            "backdrop-blur-xl",
-            "backdrop-saturate-200",
-            "hover:bg-default-200/70",
-            "dark:hover:bg-default/70",
-            "group-data-[focused=true]:bg-default-200/50",
-            "dark:group-data-[focused=true]:bg-default/60",
-            "!cursor-text",
-          ],
-        }}
-        placeholder="Type to search..."
-        startContent={
-          <SearchIcon className="text-black/50 mb-0.5 dark:text-black/90 text-black pointer-events-none flex-shrink-0" />
-        }
-      />
+          <Input
+            label="Search"
+            value={busqueda}
+            onChange={handleSearchChange}
+            isClearable
+            radius="lg"
+            className="w-72 h-12"
+            classNames={{
+              label: "text-black/50 dark:text-white/90",
+              input: [
+                "bg-transparent",
+                "text-black/90 dark:text-black/90",
+                "placeholder:text-black/60 dark:placeholder:text-black/60",
+              ],
+              innerWrapper: "bg-transparent",
+              inputWrapper: [
+                "shadow-xl",
+                "bg-default-200/50",
+                "dark:bg-default/60",
+                "backdrop-blur-xl",
+                "backdrop-saturate-200",
+                "hover:bg-default-200/70",
+                "dark:hover:bg-default/70",
+                "group-data-[focused=true]:bg-default-200/50",
+                "dark:group-data-[focused=true]:bg-default/60",
+                "!cursor-text",
+              ],
+            }}
+            placeholder="Type to search..."
+            startContent={
+              <SearchIcon className="text-black/50 mb-0.5 dark:text-black/90 text-black pointer-events-none flex-shrink-0" />
+            }
+          />
         </div>
 
       </div>
@@ -1886,7 +1926,7 @@ export default function App() {
                                           </td>
                                           <td>
                                             {
-                                              (() => { 
+                                              (() => {
                                                 const cincoHorasEnMilisegundos = 3 * 60 * 60 * 1000; // 5 horas en milisegundos
                                                 const ahora = new Date();
                                                 const fechaDeMarca = new Date(producto.fechaDeMarca);
@@ -2136,6 +2176,12 @@ export default function App() {
                                     setCantidadBebida(isNaN(value) ? "" : value);
                                   }}
                                 />
+                                <Input
+                                  disabled
+                                  label=" Stock "
+                                  className="w-44 flex text-blue-500 border-2 border-blue-400 rounded-xl"
+                                  placeholder={` ${cantidadBebidaDisponible}`}
+                                />
                                 <Select
                                   className="ml-2"
                                   name="bebidas"
@@ -2149,6 +2195,7 @@ export default function App() {
                                     if (bebidaSeleccionadaInfo) {
                                       setPrecioBebidaSeleccionada(bebidaSeleccionadaInfo.ValorUnitario);
                                       setBebidaSeleccionadaId(bebidaSeleccionadaInfo._id);
+                                      setCantidadBebidaDisponible(bebidaSeleccionadaInfo.CantidadInicial);
                                     }
                                   }}
                                 >
@@ -2188,6 +2235,12 @@ export default function App() {
                                     setCantidadBebida1(isNaN(value) ? "" : value);
                                   }}
                                 />
+                                <Input
+                                  disabled
+                                  label=" Stock "
+                                  className="w-44 flex text-blue-500 border-2 border-blue-400 rounded-xl"
+                                  placeholder={` ${cantidadBebida1Disponible}`}
+                                />
                                 <Select
                                   className="ml-2"
                                   name="bebidas"
@@ -2201,6 +2254,7 @@ export default function App() {
                                     if (bebida1SeleccionadaInfo) {
                                       setPrecioBebida1Seleccionada(bebida1SeleccionadaInfo.ValorUnitario);
                                       setBebida1SeleccionadaId(bebida1SeleccionadaInfo._id);
+                                      setCantidadBebida1Disponible(bebida1SeleccionadaInfo.CantidadInicial);
                                     }
                                   }}
                                 >
@@ -2240,6 +2294,12 @@ export default function App() {
                                     setCantidadBebida2(isNaN(value) ? "" : value);
                                   }}
                                 />
+                                <Input
+                                  disabled
+                                  label=" Stock "
+                                  className="w-44 flex text-blue-500 border-2 border-blue-400 rounded-xl"
+                                  placeholder={` ${cantidadBebida2Disponible}`}
+                                />
                                 <Select
                                   className="ml-2"
                                   name="bebidas"
@@ -2253,6 +2313,7 @@ export default function App() {
                                     if (bebida2SeleccionadaInfo) {
                                       setPrecioBebida2Seleccionada(bebida2SeleccionadaInfo.ValorUnitario);
                                       setBebida2SeleccionadaId(bebida2SeleccionadaInfo._id);
+                                      setCantidadBebida2Disponible(bebida2SeleccionadaInfo.CantidadInicial);
                                     }
                                   }}
                                 >
@@ -2292,6 +2353,12 @@ export default function App() {
                                     setCantidadBebida3(isNaN(value) ? "" : value);
                                   }}
                                 />
+                                <Input
+                                  disabled
+                                  label=" Stock "
+                                  className="w-44 flex text-blue-500 border-2 border-blue-400 rounded-xl"
+                                  placeholder={` ${cantidadBebida3Disponible}`}
+                                />
                                 <Select
                                   className="ml-2"
                                   name="bebidas"
@@ -2305,6 +2372,7 @@ export default function App() {
                                     if (bebida3SeleccionadaInfo) {
                                       setPrecioBebida3Seleccionada(bebida3SeleccionadaInfo.ValorUnitario);
                                       setBebida3SeleccionadaId(bebida3SeleccionadaInfo._id);
+                                      setCantidadBebida3Disponible(bebida3SeleccionadaInfo.CantidadInicial);
                                     }
                                   }}
                                 >
@@ -2344,6 +2412,12 @@ export default function App() {
                                     setCantidadBebida4(isNaN(value) ? "" : value);
                                   }}
                                 />
+                                <Input
+                                  disabled
+                                  label=" Stock "
+                                  className="w-44 flex text-blue-500 border-2 border-blue-400 rounded-xl"
+                                  placeholder={` ${cantidadBebida4Disponible}`}
+                                />
                                 <Select
                                   className="ml-2"
                                   name="bebidas"
@@ -2357,6 +2431,7 @@ export default function App() {
                                     if (bebida4SeleccionadaInfo) {
                                       setPrecioBebida4Seleccionada(bebida4SeleccionadaInfo.ValorUnitario);
                                       setBebida4SeleccionadaId(bebida4SeleccionadaInfo._id);
+                                      setCantidadBebida4Disponible(bebida4SeleccionadaInfo.CantidadInicial);
                                     }
                                   }}
                                 >
@@ -2448,6 +2523,12 @@ export default function App() {
                                   setCantidadFood(isNaN(value) ? "" : value);
                                 }}
                               />
+                              <Input
+                                disabled
+                                label=" Stock "
+                                className="w-44 flex text-blue-500 border-2 border-blue-400 rounded-xl"
+                                placeholder={` ${cantidadFoodDisponible}`}
+                              />
                               <Select
                                 className="ml-2"
                                 name="restaurante"
@@ -2461,6 +2542,7 @@ export default function App() {
                                   if (foodSeleccionadaInfo) {
                                     setPrecioFoodSeleccionada(foodSeleccionadaInfo.ValorUnitario);
                                     setFoodSeleccionadaId(foodSeleccionadaInfo._id);
+                                    setCantidadFoodDisponible(foodSeleccionadaInfo.CantidadInicial);
                                   }
                                 }}
                               >
@@ -2500,6 +2582,12 @@ export default function App() {
                                   setCantidadFood1(isNaN(value) ? "" : value);
                                 }}
                               />
+                              <Input
+                                disabled
+                                label=" Stock "
+                                className="w-44 flex text-blue-500 border-2 border-blue-400 rounded-xl"
+                                placeholder={` ${cantidadFood1Disponible}`}
+                              />
                               <Select
                                 className="ml-2"
                                 name="restaurante"
@@ -2513,6 +2601,7 @@ export default function App() {
                                   if (food1SeleccionadaInfo) {
                                     setPrecioFood1Seleccionada(food1SeleccionadaInfo.ValorUnitario);
                                     setFood1SeleccionadaId(food1SeleccionadaInfo._id);
+                                    setCantidadFood1Disponible(food1SeleccionadaInfo.CantidadInicial);
                                   }
                                 }}
                               >
@@ -2552,6 +2641,12 @@ export default function App() {
                                   setCantidadFood2(isNaN(value) ? "" : value);
                                 }}
                               />
+                              <Input
+                                disabled
+                                label=" Stock "
+                                className="w-44 flex text-blue-500 border-2 border-blue-400 rounded-xl"
+                                placeholder={` ${cantidadFood2Disponible}`}
+                              />
                               <Select
                                 className="ml-2"
                                 name="restaurante"
@@ -2565,6 +2660,7 @@ export default function App() {
                                   if (food2SeleccionadaInfo) {
                                     setPrecioFood2Seleccionada(food2SeleccionadaInfo.ValorUnitario);
                                     setFood2SeleccionadaId(food2SeleccionadaInfo._id);
+                                    setCantidadFood2Disponible(food2SeleccionadaInfo.CantidadInicial);
                                   }
                                 }}
                               >
@@ -2604,6 +2700,12 @@ export default function App() {
                                   setCantidadFood3(isNaN(value) ? "" : value);
                                 }}
                               />
+                              <Input
+                                disabled
+                                label=" Stock "
+                                className="w-44 flex text-blue-500 border-2 border-blue-400 rounded-xl"
+                                placeholder={` ${cantidadFood3Disponible}`}
+                              />
                               <Select
                                 className="ml-2"
                                 name="restaurante"
@@ -2617,6 +2719,7 @@ export default function App() {
                                   if (food3SeleccionadaInfo) {
                                     setPrecioFood3Seleccionada(food3SeleccionadaInfo.ValorUnitario);
                                     setFood3SeleccionadaId(food3SeleccionadaInfo._id);
+                                    setCantidadFood3Disponible(food3SeleccionadaInfo.CantidadInicial);
                                   }
                                 }}
                               >
@@ -2656,6 +2759,12 @@ export default function App() {
                                   setCantidadFood4(isNaN(value) ? "" : value);
                                 }}
                               />
+                              <Input
+                                disabled
+                                label=" Stock "
+                                className="w-44 flex text-blue-500 border-2 border-blue-400 rounded-xl"
+                                placeholder={` ${cantidadFood4Disponible}`}
+                              />
                               <Select
                                 className="ml-2"
                                 name="restaurante"
@@ -2669,6 +2778,7 @@ export default function App() {
                                   if (food4SeleccionadaInfo) {
                                     setPrecioFood4Seleccionada(food4SeleccionadaInfo.ValorUnitario);
                                     setFood4SeleccionadaId(food4SeleccionadaInfo._id);
+                                    setCantidadFood4Disponible(food4SeleccionadaInfo.CantidadInicial);
                                   }
                                 }}
                               >
@@ -2732,7 +2842,7 @@ export default function App() {
                 {/* {cliente.restaurante.map((food, index) => (
                   <TableCell key={index}>{food?.nombre || "aun no hay bebidas"}</TableCell>
                 ))} */}
-                <TableCell>{cliente.tipo_cabania === "Mayapo" ? (( cliente.nuevoTotal ) )
+                <TableCell>{cliente.tipo_cabania === "Mayapo" ? ((cliente.nuevoTotal))
                   : ((cliente.nuevoTotal))}</TableCell>
                 {/* <TableCell className="flex justify-center align-center pr-5 w-60">
                   {cliente.identificacion === editedUserId && (
