@@ -28,6 +28,7 @@ import chevron from "../../images/right.png";
 import plus from "../../images/plus.png";
 import plusb from "../../images/plus_blue.png";
 import { SearchIcon } from "./SearchIcon";
+// import toast, { Toaster}  from 'alert';
 import toast, { Toaster } from 'react-hot-toast';
 import jsPDF from "jspdf";
 import Swal from 'sweetalert2';
@@ -39,6 +40,7 @@ import wave from "../../images/wave.png"
 import svg from "../../images/svg.png"
 import AxiosInstances from "../../api/axios.js";
 import { PlusIcon } from "../finca/PlusIcon.jsx";
+
 //#endregion
 export default function App() {
 
@@ -140,6 +142,19 @@ export default function App() {
   const [errorAdultos, setErrorAdultos] = useState(false);
   const [errorNinios, setErrorNinios] = useState(false);
 
+  const [cantidadFoodDisponible, setCantidadFoodDisponible] = useState(0);
+  const [cantidadFood1Disponible, setCantidadFood1Disponible] = useState(0);
+  const [cantidadFood2Disponible, setCantidadFood2Disponible] = useState(0);
+  const [cantidadFood3Disponible, setCantidadFood3Disponible] = useState(0);
+  const [cantidadFood4Disponible, setCantidadFood4Disponible] = useState(0);
+
+  const [cantidadBebidaDisponible, setCantidadBebidaDisponible] = useState(0);
+  const [cantidadBebida1Disponible, setCantidadBebida1Disponible] = useState(0);
+  const [cantidadBebida2Disponible, setCantidadBebida2Disponible] = useState(0);
+  const [cantidadBebida3Disponible, setCantidadBebida3Disponible] = useState(0);
+  const [cantidadBebida4Disponible, setCantidadBebida4Disponible] = useState(0);
+
+
 
 
   const options = ["Si", "No"];
@@ -169,6 +184,7 @@ export default function App() {
   const [busqueda, setBusqueda] = useState('');
   const [pasadiaAdultos, setPasadiaAdultos] = useState(null)
   const [pasadiaNinios, setPasadiaNinios] = useState(null)
+  const [ccDisponibles, setCcDisponibles] = useState(null)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -328,6 +344,7 @@ export default function App() {
        
         const nuevaCantidadTotalCortesia = cantidadTotalCortesia;
         const cantidadRestante = totalPersonas - cantidadTotalCortesia;
+        setCcDisponibles(cantidadRestante)
         console.log("cantidad restante: "+cantidadRestante)
         console.log("supuesta nueva cantidad: "+nuevaCantidadTotalCortesia)
 
@@ -621,6 +638,7 @@ export default function App() {
     const checkStockAndUpdateInventory = async (foodId, cantidad) => {
       const response = await AxiosInstances.get(`/verificar-disponibilidad/${foodId}`);
 
+
       let fecha = new Date();
 
       fecha.setHours(fecha.getHours() - 5);
@@ -636,48 +654,88 @@ export default function App() {
       console.log("numero de cortesias: "+cantidadTotalCortesia)
       console.log("cantidad de bebidas del usuario"+JSON.stringify(numeroDeFood, null, 2))
       const totalPersonas = ninios + adultos;
-      
-      if (esCortesia) {
-        
-        const nuevaCantidadTotalCortesia = cantidadTotalCortesia;
-        const cantidadRestante = totalPersonas - cantidadTotalCortesia;
-        console.log("cantidad restante: "+cantidadRestante)
-        console.log("supuesta nueva cantidad: "+nuevaCantidadTotalCortesia)
-        
-        if(cantidad > totalPersonas){
-          alert(`La cantidad de cortesias ${cantidad} no debe superar a la cantidad de personas ${totalPersonas} `)
-          return;
-        }
 
-        if (cantidad > disponibleInventario ) {
-          alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
-          return false;
+      if(foodSeleccionada && disponibleInventario === 0){
+        // alert(`Producto agotado ${foodSeleccionada} en el stock ( ${disponibleInventario} ) `);
+        toast.error('Algun producto esta agotado',
+        {
+          style: {
+            borderRadius: '10px',
+            background: '#333',
+            color: '#fff',
+          },
         }
-
-
-        if(cantidad > cantidadRestante){
-          alert(`el usuario tiene ${cantidadRestante} cortesias disponibles`)
-          return;
-        }
-    
-        if (nuevaCantidadTotalCortesia > totalPersonas) {
-          alert(`La cantidad de cortesías (${nuevaCantidadTotalCortesia}) no puede exceder la cantidad de personas (${totalPersonas}).`);
-          return false;
-        }
-    
-        if (cantidad > cantidadRestante) {
-          alert(`Solo puedes agregar hasta ${cantidadRestante} cortesías adicionales.`);
-          return false;
-        }
-      } else {
-        if (cantidad > disponibleInventario ) {
-          alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
-          return false;
-        }
-      }
-      if (cantidad > disponibleInventario ) {
-        alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
+      );
         return false;
+      }
+
+      // if(food1Seleccionada && disponibleInventario === 0){
+      //   alert(`Producto agotado ${food1Seleccionada} en el stock ( ${disponibleInventario} ) `);
+      //   return false;
+      // }
+      
+      // if(food2Seleccionada || disponibleInventario === 0){
+      //   alert(`Producto agotado ${food2Seleccionada} en el stock ( ${disponibleInventario} ) `);
+      //  return false;
+      // }
+
+
+
+        
+
+        
+        
+        if (esCortesia) {
+          
+          const nuevaCantidadTotalCortesia = cantidadTotalCortesia;
+          const cantidadRestante = totalPersonas - cantidadTotalCortesia;
+          console.log("cantidad restante: "+cantidadRestante)
+          console.log("supuesta nueva cantidad: "+nuevaCantidadTotalCortesia)
+          
+          if(cantidad > totalPersonas){
+            alert(`La cantidad de cortesias ${cantidad} no debe superar a la cantidad de personas ${totalPersonas} `)
+            return;
+          }
+  
+          if (cantidad > disponibleInventario ) {
+            alert(`Solo quedan 1 ${disponibleInventario} unidades disponibles en el inventario.`);
+            return false;
+          }
+  
+  
+          if(cantidad > cantidadRestante){
+            alert(`el usuario tiene ${cantidadRestante} cortesias disponibles`)
+            return;
+          }
+      
+          if (nuevaCantidadTotalCortesia > totalPersonas) {
+            alert(`La cantidad de cortesías (${nuevaCantidadTotalCortesia}) no puede exceder la cantidad de personas (${totalPersonas}).`);
+            return false;
+          }
+      
+          if (cantidad > cantidadRestante) {
+            alert(`Solo puedes agregar hasta ${cantidadRestante} cortesías adicionales.`);
+            return false;
+          }
+        } 
+
+
+
+  
+
+      
+
+
+
+      if (cantidad > disponibleInventario ) {
+        alert(`Solo quedan ${disponibleInventario } unidades disponibles en el inventario.`);
+        return;
+      }else if(disponibleInventario === 0 && !foodSeleccionada){
+        alert(`Ya no quedan ${foodSeleccionada} disponibles en el inventario `);
+        return;
+      }else if(disponibleInventario === 0 && !food1Seleccionada){
+        alert(`Ya no quedan ${food1Seleccionada} disponibles en el inventario `);
+        return;
       }
 
       await actualizarInventarioBebida(foodId, cantidad);
@@ -899,12 +957,10 @@ export default function App() {
 
       closeModalF();
       closeModalF();
-      const responses = await Axios.get("/pasadia-clientes");
+      const responses = await AxiosInstances.get("/pasadia-clientes");
 
-      // Ordena los datos de la respuesta de la petición GET, no del PUT
       const usuariosOrdenados = responses.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
 
-      // Actualiza el estado con los usuarios ordenados
       setUsers(usuariosOrdenados);
     } catch (error) {
       console.error('Error al guardar la bebida en el cliente:', error.message);
@@ -1163,6 +1219,12 @@ export default function App() {
     setFiltro4("")
     setFiltro5("")
 
+    setCantidadBebidaDisponible("")
+setCantidadBebida1Disponible("")
+setCantidadBebida2Disponible("")
+setCantidadBebida3Disponible("")
+setCantidadBebida4Disponible("")
+
   };
 
   const [selectedSize, setSelectedSize] = React.useState('md');
@@ -1207,6 +1269,12 @@ export default function App() {
     setFoodFiltro3("")
     setFoodFiltro4("")
     setFoodFiltro5("")
+
+    setCantidadFoodDisponible("")
+    setCantidadFood1Disponible("")
+    setCantidadFood2Disponible("")
+    setCantidadFood3Disponible("")
+    setCantidadFood4Disponible("")
 
 
   };
@@ -1504,9 +1572,10 @@ export default function App() {
 
   //#endregion
 
+
   return (
     <div className="max-w-full w-98 mx-auto">
-      <Toaster />
+      <Toaster position="top-right" />
       <div className="flex justify-between flex-row-reverse px-5 flex-wrap">
 
         <div className="">
@@ -2049,6 +2118,9 @@ export default function App() {
                                     setCantidadBebida(isNaN(value) ? "" : value);
                                   }}
                                 />
+                                <Input
+                                  placeholder={`${ccDisponibles}`}
+                                />
                                 <Select
                                   className="ml-2"
                                   name="bebidas"
@@ -2334,7 +2406,7 @@ export default function App() {
                     <ModalContent>
                       {(closeModalF) => (
                         <>
-                          <ModalHeader className="flex flex-col gap-1">COMIDAS</ModalHeader>
+                          <ModalHeader className="flex flex-col gap-1">COMIDAS  </ModalHeader>
                           <ModalBody>
                             <Checkbox
                               checked={esCortesia}
@@ -2354,6 +2426,12 @@ export default function App() {
                                   setCantidadFood(isNaN(value) ? '' : value);
                                 }}
                               />
+                              <Input 
+                              disabled
+                              label="Stock"
+                              className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
+                              placeholder={`   ${cantidadFoodDisponible}`}
+                              />
                               <Select
                                 className="ml-2"
                                 name="restaurante"
@@ -2367,6 +2445,7 @@ export default function App() {
                                   if (foodSeleccionadaInfo) {
                                     setPrecioFoodSeleccionada(foodSeleccionadaInfo.ValorUnitario);
                                     setFoodSeleccionadaId(foodSeleccionadaInfo._id);
+                                    setCantidadFoodDisponible(foodSeleccionadaInfo.CantidadInicial);
                                   }
                                 }}
                               >
@@ -2407,6 +2486,12 @@ export default function App() {
                                   setCantidadFood1(isNaN(value) ? '' : value);
                                 }}
                               />
+                              <Input 
+                              disabled
+                              label="Stock"
+                              className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
+                              placeholder={`   ${cantidadFood1Disponible}`}
+                              />
                               <Select
                                 className="ml-2"
                                 name="restaurante"
@@ -2420,6 +2505,7 @@ export default function App() {
                                   if (food1SeleccionadaInfo) {
                                     setPrecioFood1Seleccionada(food1SeleccionadaInfo.ValorUnitario);
                                     setFood1SeleccionadaId(food1SeleccionadaInfo._id);
+                                    setCantidadFood1Disponible(food1SeleccionadaInfo.CantidadInicial);
                                   }
                                 }}
                               >
@@ -2461,6 +2547,12 @@ export default function App() {
                                   setCantidadFood2(isNaN(value) ? '' : value);
                                 }}
                               />
+                              <Input 
+                              disabled
+                              label="Stock"
+                              className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
+                              placeholder={`   ${cantidadFood2Disponible}`}
+                              />
                               <Select
                                 className="ml-2"
                                 name="restaurante"
@@ -2474,6 +2566,7 @@ export default function App() {
                                   if (food2SeleccionadaInfo) {
                                     setPrecioFood2Seleccionada(food2SeleccionadaInfo.ValorUnitario);
                                     setFood2SeleccionadaId(food2SeleccionadaInfo._id);
+                                    setCantidadFood2Disponible(food2SeleccionadaInfo.CantidadInicial);
                                   }
                                 }}
                               >
@@ -2514,6 +2607,12 @@ export default function App() {
                                   setCantidadFood3(isNaN(value) ? '' : value);
                                 }}
                               />
+                              <Input 
+                              disabled
+                              label="Stock"
+                              className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
+                              placeholder={`   ${cantidadFood3Disponible}`}
+                              />
                               <Select
                                 className="ml-2"
                                 name="restaurante"
@@ -2527,6 +2626,7 @@ export default function App() {
                                   if (food3SeleccionadaInfo) {
                                     setPrecioFood3Seleccionada(food3SeleccionadaInfo.ValorUnitario);
                                     setFood3SeleccionadaId(food3SeleccionadaInfo._id);
+                                    setCantidadFood3Disponible(food3SeleccionadaInfo.CantidadInicial);
                                   }
                                 }}
                               >
@@ -2567,6 +2667,12 @@ export default function App() {
                                   setCantidadFood4(isNaN(value) ? '' : value);
                                 }}
                               />
+                              <Input 
+                              disabled
+                              label="Stock"
+                              className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
+                              placeholder={`   ${cantidadFood4Disponible}`}
+                              />
                               <Select
                                 className="ml-2"
                                 name="restaurante"
@@ -2580,6 +2686,7 @@ export default function App() {
                                   if (food4SeleccionadaInfo) {
                                     setPrecioFood4Seleccionada(food4SeleccionadaInfo.ValorUnitario);
                                     setFood4SeleccionadaId(food4SeleccionadaInfo._id);
+                                    setCantidadFood4Disponible(food4SeleccionadaInfo.CantidadInicial);
                                   }
                                 }}
                               >

@@ -154,10 +154,10 @@ export default function App() {
       }
   
       setEditedName(""); 
-      setEditedType("")
-      setEditedDate("")
-      setEditedCantidad("")
-      setEditedValorUnitario("")
+      setEditedType("");
+      setEditedDate("");
+      setEditedCantidad("");
+      setEditedValorUnitario("");
       setEditedUserId(null); 
   
       toast.success('Producto actualizado exitosamente!');

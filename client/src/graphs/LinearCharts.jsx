@@ -5,7 +5,6 @@ import PeopleReservations from './EnjoyersCPH.jsx';
 import Navbars from '../components/Navbars.jsx';
 
 const App = () => {
-
   return (
     <div className=''>
       <Navbars/>
