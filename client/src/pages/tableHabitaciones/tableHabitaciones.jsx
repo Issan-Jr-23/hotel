@@ -1346,49 +1346,49 @@ export default function App() {
 
   const generarPDF = async () => {
     const pdf = new jsPDF();
-
+  
     await actualizarFechaEnProductos(selectedUser._id);
-
+  
     try {
       const svgBase64 = await toBase64(svg);
       pdf.addImage(svgBase64, 'JPEG', 0, 0, 220, 80);
     } catch (error) {
       console.error("Error al cargar la imagen", error);
     }
-
+  
     try {
       const waveBase64 = await toBase64(wave);
       pdf.addImage(waveBase64, 'JPEG', 0, 240, 220, 80);
     } catch (error) {
       console.error("Error al cargar la imagen", error);
     }
-
+  
     try {
       const logoBase64 = await toBase64(logo);
       pdf.addImage(logoBase64, 'JPEG', 85, 25, 40, 40);
     } catch (error) {
       console.error("Error al cargar la imagen", error);
     }
-
+  
     pdf.setFont("helvetica", "bold");
     pdf.setFontSize(20);
     pdf.setTextColor("#FFFFFF");
     pdf.text("HOTEL MEQO", 105, 20, null, null, 'center');
-
+  
     pdf.setTextColor(0, 0, 0);
     pdf.setFontSize(12);
     pdf.text('Datos de la empresa', 157, 54);
-
+  
     pdf.setFontSize(10);
     pdf.text('Nombre: Hotel Meqo', 164, 63)
-    pdf.text('Numero: 3022785526', 164, 70)
-
+    pdf.text('Numero: 3152390814', 164, 70)
+  
     pdf.setFontSize(12);
     pdf.text('Datos del cliente', 10, 54);
     pdf.setFontSize(10);
     pdf.text(`Nombre: ${selectedUser.nombre}`, 10, 63);
     pdf.text(`Identificación: ${selectedUser.identificacion}`, 10, 70);
-
+  
     // Encabezados de la tabla de productos
     pdf.setFontSize(12);
     pdf.text("Descripción", 10, 80);
@@ -1396,38 +1396,50 @@ export default function App() {
     pdf.text("Precio", 150, 80);
     pdf.text("Total", 180, 80); // Added column header for total
     pdf.line(10, 82, 200, 82);
-
+  
     // Lista de productos
     let y = 90;
     const cincoHorasEnMilisegundos = 3 * 60 * 60 * 1000;
     const productos = [...selectedUser.bebidas, ...selectedUser.restaurante];
-
+  
     const ahora = new Date();
     const totalGeneral = productos.filter(producto => {
       const fechaDeMarca = new Date(producto.fechaDeMarca);
       const diferenciaEnHoras = (ahora - fechaDeMarca) / cincoHorasEnMilisegundos;
       return producto.fechaDeMarca === "" || diferenciaEnHoras <= 3;
     }).reduce((acc, producto) => acc + (producto.cantidad * producto.precio), 0);
-
-    productos.forEach((producto) => {
+  
+    // Lógica para dividir en múltiples páginas
+    const agregarProductoEnPagina = (producto) => {
       const fechaDeMarca = new Date(producto.fechaDeMarca);
       const diferenciaEnHoras = (ahora - fechaDeMarca) / cincoHorasEnMilisegundos;
-
+  
       if (producto.fechaDeMarca === "" || diferenciaEnHoras <= 3) {
         const productoTotal = producto.cantidad * producto.precio;
         pdf.text(producto.nombre, 10, y);
         pdf.text(producto.cantidad.toString(), 88, y);
         pdf.text(`$${producto.precio.toFixed(2)}`, 150, y);
-        pdf.text(`$${productoTotal.toFixed(2)}`, 180, y); // Display the total for each product
+        pdf.text(`$${productoTotal.toFixed(2)}`, 180, y);
+  
+        // Actualizar posición Y
         y += 10;
+  
+        // Verificar si hay espacio suficiente para otro producto en la página actual
+        if (y > 282) { // 297 - Margen inferior
+          // Cambiar a una nueva página
+          pdf.addPage();
+          y = 10; // Reiniciar la posición Y
+        }
       }
-    });
-
-    // Display the total general
+    };
+  
+    // Iterar sobre los productos
+    productos.forEach(agregarProductoEnPagina);
+  
+    // Mostrar el total general en la última página
     pdf.setFontSize(12);
     pdf.text(`Total General: ${totalGeneral.toFixed(2)}`, 150, y);
-
-
+  
     pdf.save("factura.pdf");
   };
 

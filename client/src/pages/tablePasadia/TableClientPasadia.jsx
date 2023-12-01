@@ -1480,7 +1480,7 @@ export default function App() {
   
     pdf.setFontSize(10);
     pdf.text('Nombre: Hotel Meqo', 164, 63)
-    pdf.text('Numero: 3022785526', 164, 70)
+    pdf.text('Numero: 3152390814', 164, 70)
   
     pdf.setFontSize(12);
     pdf.text('Datos del cliente', 10, 54);
