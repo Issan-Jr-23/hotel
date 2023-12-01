@@ -49,6 +49,8 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  
+
 
   const logout = () => {
     Cookies.remove("token");
@@ -71,6 +73,7 @@ export const AuthProvider = ({ children }) => {
         if (!res.data) return setIsAuthenticated(false);
         setIsAuthenticated(true);
         setUser(res.data);
+        
         setLoading(false);
       } catch (error) {
         setIsAuthenticated(false);

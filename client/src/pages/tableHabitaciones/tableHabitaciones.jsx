@@ -178,6 +178,7 @@ export default function App() {
 
   const [busqueda, setBusqueda] = useState('');
   const [valorHabitaciones, setValorHabitaciones] = useState(null)
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -613,6 +614,21 @@ export default function App() {
       console.log("cantidad de bebidas del usuario" + JSON.stringify(numeroDeFood, null, 2))
       const totalPersonas = ninios + adultos;
 
+
+      if (foodSeleccionada && disponibleInventario === 0) {
+        toast.error('Algun producto esta agotado',
+          {
+            style: {
+              borderRadius: '10px',
+              background: '#333',
+              color: '#fff',
+            },
+          }
+        );
+        return false;
+      }
+
+
       if (esCortesia) {
 
         const nuevaCantidadTotalCortesia = cantidadTotalCortesia;
@@ -647,17 +663,17 @@ export default function App() {
         }
       } else {
         if (cantidad > disponibleInventario) {
-          alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
+          alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
           return false;
         }
       }
       if (cantidad > disponibleInventario) {
-        alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
+        alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
         return false;
       }
 
-      await actualizarInventarioBebida(foodId, cantidad);
-      await actualizarStockInicialBebida(foodId, cantidad);
+      await actualizarInventarioFood(foodId, cantidad);
+      await actualizarStockInicialFood(foodId, cantidad);
       return true;
     };
 
@@ -1501,7 +1517,7 @@ export default function App() {
 
   return (
     <div className="max-w-full w-98 mx-auto">
-      <Toaster />
+      <Toaster position="top-right" />
       <div className="flex justify-between px-5">
         <div className=" flex items-center">
           <div className="flex flex-wrap gap-3">

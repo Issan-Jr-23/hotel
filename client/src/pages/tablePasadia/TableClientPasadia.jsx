@@ -387,12 +387,12 @@ export default function App() {
         }
       } else {
         if (cantidad > disponibleInventario) {
-          alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
+          alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
           return false;
         }
       }
       if (cantidad > disponibleInventario) {
-        alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
+        alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
         return false;
       }
 
@@ -1238,10 +1238,10 @@ export default function App() {
     setFiltro5("")
 
     setCantidadBebidaDisponible("")
-setCantidadBebida1Disponible("")
-setCantidadBebida2Disponible("")
-setCantidadBebida3Disponible("")
-setCantidadBebida4Disponible("")
+    setCantidadBebida1Disponible("")
+    setCantidadBebida2Disponible("")
+    setCantidadBebida3Disponible("")
+    setCantidadBebida4Disponible("")
 
   };
 
@@ -2115,9 +2115,7 @@ setCantidadBebida4Disponible("")
                           <>
                             <ModalHeader className="flex flex-col gap-1">
                               <h2>BEBIDAS</h2>
-                              <Input
-                                placeholder={`${ccDisponibles}`}
-                              />
+                             
 
                             </ModalHeader>
                             <ModalBody>
@@ -2141,7 +2139,10 @@ setCantidadBebida4Disponible("")
                                 />
 
                                 <Input
-                                  placeholder={`${ccDisponibles}`}
+                                  disabled
+                                  label=" Stock "
+                                  className="w-44 flex text-blue-500 border-2 border-blue-400 rounded-xl"
+                                  placeholder={` ${cantidadBebidaDisponible}`}
                                 />
 
                                 <Select
@@ -2157,6 +2158,7 @@ setCantidadBebida4Disponible("")
                                     if (bebidaSeleccionadaInfo) {
                                       setPrecioBebidaSeleccionada(bebidaSeleccionadaInfo.ValorUnitario);
                                       setBebidaSeleccionadaId(bebidaSeleccionadaInfo._id);
+                                      setCantidadBebidaDisponible(bebidaSeleccionadaInfo.CantidadInicial);
                                     }
                                   }}
                                 >
@@ -2196,6 +2198,12 @@ setCantidadBebida4Disponible("")
                                     setCantidadBebida1(isNaN(value) ? "" : value);
                                   }}
                                 />
+                                <Input
+                                  disabled
+                                  label=" Stock "
+                                  className="w-44 flex text-blue-500 border-2 border-blue-400 rounded-xl"
+                                  placeholder={` ${cantidadBebida1Disponible}`}
+                                />
                                 <Select
                                   className="ml-2"
                                   name="bebidas"
@@ -2209,6 +2217,7 @@ setCantidadBebida4Disponible("")
                                     if (bebida1SeleccionadaInfo) {
                                       setPrecioBebida1Seleccionada(bebida1SeleccionadaInfo.ValorUnitario);
                                       setBebida1SeleccionadaId(bebida1SeleccionadaInfo._id);
+                                      setCantidadBebida1Disponible(bebida1SeleccionadaInfo.CantidadInicial);
                                     }
                                   }}
                                 >
@@ -2249,6 +2258,12 @@ setCantidadBebida4Disponible("")
                                     setCantidadBebida2(isNaN(value) ? "" : value);
                                   }}
                                 />
+                                <Input
+                                  disabled
+                                  label=" Stock "
+                                  className="w-44 flex text-blue-500 border-2 border-blue-400 rounded-xl"
+                                  placeholder={` ${cantidadBebida2Disponible}`}
+                                />
                                 <Select
                                   className="ml-2"
                                   name="bebidas"
@@ -2262,6 +2277,7 @@ setCantidadBebida4Disponible("")
                                     if (bebida2SeleccionadaInfo) {
                                       setPrecioBebida2Seleccionada(bebida2SeleccionadaInfo.ValorUnitario);
                                       setBebida2SeleccionadaId(bebida2SeleccionadaInfo._id);
+                                      setCantidadBebida2Disponible(bebida2SeleccionadaInfo.CantidadInicial);
                                     }
                                   }}
                                 >
@@ -2301,6 +2317,12 @@ setCantidadBebida4Disponible("")
                                     setCantidadBebida3(isNaN(value) ? "" : value);
                                   }}
                                 />
+                                 <Input
+                                  disabled
+                                  label=" Stock "
+                                  className="w-44 flex text-blue-500 border-2 border-blue-400 rounded-xl"
+                                  placeholder={` ${cantidadBebida3Disponible}`}
+                                />
                                 <Select
                                   className="ml-2"
                                   name="bebidas"
@@ -2314,6 +2336,7 @@ setCantidadBebida4Disponible("")
                                     if (bebida3SeleccionadaInfo) {
                                       setPrecioBebida3Seleccionada(bebida3SeleccionadaInfo.ValorUnitario);
                                       setBebida3SeleccionadaId(bebida3SeleccionadaInfo._id);
+                                      setCantidadBebida3Disponible(bebida3SeleccionadaInfo.CantidadInicial);
                                     }
                                   }}
                                 >
@@ -2353,6 +2376,12 @@ setCantidadBebida4Disponible("")
                                     setCantidadBebida4(isNaN(value) ? "" : value);
                                   }}
                                 />
+                                 <Input
+                                  disabled
+                                  label=" Stock "
+                                  className="w-44 flex text-blue-500 border-2 border-blue-400 rounded-xl"
+                                  placeholder={` ${cantidadBebida4Disponible}`}
+                                />
                                 <Select
                                   className="ml-2"
                                   name="bebidas"
@@ -2366,6 +2395,7 @@ setCantidadBebida4Disponible("")
                                     if (bebida4SeleccionadaInfo) {
                                       setPrecioBebida4Seleccionada(bebida4SeleccionadaInfo.ValorUnitario);
                                       setBebida4SeleccionadaId(bebida4SeleccionadaInfo._id);
+                                      setCantidadBebida4Disponible(bebida4SeleccionadaInfo.CantidadInicial);
                                     }
                                   }}
                                 >
@@ -2449,11 +2479,11 @@ setCantidadBebida4Disponible("")
                                   setCantidadFood(isNaN(value) ? '' : value);
                                 }}
                               />
-                              <Input 
-                              disabled
-                              label="Stock"
-                              className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
-                              placeholder={`   ${cantidadFoodDisponible}`}
+                              <Input
+                                disabled
+                                label="Stock"
+                                className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
+                                placeholder={`   ${cantidadFoodDisponible}`}
                               />
                               <Select
                                 className="ml-2"
@@ -2509,11 +2539,11 @@ setCantidadBebida4Disponible("")
                                   setCantidadFood1(isNaN(value) ? '' : value);
                                 }}
                               />
-                              <Input 
-                              disabled
-                              label="Stock"
-                              className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
-                              placeholder={`   ${cantidadFood1Disponible}`}
+                              <Input
+                                disabled
+                                label="Stock"
+                                className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
+                                placeholder={`   ${cantidadFood1Disponible}`}
                               />
                               <Select
                                 className="ml-2"
@@ -2570,11 +2600,11 @@ setCantidadBebida4Disponible("")
                                   setCantidadFood2(isNaN(value) ? '' : value);
                                 }}
                               />
-                              <Input 
-                              disabled
-                              label="Stock"
-                              className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
-                              placeholder={`   ${cantidadFood2Disponible}`}
+                              <Input
+                                disabled
+                                label="Stock"
+                                className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
+                                placeholder={`   ${cantidadFood2Disponible}`}
                               />
                               <Select
                                 className="ml-2"
@@ -2630,11 +2660,11 @@ setCantidadBebida4Disponible("")
                                   setCantidadFood3(isNaN(value) ? '' : value);
                                 }}
                               />
-                              <Input 
-                              disabled
-                              label="Stock"
-                              className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
-                              placeholder={`   ${cantidadFood3Disponible}`}
+                              <Input
+                                disabled
+                                label="Stock"
+                                className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
+                                placeholder={`   ${cantidadFood3Disponible}`}
                               />
                               <Select
                                 className="ml-2"
@@ -2690,11 +2720,11 @@ setCantidadBebida4Disponible("")
                                   setCantidadFood4(isNaN(value) ? '' : value);
                                 }}
                               />
-                              <Input 
-                              disabled
-                              label="Stock"
-                              className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
-                              placeholder={`   ${cantidadFood4Disponible}`}
+                              <Input
+                                disabled
+                                label="Stock"
+                                className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
+                                placeholder={`   ${cantidadFood4Disponible}`}
                               />
                               <Select
                                 className="ml-2"
