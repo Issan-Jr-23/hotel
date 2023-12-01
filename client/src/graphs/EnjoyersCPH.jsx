@@ -114,6 +114,7 @@ const MyChart = () => {
   const options = {
     chart: {
       type: 'line'
+      
     },
     title: {
       text: vista === '7dias' ? 'Cantidad de Reservaciones en los Últimos 7 Días' : 'Crecimiento Mensual de Reservaciones'
@@ -129,7 +130,7 @@ const MyChart = () => {
       }
     },
     tooltip: {
-      headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+      headerFormat: '<span style="font-size:16px">{point.key}</span><table>',
       pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
         '<td style="padding:0"><b>{point.y} reservaciones</b></td></tr>',
       footerFormat: '</table>',
@@ -146,11 +147,11 @@ const MyChart = () => {
   };
 
   if (loading) {
-    return <div>Cargando datos...</div>;
+    return <div className='text-white border-4 h-96 flex justify-center items-center text-2xl'>Cargando datos...</div>;
   }
 
   return (
-    <div>
+    <div className='mt-5'>
       <select value={vista} onChange={(e) => setVista(e.target.value)}>
         <option value="7dias">Últimos 7 días</option>
         <option value="anual">Crecimiento Mensual</option>

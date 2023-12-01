@@ -14,7 +14,7 @@ import { PlusIcon } from "../finca/PlusIcon.jsx";
 import { SearchIcon } from "../tablePasadia/SearchIcon.jsx";
 import toast, {Toaster} from 'react-hot-toast';
 import * as XLSX from 'xlsx';
-import { useAuth } from "../../context/authContext.jsx";
+import { useAuth } from "../../context/authContext.jsx"; 
 
 
 import "./table.css"
@@ -89,7 +89,7 @@ export default function App() {
 
   const registrarEliminacion = async (productName) => {
     try {
-      const mensaje = `${user.username} ha eliminado el ${productName}`;
+      const mensaje = `${user.username} ha eliminado el producto ${productName}`;
       await AxiosInstance.post(`/registrar-eliminacion`, { mensaje });
     } catch (error) {
       console.error("Error al registrar la eliminación:", error);
@@ -193,7 +193,7 @@ export default function App() {
       'Productos Vendidos': item.ProductosVendidos,
       'Total de la Venta': item.ProductosVendidos * item.ValorUnitario,
       'Cantidad Restante': item.CantidadInicial,
-      'Total de la venta': (item.CantidadInicial + item.ProductosVendidos) * item.ValorUnitario
+      'Valor total': (item.CantidadInicial + item.ProductosVendidos) * item.ValorUnitario
     }));
   
     // Crear una hoja de trabajo a partir de los datos formateados
@@ -217,25 +217,10 @@ export default function App() {
             <div className='w-full '>
         {/* <CardDesplegable /> */}
         <>
-      <div className="flex justify-between w-12/12 gap-3 flex-col">
-        <div className=" flex flex justify-between">
-        <div className="flex ml-5">
-        <Button className="bg-blue-500 w-28 text-white" onClick={() => exportToExcel(filteredProducts)}>
-            Exportar
-        </Button>
-        <Button
-          variant="flat"
-          onClick={() => {
-            setBackdrop("blur");
-            onOpen();
-          }}
-          className="capitalize ml-5 text-white bg-black"
-        >
-        <PlusIcon/>  Agregar
-        </Button>
-        </div>
+      <div className=" flex justify-between w-12/12 gap-3 flex-col">
+        <div className="btnAdd flex flex-wrap"  >
 
-        <div className="mr-5">
+        <div className="inputSearch">
         <Input
         label="Search"
         value={searchTerm}
@@ -270,6 +255,24 @@ export default function App() {
         }
       />
         </div>
+
+        <div className="btns flex ">
+        <Button className="bg-blue-500 w-28 text-white" onClick={() => exportToExcel(filteredProducts)}>
+            Exportar
+        </Button>
+        <Button
+          variant="flat"
+          onClick={() => {
+            setBackdrop("blur");
+            onOpen();
+          }}
+          className="capitalize ml-5 text-white bg-black"
+        >
+        <PlusIcon/>  Agregar
+        </Button>
+        </div>
+
+       
 
         </div>
       
@@ -363,7 +366,7 @@ export default function App() {
             
         </div>
         <section className="flex coluns-2  mx-5">
-          <Table  className=" text-center uppercase max-w-full overflow-y-auto" aria-label="Lista de Usuarios">
+          <Table  className=" text-center uppercase max-w-full overflow-y-auto table-fixed" aria-label="Lista de Usuarios">
             <TableHeader className="text-center bg-blue-500">
               <TableColumn className="text-center">descripcion del producto</TableColumn>
               <TableColumn className="text-center">Tipo</TableColumn>

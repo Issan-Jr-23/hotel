@@ -13,22 +13,13 @@ export default function Navbars() {
   const isEditor = user && user.role == "editor";
 
 
-  // const menuItems = [
-  //   "Profile",
-  //   "Dashboard",
-  //   "Activity",
-  //   "Analytics",
-  //   "System",
-  //   "Deployments",
-  //   "My Settings",
-  //   "Team Settings",
-  //   "Help & Feedback",
-  //   "Log Out",
-  // ];
 
   return (
-    <div className=" flex justify-center mt-10">
-    <Navbar isBordered className="bg-white/30 h-20 justify-beetween w-10/12 rounded-3xl" onMenuOpenChange={setIsMenuOpen}>
+    <div className="mobile flex justify-center">
+      <div className="mobileNav">
+    <Navbar isBordered className="pruebacss bg-white/30 h-20 justify-beetween" onMenuOpenChange={setIsMenuOpen}
+      
+    >
 
       <NavbarContent className="sm:hidden pr-3" justify="center">
       <NavbarMenuToggle
@@ -241,6 +232,8 @@ export default function Navbars() {
         ))} */}
       </NavbarMenu>
     </Navbar>
+
+      </div>
 
     </div>
   );

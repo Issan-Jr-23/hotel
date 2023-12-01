@@ -48,7 +48,7 @@ const GraficaProductos = () => {
     };
 
     return (
-        <div style={{ backdropFilter: "blur(10px) saturate(90%) brightness(130%)", border:"1px solid #272c3d", borderRadius: "15px", color:"white" }}>
+        <div style={{ backgroundColor:"white", borderRadius: "15px"}}>
             <HighchartsReact highcharts={Highcharts} options={opcionesGrafica} />
         </div>
     );

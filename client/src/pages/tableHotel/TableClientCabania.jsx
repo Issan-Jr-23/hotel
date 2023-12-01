@@ -1598,9 +1598,48 @@ export default function App() {
   return (
     <div className="max-w-full w-98 mx-auto">
        <Toaster position="top-right" />
-      <div className="flex justify-between px-5">
-        <div className="flex items-center">
-          <div className="flex flex-wrap gap-3">
+      <div className="btnAdd flex  px-5 flex-wrap">
+          
+          <div className="inputSearch">
+          <Input
+            label="Search"
+            value={busqueda}
+            onChange={handleSearchChange}
+            isClearable
+            radius="lg"
+            className="w-72 h-12"
+            classNames={{
+              label: "text-black/50 dark:text-white/90",
+              input: [
+                "bg-transparent",
+                "text-black/90 dark:text-black/90",
+                "placeholder:text-black/60 dark:placeholder:text-black/60",
+              ],
+              innerWrapper: "bg-transparent",
+              inputWrapper: [
+                "shadow-xl",
+                "bg-default-200/50",
+                "dark:bg-default/60",
+                "backdrop-blur-xl",
+                "backdrop-saturate-200",
+                "hover:bg-default-200/70",
+                "dark:hover:bg-default/70",
+                "group-data-[focused=true]:bg-default-200/50",
+                "dark:group-data-[focused=true]:bg-default/60",
+                "!cursor-text",
+              ],
+            }}
+            placeholder="Type to search..."
+            startContent={
+              <SearchIcon className="text-black/50 mb-0.5 dark:text-black/90 text-black pointer-events-none flex-shrink-0" />
+            }
+          />
+        </div>
+
+          <div className="">
+            <div className="flex  flex-wrap gap-3">
+
+            <div>
             <Button
               variant="flat"
               onClick={() => {
@@ -1611,13 +1650,13 @@ export default function App() {
             >
               <PlusIcon /> Agregar
             </Button>
-          </div>
-          <div className="flex items-center justify-center w-32 ml-3 ">
+            </div>
+          <div className="flex items-center justify-center w-32 ">
             <Button className="bg-blue-500 w-28 text-white">
               Exportar
             </Button>
           </div>
-
+            </div>
           <Modal backdrop={backdrop} isOpen={isOpen} onClose={onClose}>
             <ModalContent>
               {(onClose) => (
@@ -1788,43 +1827,9 @@ export default function App() {
               )}
             </ModalContent>
           </Modal>
-        </div>
+          </div>
 
-        <div>
-          <Input
-            label="Search"
-            value={busqueda}
-            onChange={handleSearchChange}
-            isClearable
-            radius="lg"
-            className="w-72 h-12"
-            classNames={{
-              label: "text-black/50 dark:text-white/90",
-              input: [
-                "bg-transparent",
-                "text-black/90 dark:text-black/90",
-                "placeholder:text-black/60 dark:placeholder:text-black/60",
-              ],
-              innerWrapper: "bg-transparent",
-              inputWrapper: [
-                "shadow-xl",
-                "bg-default-200/50",
-                "dark:bg-default/60",
-                "backdrop-blur-xl",
-                "backdrop-saturate-200",
-                "hover:bg-default-200/70",
-                "dark:hover:bg-default/70",
-                "group-data-[focused=true]:bg-default-200/50",
-                "dark:group-data-[focused=true]:bg-default/60",
-                "!cursor-text",
-              ],
-            }}
-            placeholder="Type to search..."
-            startContent={
-              <SearchIcon className="text-black/50 mb-0.5 dark:text-black/90 text-black pointer-events-none flex-shrink-0" />
-            }
-          />
-        </div>
+
 
       </div>
 

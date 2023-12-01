@@ -46,12 +46,12 @@ const DoughnutChart = () => {
     const options = {
       chart: { type: 'pie', backgroundColor: "transparent", },
       accessibility: { enabled: false },
-      title: { text: 'Estado de Reservas', style: {
-        color: '#fff'
+      title: { text: 'ESTADO DE RESERVAS', style: {
+        color: '#000000/60'
       } },
       plotOptions: {
         pie: {
-          innerSize: '50%',
+          innerSize: '60%',
           dataLabels: {
             enabled: true,
             format: '{point.name}: {point.percentage:.1f} %',
@@ -136,7 +136,7 @@ const DoughnutChart = () => {
     <option value="habitaciones">Habitaciones</option>
   </select>
     </div>
-    <div style={{ backdropFilter: "blur(15px) saturate(90%) brightness(130%)", borderRadius: "15px", color:"white" }}>
+    <div style={{ backgroundColor: "white", borderRadius: "15px", color:"white" }}>
   <div id="chart-container"
   ></div>
 

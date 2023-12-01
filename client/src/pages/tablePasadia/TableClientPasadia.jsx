@@ -40,9 +40,14 @@ import wave from "../../images/wave.png"
 import svg from "../../images/svg.png"
 import AxiosInstances from "../../api/axios.js";
 import { PlusIcon } from "../finca/PlusIcon.jsx";
+// import { useAuth } from "../../context/authContext.jsx";
 
 //#endregion
 export default function App() {
+
+  // const { user } = useAuth();
+  // const isAdmin = user && user.role === 'admin';
+  // const isEditor = user && user.role === 'editor';
 
   const toBase64 = (url) => new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
@@ -57,8 +62,6 @@ export default function App() {
     xhr.responseType = 'blob';
     xhr.send();
   });
-
-
 
 
   //#region 
@@ -175,6 +178,8 @@ export default function App() {
     fechaPasadia: ""
 
   });
+
+
 
   //#endregion
 
@@ -1120,7 +1125,7 @@ export default function App() {
     }
   };
 
-  const handleDeleteUser = async (identificacion) => {
+  const handleDelete = async (id) => {
     const confirmDelete = window.confirm(
       "¿Estás seguro de que deseas eliminar este usuario?"
     );
@@ -1243,6 +1248,11 @@ export default function App() {
     setCantidadBebida3Disponible("")
     setCantidadBebida4Disponible("")
 
+    const response = await AxiosInstances.get("/drinks");
+    setDrinks(response.data);
+    const responses = await AxiosInstances.get("/food");
+    setSnacks(responses.data);
+
   };
 
   const [selectedSize, setSelectedSize] = React.useState('md');
@@ -1293,6 +1303,11 @@ export default function App() {
     setCantidadFood2Disponible("")
     setCantidadFood3Disponible("")
     setCantidadFood4Disponible("")
+
+    const response = await AxiosInstances.get("/drinks");
+    setDrinks(response.data);
+    const responses = await AxiosInstances.get("/food");
+    setSnacks(responses.data);
 
 
   };
@@ -1519,9 +1534,6 @@ export default function App() {
 
 
 
-
-
-
   let fecha2 = new Date();
 
   fecha2.setHours(fecha2.getHours());
@@ -1594,9 +1606,9 @@ export default function App() {
   return (
     <div className="max-w-full w-98 mx-auto">
       <Toaster position="top-right" />
-      <div className="flex justify-between flex-row-reverse px-5 flex-wrap">
+      <div className="btnAdd flex  px-5 flex-wrap">
 
-        <div className="">
+        <div className="inputSearch">
           <Input
             label="Search"
             value={busqueda}
@@ -1632,8 +1644,8 @@ export default function App() {
           />
         </div>
 
-        <div className=" ">
-          <div className="flex flex-wrap gap-3">
+        <div className="">
+          <div className=" flex  flex-wrap gap-3">
             <Button
               variant="flat"
               onClick={() => {
@@ -1836,7 +1848,14 @@ export default function App() {
             <TableColumn className="text-center">agregar bebida</TableColumn>
             <TableColumn className="text-center flex items-center justify-center">agregar comida</TableColumn>
             <TableColumn className="text-center">Pago pendiente</TableColumn>
-            {/* <TableColumn className="text-center">Acción</TableColumn> */}
+            {/* <TableColumn className="text-center">
+              {isAdmin || isEditor ? (
+                <div>
+                  accion
+                </div>
+              ) : null
+              }
+            </TableColumn> */}
           </TableHeader>
 
 
@@ -1866,7 +1885,7 @@ export default function App() {
                         backdrop: "bg-inherit",
                       }}
                     >
-                      <ModalContent className="max-h-96 overflow-y-auto">
+                      <ModalContent className="max-h-96 overflow-y-auto overflow-x-auto">
                         <ModalHeader className="border-b-3 border-blue-500 text-3xl flex  justify-between">
                           <div className="mb-0.5 text-2xl">History</div>
                           <div className="uppercase text-lg"> {selectedUser.nombre} - {selectedUser.identificacion}</div>
@@ -1884,10 +1903,10 @@ export default function App() {
                                   <table className="w-full text-center">
                                     <thead>
                                       <tr>
-                                        <th>Nombre</th>
-                                        <th>Cantidad</th>
-                                        <th>Precio Unitario</th>
-                                        <th>Total</th>
+                                        <th className="table-padding">Nombre</th>
+                                        <th className="table-padding">Cantidad</th>
+                                        <th className="table-padding">Precio Unitario</th>
+                                        <th className="table-padding">Total</th>
                                       </tr>
                                     </thead>
                                     <tbody>
@@ -2115,7 +2134,7 @@ export default function App() {
                           <>
                             <ModalHeader className="flex flex-col gap-1">
                               <h2>BEBIDAS</h2>
-                             
+
 
                             </ModalHeader>
                             <ModalBody>
@@ -2317,7 +2336,7 @@ export default function App() {
                                     setCantidadBebida3(isNaN(value) ? "" : value);
                                   }}
                                 />
-                                 <Input
+                                <Input
                                   disabled
                                   label=" Stock "
                                   className="w-44 flex text-blue-500 border-2 border-blue-400 rounded-xl"
@@ -2376,7 +2395,7 @@ export default function App() {
                                     setCantidadBebida4(isNaN(value) ? "" : value);
                                   }}
                                 />
-                                 <Input
+                                <Input
                                   disabled
                                   label=" Stock "
                                   className="w-44 flex text-blue-500 border-2 border-blue-400 rounded-xl"
@@ -2800,45 +2819,20 @@ export default function App() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                 <TableCell> {(cliente.cantidadPersonas.adultos * pasadiaAdultos) + (cliente.cantidadPersonas.ninios * pasadiaNinios) - (cliente.pagoAnticipado + cliente.pagoPendiente)}</TableCell>
 
                 {/* <TableCell className="flex justify-center align-center pr-5 w-60">
-                  {cliente.identificacion === editedUserId && (
-                    <div className="flex">
+
+                  {isAdmin || isEditor ? (
+                  <div className="flex w-40 justify-center items-center">
+                  {cliente.id === editedUserId && (
+                    
                       <img
                         className="w-8 h-8 mr-4 cursor-pointer"
                         src={download}
                         alt="actualizar"
-                        onClick={handleEditUser}
+                        onClick={() => handleEditUser(cliente._id)}
                       />
-                    </div>
                   )}
                   <img
                     className="w-8 h-8 mr-4 cursor-pointer"
@@ -2854,6 +2848,21 @@ export default function App() {
                     alt="Delete"
                     onClick={() => handleDeleteUser(cliente._id)}
                   />
+
+                  </div>
+                  ) : null}
+                </TableCell> */}
+                {/* <TableCell className="flex justify-center align-center">
+                  {isAdmin || isEditor ? (
+                    <div className="flex w-40 justify-center items-center">
+                      <img
+                        className="w-8 h-8 cursor-pointer"
+                        src={borrar}
+                        alt="Delete"
+                        onClick={() => handleDelete(cliente._id)}
+                      />
+                    </div>
+                  ) : null}
                 </TableCell> */}
               </TableRow>
             ))}
