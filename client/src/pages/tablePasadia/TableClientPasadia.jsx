@@ -1199,8 +1199,8 @@ export default function App() {
   const { isOpen: isModalOpenM, onOpen: openModalM, onClose: closeModalM } = useDisclosure();
   const { isOpen: isModalOpenF, onOpen: openModalF, onClose: closeModalF } = useDisclosure();
 
-  const [ancho, setAncho] = React.useState('xl')
-  const sizesm = ["xl"];
+  const [ancho, setAncho] = React.useState('2xl')
+  const sizesm = ["2xl"];
 
   const handleOpenm = async (ancho, userId) => {
     setAncho(ancho);
@@ -1238,17 +1238,10 @@ export default function App() {
     setFiltro5("")
 
     setCantidadBebidaDisponible("")
-    setCantidadBebida1Disponible("")
-    setCantidadBebida2Disponible("")
-    setCantidadBebida3Disponible("")
-    setCantidadBebida4Disponible("")
-
-    const response = await AxiosInstances.get("/drinks");
-    setDrinks(response.data);
-    
-    const responses = await AxiosInstances.get("/food");
-    setSnacks(responses.data);
-
+setCantidadBebida1Disponible("")
+setCantidadBebida2Disponible("")
+setCantidadBebida3Disponible("")
+setCantidadBebida4Disponible("")
 
   };
 
@@ -1300,12 +1293,6 @@ export default function App() {
     setCantidadFood2Disponible("")
     setCantidadFood3Disponible("")
     setCantidadFood4Disponible("")
-
-
-    const responses = await AxiosInstances.get("/food");
-    setSnacks(responses.data);
-    const response = await AxiosInstances.get("/drinks");
-    setDrinks(response.data);
 
 
   };
@@ -2152,11 +2139,9 @@ export default function App() {
                                     setCantidadBebida(isNaN(value) ? "" : value);
                                   }}
                                 />
+
                                 <Input
-                                  disabled
-                                  label="Stock"
-                                  className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
-                                  placeholder={` ${cantidadBebidaDisponible}`}
+                                  placeholder={`${ccDisponibles}`}
                                 />
 
                                 <Select
@@ -2172,7 +2157,6 @@ export default function App() {
                                     if (bebidaSeleccionadaInfo) {
                                       setPrecioBebidaSeleccionada(bebidaSeleccionadaInfo.ValorUnitario);
                                       setBebidaSeleccionadaId(bebidaSeleccionadaInfo._id);
-                                      setCantidadBebidaDisponible(bebidaSeleccionadaInfo.CantidadInicial)
                                     }
                                   }}
                                 >
@@ -2212,12 +2196,6 @@ export default function App() {
                                     setCantidadBebida1(isNaN(value) ? "" : value);
                                   }}
                                 />
-                                <Input
-                                  disabled
-                                  label="Stock"
-                                  className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
-                                  placeholder={` ${cantidadBebida1Disponible}`}
-                                />
                                 <Select
                                   className="ml-2"
                                   name="bebidas"
@@ -2231,7 +2209,6 @@ export default function App() {
                                     if (bebida1SeleccionadaInfo) {
                                       setPrecioBebida1Seleccionada(bebida1SeleccionadaInfo.ValorUnitario);
                                       setBebida1SeleccionadaId(bebida1SeleccionadaInfo._id);
-                                      setCantidadBebida1Disponible(bebida1SeleccionadaInfo.CantidadInicial)
                                     }
                                   }}
                                 >
@@ -2272,12 +2249,6 @@ export default function App() {
                                     setCantidadBebida2(isNaN(value) ? "" : value);
                                   }}
                                 />
-                                <Input
-                                  disabled
-                                  label="Stock"
-                                  className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
-                                  placeholder={` ${cantidadBebida2Disponible}`}
-                                />
                                 <Select
                                   className="ml-2"
                                   name="bebidas"
@@ -2291,7 +2262,6 @@ export default function App() {
                                     if (bebida2SeleccionadaInfo) {
                                       setPrecioBebida2Seleccionada(bebida2SeleccionadaInfo.ValorUnitario);
                                       setBebida2SeleccionadaId(bebida2SeleccionadaInfo._id);
-                                      setCantidadBebida2Disponible(bebida2SeleccionadaInfo.CantidadInicial)
                                     }
                                   }}
                                 >
@@ -2331,12 +2301,6 @@ export default function App() {
                                     setCantidadBebida3(isNaN(value) ? "" : value);
                                   }}
                                 />
-                                <Input
-                                  disabled
-                                  label="Stock"
-                                  className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
-                                  placeholder={` ${cantidadBebida3Disponible}`}
-                                />
                                 <Select
                                   className="ml-2"
                                   name="bebidas"
@@ -2350,7 +2314,6 @@ export default function App() {
                                     if (bebida3SeleccionadaInfo) {
                                       setPrecioBebida3Seleccionada(bebida3SeleccionadaInfo.ValorUnitario);
                                       setBebida3SeleccionadaId(bebida3SeleccionadaInfo._id);
-                                      setCantidadBebida3Disponible(bebida3SeleccionadaInfo.CantidadInicial)
                                     }
                                   }}
                                 >
@@ -2390,12 +2353,6 @@ export default function App() {
                                     setCantidadBebida4(isNaN(value) ? "" : value);
                                   }}
                                 />
-                                <Input
-                                  disabled
-                                  label="Stock"
-                                  className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
-                                  placeholder={` ${cantidadBebida4Disponible}`}
-                                />
                                 <Select
                                   className="ml-2"
                                   name="bebidas"
@@ -2409,7 +2366,6 @@ export default function App() {
                                     if (bebida4SeleccionadaInfo) {
                                       setPrecioBebida4Seleccionada(bebida4SeleccionadaInfo.ValorUnitario);
                                       setBebida4SeleccionadaId(bebida4SeleccionadaInfo._id);
-                                      setCantidadBebida4Disponible(bebida4SeleccionadaInfo.CantidadInicial)
                                     }
                                   }}
                                 >
@@ -2493,11 +2449,11 @@ export default function App() {
                                   setCantidadFood(isNaN(value) ? '' : value);
                                 }}
                               />
-                              <Input
-                                disabled
-                                label="Stock"
-                                className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
-                                placeholder={`   ${cantidadFoodDisponible}`}
+                              <Input 
+                              disabled
+                              label="Stock"
+                              className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
+                              placeholder={`   ${cantidadFoodDisponible}`}
                               />
                               <Select
                                 className="ml-2"
@@ -2553,11 +2509,11 @@ export default function App() {
                                   setCantidadFood1(isNaN(value) ? '' : value);
                                 }}
                               />
-                              <Input
-                                disabled
-                                label="Stock"
-                                className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
-                                placeholder={`   ${cantidadFood1Disponible}`}
+                              <Input 
+                              disabled
+                              label="Stock"
+                              className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
+                              placeholder={`   ${cantidadFood1Disponible}`}
                               />
                               <Select
                                 className="ml-2"
@@ -2614,11 +2570,11 @@ export default function App() {
                                   setCantidadFood2(isNaN(value) ? '' : value);
                                 }}
                               />
-                              <Input
-                                disabled
-                                label="Stock"
-                                className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
-                                placeholder={`   ${cantidadFood2Disponible}`}
+                              <Input 
+                              disabled
+                              label="Stock"
+                              className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
+                              placeholder={`   ${cantidadFood2Disponible}`}
                               />
                               <Select
                                 className="ml-2"
@@ -2674,11 +2630,11 @@ export default function App() {
                                   setCantidadFood3(isNaN(value) ? '' : value);
                                 }}
                               />
-                              <Input
-                                disabled
-                                label="Stock"
-                                className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
-                                placeholder={`   ${cantidadFood3Disponible}`}
+                              <Input 
+                              disabled
+                              label="Stock"
+                              className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
+                              placeholder={`   ${cantidadFood3Disponible}`}
                               />
                               <Select
                                 className="ml-2"
@@ -2734,11 +2690,11 @@ export default function App() {
                                   setCantidadFood4(isNaN(value) ? '' : value);
                                 }}
                               />
-                              <Input
-                                disabled
-                                label="Stock"
-                                className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
-                                placeholder={`   ${cantidadFood4Disponible}`}
+                              <Input 
+                              disabled
+                              label="Stock"
+                              className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
+                              placeholder={`   ${cantidadFood4Disponible}`}
                               />
                               <Select
                                 className="ml-2"
