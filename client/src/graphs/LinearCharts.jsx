@@ -3,24 +3,28 @@ import LineChart from './ChartsHotel.jsx';
 import DoughnutChart from './DoughnutAndPie.jsx';
 import PeopleReservations from './EnjoyersCPH.jsx';
 import Navbars from '../components/Navbars.jsx';
+import '../App.css'
 
 const App = () => {
   return (
-    <div className=''>
+    <div className='mb-20'>
       <Navbars/>
-      <div className='ml-5 mr-5 w-12/12 flex justify-center'>
-        <article className='w-9/12 '>
+      <div className='flex justify-center mt-10'>
+      <div className='lineChart flex justify-center'>
+        <article className='linearContent '>
       <PeopleReservations/>
 
         </article>
 
       </div>
-      <div className='w-12/12 flex justify-evenly mt-10'>
-        <article className='w-6/12 mt-1'>
+
+      </div>
+      <div className='pieContent mt-10'>
+        <article className='content-pie'>
       <DoughnutChart/>
 
         </article>
-        <article className='w-4/12 mt-14'>
+        <article className='content-line'>
       <LineChart/>
         </article>
       </div>

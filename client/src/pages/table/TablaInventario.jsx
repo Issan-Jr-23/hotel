@@ -211,7 +211,7 @@ export default function App() {
   
 
   return (
-    <div className="w-full ">
+    <div className="w-full">
       <Toaster/>
         <div className='flex  justify-between mt-5 '>
             <div className='w-full '>

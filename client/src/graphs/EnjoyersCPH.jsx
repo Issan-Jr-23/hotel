@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import  AxiosInstance  from "../api/axios.js";
+import 'App.css'
 
 const MyChart = () => {
   const [chartData, setChartData] = useState({ categories: [], series: [] });
