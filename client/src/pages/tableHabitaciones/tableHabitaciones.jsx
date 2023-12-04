@@ -1038,7 +1038,7 @@ export default function App() {
     }
   };
 
-  const handleDeleteUser = async (identificacion) => {
+  const handleDeleteUser = async (id) => {
     const confirmDelete = window.confirm(
       "¿Estás seguro de que deseas eliminar este usuario?"
     );
@@ -1118,7 +1118,7 @@ export default function App() {
   const { isOpen: isModalOpenF, onOpen: openModalF, onClose: closeModalF } = useDisclosure();
 
   const [ancho, setAncho] = React.useState('md')
-  const sizesm = ["2xl"];
+  const sizesm = ["4xl"];
 
   const handleOpenm = async (ancho, userId) => {
     setAncho(ancho);
@@ -1794,7 +1794,7 @@ export default function App() {
             <TableColumn className="text-center">agregar bebida</TableColumn>
             <TableColumn className="text-center">agregar comida</TableColumn>
             <TableColumn className="text-center">Pago pendiente</TableColumn>
-            {/* <TableColumn className="text-center">Acción</TableColumn> */}
+            <TableColumn className="text-center">Acción</TableColumn>
           </TableHeader>
 
 
@@ -2681,7 +2681,7 @@ export default function App() {
                   </Modal>
                 </TableCell>
                 <TableCell> {((valorHabitaciones) - (cliente.pagoAnticipado + cliente.pagoPendiente))}</TableCell>
-                {/* <TableCell className="flex justify-center align-center pr-5 w-60">
+                <TableCell className="flex justify-center align-center pr-5 w-60">
                   {cliente.identificacion === editedUserId && (
                     <div className="flex">
                       <img
@@ -2706,7 +2706,7 @@ export default function App() {
                     alt="Delete"
                     onClick={() => handleDeleteUser(cliente._id)}
                   />
-                </TableCell> */}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

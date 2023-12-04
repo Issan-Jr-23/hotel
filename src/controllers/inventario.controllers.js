@@ -35,7 +35,7 @@ export const obtenerMekatos = (req, res) => {
 };
 
 export const obtenerDrinks = (req, res) => {
-  Bebida.find({ tipo: "Bebida" })
+  Bebida.find({ tipo: "bebida" })
     .then((mekatos) => {
       res.json(mekatos);
       console.log(mekatos)

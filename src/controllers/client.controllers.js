@@ -7,11 +7,13 @@ export const obtenerClientes = async (req, res) => {
     res.status(200).json(clientesObtenidos);
   } catch (error) {
     console.error(error);
-    res.status(500).send("Error al obtener los clientes desde la base de datos");
+    res
+      .status(500)
+      .send("Error al obtener los clientes desde la base de datos");
   }
 };
 
-export const crearCliente = async (req, res) => { 
+export const crearCliente = async (req, res) => {
   try {
     const nuevoCliente = new Cliente(req.body);
     const clienteGuardado = await nuevoCliente.save();
@@ -22,9 +24,9 @@ export const crearCliente = async (req, res) => {
   }
 };
 
-
 export const deleteClient = async (req, res) => {
   const identificacion = req.params.id; 
+  console.log(identificacion)
 
   try {
     const resultado = await Cliente.deleteOne({ _id: identificacion }); 
@@ -39,15 +41,12 @@ export const deleteClient = async (req, res) => {
   }
 }
 
-
-
-
 // export const deleteProducto = async (req, res) => {
-//   const identificacion = req.params.id; 
+//   const identificacion = req.params.id;
 //   console.log("delete registro: "+identificacion)
 
 //   try {
-//     const resultado = await Cliente.deleteOne({ _id: identificacion }); 
+//     const resultado = await Cliente.deleteOne({ _id: identificacion });
 //     if (resultado.deletedCount > 0) {
 //       res.status(200).json({ message: `Usuario con identificación "${identificacion}" eliminado con éxito.` });
 //     } else {
@@ -59,32 +58,30 @@ export const deleteClient = async (req, res) => {
 //   }
 // }
 
-
-
-
 export const updateClient = async (req, res) => {
-  const identificacion = req.params.identificacion;
-  const { nombre, pagoPendienteTotal, reserva, bebidas } = req.body;
+  const identificacion = req.params.id;
+  const { nombre, fechaPasadia, reserva } = req.body;
 
   try {
     const usuarioActualizado = await Cliente.findOneAndUpdate(
-      { identificacion },
-      { nombre, pagoPendienteTotal, reserva, bebidas },
+      { _id:identificacion },
+      { nombre, fechaPasadia, reserva },
       { new: true }
     );
 
     if (!usuarioActualizado) {
-      return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+      return res.status(404).json({ mensaje: "Usuario no encontrado" });
     }
 
-    res.json({ mensaje: 'Usuario actualizado correctamente', usuarioActualizado });
+    res.json({
+      mensaje: "Usuario actualizado correctamente",
+      usuarioActualizado,
+    });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ mensaje: 'Error interno del servidor' });
+    res.status(500).json({ mensaje: "Error interno del servidor" });
   }
 };
-
-
 
 export const addBebida = async (req, res) => {
   const { id, bebida } = req.body;
@@ -95,10 +92,11 @@ export const addBebida = async (req, res) => {
     if (cliente) {
       let index = -1;
       // Buscar si la bebida ya existe en el registro del cliente y coincide en tipo (cortesía o no)
-      index = cliente.bebidas.findIndex(b => 
-        b.id === bebida.id && 
-        b.mensaje === bebida.mensaje && // Asegurarse de que el tipo (cortesía o no) sea el mismo
-        (b.fechaDeMarca === "" || !b.fechaDeMarca) // Busca bebidas con fechaDeMarca como espacio en blanco o sin definir
+      index = cliente.bebidas.findIndex(
+        (b) =>
+          b.id === bebida.id &&
+          b.mensaje === bebida.mensaje && // Asegurarse de que el tipo (cortesía o no) sea el mismo
+          (b.fechaDeMarca === "" || !b.fechaDeMarca) // Busca bebidas con fechaDeMarca como espacio en blanco o sin definir
       );
 
       if (index > -1) {
@@ -113,15 +111,15 @@ export const addBebida = async (req, res) => {
         cliente.bebidas.push(bebida);
       }
 
-      cliente.markModified('bebidas');
+      cliente.markModified("bebidas");
       await cliente.save();
       res.status(200).json(cliente);
     } else {
-      res.status(404).json({ message: 'Cliente no encontrado' });
+      res.status(404).json({ message: "Cliente no encontrado" });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Error al agregar la bebida al cliente' });
+    res.status(500).json({ message: "Error al agregar la bebida al cliente" });
   }
 };
 
@@ -134,10 +132,11 @@ export const addFood = async (req, res) => {
     if (cliente) {
       let index = -1;
       // Buscar si la comida ya existe en el registro del cliente y coincide en tipo (cortesía o no)
-      index = cliente.restaurante.findIndex(f => 
-        f.id === food.id && 
-        f.mensaje === food.mensaje && // Asegurarse de que el tipo (cortesía o no) sea el mismo
-        (f.fechaDeMarca === "" || !f.fechaDeMarca)
+      index = cliente.restaurante.findIndex(
+        (f) =>
+          f.id === food.id &&
+          f.mensaje === food.mensaje && // Asegurarse de que el tipo (cortesía o no) sea el mismo
+          (f.fechaDeMarca === "" || !f.fechaDeMarca)
       );
 
       if (index > -1) {
@@ -152,31 +151,26 @@ export const addFood = async (req, res) => {
         cliente.restaurante.push(food);
       }
 
-      cliente.markModified('restaurante');
+      cliente.markModified("restaurante");
       await cliente.save();
       res.status(200).json(cliente);
     } else {
-      res.status(404).json({ message: 'Cliente no encontrado' });
+      res.status(404).json({ message: "Cliente no encontrado" });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Error al agregar la comida al cliente' });
+    res.status(500).json({ message: "Error al agregar la comida al cliente" });
   }
 };
 
-
-
-
-
-
 export const obtenerCPI = async (req, res) => {
   try {
-    const clientId = req.params.id; 
+    const clientId = req.params.id;
 
     const cliente = await Cliente.findById(clientId);
 
     if (!cliente) {
-      return res.status(404).send('Cliente no encontrado');
+      return res.status(404).send("Cliente no encontrado");
     }
 
     res.json({
@@ -184,14 +178,14 @@ export const obtenerCPI = async (req, res) => {
       cantidadDeCortesias: cliente.cantidadDeCortesias,
       cantidadDeCortesiasF: cliente.cantidadDeCortesiasF,
       cantidadDeBebidas: cliente.bebidas,
-      cantidadDeFood: cliente.restaurante
+      cantidadDeFood: cliente.restaurante,
     });
-
   } catch (error) {
-    res.status(500).send('Error al obtener los datos del cliente: ' + error.message);
+    res
+      .status(500)
+      .send("Error al obtener los datos del cliente: " + error.message);
   }
 };
-
 
 export const updatePP = async (req, res) => {
   const clienteId = req.params.id;
@@ -199,74 +193,73 @@ export const updatePP = async (req, res) => {
 
   try {
     const cliente = await Cliente.findOneAndUpdate(
-      { identificacion: clienteId }, 
+      { identificacion: clienteId },
       { pagoPendiente, mediosDePagoPendiente },
-      { new: true } 
+      { new: true }
     );
 
     if (!cliente) {
-      return res.status(404).json({ message: 'Cliente no encontrado' });
+      return res.status(404).json({ message: "Cliente no encontrado" });
     }
 
-    console.log(`Cliente con ID ${clienteId} ha sido actualizado con la siguiente información:`);
-    console.log('Pago Pendiente:', pagoPendiente);
-    console.log('Medios de Pago Pendiente:', mediosDePagoPendiente);
+    console.log(
+      `Cliente con ID ${clienteId} ha sido actualizado con la siguiente información:`
+    );
+    console.log("Pago Pendiente:", pagoPendiente);
+    console.log("Medios de Pago Pendiente:", mediosDePagoPendiente);
 
-    res.status(200).json({ message: `Datos del cliente ${clienteId} actualizados correctamente`, cliente });
+    res.status(200).json({
+      message: `Datos del cliente ${clienteId} actualizados correctamente`,
+      cliente,
+    });
   } catch (error) {
-    console.error('Error al actualizar el cliente:', error);
-    res.status(500).json({ message: 'Error al actualizar el cliente' });
+    console.error("Error al actualizar el cliente:", error);
+    res.status(500).json({ message: "Error al actualizar el cliente" });
   }
 };
 
-
 export const updateClientCts = async (req, res) => {
-  const identificacion = req.params.id; 
+  const identificacion = req.params.id;
   const { cantidadDeCortesias, cantidadDeCortesiasF } = req.body;
 
   try {
     const cortesias = await Cliente.findOneAndUpdate(
       { _id: identificacion },
-      { cantidadDeCortesias, cantidadDeCortesiasF  },
+      { cantidadDeCortesias, cantidadDeCortesiasF },
       { new: true }
     );
 
     if (!cortesias) {
-      return res.status(404).json({ mensaje: 'Cortesia no encontrado' });
+      return res.status(404).json({ mensaje: "Cortesia no encontrado" });
     }
 
-    res.json({ mensaje: 'Cortesia actualizada correctamente', cortesias });
+    res.json({ mensaje: "Cortesia actualizada correctamente", cortesias });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ mensaje: 'Error interno del servidor' });
+    res.status(500).json({ mensaje: "Error interno del servidor" });
   }
 };
 
-
-
 export const actualizarFacturacion = async (req, res) => {
   try {
-    const { bebidas, restaurante,clienteId } = req.body;
-    
+    const { bebidas, restaurante, clienteId } = req.body;
+
     const cliente = await Cliente.findById(clienteId);
     if (!cliente) {
-      return res.status(404).json({ message: "Cliente no encontrado: "+clienteId });
+      return res
+        .status(404)
+        .json({ message: "Cliente no encontrado: " + clienteId });
     }
 
     cliente.bebidas = bebidas;
     cliente.restaurante = restaurante;
-    console.log(restaurante)
+    console.log(restaurante);
 
     await cliente.save();
 
     res.status(200).json({ message: "Facturación actualizada con éxito" });
   } catch (error) {
-    console.error('Error al actualizar la facturación:', error);
+    console.error("Error al actualizar la facturación:", error);
     res.status(500).json({ message: "Error al actualizar la facturación" });
   }
 };
-      
-
-
-
-

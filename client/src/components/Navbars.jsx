@@ -4,6 +4,18 @@ import { Link } from "react-router-dom";
 import './navbars.css'
 import { useAuth } from "../context/authContext";
 import logo from "../images/logo.png"
+import home from "../images/home-icon.png"
+import hotel from "../images/hotel-bell.png"
+import finca from "../images/cowboy-hat.png"
+import energy from "../images/solar-energy.png"
+import add from "../images/add-user1.png"
+import inventory from "../images/stock-rotation.png"
+import notification from "../images/chat.png"
+import cabania from "../images/beach-cabana.png"
+import pasadia from "../images/cocktails.png"
+import habitaciones from "../images/bed.png"
+import price from "../images/dollar.png"
+import grafic from "../images/growth.png"
 
 export default function Navbars() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
@@ -32,6 +44,11 @@ export default function Navbars() {
         <NavbarBrand>
           <Link to={isAuthenticated ? "/home" : "/"}><img className="w-14" src={logo} alt="" /> </Link>
         </NavbarBrand>
+        <NavbarItem>
+          <Link className="text-white font-medium text-base flex justify-center items-center" to="/home">
+           <img className="mr-1 w-4 h-4" src={home} alt="" /> Inicio
+          </Link>
+        </NavbarItem>
         <Dropdown>
           <NavbarItem >
             <DropdownTrigger>
@@ -41,7 +58,7 @@ export default function Navbars() {
                 radius="sm"
                 variant="light"
               >
-                Hotel
+                <img className=" w-4 h-4" src={hotel} alt="" />Hotel
               </Button>
             </DropdownTrigger>
           </NavbarItem>
@@ -57,28 +74,28 @@ export default function Navbars() {
               className=""
             >
             <Link className="link_nav" to='/pasadia'>
-            Pasadia
+            <img className="mr-1 w-5 h-5" src={pasadia} alt="" />Pasadia
             </Link>
             </DropdownItem>
             <DropdownItem aria-label="prueba"
               key="production_ready"
             >
               <Link className="link_nav" to='/cabanias'>
-            Cabañas
+              <img className="mr-1 w-5 h-5" src={cabania} alt="" />Cabañas
             </Link>
             </DropdownItem>
             <DropdownItem aria-label="prueba"
               key="production_one"
             >
               <Link className="link_nav" to='/habitaciones'>
-            Habitaciones
+              <img className="mr-1 w-5 h-5" src={habitaciones} alt="" />Habitaciones
             </Link>
             </DropdownItem>
             <DropdownItem aria-label="prueba"
               key="99_uptime_inv"
             >
               <Link className="link_nav" to='/inventario'>
-            Inventario
+              <img className="mr-1 w-5 h-5" src={inventory} alt="" /> Inventario
             </Link>
             </DropdownItem>
             {isEditor && (
@@ -86,7 +103,7 @@ export default function Navbars() {
               key="100_uptime_inv"
             >
               <Link className="link_nav" to='/message'>
-            Mensajes
+              <img className="mr-1 w-5 h-5" src={notification} alt="" />Notificaciones
             </Link>
             </DropdownItem>
             )}
@@ -95,7 +112,7 @@ export default function Navbars() {
               key="101_uptime_inv"
             >
               <Link className="link_nav" to='/hotel-graphs'>
-            Graph
+              <img className="mr-1 w-5 h-5" src={grafic} alt="" />Graph
             </Link>
             </DropdownItem>
             )}
@@ -104,27 +121,27 @@ export default function Navbars() {
               key="102_uptime_inv"
             >
               <Link className="link_nav" to='/price'>
-            Precios
+              <img className="mr-1 w-5 h-5" src={price} alt="" />Precios
             </Link>
             </DropdownItem>
               )}
           </DropdownMenu>
         </Dropdown>
         <NavbarItem isActive>
-          <Link className="text-white font-medium text-base" to={'/finca'} aria-current="page" color="warning">
-            Finca
+          <Link className="text-white font-medium text-base flex justify-center items-center" to={'/finca'} aria-current="page" color="warning">
+          <img className="mt-1 mr-1 w-5 h-5" src={finca} alt="" /> Finca
           </Link>
         </NavbarItem>
         <NavbarItem >
-          <Link className="text-white ml-4 font-medium text-base" color="foreground" href="#">
-            Energia Renovable
+          <Link className="text-white font-medium text-base flex justify-center items-center" color="foreground" href="#">
+          <img className="mr-1 w-5 h-5" src={energy} alt="" />Energia Renovable
           </Link>
         </NavbarItem>
         {isEditor && (
         
         <NavbarItem>
-          <Link to="/Register" className="text-red-500 font-medium text-base">
-            Registrar
+          <Link to="/Register" className="text-white font-medium text-base flex justify-center items-center">
+          <img className="mr-1 w-4 h-4" src={add} alt="" />Add user
           </Link>
         </NavbarItem>
         )}

@@ -23,7 +23,7 @@ import {
 import axios from "axios";
 import editar from "../../images/boligrafo.png";
 import borrar from "../../images/borrar.png";
-import download from "../../images/download.png";
+import download from "../../images/Download.svg";
 import chevron from "../../images/right.png";
 import plus from "../../images/plus.png";
 import plusb from "../../images/plus_blue.png";
@@ -40,14 +40,15 @@ import wave from "../../images/wave.png"
 import svg from "../../images/svg.png"
 import AxiosInstances from "../../api/axios.js";
 import { PlusIcon } from "../finca/PlusIcon.jsx";
-// import { useAuth } from "../../context/authContext.jsx";
+import { useAuth } from "../../context/authContext.jsx";
+
 
 //#endregion
 export default function App() {
 
-  // const { user } = useAuth();
-  // const isAdmin = user && user.role === 'admin';
-  // const isEditor = user && user.role === 'editor';
+  const { user } = useAuth();
+  const isAdmin = user && user.role === 'admin';
+  const isEditor = user && user.role === 'editor';
 
   const toBase64 = (url) => new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
@@ -74,6 +75,10 @@ export default function App() {
   const [users, setUsers] = useState([]);
   const [drinks, setDrinks] = useState([]);
   const [snacks, setSnacks] = useState([]);
+
+
+
+
 
   const [cantidadBebida, setCantidadBebida] = useState("");
   const [bebidaSeleccionada, setBebidaSeleccionada] = useState('');
@@ -136,7 +141,8 @@ export default function App() {
 
   const [editedUserId, setEditedUserId] = useState(null);
   const [editedName, setEditedName] = useState("");
-  const [editPago, setEditPago] = useState("");
+  const [editedReserva, setEditedReserva] = useState("");
+  const [editedDate, setEditedDate] = useState("")
 
   const [errorFechaPasadia, setErrorFechaPasadia] = useState(false);
   const [errorIdentificacion, setErrorIdentificacion] = useState(false);
@@ -223,7 +229,7 @@ export default function App() {
     if (!busqueda) return users;
 
     return users.filter((user) => {
-      return user.identificacion.toString().includes(busqueda);
+      return user && user.identificacion.toString().includes(busqueda.toString());
     });
   }, [busqueda, users]);
 
@@ -690,16 +696,6 @@ export default function App() {
         return false;
       }
 
-      // if(food1Seleccionada && disponibleInventario === 0){
-      //   alert(`Producto agotado ${food1Seleccionada} en el stock ( ${disponibleInventario} ) `);
-      //   return false;
-      // }
-
-      // if(food2Seleccionada || disponibleInventario === 0){
-      //   alert(`Producto agotado ${food2Seleccionada} en el stock ( ${disponibleInventario} ) `);
-      //  return false;
-      // }
-
 
 
 
@@ -953,7 +949,6 @@ export default function App() {
     }
   };
 
-
   const guardarFood = async (food) => {
 
     try {
@@ -989,19 +984,21 @@ export default function App() {
     }
   };
 
-
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await AxiosInstances.get("/pasadia-clientes");
-        setUsers(response.data);
         const usuariosOrdenados = response.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
+        setUsers(usuariosOrdenados);
       } catch (error) {
         console.error("Error al obtener datos del servidor:", error);
       }
     };
     fetchData();
-  }, []);
+  }, []); 
+
+
+
 
   //#endregion
 
@@ -1100,48 +1097,35 @@ export default function App() {
     }
   };
 
-  const handleEditUser = async () => {
+  const handleEditUser = async (id) => {
     try {
       await AxiosInstances.put(
-        `/pasadia/edit/${editedUserId}`,
+        `/pasadia/edit/${id}`,
         {
           nombre: editedName,
-          pagoPendienteTotal: editPago
-        }
+          fechaPasadia: editedDate,
+          reserva: editedReserva
+        },
+        console.log("id del usuario "+id)
       );
       const updatedUsers = users.map((user) =>
-        user.identificacion === editedUserId ? { ...user, nombre: editedName, pagoPendienteTotal: editPago } : user
+        user._id === id ? { nombre: editedName,fechaPasadia: editedDate, reserva: editedReserva } : user
       );
-      setUsers(updatedUsers);
       setEditedName("");
-      setEditPago("");
+      setEditedReserva("");
+      setEditedDate("");
       setEditedUserId(null);
       toast.success('Cliente actualizado exitosamente!');
+      const response = await AxiosInstances.get("/pasadia-clientes");
+      const usuariosOrdenados = response.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
+      setUsers(usuariosOrdenados);
     } catch (error) {
       console.error("Error al editar usuario:", error);
       alert("Error al editar usuario. Por favor, inténtalo de nuevo más tarde.");
     }
   };
 
-  const handleDelete = async (id) => {
-    const confirmDelete = window.confirm(
-      "¿Estás seguro de que deseas eliminar este usuario?"
-    );
 
-    if (!confirmDelete) {
-      return;
-    }
-
-    try {
-      await AxiosInstances.delete(`/pasadia/${id}`);
-      const updatedUsers = users.filter((user) => user._id !== id);
-      setUsers(updatedUsers);
-      toast.success('Successfully toasted!')
-    } catch (error) {
-      console.error("Error al eliminar usuario:", error);
-      alert("Error al eliminar usuario. Por favor, inténtalo de nuevo más tarde.");
-    }
-  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -1203,7 +1187,7 @@ export default function App() {
   const { isOpen: isModalOpenF, onOpen: openModalF, onClose: closeModalF } = useDisclosure();
 
   const [ancho, setAncho] = React.useState('2xl')
-  const sizesm = ["2xl"];
+  const sizesm = ["4xl"];
 
   const handleOpenm = async (ancho, userId) => {
     setAncho(ancho);
@@ -1445,49 +1429,49 @@ export default function App() {
 
   const generarPDF = async () => {
     const pdf = new jsPDF();
-  
+
     await actualizarFechaEnProductos(selectedUser._id);
-  
+
     try {
       const svgBase64 = await toBase64(svg);
       pdf.addImage(svgBase64, 'JPEG', 0, 0, 220, 80);
     } catch (error) {
       console.error("Error al cargar la imagen", error);
     }
-  
+
     try {
       const waveBase64 = await toBase64(wave);
       pdf.addImage(waveBase64, 'JPEG', 0, 240, 220, 80);
     } catch (error) {
       console.error("Error al cargar la imagen", error);
     }
-  
+
     try {
       const logoBase64 = await toBase64(logo);
       pdf.addImage(logoBase64, 'JPEG', 85, 25, 40, 40);
     } catch (error) {
       console.error("Error al cargar la imagen", error);
     }
-  
+
     pdf.setFont("helvetica", "bold");
     pdf.setFontSize(20);
     pdf.setTextColor("#FFFFFF");
     pdf.text("HOTEL MEQO", 105, 20, null, null, 'center');
-  
+
     pdf.setTextColor(0, 0, 0);
     pdf.setFontSize(12);
     pdf.text('Datos de la empresa', 157, 54);
-  
+
     pdf.setFontSize(10);
     pdf.text('Nombre: Hotel Meqo', 164, 63)
     pdf.text('Numero: 3152390814', 164, 70)
-  
+
     pdf.setFontSize(12);
     pdf.text('Datos del cliente', 10, 54);
     pdf.setFontSize(10);
     pdf.text(`Nombre: ${selectedUser.nombre}`, 10, 63);
     pdf.text(`Identificación: ${selectedUser.identificacion}`, 10, 70);
-  
+
     // Encabezados de la tabla de productos
     pdf.setFontSize(12);
     pdf.text("Descripción", 10, 80);
@@ -1495,34 +1479,34 @@ export default function App() {
     pdf.text("Precio", 150, 80);
     pdf.text("Total", 180, 80); // Added column header for total
     pdf.line(10, 82, 200, 82);
-  
+
     // Lista de productos
     let y = 90;
     const cincoHorasEnMilisegundos = 3 * 60 * 60 * 1000;
     const productos = [...selectedUser.bebidas, ...selectedUser.restaurante];
-  
+
     const ahora = new Date();
     const totalGeneral = productos.filter(producto => {
       const fechaDeMarca = new Date(producto.fechaDeMarca);
       const diferenciaEnHoras = (ahora - fechaDeMarca) / cincoHorasEnMilisegundos;
       return producto.fechaDeMarca === "" || diferenciaEnHoras <= 3;
     }).reduce((acc, producto) => acc + (producto.cantidad * producto.precio), 0);
-  
+
     // Lógica para dividir en múltiples páginas
     const agregarProductoEnPagina = (producto) => {
       const fechaDeMarca = new Date(producto.fechaDeMarca);
       const diferenciaEnHoras = (ahora - fechaDeMarca) / cincoHorasEnMilisegundos;
-  
+
       if (producto.fechaDeMarca === "" || diferenciaEnHoras <= 3) {
         const productoTotal = producto.cantidad * producto.precio;
         pdf.text(producto.nombre, 10, y);
         pdf.text(producto.cantidad.toString(), 88, y);
         pdf.text(`$${producto.precio.toFixed(2)}`, 150, y);
         pdf.text(`$${productoTotal.toFixed(2)}`, 180, y);
-  
+
         // Actualizar posición Y
         y += 10;
-  
+
         // Verificar si hay espacio suficiente para otro producto en la página actual
         if (y > 282) { // 297 - Margen inferior
           // Cambiar a una nueva página
@@ -1531,17 +1515,17 @@ export default function App() {
         }
       }
     };
-  
+
     // Iterar sobre los productos
     productos.forEach(agregarProductoEnPagina);
-  
+
     // Mostrar el total general en la última página
     pdf.setFontSize(12);
     pdf.text(`Total General: ${totalGeneral.toFixed(2)}`, 150, y);
-  
+
     pdf.save("factura.pdf");
   };
-  
+
 
 
 
@@ -1607,11 +1591,30 @@ export default function App() {
     food.Descripcion.toLowerCase().includes(foodFiltro5.toLowerCase())
   );
 
-  const handleItemClick = (e) => {
-    e.stopPropagation();
-  };
+
 
   //#endregion
+
+
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm(
+      "¿Estás seguro de que deseas eliminar este usuario?"
+    );
+
+    if (!confirmDelete) {
+      return;
+    }
+
+    try {
+      await AxiosInstances.delete(`/pasadia/${id}`);
+      window.location.reload();
+    } catch (error) {
+      console.error("Error al eliminar usuario:", error);
+      alert("Error al eliminar usuario. Por favor, inténtalo de nuevo más tarde.");
+    }
+  };
+
+
 
 
   return (
@@ -1845,11 +1848,13 @@ export default function App() {
             <option className="text-black" value="1">Mostrar 1</option>
             <option className="text-black" value="5">Mostrar 5</option>
             <option className="text-black" value="15">Mostrar 15</option>
-            <option className="text-black" value="50">Mostrar 20</option>
+            <option className="text-black" value="50">Mostrar 50</option>
           </select>
 
         </div>
-        <Table className=" text-center uppercase mb-20" aria-label="Lista de Usuarios">
+        <Table className=" text-center uppercase mb-20" aria-label="Lista de Usuarios"
+        
+        >
           <TableHeader className="text-center">
             <TableColumn className="text-center">+</TableColumn>
             <TableColumn className="text-center max-w-xs">ID</TableColumn>
@@ -1859,28 +1864,25 @@ export default function App() {
             <TableColumn className="text-center">agregar bebida</TableColumn>
             <TableColumn className="text-center flex items-center justify-center">agregar comida</TableColumn>
             <TableColumn className="text-center">Pago pendiente</TableColumn>
-            {/* <TableColumn className="text-center">
+            <TableColumn className="text-center">
               {isAdmin || isEditor ? (
                 <div>
                   accion
                 </div>
               ) : null
               }
-            </TableColumn> */}
+            </TableColumn>
           </TableHeader>
 
 
 
           <TableBody emptyContent="No hay elementos por mostrar" className="">
-            {datosFiltrados.slice(start, end).map((cliente) => (
+            {datosFiltrados.map((cliente) => (
 
               <TableRow className="cursor-pointer hover:bg-blue-200" key={cliente._id}>
 
 
                 {/* -------------------MODAL DE PRODUCTOS SELECCIONADOS*/}
-
-
-
 
                 <TableCell>
                   {sizess.map((size) => (
@@ -2098,7 +2100,14 @@ export default function App() {
 
                   <Popover placement="bottom" offset={20} showArrow>
                     <PopoverTrigger>
-                      <p>{cliente.nombre}</p>
+                      {cliente._id === editedUserId ? (
+                        <Input
+                          value={editedName}
+                          onChange= {(e) => setEditedName(e.target.value)}
+                        />
+                      ) : (
+                        cliente.nombre
+                      )}
                     </PopoverTrigger>
                     <PopoverContent>
                       <div className="px-1 py-2">
@@ -2118,12 +2127,36 @@ export default function App() {
                   </Popover>
 
                 </TableCell>
-                <TableCell>{cliente.reserva}</TableCell>
-                <TableCell>{new Date(cliente.fechaPasadia).toLocaleDateString('es-ES', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}</TableCell>
+                <TableCell>
+                  {cliente._id === editedUserId ? (
+                    <Input
+                      className="w-52"
+                      value={editedReserva}
+                      onChange={(e) => setEditedReserva(e.target.value)}
+                    />
+                  ): (
+                    cliente.reserva
+
+                  )}
+                  </TableCell>
+                <TableCell>
+                  {cliente._id === editedUserId ? (
+                    <div>
+                      <Input
+                        className="w-52"
+                        value={editedDate}
+                        onChange={(e) => setEditedDate(e.target.value)}
+                      />
+                    </div>
+                  ): (
+                    new Date(cliente.fechaPasadia).toLocaleDateString('es-ES', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })
+                    
+                  )}
+                </TableCell>
                 <TableCell key={cliente._id} className=" ">
 
                   <div className=" flex justify-center">
@@ -2208,9 +2241,7 @@ export default function App() {
                                       id="search"
                                       placeholder="¿Qué quieres buscar?"
                                       value={filtro}
-                                      onClick={handleItemClick}
                                       onChange={(e) => {
-                                        e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
                                         setFiltro(e.target.value);
                                       }} />
                                   </div>
@@ -2267,9 +2298,7 @@ export default function App() {
                                       id="search"
                                       placeholder="¿Qué quieres buscar?"
                                       value={filtro2}
-                                      onClick={handleItemClick}
                                       onChange={(e) => {
-                                        e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
                                         setFiltro2(e.target.value);
                                       }} />
                                   </div>
@@ -2327,9 +2356,7 @@ export default function App() {
                                       id="search"
                                       placeholder="¿Qué quieres buscar?"
                                       value={filtro3}
-                                      onClick={handleItemClick}
                                       onChange={(e) => {
-                                        e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
                                         setFiltro3(e.target.value);
                                       }} />
                                   </div>
@@ -2386,9 +2413,7 @@ export default function App() {
                                       id="search"
                                       placeholder="¿Qué quieres buscar?"
                                       value={filtro4}
-                                      onClick={handleItemClick}
                                       onChange={(e) => {
-                                        e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
                                         setFiltro4(e.target.value);
                                       }} />
                                   </div>
@@ -2445,9 +2470,7 @@ export default function App() {
                                       id="search"
                                       placeholder="¿Qué quieres buscar?"
                                       value={filtro5}
-                                      onClick={handleItemClick}
                                       onChange={(e) => {
-                                        e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
                                         setFiltro5(e.target.value);
                                       }} />
                                   </div>
@@ -2548,9 +2571,7 @@ export default function App() {
                                     id="search"
                                     placeholder="¿Qué quieres buscar?"
                                     value={foodFiltro}
-                                    onClick={handleItemClick}
                                     onChange={(e) => {
-                                      e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
                                       setFoodFiltro(e.target.value);
                                     }} />
                                 </div>
@@ -2609,9 +2630,7 @@ export default function App() {
                                     id="search"
                                     placeholder="¿Qué quieres buscar?"
                                     value={foodFiltro2}
-                                    onClick={handleItemClick}
                                     onChange={(e) => {
-                                      e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
                                       setFoodFiltro2(e.target.value);
                                     }} />
                                 </div>
@@ -2669,9 +2688,7 @@ export default function App() {
                                     id="search"
                                     placeholder="¿Qué quieres buscar?"
                                     value={foodFiltro3}
-                                    onClick={handleItemClick}
                                     onChange={(e) => {
-                                      e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
                                       setFoodFiltro3(e.target.value);
                                     }} />
                                 </div>
@@ -2729,9 +2746,7 @@ export default function App() {
                                     id="search"
                                     placeholder="¿Qué quieres buscar?"
                                     value={foodFiltro4}
-                                    onClick={handleItemClick}
                                     onChange={(e) => {
-                                      e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
                                       setFoodFiltro4(e.target.value);
                                     }} />
                                 </div>
@@ -2789,9 +2804,7 @@ export default function App() {
                                     id="search"
                                     placeholder="¿Qué quieres buscar?"
                                     value={foodFiltro5}
-                                    onClick={handleItemClick}
                                     onChange={(e) => {
-                                      e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
                                       setFoodFiltro5(e.target.value);
                                     }} />
                                 </div>
@@ -2811,61 +2824,31 @@ export default function App() {
                     </ModalContent>
                   </Modal>
                 </TableCell>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                 <TableCell> {(cliente.cantidadPersonas.adultos * pasadiaAdultos) + (cliente.cantidadPersonas.ninios * pasadiaNinios) - (cliente.pagoAnticipado + cliente.pagoPendiente)}</TableCell>
 
-                {/* <TableCell className="flex justify-center align-center pr-5 w-60">
+                <TableCell className="flex justify-center align-center">
 
-                  {isAdmin || isEditor ? (
-                  <div className="flex w-40 justify-center items-center">
-                  {cliente.id === editedUserId && (
-                    
-                      <img
-                        className="w-8 h-8 mr-4 cursor-pointer"
-                        src={download}
-                        alt="actualizar"
-                        onClick={() => handleEditUser(cliente._id)}
-                      />
-                  )}
-                  <img
-                    className="w-8 h-8 mr-4 cursor-pointer"
-                    src={editar}
-                    alt="Edit"
-                    onClick={() => {
-                      setEditedUserId(cliente._id);
-                    }}
-                  />
-                  <img
-                    className="w-8 h-8 cursor-pointer"
-                    src={borrar}
-                    alt="Delete"
-                    onClick={() => handleDeleteUser(cliente._id)}
-                  />
-
-                  </div>
-                  ) : null}
-                </TableCell> */}
-                {/* <TableCell className="flex justify-center align-center">
                   {isAdmin || isEditor ? (
                     <div className="flex w-40 justify-center items-center">
+                      {cliente._id === editedUserId && (
+                        <img 
+                          className="w-8 h-8 mr-4 cursor-pointer"
+                          src={download}
+                          alt="actualizar"
+                          onClick={() => handleEditUser(cliente._id)}
+                        />
+                      )}
+                      <img
+                        className="w-8 h-8 mr-4 cursor-pointer"
+                        src={editar}
+                        alt="Edit"
+                        onClick={() => {
+                          setEditedDate(cliente.fechaPasadia);
+                          setEditedName(cliente.nombre);
+                          setEditedReserva(cliente.reserva);
+                          setEditedUserId(cliente._id);
+                        }}
+                      />
                       <img
                         className="w-8 h-8 cursor-pointer"
                         src={borrar}
@@ -2874,7 +2857,8 @@ export default function App() {
                       />
                     </div>
                   ) : null}
-                </TableCell> */}
+                </TableCell>
+
               </TableRow>
             ))}
           </TableBody>
