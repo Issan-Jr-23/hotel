@@ -17,7 +17,7 @@ import {
   ModalFooter,
   useDisclosure,
   Select,
-  SelectItem, Checkbox, Popover, PopoverTrigger, PopoverContent
+  SelectItem, Checkbox, Popover, PopoverTrigger, PopoverContent, input
 } from "@nextui-org/react";
 
 import axios from "axios";
@@ -164,6 +164,12 @@ export default function App() {
   const [cantidadBebida4Disponible, setCantidadBebida4Disponible] = useState(0);
 
 
+  const [editClient, setEditClient] = useState(null)
+  const [editCantidadAdultos, setEditCantidadAdultos] = useState("")
+  const [editCantidadNinios, setEditCantidadNinios] = useState("")
+  const [editMetodoPago, setEditMetodoPago] = useState("")
+  const [editPagoAnticipado,  setEditPagoAnticipado] = useState("")
+  const [editMetodoPagoPendiente, setEditMetodoPagoPendiente] = useState("")
 
 
   const options = ["Si", "No"];
@@ -627,7 +633,6 @@ export default function App() {
   };
   //#endregion 
 
-
   const actualizarInventarioFood = async (foodId, cantidad) => {
     try {
       const response = await AxiosInstances.post('/actualizar-inventario-food', {
@@ -643,6 +648,7 @@ export default function App() {
       throw error;
     }
   };
+
   const actualizarStockInicialFood = async (foodId, cantidad) => {
     try {
       const response = await AxiosInstances.post(`/actualizar-stock-inicial-food/${foodId}`, { cantidad });
@@ -1701,6 +1707,7 @@ export default function App() {
                       onChange={handleInputChange}
                       className={`rounded-xl h-12 border-2 ${errorIdentificacion ? 'border-red-500' : 'border-blue-400'}`}
                     />
+
                     <Input
                       isRequired
                       id="nombre"
@@ -1856,6 +1863,13 @@ export default function App() {
         
         >
           <TableHeader className="text-center">
+            <TableColumn>
+              {isAdmin || isEditor ? (
+                <div>
+                  Historial
+                </div>
+              ) : null}
+              </TableColumn>
             <TableColumn className="text-center">+</TableColumn>
             <TableColumn className="text-center max-w-xs">ID</TableColumn>
             <TableColumn className="text-center ">Nombre</TableColumn>
@@ -1880,6 +1894,8 @@ export default function App() {
             {datosFiltrados.map((cliente) => (
 
               <TableRow className="cursor-pointer hover:bg-blue-200" key={cliente._id}>
+
+                <TableCell>Ver</TableCell>
 
 
                 {/* -------------------MODAL DE PRODUCTOS SELECCIONADOS*/}
@@ -2110,18 +2126,93 @@ export default function App() {
                       )}
                     </PopoverTrigger>
                     <PopoverContent>
-                      <div className="px-1 py-2">
-                        <div className="text-small font-bold">Información</div>
+                      <div className="px-1 py-2 w-56">
+                        <div className="text-small font-bold flex justify-between ">Información <Button
+                         color="primary" 
+                         className="h-6 w-5 rounded-lg  text-white text-small font-bold tracking-widest"
+                         onClick={() => {
+                           setEditClient(cliente._id)
+                           setEditCantidadAdultos(cliente.cantidadPersonas.adultos)
+                           setEditCantidadNinios(cliente.cantidadPersonas.ninios)
+                           setEditMetodoPago(cliente.mediosDePago)
+                           setEditPagoAnticipado(cliente.pagoAnticipado)
+                           setEditMetodoPagoPendiente(cliente.mediosDePagoPendiente)
+                         }
+                         }
+                         >Editar</Button> </div>
                         <div className="text-red-500">Cantidad de personas</div>
-                        <div className="text-tiny">Adultos: {cliente.cantidadPersonas.adultos}</div>
-                        <div>Niños: {cliente.cantidadPersonas.ninios}</div>
+                        <div className="text-tiny flex items-center mt-2">Adultos: { cliente._id === editClient ? (
+                          
+                          <div className="flex">
+
+                            <input
+                            className="outline-none border-2 border-blue-300 rounded-xl h-6 pl-2 w-20 ml-1"
+                              label="input"
+                              value={editCantidadAdultos}
+                              onChange={(e) => setEditCantidadAdultos(e.target.value)}
+                            />
+                         
+                          </div>
+                        ) : ( 
+                          cliente.cantidadPersonas.adultos
+                        )}</div>
+                        <div className="flex mt-1">Niños: {
+                          cliente._id === editClient ? ( 
+                          <input
+                          className="outline-none border-2 border-blue-300 rounded-xl h-6 pl-2 w-20 ml-1"
+                            value={editCantidadNinios}
+                            onChange={(e) => setEditCantidadNinios(e.target.value)}
+                          />
+                          
+                          ): (
+                            cliente.cantidadPersonas.ninios
+
+                          )
+                        
+                        }</div>
                         <div className="text-red-500">Anticipo de pasadia</div>
-                        <div>Metodo de pago: {cliente.mediosDePago}</div>
-                        <div>Anticipo: {cliente.pagoAnticipado}</div>
+                        <div className="flex ">Metodo de pago: {
+                        cliente._id  === editClient ? (
+                          <input
+                          className="outline-none border-2 border-blue-300 rounded-xl h-6 pl-2 w-20 ml-1"
+                            value={editMetodoPago}
+                            onChange={(e) => setEditMetodoPago(e.target.value)}
+                          />
+                        ) : (
+                          cliente.mediosDePago
+
+                        ) 
+                        
+                        }</div>
+                        <div>Anticipo: {
+                          cliente._id === editClient ? (
+                            <input
+                            className="outline-none border-2 border-blue-300 rounded-xl h-6 pl-2 w-20 ml-1"
+                              value={editPagoAnticipado}
+                              onChange={(e) => setEditPagoAnticipado(e.target.value)}
+                            />
+                          ) : (
+                            cliente.pagoAnticipado 
+                          )
+                        }</div>
                         <div className="text-red-500">pago pendienete o total</div>
-                        <div>Metodo de pago: {cliente.mediosDePagoPendiente}</div>
+                        <div>Metodo de pago: {
+                          cliente._id === editClient ? (
+                            <input
+                            className="outline-none border-2 border-blue-300 rounded-xl h-6 pl-2 w-20 ml-1"
+                              value={editMetodoPagoPendiente}
+                              onChange={(e) => setEditMetodoPagoPendiente(e.target.value)}
+                            />
+                          ) : (
+
+                            cliente.mediosDePagoPendiente
+                          )
+                        }</div>
                         <div>Pago pendiente: {cliente.pagoPendiente}</div>
                         <div>pendiente: {(cliente.cantidadPersonas.adultos * pasadiaAdultos) + (cliente.cantidadPersonas.ninios * pasadiaNinios) - (cliente.pagoAnticipado + cliente.pagoPendiente)}</div>
+                        {cliente._id === editClient ? (
+                          <Button color="primary" className="h-7 rounded-lg bg-green-700 text-small font-bold tracking-widest mt-2">Actualizar</Button> 
+                        ): null}
                       </div>
                     </PopoverContent>
                   </Popover>

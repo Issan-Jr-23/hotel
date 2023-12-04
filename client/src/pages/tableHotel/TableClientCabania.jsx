@@ -1866,25 +1866,10 @@ export default function App() {
             <TableColumn className="text-center ">Nombre</TableColumn>
             <TableColumn className="text-center ">Reserva</TableColumn>
             <TableColumn className="text-center ">Cabaña</TableColumn>
-
-            {/* <TableColumn className="text-center ">Precio niños</TableColumn>
-            <TableColumn className="text-center ">Precio adultos</TableColumn>
-
-           
-            <TableColumn className="text-center ">Niños</TableColumn>
-            <TableColumn className="text-center ">Adultos</TableColumn> */}
-            {/* <TableColumn className="text-center ">Metodo de pago</TableColumn>
-            <TableColumn className="text-center ">
-              Anticipo
-            </TableColumn> */}
-            {/* <TableColumn className="text-center tables_im">Fecha de registro</TableColumn> */}
             <TableColumn className="text-center tables_im">fecha de inicio cabaña</TableColumn>
-            {/* <TableColumn className="text-center tables_im">Metodo de pago</TableColumn>
-            <TableColumn className="text-center tables_im">Pago pendiente o total</TableColumn> */}
             <TableColumn className="text-center">agregar bebida</TableColumn>
             <TableColumn className="text-center">agregar comida</TableColumn>
             <TableColumn className="text-center">Pago pendiente</TableColumn>
-            {/* <TableColumn className="text-center">Acción</TableColumn> */}
           </TableHeader>
 
           <TableBody emptyContent="No hay elementos por mostrar" className="">
