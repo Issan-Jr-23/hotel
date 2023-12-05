@@ -632,6 +632,7 @@ export default function App() {
         id: foodId,
         cantidad,
       });
+      console.log("datos enviados al servidor: "+foodId)
 
       if (response.status < 200 || response.status >= 300) {
         throw new Error(`Error al actualizar el inventario. Estado de la respuesta: ${response.status}`);
@@ -641,6 +642,23 @@ export default function App() {
       throw error;
     }
   };
+
+  // const actualizarProductosVendidos = async (foodId, cantidad) => {
+  //   try {
+  //     const response = await AxiosInstances.post('/actualizar-inventario-food', {
+  //       id: foodId,
+  //       cantidad,
+  //     });
+  //     console.log("datos enviados al servidor: "+foodId)
+
+  //     if (response.status < 200 || response.status >= 300) {
+  //       throw new Error(`Error al actualizar el inventario. Estado de la respuesta: ${response.status}`);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error al actualizar el inventario de bebidas:', error.message);
+  //     throw error;
+  //   }
+  // };
 
   const actualizarStockInicialFood = async (foodId, cantidad) => {
     try {
@@ -662,7 +680,19 @@ export default function App() {
     }
 
     const checkStockAndUpdateInventory = async (foodId, cantidad) => {
-      const response = await AxiosInstances.get(`/verificar-disponibilidad/${foodId}`);
+      const idPechugaPrincipal = '656e9d79ae845b7f8dddeecd';
+
+      let response;
+      let esSubproductoPechuga = false;
+
+      if (foodSeleccionada === "pechuga almuerzos (Subproducto)") {
+        esSubproductoPechuga = true;
+        response = await AxiosInstances.get(`/verificar-disponibilidad/${idPechugaPrincipal}`);
+        console.log("respose data: "+ JSON.stringify(response.data))
+      } else {
+        response = await AxiosInstances.get(`/verificar-disponibilidad/${foodId}`);
+        console.log("response data 2: "+ JSON.stringify(response.data))
+      }
 
 
       let fecha = new Date();
@@ -753,8 +783,12 @@ export default function App() {
         alert(`Ya no quedan ${food1Seleccionada} disponibles en el inventario `);
         return;
       }
-
-      await actualizarInventarioFood(foodId, cantidad);
+      console.log("id de la comida seleccionada : "+foodSeleccionadaId)
+      if (esSubproductoPechuga) {
+        await actualizarProductosVendidos(idPechugaPrincipal, cantidad);
+      }else{
+        await actualizarInventarioFood(foodId, cantidad);
+      }
       await actualizarStockInicialFood(foodId, cantidad);
       return true;
     };
@@ -978,7 +1012,7 @@ export default function App() {
 
       setUsers(usuariosOrdenados);
     } catch (error) {
-      console.error('Error al guardar la bebida en el cliente:', error.message);
+      console.error('Error al guardar la comida en el cliente:', error.message);
       throw error;
     }
   };
@@ -2224,7 +2258,7 @@ export default function App() {
                           )
                         }</div>
                         <div>Pago pendiente: {cliente.pagoPendiente}</div>
-                        <div>pendiente: {(cliente.cantidadPersonas.adultos * pasadiaAdultos) + (cliente.cantidadPersonas.ninios * pasadiaNinios) - (cliente.pagoAnticipado + cliente.pagoPendiente)}</div>
+                        <div>pendiente: {cliente.nuevoTotal}</div>
                         {cliente._id === editClient ? (
                           <Button color="primary" className="h-7 rounded-lg bg-green-700 text-small font-bold tracking-widest mt-2">Actualizar</Button>
                         ) : null}
@@ -2654,10 +2688,20 @@ export default function App() {
                                   setFoodSeleccionada(selectedFood);
 
                                   const foodSeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood);
+                                  const productoPrincipalInfo = snacks.find(food => food.Descripcion === "PECHUGA");
+                                  console.log("pechugas data: "+productoPrincipalInfo)
+
                                   if (foodSeleccionadaInfo) {
                                     setPrecioFoodSeleccionada(foodSeleccionadaInfo.ValorUnitario);
                                     setFoodSeleccionadaId(foodSeleccionadaInfo._id);
-                                    setCantidadFoodDisponible(foodSeleccionadaInfo.CantidadInicial);
+
+                                    // Si seleccionas "pechuga adultos", muestra la cantidad total disponible de pechugas.
+                                    if (selectedFood === "pechuga almuerzos (Subproducto)" && productoPrincipalInfo) {
+                                      setCantidadFoodDisponible(productoPrincipalInfo.CantidadInicial);
+                                    } else {
+                                      // Para otros productos, muestra su propia cantidad disponible.
+                                      setCantidadFoodDisponible(foodSeleccionadaInfo.CantidadInicial);
+                                    }
                                   }
                                 }}
                               >
@@ -2683,6 +2727,7 @@ export default function App() {
                                 </div>
                               </aside>
                             </div>
+
                             <div className="flex">
 
                               <Input
