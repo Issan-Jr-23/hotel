@@ -203,7 +203,7 @@ export const obtenerCPI = async (req, res) => {
 
 export const updatePP = async (req, res) => {
   const clienteId = req.params.id;
-  const { pagoPendiente, mediosDePagoPendiente } = req.body;
+  const { pagoPendiente, mediosDePagoPendiente } = req.body; 
 
   try {
     const clienteActual = await Cabania.findOne({ identificacion: clienteId });

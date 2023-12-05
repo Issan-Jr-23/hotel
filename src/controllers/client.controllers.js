@@ -187,34 +187,35 @@ export const obtenerCPI = async (req, res) => {
   }
 };
 
+
 export const updatePP = async (req, res) => {
   const clienteId = req.params.id;
-  const { pagoPendiente, mediosDePagoPendiente } = req.body;
+  const { pagoPendiente, mediosDePagoPendiente } = req.body; 
 
   try {
-    const cliente = await Cliente.findOneAndUpdate(
-      { identificacion: clienteId },
-      { pagoPendiente, mediosDePagoPendiente },
+    const clienteActual = await Cliente.findOne({ identificacion: clienteId });
+    if (!clienteActual) {
+      return res.status(404).json({ message: 'Cliente no encontrado' });
+    }
+
+    const nuevoValorTotal = clienteActual.nuevoTotal - pagoPendiente;
+
+    const clienteActualizado = await Cliente.findOneAndUpdate(
+      { identificacion: clienteId }, 
+      { nuevoTotal: nuevoValorTotal, pagoPendiente, mediosDePagoPendiente },
       { new: true }
     );
 
-    if (!cliente) {
-      return res.status(404).json({ message: "Cliente no encontrado" });
+    if (!clienteActualizado) {
+      return res.status(404).json({ message: 'Error al actualizar el cliente' });
     }
 
-    console.log(
-      `Cliente con ID ${clienteId} ha sido actualizado con la siguiente información:`
-    );
-    console.log("Pago Pendiente:", pagoPendiente);
-    console.log("Medios de Pago Pendiente:", mediosDePagoPendiente);
 
-    res.status(200).json({
-      message: `Datos del cliente ${clienteId} actualizados correctamente`,
-      cliente,
-    });
+
+    res.status(200).json({ message: `Datos del cliente ${clienteId} actualizados correctamente`, cliente: clienteActualizado });
   } catch (error) {
-    console.error("Error al actualizar el cliente:", error);
-    res.status(500).json({ message: "Error al actualizar el cliente" });
+    console.error('Error al actualizar el cliente:', error);
+    res.status(500).json({ message: 'Error al actualizar el cliente' });
   }
 };
 
@@ -261,5 +262,21 @@ export const actualizarFacturacion = async (req, res) => {
   } catch (error) {
     console.error("Error al actualizar la facturación:", error);
     res.status(500).json({ message: "Error al actualizar la facturación" });
+  }
+};
+
+export const getClienteByIdentificacion = async (req, res) => {
+  try {
+    const identificacion = req.params.identificacion;
+    const cliente = await Cliente.findOne({ identificacion: identificacion }); // Busca por el campo 'identificacion'
+
+    if (!cliente) {
+      return res.status(404).send('Cliente no encontrado');
+    }
+
+    res.json(cliente);
+  } catch (error) {
+    console.error('Error al obtener el cliente:', error);
+    res.status(500).send('Error interno del servidor');
   }
 };

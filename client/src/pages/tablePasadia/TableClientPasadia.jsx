@@ -2,25 +2,9 @@
 //#region 
 import React, { useState, useEffect, useMemo } from "react";
 import {
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
-  Button,
-  Input,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  useDisclosure,
-  Select,
-  SelectItem, Checkbox, Popover, PopoverTrigger, PopoverContent, input
+  Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button, Input, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Select, SelectItem, Checkbox, Popover, PopoverTrigger, PopoverContent
 } from "@nextui-org/react";
 
-import axios from "axios";
 import editar from "../../images/boligrafo.png";
 import borrar from "../../images/borrar.png";
 import download from "../../images/Download.svg";
@@ -28,16 +12,15 @@ import chevron from "../../images/right.png";
 import plus from "../../images/plus.png";
 import plusb from "../../images/plus_blue.png";
 import { SearchIcon } from "./SearchIcon";
-// import toast, { Toaster}  from 'alert';
 import toast, { Toaster } from 'react-hot-toast';
 import jsPDF from "jspdf";
 import Swal from 'sweetalert2';
-// import html2canvas from "html2canvas";
 import "./tables.css"
 import "../table/table.css"
 import logo from "../../images/logo.png"
 import wave from "../../images/wave.png"
 import svg from "../../images/svg.png"
+import eye from "../../images/eye.png"
 import AxiosInstances from "../../api/axios.js";
 import { PlusIcon } from "../finca/PlusIcon.jsx";
 import { useAuth } from "../../context/authContext.jsx";
@@ -168,7 +151,7 @@ export default function App() {
   const [editCantidadAdultos, setEditCantidadAdultos] = useState("")
   const [editCantidadNinios, setEditCantidadNinios] = useState("")
   const [editMetodoPago, setEditMetodoPago] = useState("")
-  const [editPagoAnticipado,  setEditPagoAnticipado] = useState("")
+  const [editPagoAnticipado, setEditPagoAnticipado] = useState("")
   const [editMetodoPagoPendiente, setEditMetodoPagoPendiente] = useState("")
 
 
@@ -187,7 +170,8 @@ export default function App() {
     pagoAnticipado: "",
     mediosDePagoPendiente: "",
     pagoPendiente: "",
-    fechaPasadia: ""
+    fechaPasadia: "",
+    nuevoTotal: ""
 
   });
 
@@ -270,7 +254,14 @@ export default function App() {
     const totalCosto = (formData.cantidadPersonas.ninios * pasadiaNinios) +
       (formData.cantidadPersonas.adultos * pasadiaAdultos);
 
+    const valueInputs = (formData.pagoAnticipado + formData.pagoPendiente);
+    const totalValueInputs = valueInputs;
+
     const totalPendiente = totalCosto;
+
+    const ppc = totalPendiente - totalValueInputs;
+    console.log("valor de los inputs: " + ppc)
+    formData.nuevoTotal = ppc;
 
     const cantidadDeClientes = formData.cantidadPersonas.ninios + formData.cantidadPersonas.adultos;
     if ((name === 'pagoPendiente' && parseFloat(value) > totalPendiente) ||
@@ -291,6 +282,7 @@ export default function App() {
       setFormData({
         ...formData,
         [name]: value,
+        nuevoTotal: formData.nuevoTotal,
         ...(fieldName && (name === 'ninios' || name === 'adultos') ? { cantidadPersonas: { ...formData.cantidadPersonas, [fieldName]: newValue } } : {})
       });
     }
@@ -319,6 +311,7 @@ export default function App() {
       throw error;
     }
   };
+
   const actualizarStockInicialBebida = async (bebidaId, cantidad) => {
     try {
       const response = await AxiosInstances.post(`/actualizar-stock-inicial/${bebidaId}`, { cantidad });
@@ -1001,7 +994,7 @@ export default function App() {
       }
     };
     fetchData();
-  }, []); 
+  }, []);
 
 
 
@@ -1112,10 +1105,10 @@ export default function App() {
           fechaPasadia: editedDate,
           reserva: editedReserva
         },
-        console.log("id del usuario "+id)
+        console.log("id del usuario " + id)
       );
       const updatedUsers = users.map((user) =>
-        user._id === id ? { nombre: editedName,fechaPasadia: editedDate, reserva: editedReserva } : user
+        user._id === id ? { nombre: editedName, fechaPasadia: editedDate, reserva: editedReserva } : user
       );
       setEditedName("");
       setEditedReserva("");
@@ -1353,24 +1346,31 @@ export default function App() {
       toast.error('Debe llenar todos los campos');
       return;
     }
+
     if (selectedClienteId) {
+      console.log("identificacion del cliente: " + selectedClienteId)
       try {
+        const clienteResponse = await AxiosInstances.get(`/pasadia-clientes-identificacion/${selectedClienteId}`);
+        const clienteData = clienteResponse.data;
+
+        const nuevoValorTotal = clienteData.nuevoTotal - formDatas.pagoPendiente;
+        console.log("nuevo total: " + nuevoValorTotal)
+
         const response = await AxiosInstances.put(`/pasadia-clientes/${selectedClienteId}/actualizar`, {
+          nuevoTotal: nuevoValorTotal,
           pagoPendiente: formDatas.pagoPendiente,
           mediosDePagoPendiente: formDatas.mediosDePagoPendiente
         });
+
         setFormDatas({
           pagoPendiente: '',
           mediosDePagoPendiente: ''
         });
+
         toast.success('Datos actualizados exitosamente');
 
         const responses = await AxiosInstances.get("/pasadia-clientes");
-
-        // Ordena los datos de la respuesta de la petición GET, no del PUT
         const usuariosOrdenados = responses.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
-
-        // Actualiza el estado con los usuarios ordenados
         setUsers(usuariosOrdenados);
 
       } catch (error) {
@@ -1860,7 +1860,7 @@ export default function App() {
 
         </div>
         <Table className=" text-center uppercase mb-20" aria-label="Lista de Usuarios"
-        
+
         >
           <TableHeader className="text-center">
             <TableColumn>
@@ -1869,7 +1869,7 @@ export default function App() {
                   Historial
                 </div>
               ) : null}
-              </TableColumn>
+            </TableColumn>
             <TableColumn className="text-center">+</TableColumn>
             <TableColumn className="text-center max-w-xs">ID</TableColumn>
             <TableColumn className="text-center ">Nombre</TableColumn>
@@ -1895,7 +1895,22 @@ export default function App() {
 
               <TableRow className="cursor-pointer hover:bg-blue-200" key={cliente._id}>
 
-                <TableCell>Ver</TableCell>
+                <TableCell className="flex justify-center items-center">
+
+                  <Popover placement="right">
+                    <PopoverTrigger>
+                      <h2>
+                        <img className="w-6" src={eye} alt="" />
+                      </h2>
+                    </PopoverTrigger>
+                    <PopoverContent>
+                      <div className="px-1 w-56">
+                        {"ver datos"}
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+
+                </TableCell>
 
 
                 {/* -------------------MODAL DE PRODUCTOS SELECCIONADOS*/}
@@ -2069,14 +2084,14 @@ export default function App() {
                       <p onClick={() => seleccionarCliente(cliente.identificacion)}>{cliente.identificacion}</p>
                     </PopoverTrigger>
                     <PopoverContent >
-                      {cliente.reserva === "Si" && ((cliente.cantidadPersonas.adultos * pasadiaAdultos) + (cliente.cantidadPersonas.ninios * pasadiaNinios) - (cliente.pagoAnticipado + cliente.pagoPendiente)) !== 0 || cliente.reserva === "No" && ((cliente.cantidadPersonas.adultos * pasadiaAdultos) + (cliente.cantidadPersonas.ninios * pasadiaNinios) - (cliente.pagoAnticipado + cliente.pagoPendiente)) !== 0 ?
+                      {cliente.reserva === "Si" && (cliente.nuevoTotal) !== 0 || cliente.reserva === "No" && (cliente.nuevoTotal) !== 0 ?
                         <div className="px-1 py-2">
                           <div className="text-small font-bold">Información</div>
                           <div className="text-red-500">Datos del usuario</div>
                           <div>Identificacion: {cliente.identificacion}</div>
                           <div className="text-tiny">Nombre: {cliente.nombre}</div>
                           <div className="text-red-500 text-small font-bold">Pago pendiente</div>
-                          <div>{((cliente.cantidadPersonas.adultos * pasadiaAdultos) + (cliente.cantidadPersonas.ninios * pasadiaNinios) - (cliente.pagoAnticipado + cliente.pagoPendiente))}</div>
+                          <div>{cliente.nuevoTotal}</div>
                           <Input
                             disabled
                             type="number"
@@ -2119,7 +2134,7 @@ export default function App() {
                       {cliente._id === editedUserId ? (
                         <Input
                           value={editedName}
-                          onChange= {(e) => setEditedName(e.target.value)}
+                          onChange={(e) => setEditedName(e.target.value)}
                         />
                       ) : (
                         cliente.nombre
@@ -2128,78 +2143,78 @@ export default function App() {
                     <PopoverContent>
                       <div className="px-1 py-2 w-56">
                         <div className="text-small font-bold flex justify-between ">Información <Button
-                         color="primary" 
-                         className="h-6 w-5 rounded-lg  text-white text-small font-bold tracking-widest"
-                         onClick={() => {
-                           setEditClient(cliente._id)
-                           setEditCantidadAdultos(cliente.cantidadPersonas.adultos)
-                           setEditCantidadNinios(cliente.cantidadPersonas.ninios)
-                           setEditMetodoPago(cliente.mediosDePago)
-                           setEditPagoAnticipado(cliente.pagoAnticipado)
-                           setEditMetodoPagoPendiente(cliente.mediosDePagoPendiente)
-                         }
-                         }
-                         >Editar</Button> </div>
+                          color="primary"
+                          className="h-6 w-5 rounded-lg  text-white text-small font-bold tracking-widest"
+                          onClick={() => {
+                            setEditClient(cliente._id)
+                            setEditCantidadAdultos(cliente.cantidadPersonas.adultos)
+                            setEditCantidadNinios(cliente.cantidadPersonas.ninios)
+                            setEditMetodoPago(cliente.mediosDePago)
+                            setEditPagoAnticipado(cliente.pagoAnticipado)
+                            setEditMetodoPagoPendiente(cliente.mediosDePagoPendiente)
+                          }
+                          }
+                        >Editar</Button> </div>
                         <div className="text-red-500">Cantidad de personas</div>
-                        <div className="text-tiny flex items-center mt-2">Adultos: { cliente._id === editClient ? (
-                          
+                        <div className="text-tiny flex items-center mt-2">Adultos: {cliente._id === editClient ? (
+
                           <div className="flex">
 
                             <input
-                            className="outline-none border-2 border-blue-300 rounded-xl h-6 pl-2 w-20 ml-1"
+                              className="outline-none border-2 border-blue-300 rounded-xl h-6 pl-2 w-20 ml-1"
                               label="input"
                               value={editCantidadAdultos}
                               onChange={(e) => setEditCantidadAdultos(e.target.value)}
                             />
-                         
+
                           </div>
-                        ) : ( 
+                        ) : (
                           cliente.cantidadPersonas.adultos
                         )}</div>
                         <div className="flex mt-1">Niños: {
-                          cliente._id === editClient ? ( 
-                          <input
-                          className="outline-none border-2 border-blue-300 rounded-xl h-6 pl-2 w-20 ml-1"
-                            value={editCantidadNinios}
-                            onChange={(e) => setEditCantidadNinios(e.target.value)}
-                          />
-                          
-                          ): (
+                          cliente._id === editClient ? (
+                            <input
+                              className="outline-none border-2 border-blue-300 rounded-xl h-6 pl-2 w-20 ml-1"
+                              value={editCantidadNinios}
+                              onChange={(e) => setEditCantidadNinios(e.target.value)}
+                            />
+
+                          ) : (
                             cliente.cantidadPersonas.ninios
 
                           )
-                        
+
                         }</div>
                         <div className="text-red-500">Anticipo de pasadia</div>
                         <div className="flex ">Metodo de pago: {
-                        cliente._id  === editClient ? (
-                          <input
-                          className="outline-none border-2 border-blue-300 rounded-xl h-6 pl-2 w-20 ml-1"
-                            value={editMetodoPago}
-                            onChange={(e) => setEditMetodoPago(e.target.value)}
-                          />
-                        ) : (
-                          cliente.mediosDePago
+                          cliente._id === editClient ? (
+                            <input
+                              className="outline-none border-2 border-blue-300 rounded-xl h-6 pl-2 w-20 ml-1"
+                              value={editMetodoPago}
+                              onChange={(e) => setEditMetodoPago(e.target.value)}
+                            />
+                          ) : (
+                            cliente.mediosDePago
 
-                        ) 
-                        
+                          )
+
                         }</div>
                         <div>Anticipo: {
                           cliente._id === editClient ? (
                             <input
-                            className="outline-none border-2 border-blue-300 rounded-xl h-6 pl-2 w-20 ml-1"
+                              className="outline-none border-2 border-blue-300 rounded-xl h-6 pl-2 w-20 ml-1"
                               value={editPagoAnticipado}
                               onChange={(e) => setEditPagoAnticipado(e.target.value)}
                             />
                           ) : (
-                            cliente.pagoAnticipado 
+                            cliente.pagoAnticipado
                           )
                         }</div>
                         <div className="text-red-500">pago pendienete o total</div>
                         <div>Metodo de pago: {
                           cliente._id === editClient ? (
                             <input
-                            className="outline-none border-2 border-blue-300 rounded-xl h-6 pl-2 w-20 ml-1"
+                              className="outline-none border-2 border-blue-300 rounded-xl h-6 pl-2 w-20 ml-1"
                               value={editMetodoPagoPendiente}
                               onChange={(e) => setEditMetodoPagoPendiente(e.target.value)}
                             />
@@ -2211,8 +2226,8 @@ export default function App() {
                         <div>Pago pendiente: {cliente.pagoPendiente}</div>
                         <div>pendiente: {(cliente.cantidadPersonas.adultos * pasadiaAdultos) + (cliente.cantidadPersonas.ninios * pasadiaNinios) - (cliente.pagoAnticipado + cliente.pagoPendiente)}</div>
                         {cliente._id === editClient ? (
-                          <Button color="primary" className="h-7 rounded-lg bg-green-700 text-small font-bold tracking-widest mt-2">Actualizar</Button> 
-                        ): null}
+                          <Button color="primary" className="h-7 rounded-lg bg-green-700 text-small font-bold tracking-widest mt-2">Actualizar</Button>
+                        ) : null}
                       </div>
                     </PopoverContent>
                   </Popover>
@@ -2225,11 +2240,11 @@ export default function App() {
                       value={editedReserva}
                       onChange={(e) => setEditedReserva(e.target.value)}
                     />
-                  ): (
+                  ) : (
                     cliente.reserva
 
                   )}
-                  </TableCell>
+                </TableCell>
                 <TableCell>
                   {cliente._id === editedUserId ? (
                     <div>
@@ -2239,13 +2254,13 @@ export default function App() {
                         onChange={(e) => setEditedDate(e.target.value)}
                       />
                     </div>
-                  ): (
+                  ) : (
                     new Date(cliente.fechaPasadia).toLocaleDateString('es-ES', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })
-                    
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })
+
                   )}
                 </TableCell>
                 <TableCell key={cliente._id} className=" ">
@@ -2915,14 +2930,14 @@ export default function App() {
                     </ModalContent>
                   </Modal>
                 </TableCell>
-                <TableCell> {(cliente.cantidadPersonas.adultos * pasadiaAdultos) + (cliente.cantidadPersonas.ninios * pasadiaNinios) - (cliente.pagoAnticipado + cliente.pagoPendiente)}</TableCell>
+                <TableCell> {cliente.nuevoTotal}</TableCell>
 
                 <TableCell className="flex justify-center align-center">
 
                   {isAdmin || isEditor ? (
                     <div className="flex w-40 justify-center items-center">
                       {cliente._id === editedUserId && (
-                        <img 
+                        <img
                           className="w-8 h-8 mr-4 cursor-pointer"
                           src={download}
                           alt="actualizar"

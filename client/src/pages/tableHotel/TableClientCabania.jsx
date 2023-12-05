@@ -278,7 +278,7 @@ export default function App() {
       const pagoAnticipado = name === 'pagoAnticipado' ? parseFloat(value) : parseFloat(formData.pagoAnticipado || 0);
       const totalPagos = pagoPendiente + pagoAnticipado;
 
-      if (totalPagos > totalCosto) {
+      if (totalPagos > totalCosto) { 
         alert('La suma de los montos no puede ser mayor que el costo total.');
       } else {
         nuevoTotal = totalCosto - totalPagos;
@@ -2149,8 +2149,6 @@ export default function App() {
                   month: 'long',
                   day: 'numeric',
                 })}</TableCell>
-                {/* <TableCell>{cliente.mediosDePagoPendiente}</TableCell>
-                <TableCell>{cliente.pagoPendiente}</TableCell> */}
 
 
 
@@ -2497,11 +2495,6 @@ export default function App() {
 
 
 
-
-
-
-
-
                 <TableCell key={cliente.id} className="">
                   <div className="flex flex-wrap gap-3">
                     {sizesm.map((size) => (
@@ -2841,24 +2834,6 @@ export default function App() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-                {/* {cliente.bebidas.map((bebida, index) => (
-                  <TableCell key={index}>{bebida?.nombre || "aun no hay bebidas"}</TableCell>
-                ))} */}
-                {/* {cliente.restaurante.map((food, index) => (
-                  <TableCell key={index}>{food?.nombre || "aun no hay bebidas"}</TableCell>
-                ))} */}
                 <TableCell>{cliente.tipo_cabania === "Mayapo" ? ((cliente.nuevoTotal))
                   : ((cliente.nuevoTotal))}</TableCell>
                 {/* <TableCell className="flex justify-center align-center pr-5 w-60">
