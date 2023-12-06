@@ -679,11 +679,14 @@ export default function App() {
 
     const checkStockAndUpdateInventory = async (foodId, cantidad) => {
       const idPechugaPrincipal = '656e9d79ae845b7f8dddeecd';
-
       let response;
       let esSubproductoPechuga = false;
+      
+      
 
-      if (foodSeleccionadaId === "656f7968d49f0b774cc57d00" || foodSeleccionadaId === "656f78fad49f0b774cc57cfd" || food1SeleccionadaId === "656f7968d49f0b774cc57d00" || food1SeleccionadaId === "656f78fad49f0b774cc57cfd") {
+      if (foodSeleccionadaId === "656f7968d49f0b774cc57d00" || foodSeleccionadaId === "656f78fad49f0b774cc57cfd" ||
+       foodSeleccionadaId === "65709cb118ba0de891cebfa4" || foodSeleccionadaId === "65709a7a18ba0de891cebf99" ||
+        foodSeleccionadaId === "65709de318ba0de891cebfac" || foodSeleccionadaId === "65709e4518ba0de891cebfaf") {
         esSubproductoPechuga = true;
         response = await AxiosInstances.get(`/verificar-disponibilidad/${idPechugaPrincipal}`);
         console.log("respose data: " + JSON.stringify(response.data))
@@ -2688,6 +2691,10 @@ export default function App() {
                                   
                                     if (foodSeleccionadaInfo._id === "656f7968d49f0b774cc57d00" || foodSeleccionadaInfo._id === "656f78fad49f0b774cc57cfd"  && productoPrincipalInfo) {
                                       setCantidadFoodDisponible(productoPrincipalInfo.CantidadInicial);
+                                    } else if(foodSeleccionadaInfo._id === "65709a7a18ba0de891cebf99" || foodSeleccionadaInfo._id === "65709cb118ba0de891cebfa4"  && productoPrincipalInfo1){
+                                      setCantidadFoodDisponible(productoPrincipalInfo1.CantidadInicial);
+                                    } else if(foodSeleccionadaInfo._id === "65709de318ba0de891cebfac" || foodSeleccionadaInfo._id === "65709e4518ba0de891cebfaf"  && productoPrincipalInfo2){
+                                      setCantidadFoodDisponible(productoPrincipalInfo2.CantidadInicial);
                                     } else {
                                       setCantidadFoodDisponible(foodSeleccionadaInfo.CantidadInicial);
                                     }
@@ -2757,6 +2764,10 @@ export default function App() {
                                   
                                     if (food1SeleccionadaInfo._id === "656f7968d49f0b774cc57d00" || food1SeleccionadaInfo._id === "656f78fad49f0b774cc57cfd"  && productoPrincipalInfo) {
                                       setCantidadFood1Disponible(productoPrincipalInfo.CantidadInicial);
+
+                                    } else if(food1SeleccionadaInfo._id === "65709a7a18ba0de891cebf99" || food1SeleccionadaInfo._id === "65709cb118ba0de891cebfa4"  && productoPrincipalInfo1){
+                                      setCantidadFood1Disponible(productoPrincipalInfo1.CantidadInicial);
+
                                     } else {
                                       setCantidadFood1Disponible(food1SeleccionadaInfo.CantidadInicial);
                                     }
