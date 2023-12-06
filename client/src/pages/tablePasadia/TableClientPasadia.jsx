@@ -638,7 +638,8 @@ export default function App() {
         throw new Error(`Error al actualizar el inventario. Estado de la respuesta: ${response.status}`);
       }
     } catch (error) {
-      console.error('Error al actualizar el inventario de bebidas:', error.message);
+      console.error('Error al actualizar el inventario de comidas:', error.message);
+      console.log("id predeterminado: "+foodId)
       throw error;
     }
   };
@@ -682,7 +683,7 @@ export default function App() {
       let response;
       let esSubproductoPechuga = false;
 
-      if (foodSeleccionada === "pechuga almuerzos (Subproducto)") {
+      if (foodSeleccionadaId === "656f7968d49f0b774cc57d00" || foodSeleccionadaId === "656f78fad49f0b774cc57cfd" || food1SeleccionadaId === "656f7968d49f0b774cc57d00" || food1SeleccionadaId === "656f78fad49f0b774cc57cfd") {
         esSubproductoPechuga = true;
         response = await AxiosInstances.get(`/verificar-disponibilidad/${idPechugaPrincipal}`);
         console.log("respose data: " + JSON.stringify(response.data))
@@ -709,7 +710,6 @@ export default function App() {
       const totalPersonas = ninios + adultos;
 
       if (foodSeleccionada && disponibleInventario === 0) {
-        // alert(`Producto agotado ${foodSeleccionada} en el stock ( ${disponibleInventario} ) `);
         toast.error('Algun producto esta agotado',
           {
             style: {
@@ -773,6 +773,7 @@ export default function App() {
       if (esSubproductoPechuga) {
         await actualizarProductosVendidos(idPechugaPrincipal, cantidad);
         await actualizarInventarioFood(foodId, cantidad);
+        console.log("id predeterminado del producto seleccionado: "+foodId)
       } else {
         await actualizarInventarioFood(foodId, cantidad);
         await actualizarStockInicialFood(foodId, cantidad);
@@ -2677,17 +2678,17 @@ export default function App() {
 
                                   const foodSeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood || selectedFood === food._id);
                                   const productoPrincipalInfo = snacks.find(food => food._id === "656e9d79ae845b7f8dddeecd");
-                                  console.log("pechugas data: ");
+                                  const productoPrincipalInfo1 = snacks.find(food => food._id === "65709d5618ba0de891cebfa7");
+                                  const productoPrincipalInfo2 = snacks.find(food => food._id === "65709e8d18ba0de891cebfb2");
 
                                   if (foodSeleccionadaInfo) {
                                     setPrecioFoodSeleccionada(foodSeleccionadaInfo.ValorUnitario);
                                     setFoodSeleccionadaId(foodSeleccionadaInfo._id);
 
-                                    // Si seleccionas "pechuga adultos", muestra la cantidad total disponible de pechugas.
-                                    if (foodSeleccionadaInfo._id === "656f7968d49f0b774cc57d00" && productoPrincipalInfo) {
+                                  
+                                    if (foodSeleccionadaInfo._id === "656f7968d49f0b774cc57d00" || foodSeleccionadaInfo._id === "656f78fad49f0b774cc57cfd"  && productoPrincipalInfo) {
                                       setCantidadFoodDisponible(productoPrincipalInfo.CantidadInicial);
                                     } else {
-                                      // Para otros productos, muestra su propia cantidad disponible.
                                       setCantidadFoodDisponible(foodSeleccionadaInfo.CantidadInicial);
                                     }
                                   }
@@ -2744,11 +2745,21 @@ export default function App() {
                                   const selectedFood1 = e.target.value;
                                   setFood1Seleccionada(selectedFood1);
 
-                                  const food1SeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood1);
+                                  const food1SeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood1 || selectedFood1 === food._id);
+                                  const productoPrincipalInfo = snacks.find(food => food._id === "656e9d79ae845b7f8dddeecd");
+                                  const productoPrincipalInfo1 = snacks.find(food => food._id === "65709d5618ba0de891cebfa7");
+                                  const productoPrincipalInfo2 = snacks.find(food => food._id === "65709e8d18ba0de891cebfb2");
+
                                   if (food1SeleccionadaInfo) {
                                     setPrecioFood1Seleccionada(food1SeleccionadaInfo.ValorUnitario);
                                     setFood1SeleccionadaId(food1SeleccionadaInfo._id);
-                                    setCantidadFood1Disponible(food1SeleccionadaInfo.CantidadInicial);
+
+                                  
+                                    if (food1SeleccionadaInfo._id === "656f7968d49f0b774cc57d00" || food1SeleccionadaInfo._id === "656f78fad49f0b774cc57cfd"  && productoPrincipalInfo) {
+                                      setCantidadFood1Disponible(productoPrincipalInfo.CantidadInicial);
+                                    } else {
+                                      setCantidadFood1Disponible(food1SeleccionadaInfo.CantidadInicial);
+                                    }
                                   }
                                 }}
                               >

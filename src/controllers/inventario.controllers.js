@@ -319,10 +319,11 @@ export const updateCF = async (req, res) => {
     }
 
     const cantidadRestante = bebida.CantidadInicial;
-    const psubproducto = bebida.Descripcion
+    const psubproducto = bebida.id;
+    console.log("muestra el _id del producto seleccionado: "+psubproducto)
     console.log("cantidad mostrada en el server: "+cantidadRestante)
 
-    if(psubproducto === "pechuga almuerzos (Subproducto)" ){
+    if(psubproducto === "656f7968d49f0b774cc57d00" || psubproducto === "656f78fad49f0b774cc57cfd"){
       bebida.ProductosVendidos += cantidad;
       await bebida.save();
     }else
