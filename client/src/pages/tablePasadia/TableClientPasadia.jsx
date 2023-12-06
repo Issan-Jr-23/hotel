@@ -632,7 +632,7 @@ export default function App() {
         id: foodId,
         cantidad,
       });
-      console.log("datos enviados al servidor: "+foodId)
+      console.log("datos enviados al servidor: " + foodId)
 
       if (response.status < 200 || response.status >= 300) {
         throw new Error(`Error al actualizar el inventario. Estado de la respuesta: ${response.status}`);
@@ -642,23 +642,20 @@ export default function App() {
       throw error;
     }
   };
+  
 
-  // const actualizarProductosVendidos = async (foodId, cantidad) => {
-  //   try {
-  //     const response = await AxiosInstances.post('/actualizar-inventario-food', {
-  //       id: foodId,
-  //       cantidad,
-  //     });
-  //     console.log("datos enviados al servidor: "+foodId)
+  const actualizarProductosVendidos = async (idPechugaPrincipal, cantidad) => {
+    try {
+      const response = await AxiosInstances.post(`/actualizar-stock-inicial-food/${idPechugaPrincipal}`, { cantidad });
+      if (response.status < 200 || response.status >= 300) {
+        throw new Error(`Error al actualizar el stock inicial. Estado de la respuesta: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Error al actualizar el stock inicial:', error.message);
+      throw error;
+    }
+  };
 
-  //     if (response.status < 200 || response.status >= 300) {
-  //       throw new Error(`Error al actualizar el inventario. Estado de la respuesta: ${response.status}`);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error al actualizar el inventario de bebidas:', error.message);
-  //     throw error;
-  //   }
-  // };
 
   const actualizarStockInicialFood = async (foodId, cantidad) => {
     try {
@@ -688,10 +685,10 @@ export default function App() {
       if (foodSeleccionada === "pechuga almuerzos (Subproducto)") {
         esSubproductoPechuga = true;
         response = await AxiosInstances.get(`/verificar-disponibilidad/${idPechugaPrincipal}`);
-        console.log("respose data: "+ JSON.stringify(response.data))
+        console.log("respose data: " + JSON.stringify(response.data))
       } else {
         response = await AxiosInstances.get(`/verificar-disponibilidad/${foodId}`);
-        console.log("response data 2: "+ JSON.stringify(response.data))
+        console.log("response data 2: " + JSON.stringify(response.data))
       }
 
 
@@ -724,11 +721,6 @@ export default function App() {
         );
         return false;
       }
-
-
-
-
-
 
 
       if (esCortesia) {
@@ -767,12 +759,6 @@ export default function App() {
 
 
 
-
-
-
-
-
-
       if (cantidad > disponibleInventario) {
         alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
         return;
@@ -783,13 +769,14 @@ export default function App() {
         alert(`Ya no quedan ${food1Seleccionada} disponibles en el inventario `);
         return;
       }
-      console.log("id de la comida seleccionada : "+foodSeleccionadaId)
+      console.log("id de la comida seleccionada : " + foodSeleccionadaId)
       if (esSubproductoPechuga) {
         await actualizarProductosVendidos(idPechugaPrincipal, cantidad);
-      }else{
         await actualizarInventarioFood(foodId, cantidad);
+      } else {
+        await actualizarInventarioFood(foodId, cantidad);
+        await actualizarStockInicialFood(foodId, cantidad);
       }
-      await actualizarStockInicialFood(foodId, cantidad);
       return true;
     };
 
@@ -2676,7 +2663,7 @@ export default function App() {
                                 disabled
                                 label="Stock"
                                 className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
-                                placeholder={`   ${cantidadFoodDisponible}`}
+                                placeholder={` ${cantidadFoodDisponible}`}
                               />
                               <Select
                                 className="ml-2"
@@ -2686,17 +2673,18 @@ export default function App() {
                                 onChange={(e) => {
                                   const selectedFood = e.target.value;
                                   setFoodSeleccionada(selectedFood);
+                                  
 
-                                  const foodSeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood);
-                                  const productoPrincipalInfo = snacks.find(food => food.Descripcion === "PECHUGA");
-                                  console.log("pechugas data: "+productoPrincipalInfo)
+                                  const foodSeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood || selectedFood === food._id);
+                                  const productoPrincipalInfo = snacks.find(food => food._id === "656e9d79ae845b7f8dddeecd");
+                                  console.log("pechugas data: ");
 
                                   if (foodSeleccionadaInfo) {
                                     setPrecioFoodSeleccionada(foodSeleccionadaInfo.ValorUnitario);
                                     setFoodSeleccionadaId(foodSeleccionadaInfo._id);
 
                                     // Si seleccionas "pechuga adultos", muestra la cantidad total disponible de pechugas.
-                                    if (selectedFood === "pechuga almuerzos (Subproducto)" && productoPrincipalInfo) {
+                                    if (foodSeleccionadaInfo._id === "656f7968d49f0b774cc57d00" && productoPrincipalInfo) {
                                       setCantidadFoodDisponible(productoPrincipalInfo.CantidadInicial);
                                     } else {
                                       // Para otros productos, muestra su propia cantidad disponible.

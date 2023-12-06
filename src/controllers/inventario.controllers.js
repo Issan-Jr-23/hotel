@@ -120,7 +120,7 @@ export const updateProducto = async (req, res) => {
       { _id:identificacion },
       {Descripcion, tipo, Caducidad, CantidadInicial, ValorUnitario},
       { new: true }
-    );
+    ); 
 
     if (!productoActualizado) {
       return res.status(404).json({ mensaje: 'Producto no encontrado' });
