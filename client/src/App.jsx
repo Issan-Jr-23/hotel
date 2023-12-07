@@ -13,6 +13,7 @@ import Habitaciones from "./pages/Habitaciones.jsx";
 import Precios from "./pages/Price.jsx";
 import Hotel_graphs from "./graphs/LinearCharts.jsx";
 import FincaVisualizacion from "./pages/FincaVisualizacion.jsx";
+import FincaInventario from "./pages/FincaInv.jsx";
 import Message from "./pages/Mesagge.jsx";
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
                 <Route path="/finca" element={<FincaVisualizacion/>}/>
                 <Route path="/message" element={<Message/>}/>
                 <Route path="/price" element={<Precios/>}/>
+                <Route path="/inventario-finca" element={<FincaInventario/>}/>
               </Route>
               <Route element={<ProtectedRoute allowedRoles={["editor"]} />}>
                 <Route path="/Register" element={<Register/>} />

@@ -58,12 +58,12 @@ export default function Navbars() {
                 radius="sm"
                 variant="light"
               >
-                <img className=" w-4 h-4" src={hotel} alt="" />Hotel
+                <img className="mb-1" src={hotel} alt="" style={{width:"20px"}} />Hotel
               </Button>
             </DropdownTrigger>
           </NavbarItem>
           <DropdownMenu aria-label="ACME features"
-            className="w-[340px] "
+            className="w-[340px]"
             itemClasses={{
               base: "gap-4",
               
@@ -74,28 +74,28 @@ export default function Navbars() {
               className=""
             >
             <Link className="link_nav" to='/pasadia'>
-            <img className="mr-1 w-5 h-5" src={pasadia} alt="" />Pasadia
+            <img className="mr-1" src={pasadia} alt="" style={{width:"20px"}} />Pasadia
             </Link>
             </DropdownItem>
             <DropdownItem aria-label="prueba"
               key="production_ready"
             >
               <Link className="link_nav" to='/cabanias'>
-              <img className="mr-1 w-5 h-5" src={cabania} alt="" />Cabañas
+              <img className="mr-1" src={cabania} alt="" style={{width:"20px"}} />Cabañas
             </Link>
             </DropdownItem>
             <DropdownItem aria-label="prueba"
               key="production_one"
             >
               <Link className="link_nav" to='/habitaciones'>
-              <img className="mr-1 w-5 h-5" src={habitaciones} alt="" />Habitaciones
+              <img className="mr-1 " src={habitaciones} alt="" style={{width:"20px"}} />Habitaciones
             </Link>
             </DropdownItem>
             <DropdownItem aria-label="prueba"
               key="99_uptime_inv"
             >
               <Link className="link_nav" to='/inventario'>
-              <img className="mr-1 w-5 h-5" src={inventory} alt="" /> Inventario
+              <img className="mr-1 " src={inventory} alt="" style={{width:"20px"}} /> Inventario
             </Link>
             </DropdownItem>
             {isEditor && (
@@ -103,7 +103,7 @@ export default function Navbars() {
               key="100_uptime_inv"
             >
               <Link className="link_nav" to='/message'>
-              <img className="mr-1 w-5 h-5" src={notification} alt="" />Notificaciones
+              <img className="mr-1" src={notification} alt="" style={{width:"20px"}} />Notificaciones
             </Link>
             </DropdownItem>
             )}
@@ -112,7 +112,7 @@ export default function Navbars() {
               key="101_uptime_inv"
             >
               <Link className="link_nav" to='/hotel-graphs'>
-              <img className="mr-1 w-5 h-5" src={grafic} alt="" />Graph
+              <img className="mr-1 " src={grafic} alt="" style={{width:"20px"}} />Graph
             </Link>
             </DropdownItem>
             )}
@@ -121,7 +121,16 @@ export default function Navbars() {
               key="102_uptime_inv"
             >
               <Link className="link_nav" to='/price'>
-              <img className="mr-1 w-5 h-5" src={price} alt="" />Precios
+              <img className="mr-1 " src={price} alt="" style={{width:"20px"}} />Precios
+            </Link>
+            </DropdownItem>
+              )}
+              {isEditor && (
+            <DropdownItem aria-label="prueba"
+              key="103_uptime_inv"
+            >
+              <Link className="link_nav" to='/inventario-finca'>
+              <img className="mr-1" src={price} alt="" style={{width:"20px"}} />Table Finca
             </Link>
             </DropdownItem>
               )}
@@ -129,7 +138,7 @@ export default function Navbars() {
         </Dropdown>
         <NavbarItem isActive>
           <Link className="text-white font-medium text-base flex justify-center items-center" to={'/finca'} aria-current="page" color="warning">
-          <img className="mt-1 mr-1 w-5 h-5" src={finca} alt="" /> Finca
+          <img className="mt-1 mr-1 w-5 h-5" src={finca} alt=""  /> Finca
           </Link>
         </NavbarItem>
         <NavbarItem >
@@ -147,10 +156,10 @@ export default function Navbars() {
         )}
       </NavbarContent>
 
-      <NavbarContent as="div" className="items-center" justify="">
+      <NavbarContent as="div" className="items-center justify-center flex  w-56" justify="">
       <p className="font-semibold text-white ">{user.username}</p>
         <Dropdown placement="bottom-end">
-          <DropdownTrigger>
+          <DropdownTrigger className=" border-3 h-9 w-2">
               <Avatar className="cursor-pointer" showFallback/>
           </DropdownTrigger>
           <DropdownMenu aria-label="Profile Actions" variant="flat">
