@@ -136,11 +136,55 @@ export default function Navbars() {
               )}
           </DropdownMenu>
         </Dropdown>
+        <Dropdown>
         <NavbarItem isActive>
-          <Link className="text-white font-medium text-base flex justify-center items-center" to={'/finca'} aria-current="page" color="warning">
+          <DropdownTrigger>
+          {/* <Link className="text-white font-medium text-base flex justify-center items-center" to={'/finca'} aria-current="page" color="warning">
           <img className="mt-1 mr-1 w-5 h-5" src={finca} alt=""  /> Finca
-          </Link>
+          </Link> */}
+          <Button
+                disableRipple
+                className="text-white font-medium text-base p-0 bg-transparent data-[hover=true]:bg-transparent"
+                radius="sm"
+                variant="light"
+              >
+                <img className="mb-1" src={finca} alt="" style={{width:"20px"}} />Finca
+              </Button>
+          </DropdownTrigger>
         </NavbarItem>
+        <DropdownMenu aria-label="ACME features"
+            className="w-[340px]"
+            itemClasses={{
+              base: "gap-4",
+              
+            }}
+          >
+            <DropdownItem aria-label="prueba"
+              key="autoscaling101"
+              className=""
+            >
+            <Link className="link_nav" to='/finca'>
+            <img className="mr-1" src={pasadia} alt="" style={{width:"20px"}} />Producción
+            </Link>
+            </DropdownItem>
+            <DropdownItem aria-label="prueba"
+              key="autoscaling102"
+              className=""
+            >
+            <Link className="link_nav" to='/inventario-ranch'>
+            <img className="mr-1" src={pasadia} alt="" style={{width:"20px"}} />Inventario
+            </Link>
+            </DropdownItem>
+            <DropdownItem aria-label="prueba"
+              key="autoscaling103"
+              className=""
+            >
+            <Link className="link_nav" to='/precios'>
+            <img className="mr-1" src={pasadia} alt="" style={{width:"20px"}} />Precios
+            </Link>
+            </DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
         <NavbarItem >
           <Link className="text-white font-medium text-base flex justify-center items-center" color="foreground" href="#">
           <img className="mr-1 w-5 h-5" src={energy} alt="" />Energia Renovable

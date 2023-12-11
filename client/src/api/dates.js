@@ -15,15 +15,13 @@ const DataFetcher = ({ onDataFetched }) => {
   useEffect(() => {
     fetchData()
       .then(data => {
-        // Llamar a la función onDataFetched con los datos obtenidos
         onDataFetched(data);
       })
       .catch(error => {
-        // Manejar errores aquí si es necesario
       });
   }, [onDataFetched]);
 
-  return null; // No necesitas renderizar nada en este componente
+  return null; 
 };
 
 export default DataFetcher;

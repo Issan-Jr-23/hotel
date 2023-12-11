@@ -186,32 +186,32 @@ export default function App() {
   const [pasadiaNinios, setPasadiaNinios] = useState(null)
   const [ccDisponibles, setCcDisponibles] = useState(null)
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await AxiosInstances.get("/table-precios");
-  //       const pasadiaN = response.data.find(item => item.servicio === "pasadia" && item.tipo === "ninios");
-  //       const pasadiaA = response.data.find(item => item.servicio === "pasadia" && item.tipo === "adultos");
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await AxiosInstances.get("/table-precios");
+        const pasadiaN = response.data.find(item => item.servicio === "pasadia" && item.tipo === "ninios");
+        const pasadiaA = response.data.find(item => item.servicio === "pasadia" && item.tipo === "adultos");
 
 
-  //       if (pasadiaN) {
-  //         setPasadiaNinios(pasadiaN.precio);
-  //       } else {
-  //         console.log("No se encontró el servicio de 'cabanias'");
-  //       }
+        if (pasadiaN) {
+          setPasadiaNinios(pasadiaN.precio);
+        } else {
+          console.log("No se encontró el servicio de 'cabanias'");
+        }
 
-  //       if (pasadiaA) {
-  //         setPasadiaAdultos(pasadiaA.precio);
-  //       } else {
-  //         console.log("No se encontró el servicio de 'cabanias mayapo'");
-  //       }
+        if (pasadiaA) {
+          setPasadiaAdultos(pasadiaA.precio);
+        } else {
+          console.log("No se encontró el servicio de 'cabanias mayapo'");
+        }
 
-  //     } catch (error) {
-  //       console.error("Error al obtener datos del servidor:", error);
-  //     }
-  //   };
-  //   fetchData();
-  // }, []);
+      } catch (error) {
+        console.error("Error al obtener datos del servidor:", error);
+      }
+    };
+    fetchData();
+  }, []);
 
 
   const datosFiltrados = useMemo(() => {
@@ -2706,24 +2706,12 @@ export default function App() {
                                   setFood1Seleccionada(selectedFood1);
 
                                   const food1SeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood1 || selectedFood1 === food._id);
-                                  const productoPrincipalInfo = snacks.find(food => food._id === "656e9d79ae845b7f8dddeecd");
-                                  const productoPrincipalInfo1 = snacks.find(food => food._id === "65709d5618ba0de891cebfa7");
-                                  const productoPrincipalInfo2 = snacks.find(food => food._id === "65709e8d18ba0de891cebfb2");
+                                
 
                                   if (food1SeleccionadaInfo) {
                                     setPrecioFood1Seleccionada(food1SeleccionadaInfo.ValorUnitario);
                                     setFood1SeleccionadaId(food1SeleccionadaInfo._id);
-
-
-                                    if (food1SeleccionadaInfo._id === "656f7968d49f0b774cc57d00" || food1SeleccionadaInfo._id === "656f78fad49f0b774cc57cfd" && productoPrincipalInfo) {
-                                      setCantidadFood1Disponible(productoPrincipalInfo.CantidadInicial);
-
-                                    } else if (food1SeleccionadaInfo._id === "65709a7a18ba0de891cebf99" || food1SeleccionadaInfo._id === "65709cb118ba0de891cebfa4" && productoPrincipalInfo1) {
-                                      setCantidadFood1Disponible(productoPrincipalInfo1.CantidadInicial);
-
-                                    } else {
-                                      setCantidadFood1Disponible(food1SeleccionadaInfo.CantidadInicial);
-                                    }
+                                    setCantidadFood1Disponible(food1SeleccionadaInfo.CantidadInicial);
                                   }
                                 }}
                               >
