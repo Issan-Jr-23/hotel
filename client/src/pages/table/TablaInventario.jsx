@@ -6,7 +6,7 @@ import {
   ModalBody,
   ModalFooter,
   Button,
-  useDisclosure, Input
+  useDisclosure, Input, Tabs, Tab, Card, CardBody
 } from "@nextui-org/react";
 import axios from "axios";
 import editar from "../../images/boligrafo.png";
@@ -43,6 +43,36 @@ export default function App() {
   });
 
 
+  const [formDatas, setFormDatas] = useState({
+    Descripcion: '',
+    tipo: '',
+    CantidadInicial: '',
+    Caducidad: '',
+    subproductos: [
+      { Descripcion: '', ValorUnitario: '' },
+      { Descripcion: '', ValorUnitario: '' },
+    ],
+  });
+
+  // Función para manejar cambios en los campos del producto principal
+  const handleInputChanges = (event) => {
+    const { name, value } = event.target;
+    setFormDatas((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
+  };
+
+  // Función para manejar cambios en los campos de los subproductos
+  const handleSubproductoChange = (index, field, value) => {
+    setFormDatas((prevFormData) => {
+      const subproductos = [...prevFormData.subproductos];
+      subproductos[index][field] = value;
+      return { ...prevFormData, subproductos };
+    });
+  };
+
+
   const handleInputChange = (event) => {
     const { name, value } = event.target;
 
@@ -63,6 +93,7 @@ export default function App() {
       try {
         const response = await AxiosInstance.get("/obtener-inventario");
         setUsers(response.data);
+        console.log("response data: " + JSON.stringify(response.data))
       } catch (error) {
         console.error("Error al obtener datos del servidor:", error);
       }
@@ -84,6 +115,18 @@ export default function App() {
       console.error("Error al agregar el producto: ", error);
     }
   };
+
+  const handleFormSubmite = async () => {
+    try {
+      await AxiosInstance.post("/inventario", formDatas);
+      onClose();
+      const response = await AxiosInstance.get("/obtener-inventario");
+      setUsers(response.data);
+    } catch (error) {
+      console.error("Error al agregar el producto: ", error);
+    }
+  };
+
 
 
   const registrarEliminacion = async (productName) => {
@@ -293,82 +336,156 @@ export default function App() {
 
 
             </div>
+
             <Modal backdrop={backdrop} isOpen={isOpen} onClose={onClose}>
-              <ModalContent>
+              <ModalContent className="h-5/6 overflow-y-auto">
                 {(onClose) => (
-                  <>
-                    <ModalHeader className="flex flex-col gap-1">
-                      Registrar Producto
-                    </ModalHeader>
-                    <ModalBody>
-                      <Input
-                        name="Descripcion"
-                        className="input_form"
-                        type="text"
-                        variant="flat"
-                        label="Descripción del producto"
-                        onChange={handleInputChange}
-                      />
+                  <Tabs>
+                    <Tab key="productos" title="Productos">
 
 
-                      <select
-                        className="outline-none h-16 border-3 rounded-xl border-blue-500"
-                        name="tipo"
-                        value={formData.tipo}
-                        onChange={(event) => handleInputChange(event)}
-                      >
-                        <option value="">Seleccione un tipo</option>
-                        <option value="bebida">Bebidas</option>
-                        <option value="comida">Comidas</option>
-                        <option value="utensilios">Utensilios</option>
-                        <option value="despensa">Despensa</option>
-                      </select>
+
+                      <ModalHeader className="flex flex-col gap-1">
+                        Registrar Producto
+                      </ModalHeader>
+                      <ModalBody>
+                        <Input
+                          name="Descripcion"
+                          className="input_form"
+                          type="text"
+                          variant="flat"
+                          label="Descripción del producto"
+                          onChange={handleInputChange}
+                        />
 
 
-                      <Input 
-                        name="Caducidad"
-                        className="input_form"
-                        type="Date"
-                        variant="flat"
-                        label="Fecha de caducidad"
-                        placeholder="date"
-                        onChange={handleInputChange}
-                      />
+                        <select
+                          className="outline-none h-16 border-3 rounded-xl border-blue-500"
+                          name="tipo"
+                          value={formData.tipo}
+                          onChange={(event) => handleInputChange(event)}
+                        >
+                          <option value="">Seleccione un tipo</option>
+                          <option value="bebida">Bebidas</option>
+                          <option value="comida">Comidas</option>
+                          <option value="utensilios">Utensilios</option>
+                          <option value="despensa">Despensa</option>
+                        </select>
 
 
-                      <Input
-                        name="CantidadInicial"
-                        className="input_form"
-                        type="number"
-                        variant="flat"
-                        label="Cantidad inicial"
-                        onChange={handleInputChange}
-                      />
+                        <Input
+                          name="Caducidad"
+                          className="input_form"
+                          type="Date"
+                          variant="flat"
+                          label="Fecha de caducidad"
+                          placeholder="date"
+                          onChange={handleInputChange}
+                        />
 
 
-                      <Input
-                        name="ValorUnitario"
-                        className="input_form"
-                        type="number"
-                        variant="flat"
-                        label="Precio de venta"
-                        onChange={handleInputChange}
-                      />
+                        <Input
+                          name="CantidadInicial"
+                          className="input_form"
+                          type="number"
+                          variant="flat"
+                          label="Cantidad inicial"
+                          onChange={handleInputChange}
+                        />
 
-                      
-                    </ModalBody>
-                    <ModalFooter>
-                      <Button color="danger" variant="light" onClick={onClose}>
-                        Cerrar
-                      </Button>
-                      <Button color="primary" onClick={handleFormSubmit}>
-                        Guardar
-                      </Button>
-                    </ModalFooter>
-                  </>
+
+                        <Input
+                          name="ValorUnitario"
+                          className="input_form"
+                          type="number"
+                          variant="flat"
+                          label="Precio de venta"
+                          onChange={handleInputChange}
+                        />
+
+
+                      </ModalBody>
+                      <ModalFooter>
+                        <Button color="danger" variant="light" onClick={onClose}>
+                          Cerrar
+                        </Button>
+                        <Button color="primary" onClick={handleFormSubmit}>
+                          Guardar
+                        </Button>
+                      </ModalFooter>
+
+
+                    </Tab>
+                    <Tab key="subProductos" title="SubProductos">
+                      <ModalHeader className="flex flex-col gap-1">
+                        Registrar Producto
+                        <Input
+                          label="Descripcion del producto base"
+                          type="Text"
+                          className="mb-2"
+                          name="Descripcion"
+                          value={formDatas.Descripcion}
+                          onChange={handleInputChanges}
+                        />
+                        <Input
+                          label="Cantidad inicial"
+                          className="mb-2"
+                          name="CantidadInicial"
+                          value={formDatas.CantidadInicial}
+                          onChange={handleInputChanges}
+                        />
+                        <select
+                          className="outline-none h-16 border-3 rounded-xl border-blue-500"
+                          name="tipo"
+                          value={formDatas.tipo}
+                          onChange={handleInputChanges}
+                        >
+                          <option value="">Seleccione un tipo</option>
+                          <option value="bebida">Bebidas</option>
+                          <option value="comida">Comidas</option>
+                          <option value="utensilios">Utensilios</option>
+                          <option value="despensa">Despensa</option>
+                        </select>
+                        <Input
+                          name="Caducidad"
+                          className="input_form"
+                          type="Date"
+                          variant="flat"
+                          label="Fecha de caducidad"
+                          placeholder="date"
+                          onChange={handleInputChanges}
+                        />
+
+                        {/* Campos para subproductos */}
+                        {formDatas.subproductos.map((subproducto, index) => (
+                          <div key={index}>
+                            <Input
+                              label={`Nombre del subproducto ${index + 1}`}
+                              className="mb-2"
+                              name="Descripcion"
+                              type="text"
+                              value={subproducto.Descripcion}
+                              onChange={(e) => handleSubproductoChange(index, 'Descripcion', e.target.value)}
+                            />
+                            <Input
+                              label={`Precio del subproducto ${index + 1}`}
+                              className="mb-2"
+                              type="number"
+                              name="ValorInitario"
+                              value={subproducto.ValorUnitario}
+                              onChange={(e) => handleSubproductoChange(index, 'ValorUnitario', e.target.value)}
+                            />
+                          </div>
+                        ))}
+                        <Button color="primary" onClick={handleFormSubmite}>Guardar</Button>
+                      </ModalHeader>
+                    </Tab>
+
+                  </Tabs>
                 )}
               </ModalContent>
             </Modal>
+
           </>
         </div>
 
@@ -377,10 +494,10 @@ export default function App() {
       </div>
       <section className="flex coluns-2  mx-5">
         <Table className=" text-center uppercase max-w-full overflow-y-auto table-fixed" aria-label="Lista de Usuarios"
-        color="danger"
-                selectionMode="multiple"
-                selectedKeys={selectedKeys}
-                onSelectionChange={setSelectedKeys}
+          color="danger"
+          selectionMode="multiple"
+          selectedKeys={selectedKeys}
+          onSelectionChange={setSelectedKeys}
         >
           <TableHeader className="text-center bg-blue-500">
             <TableColumn className="text-center">descripcion del producto</TableColumn>
@@ -519,7 +636,7 @@ export default function App() {
                   {isAdmin || isEditor ? (
                     <div className="flex w-40 justify-center items-center h-10">
                       {inventario._id === editedUserId && (
-                        <img 
+                        <img
                           className="w-8 h-8 mr-4 cursor-pointer"
                           src={download}
                           alt="actualizar"

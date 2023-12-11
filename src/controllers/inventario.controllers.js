@@ -113,12 +113,12 @@ export const deleteProducto = async (req, res) => {
 
 export const updateProducto = async (req, res) => {
   const identificacion = req.params.id;
-  const { Descripcion, tipo, Caducidad, CantidadInicial, ValorUnitario  } = req.body;
+  const { Descripcion, tipo, Caducidad, CantidadInicial, ValorUnitario,ProductosVendidos  } = req.body;
 
   try {
     const productoActualizado = await Bebida.findOneAndUpdate(
       { _id:identificacion },
-      {Descripcion, tipo, Caducidad, CantidadInicial, ValorUnitario},
+      {Descripcion, tipo, Caducidad, CantidadInicial, ValorUnitario, ProductosVendidos},
       { new: true }
     ); 
 
@@ -442,6 +442,24 @@ export const updateCSTOCKF = async (req, res) => {
 };
 
 
+export const obtenerSubProductos = async (req, res) => {
+  try {
+    const productId = req.params.id;
+
+    // Buscar el producto por ID
+    const product = await Bebida.findById(productId);
+
+    if (!product) {
+      return res.status(404).json({ error: 'Producto no encontrado' });
+    }
+
+    // Devolver los subproductos como respuesta
+    res.json(product.subproductos);
+  } catch (error) {
+    console.error('Error en la solicitud /verificar-disponibilidad/:productId:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
 
 
 

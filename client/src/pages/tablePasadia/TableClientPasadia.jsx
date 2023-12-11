@@ -1,4 +1,3 @@
-
 //#region 
 import React, { useState, useEffect, useMemo } from "react";
 import {
@@ -187,32 +186,32 @@ export default function App() {
   const [pasadiaNinios, setPasadiaNinios] = useState(null)
   const [ccDisponibles, setCcDisponibles] = useState(null)
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await AxiosInstances.get("/table-precios");
-        const pasadiaN = response.data.find(item => item.servicio === "pasadia" && item.tipo === "ninios");
-        const pasadiaA = response.data.find(item => item.servicio === "pasadia" && item.tipo === "adultos");
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await AxiosInstances.get("/table-precios");
+  //       const pasadiaN = response.data.find(item => item.servicio === "pasadia" && item.tipo === "ninios");
+  //       const pasadiaA = response.data.find(item => item.servicio === "pasadia" && item.tipo === "adultos");
 
 
-        if (pasadiaN) {
-          setPasadiaNinios(pasadiaN.precio);
-        } else {
-          console.log("No se encontró el servicio de 'cabanias'");
-        }
+  //       if (pasadiaN) {
+  //         setPasadiaNinios(pasadiaN.precio);
+  //       } else {
+  //         console.log("No se encontró el servicio de 'cabanias'");
+  //       }
 
-        if (pasadiaA) {
-          setPasadiaAdultos(pasadiaA.precio);
-        } else {
-          console.log("No se encontró el servicio de 'cabanias mayapo'");
-        }
+  //       if (pasadiaA) {
+  //         setPasadiaAdultos(pasadiaA.precio);
+  //       } else {
+  //         console.log("No se encontró el servicio de 'cabanias mayapo'");
+  //       }
 
-      } catch (error) {
-        console.error("Error al obtener datos del servidor:", error);
-      }
-    };
-    fetchData();
-  }, []);
+  //     } catch (error) {
+  //       console.error("Error al obtener datos del servidor:", error);
+  //     }
+  //   };
+  //   fetchData();
+  // }, []);
 
 
   const datosFiltrados = useMemo(() => {
@@ -639,24 +638,10 @@ export default function App() {
       }
     } catch (error) {
       console.error('Error al actualizar el inventario de comidas:', error.message);
-      console.log("id predeterminado: "+foodId)
+      console.log("id predeterminado: " + foodId)
       throw error;
     }
   };
-  
-
-  const actualizarProductosVendidos = async (idPechugaPrincipal, cantidad) => {
-    try {
-      const response = await AxiosInstances.post(`/actualizar-stock-inicial-food/${idPechugaPrincipal}`, { cantidad });
-      if (response.status < 200 || response.status >= 300) {
-        throw new Error(`Error al actualizar el stock inicial. Estado de la respuesta: ${response.status}`);
-      }
-    } catch (error) {
-      console.error('Error al actualizar el stock inicial:', error.message);
-      throw error;
-    }
-  };
-
 
   const actualizarStockInicialFood = async (foodId, cantidad) => {
     try {
@@ -678,23 +663,7 @@ export default function App() {
     }
 
     const checkStockAndUpdateInventory = async (foodId, cantidad) => {
-      const idPechugaPrincipal = '656e9d79ae845b7f8dddeecd';
-      let response;
-      let esSubproductoPechuga = false;
-      
-      
-
-      if (foodSeleccionadaId === "656f7968d49f0b774cc57d00" || foodSeleccionadaId === "656f78fad49f0b774cc57cfd" ||
-       foodSeleccionadaId === "65709cb118ba0de891cebfa4" || foodSeleccionadaId === "65709a7a18ba0de891cebf99" ||
-        foodSeleccionadaId === "65709de318ba0de891cebfac" || foodSeleccionadaId === "65709e4518ba0de891cebfaf") {
-        esSubproductoPechuga = true;
-        response = await AxiosInstances.get(`/verificar-disponibilidad/${idPechugaPrincipal}`);
-        console.log("respose data: " + JSON.stringify(response.data))
-      } else {
-        response = await AxiosInstances.get(`/verificar-disponibilidad/${foodId}`);
-        console.log("response data 2: " + JSON.stringify(response.data))
-      }
-
+      const response = await AxiosInstances.get(`/verificar-disponibilidad/${foodId}`);
 
       let fecha = new Date();
 
@@ -773,14 +742,10 @@ export default function App() {
         return;
       }
       console.log("id de la comida seleccionada : " + foodSeleccionadaId)
-      if (esSubproductoPechuga) {
-        await actualizarProductosVendidos(idPechugaPrincipal, cantidad);
-        await actualizarInventarioFood(foodId, cantidad);
-        console.log("id predeterminado del producto seleccionado: "+foodId)
-      } else {
-        await actualizarInventarioFood(foodId, cantidad);
-        await actualizarStockInicialFood(foodId, cantidad);
-      }
+
+      await actualizarInventarioFood(foodId, cantidad);
+      await actualizarStockInicialFood(foodId, cantidad);
+
       return true;
     };
 
@@ -2677,28 +2642,16 @@ export default function App() {
                                 onChange={(e) => {
                                   const selectedFood = e.target.value;
                                   setFoodSeleccionada(selectedFood);
-                                  
 
-                                  const foodSeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood || selectedFood === food._id);
-                                  const productoPrincipalInfo = snacks.find(food => food._id === "656e9d79ae845b7f8dddeecd");
-                                  const productoPrincipalInfo1 = snacks.find(food => food._id === "65709d5618ba0de891cebfa7");
-                                  const productoPrincipalInfo2 = snacks.find(food => food._id === "65709e8d18ba0de891cebfb2");
+
+                                  const foodSeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood);
 
                                   if (foodSeleccionadaInfo) {
                                     setPrecioFoodSeleccionada(foodSeleccionadaInfo.ValorUnitario);
                                     setFoodSeleccionadaId(foodSeleccionadaInfo._id);
-
-                                  
-                                    if (foodSeleccionadaInfo._id === "656f7968d49f0b774cc57d00" || foodSeleccionadaInfo._id === "656f78fad49f0b774cc57cfd"  && productoPrincipalInfo) {
-                                      setCantidadFoodDisponible(productoPrincipalInfo.CantidadInicial);
-                                    } else if(foodSeleccionadaInfo._id === "65709a7a18ba0de891cebf99" || foodSeleccionadaInfo._id === "65709cb118ba0de891cebfa4"  && productoPrincipalInfo1){
-                                      setCantidadFoodDisponible(productoPrincipalInfo1.CantidadInicial);
-                                    } else if(foodSeleccionadaInfo._id === "65709de318ba0de891cebfac" || foodSeleccionadaInfo._id === "65709e4518ba0de891cebfaf"  && productoPrincipalInfo2){
-                                      setCantidadFoodDisponible(productoPrincipalInfo2.CantidadInicial);
-                                    } else {
-                                      setCantidadFoodDisponible(foodSeleccionadaInfo.CantidadInicial);
-                                    }
+                                    setCantidadFoodDisponible(foodSeleccionadaInfo.CantidadInicial);
                                   }
+
                                 }}
                               >
                                 {foodFiltradas.map((food) => (
@@ -2761,11 +2714,11 @@ export default function App() {
                                     setPrecioFood1Seleccionada(food1SeleccionadaInfo.ValorUnitario);
                                     setFood1SeleccionadaId(food1SeleccionadaInfo._id);
 
-                                  
-                                    if (food1SeleccionadaInfo._id === "656f7968d49f0b774cc57d00" || food1SeleccionadaInfo._id === "656f78fad49f0b774cc57cfd"  && productoPrincipalInfo) {
+
+                                    if (food1SeleccionadaInfo._id === "656f7968d49f0b774cc57d00" || food1SeleccionadaInfo._id === "656f78fad49f0b774cc57cfd" && productoPrincipalInfo) {
                                       setCantidadFood1Disponible(productoPrincipalInfo.CantidadInicial);
 
-                                    } else if(food1SeleccionadaInfo._id === "65709a7a18ba0de891cebf99" || food1SeleccionadaInfo._id === "65709cb118ba0de891cebfa4"  && productoPrincipalInfo1){
+                                    } else if (food1SeleccionadaInfo._id === "65709a7a18ba0de891cebf99" || food1SeleccionadaInfo._id === "65709cb118ba0de891cebfa4" && productoPrincipalInfo1) {
                                       setCantidadFood1Disponible(productoPrincipalInfo1.CantidadInicial);
 
                                     } else {
