@@ -50,13 +50,23 @@ export const registrarProduction = async (formData) => {
     }
   };
    
- export const registrarPrecios = async () => {
+ export const registrarPrecios = async (formData) => {
     try {
-        await AxiosInstance.post("/precio-pasadia", formData);
+        await AxiosInstance.post("/crear-precio", formData);
         console.log("¡Registro de la tabla precio creado con exito!")
     } catch (error) {
         console.error("Error al agregar Pasadia: ", error);
     }
 };
+
+export const obtenerPrecios = async () => {
+  try {
+    const response = await AxiosInstance.get("/precios-ranch")
+    return response.data
+  } catch (error) {
+    console.error("Error al obtener los datos del servidor: ", error)
+    throw error;
+  }
+}
 
   

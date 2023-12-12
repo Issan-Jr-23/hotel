@@ -93,6 +93,7 @@ function Register() {
             <option value="user">User</option>
             <option value="admin">Admin</option>
             <option value="editor">Editor</option>
+            <option value="superUser">Super User</option>
             {/* Añade más roles según sea necesario */}
           </select>
           {errors.role?.message && (

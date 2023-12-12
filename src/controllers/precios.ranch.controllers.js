@@ -1,7 +1,7 @@
 import Precios from "../models/precios.ranch.model.js"
 
 
-export const guardarPrecioPasadia = async (req, res) => {
+export const guardarPrecios = async (req, res) => {
     try {
         const nuevoPrecio = new Precios(req.body);
         const nuevoPrecioGuardado = await nuevoPrecio.save();

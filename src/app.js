@@ -13,6 +13,7 @@ import bebidasRoutes from "./routes/inventario.routes.js";
 import preciosRoutes from "./routes/precios.routes.js";
 import mensajeRoutes from "./routes/mesaje.routes.js"
 import inventarioRanch from "./routes/inventario.ranch.routes.js"
+import preciosRanch from "./routes/precios.ranch.routes.js"
 
 const app = express();
 
@@ -36,6 +37,7 @@ app.use("/api", bebidasRoutes);
 app.use("/api", grahps);
 app.use("/api", grahpsStock);
 app.use("/api", inventarioRanch);
+app.use("/api", preciosRanch);
 
 if (process.env.NODE_ENV === "production") {
   const path = await import("path");

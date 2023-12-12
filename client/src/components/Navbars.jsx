@@ -21,7 +21,7 @@ export default function Navbars() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   const { isAuthenticated, logout, user } = useAuth();
-  const isAdmin = user && user.role === 'admin';
+  const isSuperUser = user && user.role === 'superUser';
   const isEditor = user && user.role == "editor";
 
 
@@ -30,9 +30,7 @@ export default function Navbars() {
     <div className="mobile flex justify-center">
       <div className="mobileNav">
     <Navbar isBordered className="pruebacss bg-white/30 h-20 justify-beetween" onMenuOpenChange={setIsMenuOpen}
-      
     >
-
       <NavbarContent className="sm:hidden pr-3" justify="center">
       <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
@@ -98,7 +96,7 @@ export default function Navbars() {
               <img className="mr-1 " src={inventory} alt="" style={{width:"20px"}} /> Inventario
             </Link>
             </DropdownItem>
-            {isEditor && (
+            {isEditor || isSuperUser && (
             <DropdownItem aria-label="prueba"
               key="100_uptime_inv"
             >
@@ -107,7 +105,7 @@ export default function Navbars() {
             </Link>
             </DropdownItem>
             )}
-            {isEditor && (
+            {isEditor || isSuperUser && (
             <DropdownItem aria-label="prueba"
               key="101_uptime_inv"
             >
@@ -116,7 +114,7 @@ export default function Navbars() {
             </Link>
             </DropdownItem>
             )}
-              {isEditor && (
+              {isEditor || isSuperUser && (
             <DropdownItem aria-label="prueba"
               key="102_uptime_inv"
             >
@@ -125,7 +123,7 @@ export default function Navbars() {
             </Link>
             </DropdownItem>
               )}
-              {isEditor && (
+              {isEditor || isSuperUser && (
             <DropdownItem aria-label="prueba"
               key="103_uptime_inv"
             >

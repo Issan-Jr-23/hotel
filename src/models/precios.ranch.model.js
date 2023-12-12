@@ -13,8 +13,8 @@ const preciosRanchSchema = new mongoose.Schema({
     },
     tipo: {
         type: String,
-        enum: ["unidad","carton", "litro", "gramo", "libra", "kilo" ],
-        default: "todos",
+        enum: ["unidad","carton", "litro", "gramoCerdo", "libraCerdo", "kiloCerdo", "gramoQueso", "libraQueso", "kiloQueso" ],
+        default: ""
       },
     producto: {
         type: String,

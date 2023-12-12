@@ -8,14 +8,14 @@ import toast, { Toaster } from 'react-hot-toast';
 import { DeleteIcon } from "./DeleteIcon.jsx";
 import { EditIcon } from "./EditIcon.jsx";
 import { EyeIcon } from "./EyeIcon.jsx";
-import { registrarPrecios } from "../../api/ranch.api.js";
+import { registrarPrecios, obtenerPrecios } from "../../api/ranch.api.js";
 export default function App() {
     const [selected, setSelected] = React.useState("login");
     const [preciosData, setPreciosData] = useState([]);
     const [formData, setFormData] = useState({
         tipo: "",
         precio: "",
-        servicio: ""
+        producto: ""
     })
 
     const [editedUserId, setEditedUserId] = useState(null);
@@ -43,27 +43,28 @@ export default function App() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await AxiosInstance.get("/table-precios");
-                setPreciosData(response.data);
+                const response = await obtenerPrecios("/precios-ranch");
+                setPreciosData(response);
             } catch (error) {
                 console.error("Error al obtener datos del servidor:", error);
             }
         };
         fetchData();
     }, []);
-
+  
+    
     const handleEditSave = async () => {
         try {
-            await AxiosInstance.put(`/precios/edit/${editedUserId}`,
+            await AxiosInstance.put(`/precios-ranch/edit/${editedUserId}`,
                 {
-                    servicio: editServicio,
+                    producto: editServicio,
                     tipo: editTipo,
                     precio: editPrecio
                 }
             );
 
             const updatedPrices = preciosData.map((price) =>
-                price._id === editedUserId ? { ...price, servicio: editServicio, tipo: editTipo, precio: editPrecio } : price
+                price._id === editedUserId ? { ...price, producto: editServicio, tipo: editTipo, precio: editPrecio } : price
             );
             setPreciosData(updatedPrices);
 
@@ -73,8 +74,8 @@ export default function App() {
             setEditedUserId(null);
 
             toast.success('Precio actualizado exitosamente!');
-            const response = await AxiosInstance.get("/table-precios");
-            setPreciosData(response.data);
+            const response = await obtenerPrecios("/table-precios");
+            setPreciosData(response);
         } catch (error) {
             console.error("Error al editar el precio:", error);
             alert("Error al editar el precio. Por favor, inténtalo de nuevo más tarde.");
@@ -122,7 +123,7 @@ export default function App() {
                                                 />
                                             </div>
                                         ) : (
-                                            price.servicio
+                                            price.producto
                                         )
                                     }</TableCell>
                                 <TableCell>
@@ -178,7 +179,7 @@ export default function App() {
                                             <span className="text-lg text-blue-500 cursor-pointer active:opacity-50 ml-5">
                                                 <EditIcon onClick={() => {
                                                 setEditPrecio(price.precio),
-                                                setEditServicio(price.servicio),
+                                                setEditServicio(price.producto),
                                                 setEditTipo(price.tipo),
                                                 setEditedUserId(price._id)
 
@@ -215,7 +216,7 @@ export default function App() {
                                 <form className="flex flex-col gap-4">
                                     <select
                                         className="outline-none h-14 border-blue-500 border-3 rounded-xl"
-                                        name="servicio"
+                                        name="producto"
                                         type="text"
                                         id=""
                                         value={formData.producto}

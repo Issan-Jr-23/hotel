@@ -17,6 +17,7 @@ import FincaInventario from "./pages/FincaInv.jsx";
 import InventarioRanch from "./pages/finca/InvRanch.jsx"
 import PreciosRanch from "./pages/finca/Precios.jsx"
 import Message from "./pages/Mesagge.jsx";
+import HomeSu from "./pages/HomeSu.jsx";
 
 function App() {
   return (
@@ -28,7 +29,8 @@ function App() {
               <Route path="/meqo-soft" element={<LoginPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route element={<ProtectedRoute />}>
-                <Route path="/home" element={<Home />} />
+                <Route path="/home" element={<Home/>} />
+                <Route path="/home-super-user" element={<HomeSu/>} />
                 <Route path="/Pasadia" element={<Pasadia />} />
                 <Route path="/cabanias" element={<Cabanias />} />
                 <Route path="/inventario" element={<InvBebidas />} />

@@ -22,6 +22,7 @@ export const registerSchema = z
       z.literal("user"),
       z.literal("admin"),
       z.literal("editor"),
+      z.literal("superUser"),
     ])// Make it optional or remove optional if it's required
   })
   .refine((data) => data.password === data.confirmPassword, {
