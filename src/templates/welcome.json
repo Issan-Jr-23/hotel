@@ -1,0 +1,10 @@
+{
+    "title": "Welcome back",
+    "userName": "User",
+    "greetingIcon": "wave",
+    "message": "This is a customizable welcome message for the user.",
+    "button": {
+      "text": "Go Now"
+    }
+  }
+  
