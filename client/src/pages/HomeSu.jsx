@@ -5,6 +5,7 @@ import mockup from "../images/proyecto.png"
 import hm from "../images/cover_1.jpeg"
 import users from "../images/usuario.png"
 import cabana from "../images/beach-cabana-st.png"
+import Pie from "../graphs/PeopleReservations.jsx"
 
 const HomeSu = () => {
   return (
@@ -96,6 +97,14 @@ const HomeSu = () => {
                 </span>
                 
               </article>
+            </article>
+          </section>
+
+          <section>
+            <article className='w-1/2' >
+            <Pie/>
+            </article>
+            <article>
             </article>
           </section>
 

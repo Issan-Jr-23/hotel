@@ -36,7 +36,7 @@ function App() {
                 <Route path="/inventario" element={<InvBebidas />} />
                 <Route path="/habitaciones" element={<Habitaciones />} />
               </Route>
-              <Route element={<ProtectedRoute allowedRoles={["editor"]}/>}>
+              <Route element={<ProtectedRoute allowedRoles={["superUser"]}/>}>
                 <Route path="/hotel-graphs" element={<Hotel_graphs />}/>
                 <Route path="/finca" element={<FincaVisualizacion/>}/>
                 <Route path="/message" element={<Message/>}/>
