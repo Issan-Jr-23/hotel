@@ -1,7 +1,7 @@
 //#region 
 import React, { useState, useEffect, useMemo } from "react";
 import {
-  Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button, Input, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Select, SelectItem, Checkbox, Popover, PopoverTrigger, PopoverContent
+  Table, TableHeader, cn, DropdownItem, Dropdown, DropdownTrigger, DropdownMenu,  TableColumn, TableBody, TableRow, TableCell, Button, Input, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Select, SelectItem, Checkbox, Popover, PopoverTrigger, PopoverContent
 } from "@nextui-org/react";
 
 import editar from "../../images/boligrafo.png";
@@ -23,6 +23,12 @@ import eye from "../../images/eye.png"
 import AxiosInstances from "../../api/axios.js";
 import { PlusIcon } from "../finca/PlusIcon.jsx";
 import { useAuth } from "../../context/authContext.jsx";
+import { Link } from "react-router-dom";
+import { EditDocumentIcon } from "../iconos/EditDocumentIcon.jsx";
+import { DeleteDocumentIcon } from "../iconos/DeleteDocumentIcon.jsx";
+import { CopyDocumentIcon } from "../iconos/CopyDocumentIcon.jsx";
+import { AddNoteIcon } from "../iconos/AddNoteIcon.jsx";
+import { VerticalDotsIcon } from "../iconos/VerticalDotsIcon.jsx";
 
 
 //#endregion
@@ -1611,7 +1617,7 @@ export default function App() {
   };
 
 
-
+  const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
 
   return (
     <div className="max-w-full w-98 mx-auto">
@@ -1876,7 +1882,8 @@ export default function App() {
               ) : null
               }
             </TableColumn>
-            
+            <TableColumn>Transferencia data</TableColumn>
+
           </TableHeader>
 
 
@@ -2119,7 +2126,7 @@ export default function App() {
                   </Popover>
                 </TableCell>
 
-                
+
                 <TableCell>
 
                   <Popover placement="bottom" offset={20} showArrow>
@@ -2718,7 +2725,7 @@ export default function App() {
                                   setFood1Seleccionada(selectedFood1);
 
                                   const food1SeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood1 || selectedFood1 === food._id);
-                                
+
 
                                   if (food1SeleccionadaInfo) {
                                     setPrecioFood1Seleccionada(food1SeleccionadaInfo.ValorUnitario);
@@ -2971,6 +2978,50 @@ export default function App() {
                       />
                     </div>
                   ) : null}
+                </TableCell>
+                <TableCell>
+                <Dropdown>
+      <DropdownTrigger>
+        <VerticalDotsIcon/>
+      </DropdownTrigger>
+      <DropdownMenu variant="faded"aria-label="Dropdown menu with description">
+        <DropdownItem
+          key="new"
+          shortcut="⌘N"
+          description="Create a new file"
+          // startContent={<AddNoteIcon className={iconClasses} />}
+        >
+         <AddNoteIcon/>  New file
+        </DropdownItem>
+        <DropdownItem
+          key="copy"
+          shortcut="⌘C"
+          description="Copy the file link"
+          // startContent={<CopyDocumentIcon className={iconClasses} />}
+        >
+          <CopyDocumentIcon/> Copy link
+        </DropdownItem>
+        <DropdownItem
+          key="edit"
+          shortcut="⌘⇧E"
+          showDivider
+          description="Allows you to edit the file"
+          // startContent={<EditDocumentIcon className={iconClasses} />}
+        >
+          <EditDocumentIcon/> Edit file
+        </DropdownItem>
+        <DropdownItem
+          key="delete"
+          className="text-danger"
+          color="danger"
+          shortcut="⌘⇧D"
+          description="Permanently delete the file"
+          // startContent={<DeleteDocumentIcon className={cn(iconClasses, "text-danger")} />}
+        >
+          <DeleteDocumentIcon/> Delete file
+        </DropdownItem>
+      </DropdownMenu>
+    </Dropdown>
                 </TableCell>
 
               </TableRow>

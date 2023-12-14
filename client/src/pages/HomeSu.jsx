@@ -7,8 +7,10 @@ import users from "../images/usuario.png"
 import cabana from "../images/beach-cabana-st.png"
 import PieYes from "../graphs/PeopleReservations.jsx"
 import PieNo from "../graphs/DoughnutAndPie.jsx"
+import { useAuth } from "../context/authContext.jsx";
 
 const HomeSu = () => {
+  const {  user } = useAuth();
   return (
     <div className='bg-white min-h-screen'>
         {/* <NavMenu/> */}
@@ -16,7 +18,7 @@ const HomeSu = () => {
           <section className=' flex justify-between flex-wrap' >
            <div className=' rounded-3xl mr-5 flex' style={{width:"60%", height:"280px", backgroundColor:"#d5f4e7", border:" 5px solid #d5f4e7"}}>
             <article className=' w-2/4 pl-8 pt-8 pr-4' style={{borderRadius:" 20px 0px 0px 20px"}} >
-              <h1 style={{fontSize:"22px", fontWeight:"700", color:"#004b50"}} >Welcome back 👋 <br /> user name</h1>
+              <h1 style={{fontSize:"22px", fontWeight:"700", color:"#004b50"}} >Welcome back 👋 <br />  {user && <span className='uppercase'>{user.username}</span>} </h1>
               <p style={{fontSize:"14.2px", color:"#58918e"}} className='pt-2' >Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus molestiae illo natus.</p>
               <Button className='mt-5 text-white' style={{fontWeight:"700", backgroundColor:"#00a76f"}}>
                 Go now

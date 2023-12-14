@@ -2,13 +2,13 @@ import React from 'react';
 import LineChart from './ChartsHotel.jsx';
 import DoughnutChart from './DoughnutAndPie.jsx';
 import PeopleReservations from './EnjoyersCPH.jsx';
-import Navbars from '../components/Navbars.jsx';
+// import Navbars from '../components/Navbars.jsx';
 import '../App.css'
 
 const App = () => {
   return (
     <div className='mb-20'>
-      <Navbars/>
+      {/* <Navbars/> */}
       <div className='flex justify-center mt-10'>
       <div className='lineChart flex justify-center'>
         <article className='linearContent '>

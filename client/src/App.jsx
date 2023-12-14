@@ -20,7 +20,7 @@ import PreciosRanch from "./pages/finca/Precios.jsx"
 import Message from "./pages/Mesagge.jsx";
 import HomeSu from "./pages/HomeSu.jsx";
 import TransferenciaData from "./pages/tablePasadia/TransferirData.jsx";
-import NavMenu from "./components/NavMenu.jsx";
+import AppWithAuth from './context/apiWitchAuth.jsx';
 
 function App() {
   return (
@@ -28,7 +28,7 @@ function App() {
       <TaskProvider>
         <MenuProvider>
           <BrowserRouter basename="/meqo-soft">
-            <NavMenu/>
+            <AppWithAuth/>
             <Routes>
               <Route path="/" element={<LoginPage />} />
               <Route path="/meqo-soft" element={<LoginPage />} />

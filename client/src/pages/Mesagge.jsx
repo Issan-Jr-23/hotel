@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Navbars from '../components/Navbars.jsx'
+// import Navbars from '../components/Navbars.jsx'
 import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell} from "@nextui-org/react";
 import AxiosInstance from "../api/axios.js";
 import "../App.css"
@@ -25,7 +25,7 @@ export default function App() {
   return (
     <div>
         <div>
-            <Navbars/>
+            {/* <Navbars/> */}
         </div>
         <div className="flex justify-center items-center mt-10 flex-col">
             <h2 className="text-white text-4xl mb-5 text-center pl-2 pr-2">CAMBIOS REALIZADOS EN EL INVENTARIO</h2>

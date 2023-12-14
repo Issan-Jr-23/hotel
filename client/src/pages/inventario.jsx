@@ -1,4 +1,4 @@
-import  Navbar  from "../components/Navbars.jsx"
+// import  Navbar  from "../components/Navbars.jsx"
 import InventarioBebidas from './table/TablaInventario.jsx'
 
 const inventario = () => {

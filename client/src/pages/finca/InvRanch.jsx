@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, RadioGroup, Radio, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Input, Tooltip } from "@nextui-org/react";
-import Navbars from "../../components/Navbars.jsx";
+// import Navbars from "../../components/Navbars.jsx";
 import { EditIcon } from "./EditIcon.jsx";
 import { DeleteIcon } from "./DeleteIcon.jsx";
 import { EyeIcon } from "./EyeIcon.jsx";
@@ -89,7 +89,7 @@ export default function App() {
     return (
         <div className="flex flex-col gap-3">
             <Toaster position="top-right" />
-            <Navbars />
+            {/* <Navbars /> */}
             <div>
                 <>
                     <Button onPress={() => handleOpen()} className="bg-black text-white ml-5" >Agregar <PlusIcon /> </Button>

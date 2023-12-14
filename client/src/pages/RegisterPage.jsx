@@ -4,7 +4,7 @@ import { Card, Message, Button, Input, Label } from "../components/ui";
 import { useForm } from "react-hook-form";
 import { registerSchema } from "../schemas/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Navbars from "../components/Navbars";
+// import Navbars from "../components/Navbars";
 
 function Register() {
   const { signup, errors: authErrors } = useAuth();
@@ -29,7 +29,7 @@ function Register() {
     <div className="flex items-center  flex-col"
     style={{height:"100vh"}}
     >
-      <Navbars/>
+      {/* <Navbars/> */}
       <div className=" w-full h-full flex justify-center items-center">
 
       <Card>

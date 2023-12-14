@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Tabs, Tab, Input, Link, Button, Card, CardBody, CardHeader, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Tooltip } from "@nextui-org/react";
-import Navbars from "../../components/Navbars.jsx";
+// import Navbars from "../../components/Navbars.jsx";
 import AxiosInstance from "../../api/axios.js";
 import pen from "../../images/pencil.png"
 import update from "../../images/update.png"
@@ -96,7 +96,7 @@ export default function App() {
         <div className="flex flex-col w-full">
             <Toaster />
             <div>
-                <Navbars />
+                {/* <Navbars /> */}
             </div>
             <h1 className="uppercase text-4xl mt-6 text-white w-ful flex justify-center">precios de los servicios</h1>
             <div className="flex justify-evenly mt-10">
