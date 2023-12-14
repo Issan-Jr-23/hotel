@@ -1863,8 +1863,8 @@ export default function App() {
             <TableColumn className="text-center">+</TableColumn>
             <TableColumn className="text-center max-w-xs">ID</TableColumn>
             <TableColumn className="text-center ">Nombre</TableColumn>
-            <TableColumn className="text-center ">Reserva</TableColumn>
-            <TableColumn className="text-center tables_im">fecha de inicio del pasadia</TableColumn>
+            {/* <TableColumn className="text-center ">Reserva</TableColumn>
+            <TableColumn className="text-center tables_im">fecha de inicio del pasadia</TableColumn> */}
             <TableColumn className="text-center">agregar bebida</TableColumn>
             <TableColumn className="text-center flex items-center justify-center">agregar comida</TableColumn>
             <TableColumn className="text-center">Pago pendiente</TableColumn>
@@ -1876,6 +1876,7 @@ export default function App() {
               ) : null
               }
             </TableColumn>
+            
           </TableHeader>
 
 
@@ -2117,6 +2118,8 @@ export default function App() {
                     </PopoverContent>
                   </Popover>
                 </TableCell>
+
+                
                 <TableCell>
 
                   <Popover placement="bottom" offset={20} showArrow>
@@ -2223,7 +2226,10 @@ export default function App() {
                   </Popover>
 
                 </TableCell>
-                <TableCell>
+
+
+
+                {/* <TableCell>
                   {cliente._id === editedUserId ? (
                     <Input
                       className="w-52"
@@ -2234,6 +2240,8 @@ export default function App() {
                     cliente.reserva
 
                   )}
+               
+               
                 </TableCell>
                 <TableCell>
                   {cliente._id === editedUserId ? (
@@ -2252,7 +2260,11 @@ export default function App() {
                     })
 
                   )}
-                </TableCell>
+                </TableCell> */}
+
+
+
+
                 <TableCell key={cliente._id} className=" ">
 
                   <div className=" flex justify-center">

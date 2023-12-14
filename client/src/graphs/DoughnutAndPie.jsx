@@ -1,148 +1,90 @@
 import React, { useEffect, useState } from 'react';
 import Highcharts from 'highcharts';
 import HC_accessibility from 'highcharts/modules/accessibility';
-import {
-  Input
-} from "@nextui-org/react";
-import './style.css'
+import './style.css';
 import AxiosInstance from '../api/axios.js';
 HC_accessibility(Highcharts);
 
 const DoughnutChart = () => {
   const [data, setData] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState('todo');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const [totalReservas, setTotalReservas] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstance.get(`/grahps-reservas?tipo=${selectedCategory}&fechaInicio=${startDate}&fechaFin=${endDate}`);
-        const transformedData = response.data.flatMap(item => ([
-          { name: `${item.tipo} - Si`, y: item.reserva === 'Si' ? 1 : 0 },
-          { name: `${item.tipo} - No`, y: item.reserva === 'No' ? 1 : 0 }
-        ]));
-        setData(transformedData);
+        const response = await AxiosInstance.get('/grahps-reservas');
+        const reservasNo = response.data.filter(item => item.reserva === 'No').map(item => ({
+          name: item.tipo,
+          y: 1
+        }));
+
+        setData(reservasNo);
+        setTotalReservas(reservasNo.length);
       } catch (error) {
         console.error('Error al obtener los datos: ', error);
       }
     };
 
     fetchData();
-  },  [selectedCategory, startDate, endDate]);
+  }, []);
 
   useEffect(() => {
-    const processedData = data.reduce((acc, item) => {
+    // Paleta de colores personalizada
+    const colors = ['#FF5733', '#33FF57', '#3357FF', '#FF33F6', '#F6FF33'];
+
+    const processedData = data.reduce((acc, item, index) => {
       const existing = acc.find(({name}) => name === item.name);
       if (existing) {
-        existing.y += item.y;
+        existing.y += 1;
       } else {
-        acc.push({...item});
+        acc.push({...item, color: colors[index % colors.length]});
       }
       return acc;
     }, []);
 
-    
     const options = {
-      chart: { type: 'pie', backgroundColor: "transparent", },
+      chart: { type: 'pie', backgroundColor: "transparent" },
       accessibility: { enabled: false },
-      title: { text: 'ESTADO DE RESERVAS', style: {
-        color: '#000000/60'
-      } },
+      title: { 
+        text: 'ESTADO DE RESERVAS', 
+        style: { color: '#000000/60' } 
+      },
       plotOptions: {
         pie: {
-          innerSize: '60%',
-          dataLabels: {
-            enabled: true,
-            format: '{point.name}: {point.percentage:.1f} %',
-            style: {
-              color: 'black' // This will change the font color of the labels
-            }
-          },
-        },
+          innerSize: '90%',
+          showInLegend: true,
+          colors: colors, // Aplicar la paleta de colores a la gráfica
+        }
+      },
+      legend: {
+        layout: 'horizontal',
+        align: 'center',
+        verticalAlign: 'bottom',
+        useHTML: true,
       },
       series: [{ name: 'Cantidad', data: processedData }]
     };
 
-    Highcharts.chart('chart-container', options);
+    Highcharts.chart('chart-container-rn', {
+      ...options,
+      title: {
+        ...options.title,
+        useHTML: true,
+        align: 'center',
+        verticalAlign: 'middle',
+        y: 50, // Ajuste la posición según sea necesario
+        text: `<div style=" text-align: center; color:black;" > Total <br/>  ${totalReservas}</div>`
+      }
+    });
   }, [data]);
 
- return(
-  <div className='w-12/12 ml-5 mr-5'>
-    <div className='flex justify-between items-center mb-3'>
-
-  <section className=' w-6/12 flex items-center justify-start'>
-
-  <Input 
-  color='primary'
-  className='w-12/12 mr-2'
-        type="date" 
-        value={startDate} 
-        onChange={(e) => setStartDate(e.target.value)}
-        classNames={{
-          input: [
-            "text-black/90 dark:text-black/90",
-            "placeholder:text-default-700/50 dark:placeholder:text-white/60"],
-            innerWrapper: "bg-transparent",
-            inputWrapper: [
-              "shadow-xl",
-              "bg-default-200/50",
-              "dark:bg-default/60",
-              "backdrop-blur-xl",
-              "backdrop-saturate-200",
-              "hover:bg-default-200/70",
-              "dark:hover:bg-default/70",
-              "group-data-[focused=true]:bg-default-200/50",
-              "dark:group-data-[focused=true]:bg-default/60",
-              "!cursor-text",
-              "h-8"
-            ]
-
-        }}
-
-      />
-      <Input 
-      className='w-12/12 ml-2 mr-5'
-        type="date" 
-        value={endDate} 
-        onChange={(e) => setEndDate(e.target.value)} 
-        classNames={{
-          input: [
-            "text-black/90 dark:text-black/90",
-            "placeholder:text-default-700/50 dark:placeholder:text-white/60"],
-            innerWrapper: "bg-transparent",
-            inputWrapper: [
-              "shadow-xl",
-              "bg-default-200/50",
-              "dark:bg-default/60",
-              "backdrop-blur-xl",
-              "backdrop-saturate-200",
-              "hover:bg-default-200/70",
-              "dark:hover:bg-default/70",
-              "group-data-[focused=true]:bg-default-200/50",
-              "dark:group-data-[focused=true]:bg-default/60",
-              "!cursor-text",
-              "h-8"
-            ]
-
-        }}
-      />
-  </section>
-  <select className='outline-none h-10 w-28 rounded-xl bg-white/60' value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}
-  >
-    <option value="todo">Todo</option>
-    <option value="pasadia">Pasadía</option>
-    <option value="cabañas">Cabañas</option>
-    <option value="habitaciones">Habitaciones</option>
-  </select>
+  return (
+    <div className='w-12/12 ml-5 mr-5'>
+      <div style={{ backgroundColor: "white", borderRadius: "15px", color: "white" }}>
+        <div id="chart-container-rn"></div>
+      </div>
     </div>
-    <div style={{ backgroundColor: "white", borderRadius: "15px", color:"white" }}>
-  <div id="chart-container"
-  ></div>
-
-    </div>
-</div>
- );
+  );
 };
 
 export default DoughnutChart;

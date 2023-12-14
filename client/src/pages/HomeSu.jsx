@@ -5,13 +5,14 @@ import mockup from "../images/proyecto.png"
 import hm from "../images/cover_1.jpeg"
 import users from "../images/usuario.png"
 import cabana from "../images/beach-cabana-st.png"
-import Pie from "../graphs/PeopleReservations.jsx"
+import PieYes from "../graphs/PeopleReservations.jsx"
+import PieNo from "../graphs/DoughnutAndPie.jsx"
 
 const HomeSu = () => {
   return (
     <div className='bg-white min-h-screen'>
-        <NavMenu/>
-        <div style={{marginLeft:"250px", marginRight:"20px", paddingTop:"60px" ,  fontSize:"black"}} >
+        {/* <NavMenu/> */}
+        <div style={{marginLeft:"20px", marginRight:"20px", paddingTop:"60px" ,  fontSize:"black"}} >
           <section className=' flex justify-between flex-wrap' >
            <div className=' rounded-3xl mr-5 flex' style={{width:"60%", height:"280px", backgroundColor:"#d5f4e7", border:" 5px solid #d5f4e7"}}>
             <article className=' w-2/4 pl-8 pt-8 pr-4' style={{borderRadius:" 20px 0px 0px 20px"}} >
@@ -22,7 +23,7 @@ const HomeSu = () => {
               </Button>
             </article>
             <article className='cont-cover1 w-2/4' style={{borderRadius:" 0px 20px 20px 0px"}} >
-            <img className='h-full' src={mockup} alt="" style={{borderRadius:"0px 20px 20px 0px"}} />
+            <img className='h-full w-full' src={mockup} alt="" style={{borderRadius:"0px 20px 20px 0px"}} />
             </article>
            </div>
            <div className='cover1 ml-5 rounded-3xl' style={{width:"35%", height:"280px"}} >
@@ -100,11 +101,12 @@ const HomeSu = () => {
             </article>
           </section>
 
-          <section>
+          <section className='flex'>
             <article className='w-1/2' >
-            <Pie/>
+            <PieYes/>
             </article>
-            <article>
+            <article className='w-1/2'>
+            <PieNo/>
             </article>
           </section>
 

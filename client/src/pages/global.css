@@ -18,3 +18,43 @@
 .movimiento{
     overflow: auto;
 }
+
+.globales{
+    display: flex;
+}
+
+.globalesp1{
+    padding-left: 230px;
+}
+
+.trasladado {
+    transform: translateX(-230px);
+
+  }
+
+  .globalesp1 {
+    padding-left: 230px;
+  }
+  
+  .globalesp1-cerrado {
+    padding-left: 0px;
+  }
+  
+  .mostrar {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.646);
+    z-index: 10;
+    position: fixed;
+    transition: .5s;
+  }
+
+  .active{
+    color: rgb(6, 175, 32);
+    font-weight: 700;
+  }
+
+  .ostias{
+    backdrop-filter: blur(45px) saturate(40%) brightness(380%);
+  }

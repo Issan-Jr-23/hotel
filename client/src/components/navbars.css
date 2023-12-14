@@ -24,6 +24,8 @@
     border-radius: 0px 12px 12px 0px;
     overflow: hidden;
     overflow-y: auto;
+    z-index: 20;
+    transition: .5s;
 }
 
 .navbar:hover{
@@ -55,7 +57,7 @@
 
   .cover1 {
     position: relative;
-    background-image: url("../images//cover_1.jpeg");
+    background-image: url("../images//cover_1.jpeg"); 
     background-size: cover;
     z-index: 2;
     padding-right: 20px;
@@ -332,6 +334,11 @@
   }
 
 
+  .active-link{
+    color: #007806;
+  }
+
+
 
 
 
@@ -351,13 +358,12 @@
 
     .barra-superior{
         margin-left: 0;
-        background-color: #ffffff;
+        /* background-color: #ffffff; */
         display: flex;
         justify-content: space-between;
         align-items: center;
         width: 100%;
         padding-right: 20px;
-        padding-left: 230px;
         
     }
     

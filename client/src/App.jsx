@@ -4,6 +4,7 @@ import { AuthProvider } from "./context/authContext.jsx";
 import { ProtectedRoute } from "./routes";
 import { LoginPage } from "./pages/LoginPage";
 import { TaskProvider } from "./context/tasksContext";
+import { MenuProvider } from "./context/menuContext.jsx";
 import { Home } from "./pages/Home";
 import Register from "./pages/RegisterPage.jsx";
 import Pasadia from "./pages/Pasadia.jsx";
@@ -12,25 +13,29 @@ import InvBebidas from "./pages/inventario.jsx";
 import Habitaciones from "./pages/Habitaciones.jsx";
 import Precios from "./pages/Price.jsx";
 import Hotel_graphs from "./graphs/LinearCharts.jsx";
-import FincaVisualizacion from "./pages/FincaVisualizacion.jsx";
+import FincaVisualizacion from "./pages/FincaVisualizacion.jsx"; 
 import FincaInventario from "./pages/FincaInv.jsx";
 import InventarioRanch from "./pages/finca/InvRanch.jsx"
 import PreciosRanch from "./pages/finca/Precios.jsx"
 import Message from "./pages/Mesagge.jsx";
 import HomeSu from "./pages/HomeSu.jsx";
+import TransferenciaData from "./pages/tablePasadia/TransferirData.jsx";
+import NavMenu from "./components/NavMenu.jsx";
 
 function App() {
   return (
     <AuthProvider>
       <TaskProvider>
+        <MenuProvider>
           <BrowserRouter basename="/meqo-soft">
+            <NavMenu/>
             <Routes>
               <Route path="/" element={<LoginPage />} />
               <Route path="/meqo-soft" element={<LoginPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route element={<ProtectedRoute />}>
-                <Route path="/home" element={<Home/>} />
-                <Route path="/home-super-user" element={<HomeSu/>} />
+                {/* <Route path="/home" element={<Home/>} /> */}
+                <Route path="/home" element={<HomeSu/>} />
                 <Route path="/Pasadia" element={<Pasadia />} />
                 <Route path="/cabanias" element={<Cabanias />} />
                 <Route path="/inventario" element={<InvBebidas />} />
@@ -44,12 +49,14 @@ function App() {
                 <Route path="/inventario-finca" element={<FincaInventario/>}/>
                 <Route path="/inventario-ranch" element={<InventarioRanch/>}/>
                 <Route path="/precios" element={<PreciosRanch/>}/>
+                <Route path="/transferencia-data" element={<TransferenciaData/>}/>
               </Route>
               <Route element={<ProtectedRoute allowedRoles={["editor"]} />}>
                 <Route path="/Register" element={<Register/>} />
               </Route>
             </Routes>
           </BrowserRouter>
+        </MenuProvider>
       </TaskProvider>
     </AuthProvider>
   );

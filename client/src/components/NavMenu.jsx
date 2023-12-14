@@ -1,34 +1,71 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import { Accordion, AccordionItem, Avatar, AvatarIcon ,Dropdown, DropdownItem } from "@nextui-org/react";
+import React, { useState, useRef, useEffect } from 'react'
+import { Link, NavLink } from 'react-router-dom'
+import { Accordion, AccordionItem, Avatar, AvatarIcon, Dropdown, DropdownItem } from "@nextui-org/react";
 import Hotel from "../images/hotel1.png"
 import stock from "../images/bolsa-de-la-compra.png"
 import Finca from "../images/vaquero.png"
 import Dashboard from "../images/data-analytics.png"
 import Home from "../images/variante-de-inicio.png"
 import StockFinca from "../images/paquetes.png"
+import open from "../images/menu.png"
+import close from "../images/menu.png"
+import "../pages/global.css"
+import useOutsideClick from '../hooks/MenuOut.jsx';
+import { useLocation } from 'react-router-dom';
 
 const NavMenu = () => {
-    return (
-        <div className='cont-nav  text-white'>
 
-            <div className='barra-superior h-14 flex justify-end  items-center' >
-                <Avatar
-                    icon={<AvatarIcon />}
-                    classNames={{
-                        base: "bg-gradient-to-br from-[#FFB457] to-[#FF705B]",
-                        icon: "text-black/80",
-                    }}
-                    className='cursor-pointer'
+
+    const [menuAbierto, setMenuAbierto] = useState(false);
+
+    const menuRef = useRef();
+
+    const location = useLocation();
+
+    useEffect(() => {
+        setMenuAbierto(false);
+    }, [location]);
+
+    useOutsideClick(menuRef, () => {
+        if (menuAbierto) {
+            setMenuAbierto(false);
+        }
+    });
+
+    const abrirMenu = () => {
+        setMenuAbierto(true);
+    };
+
+    const cerrarMenu = () => {
+        setMenuAbierto(false);
+    };
+
+
+    return (
+        <div className={`cont-nav text-white ${menuAbierto ? 'mostrar' : ''}`}>
+            <div className='barra-superior ostias h-14 flex justify-between items-center border-2' style={{zIndex:"8"}}>
+                <img className='w-8 ml-5 z-10' src={open} alt="" onClick={abrirMenu} />
+                <Avatar icon={<AvatarIcon />} classNames={{ base: "bg-gradient-to-br from-[#FFB457] to-[#FF705B]", icon: "text-black/80" }}
+                    className='cursor-pointer' 
                 />
             </div>
-            <nav className='navbar pt-20'>
-                <Link to="/home-super-user" className='flex mb-3' > <img src={Home} alt="" style={{ width: "23px", marginBottom: "5px" }} className='ml-3 mr-5' /> home </Link>
+            <nav ref={menuRef} className={`navbar ${menuAbierto ? '' : 'trasladado'}`}>
+                <img className='w-8 ml-5 mb-10 mt-5' src={close} alt="" onClick={cerrarMenu} />
+                <NavLink 
+                    to="/home"
+                    className={({ isActive, isPending }) =>
+                        isPending ? "pending" : isActive ? "active" : ""
+                    }
+                    style={{display:"flex", marginLeft:"10px", marginBottom:"10px", alignItems:"center"}}
+                >
+                    <img src={Home} style={{ width: "27px",}} className='mb-1 mr-4' />
+                    Home
+                </NavLink>
                 <Accordion isCompact className="" style={{ overflow: "hidden" }}>
                     <AccordionItem className='flex flex-col text-white' key="1" aria-label="Accordion 1" title={
                         <div className='flex'>
                             <img src={Dashboard} style={{ width: "23px", marginBottom: "5px" }} className='ml-1 mr-3' />
-                            <span className='ml-2 text-white'>Dashboard</span>
+                            <span className='ml-2 text-white' activeClassName="active-link" >Dashboard</span>
                         </div>
                     }
                         style={{ height: "auto", display: "flex", flexDirection: "column", overflow: "hidden" }}>
@@ -47,12 +84,12 @@ const NavMenu = () => {
                     }
                         style={{ height: "auto", display: "flex", flexDirection: "column", overflow: "hidden" }}>
                         <div className=' flex flex-col pl-9' style={{ overflow: "hidden" }} >
-                            <Link className='mb-1 pt-2 pb-2' >Pasadia</Link>
-                            <Link className='mb-1 pt-2 pb-2' >Cabaña</Link>
-                            <Link className='mb-1 pt-2 pb-2' >Habitaciones</Link>
-                            <Link className='mb-1 pt-2 pb-2' >Habitaciones</Link>
-                            <Link className='mb-1 pt-2 pb-2' >Notificaciones</Link>
-                            <Link className='mb-1 pt-2 pb-2' >Precios</Link>
+                            <Link to="/pasadia" className='mb-1 pt-2 pb-2' activeClassName="active-link" >Pasadia</Link>
+                            <Link to="/cabanias" className='mb-1 pt-2 pb-2' >Cabaña</Link>
+                            <Link to="/habitaciones" className='mb-1 pt-2 pb-2' >Habitaciones</Link>
+                            <Link to="/message" className='mb-1 pt-2 pb-2' >Notificaciones</Link>
+                            <Link to="price" className='mb-1 pt-2 pb-2' >Precios</Link>
+                            <Link to="/transferencia-data" className='mb-1 pt-2 pb-2' >Transferencia de datos</Link>
                         </div>
                     </AccordionItem>
                 </Accordion>

@@ -57,9 +57,6 @@ const DoughnutChart = () => {
         align: 'center',
         verticalAlign: 'bottom',
         useHTML: true,
-        labelFormatter: function() {
-          return '<span style="color:' + this.color + '">\u25CF</span> ' + this.name;
-        }
       },
       series: [{ name: 'Cantidad', data: processedData }]
     };
