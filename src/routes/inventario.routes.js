@@ -2,8 +2,8 @@ import {Router} from "express";
 import {crearProducto, filType, obtenerSubProductos, updateBebidas, updateCB, updateCF, updateCSTOCKB, updateCSTOCKF, validCB, validCF } from '../controllers/inventario.controllers.js'
 import {updateProducto } from '../controllers/inventario.controllers.js'
 import {obtenerInventario } from '../controllers/inventario.controllers.js'
-import {crearAlimentos } from '../controllers/alimentos.controllers.js'
-import {obtenerAlimentos } from '../controllers/alimentos.controllers.js'
+// import {crearAlimentos } from '../controllers/alimentos.controllers.js'
+// import {obtenerAlimentos } from '../controllers/alimentos.controllers.js'
 import {obtenerMekatos } from '../controllers/inventario.controllers.js'
 import {obtenerDrinks } from '../controllers/inventario.controllers.js'
 import {obtenerFood } from '../controllers/inventario.controllers.js'
@@ -14,8 +14,8 @@ const router = Router();
 
 router.post("/inventario",auth, crearProducto)
 router.get("/obtener-inventario",auth, obtenerInventario) 
-router.post("/alimentos",auth, crearAlimentos)
-router.get("/obtener-alimentos",auth, obtenerAlimentos)
+// router.post("/alimentos",auth, crearAlimentos)
+// router.get("/obtener-alimentos",auth, obtenerAlimentos)
 router.get("/mekatos",auth, obtenerMekatos)
 router.get("/drinks",auth, obtenerDrinks)
 router.get("/food",auth, obtenerFood)

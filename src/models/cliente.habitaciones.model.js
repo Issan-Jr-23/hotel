@@ -77,10 +77,11 @@ const clienteSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
-  cantidadDeCortesiasF: {
+  cantidadDeCortesiasF:{
     type: Number,
     default: 0
-  }
+  },
+  servicio:{type:String, default:"habitaciones"}
 });
 
 

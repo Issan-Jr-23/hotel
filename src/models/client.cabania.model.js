@@ -72,7 +72,8 @@ const clienteSchema = new mongoose.Schema({
   nuevoTotal: {
     type: Number,
     default: 0
-  }
+  },
+  servicio:{type:String, default:"cabania"}
 });
 
 

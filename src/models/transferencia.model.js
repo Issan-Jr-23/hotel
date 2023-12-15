@@ -1,7 +1,5 @@
-// Importando Mongoose
 import mongoose from 'mongoose';
 
-// Esquema para historial
 const historialSchema = new mongoose.Schema({
   idHistorial: { type: String },
   nombre: { type: String },
@@ -25,14 +23,11 @@ const historialSchema = new mongoose.Schema({
   },
 });
 
-// Esquema para transferencia
 const transferenciaSchema = new mongoose.Schema({
   identificacion: { type: String, required: true },
   historial: [historialSchema]
 });
 
-// Creando el modelo Transferencia y especificando el nombre de la colección
 const Transferencia = mongoose.model('Historial', transferenciaSchema);
 
-// Exportando el modelo
 export default Transferencia;

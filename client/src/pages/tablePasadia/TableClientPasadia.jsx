@@ -1,7 +1,7 @@
 //#region 
 import React, { useState, useEffect, useMemo } from "react";
 import {
-  Table, TableHeader, cn, DropdownItem, DropdownSection, Dropdown, DropdownTrigger, DropdownMenu, TableColumn, TableBody, TableRow, TableCell, Button, Input, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Select, SelectItem, Checkbox, Popover, PopoverTrigger, PopoverContent
+  Table, TableHeader, Tabs, TableColumn, TableBody, TableRow, TableCell, Button, Input, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Select, SelectItem, Checkbox, Popover, PopoverTrigger, PopoverContent, Tab, Card, CardBody
 } from "@nextui-org/react";
 
 import editar from "../../images/boligrafo.png";
@@ -24,6 +24,7 @@ import AxiosInstances from "../../api/axios.js";
 import { PlusIcon } from "../finca/PlusIcon.jsx";
 import { useAuth } from "../../context/authContext.jsx";
 import TransferirData from "./TransferirData.jsx"
+import SubMenu from "./SubMenu.jsx"
 
 
 //#endregion
@@ -2636,16 +2637,25 @@ export default function App() {
                       </Button>
                     ))}
                   </div>
+                  
 
                   <Modal size={selectedSize} isOpen={isModalOpenF} onClose={closeModalF}
                     classNames={{
                       backdrop: "bg-inherit",
                     }}
                   >
-                    <ModalContent>
+                    
+                    
+                    <ModalContent >
                       {(closeModalF) => (
+                        
                         <>
-                          <ModalHeader className="flex flex-col gap-1">COMIDAS  </ModalHeader>
+                        <Tabs className="">
+                    <Tab key="productos" title="Productos">
+
+
+
+                    <ModalHeader className="flex flex-col gap-1">COMIDAS  </ModalHeader>
                           <ModalBody>
                             <Checkbox
                               checked={esCortesia}
@@ -2958,7 +2968,16 @@ export default function App() {
                               Ahorrar
                             </Button>
                           </ModalFooter>
-                        </>
+
+
+                    </Tab>
+                    <Tab key="menu2" title="subProductos" className=" flex flex-col">
+                                    <SubMenu/>
+                    </Tab>
+                               
+                    </Tabs>
+                        </> 
+                        
                       )}
                     </ModalContent>
                   </Modal>

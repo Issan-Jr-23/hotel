@@ -7,6 +7,7 @@ import { CopyDocumentIcon } from "../iconos/CopyDocumentIcon.jsx";
 import { AddNoteIcon } from "../iconos/AddNoteIcon.jsx";
 import { VerticalDotsIcon } from "../iconos/VerticalDotsIcon.jsx";
 import AxiosInstance from '../../api/axios.js';
+import Swal from "sweetalert2"
 
 const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
 
@@ -17,7 +18,7 @@ const TransferirData = () => {
     identificacion: "",
     historial: []
   });
-  
+
   const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null);
   const onSelectUser = (userId) => {
     const usuario = users.find(user => user._id === userId);
@@ -27,16 +28,32 @@ const TransferirData = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstance.get("/pasadia-clientes");
-        // console.log("muestra de datos: ",JSON.stringify(response.data))
-        const usuariosOrdenados = response.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
-        setUsers(usuariosOrdenados);
+        const [responsePasadia, responseCabania, responseHabitaciones] = await Promise.all([
+          AxiosInstance.get("/pasadia-clientes"),
+          AxiosInstance.get("/cabania-clientes"),
+          AxiosInstance.get("/habitaciones-clientes")
+        ]);
+
+        const usuariosCombinados = [...responsePasadia.data, ...responseCabania.data, ...responseHabitaciones.data]
+          .sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
+        setUsers(usuariosCombinados);
       } catch (error) {
         console.error("Error al obtener datos del servidor:", error);
       }
     };
     fetchData();
   }, []);
+
+  const actualizartTabla = async () => {
+    const [responsePasadia, responseCabania, responseHabitaciones] = await Promise.all([
+      AxiosInstance.get("/pasadia-clientes"),
+      AxiosInstance.get("/cabania-clientes"),
+      AxiosInstance.get("/habitaciones-clientes")
+    ]);
+    const usuariosCombinados = [...responsePasadia.data, ...responseCabania.data, ...responseHabitaciones.data]
+      .sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
+    setUsers(usuariosCombinados);
+  }
 
   const datosFiltrados = useMemo(() => {
     if (!busqueda) return users;
@@ -50,12 +67,12 @@ const TransferirData = () => {
     setBusqueda(event.target.value);
   };
 
-  const enviarDatos = async (id,identificacion,nombre,reserva,ninios,adultos,metodoPago,pago,metodoPagoPendiente,pagoPendiente,bebidas, restaurante,servicio) => {
+  const enviarDatos = async (id, identificacion, nombre, reserva, ninios, adultos, metodoPago, pago, metodoPagoPendiente, pagoPendiente, bebidas, restaurante, servicio) => {
     if (!identificacion) {
       console.error("No hay usuario seleccionado para transferir");
       return;
     }
-  
+
     const datosHistorial = {
       nombre,
       reserva,
@@ -68,25 +85,23 @@ const TransferirData = () => {
       bebidas,
       restaurante,
       servicio
-      
+
     };
-  
+
     const datosParaEnviar = {
       identificacion: identificacion,
       datosHistorial
     };
 
-    console.log("datos del usuario: ",datosParaEnviar)
-  
-    // Llamar a la función que hace la solicitud HTTP con estos datos
+    console.log("datos del usuario: ", datosParaEnviar)
+
     await realizarSolicitudHTTP(datosParaEnviar);
     await handleDelete(id)
   };
-  
+
   const realizarSolicitudHTTP = async (datos) => {
     try {
       const response = await AxiosInstance.post('create-historial', datos);
-      console.log("muestra los datos enviados al servidor: ",JSON.stringify(response.data))
       if (response.status === 200) {
         console.log("Datos transferidos con éxito");
       } else {
@@ -94,84 +109,87 @@ const TransferirData = () => {
       }
     } catch (error) {
       console.error("Error de red: ", error);
-      
+
     }
   };
 
   const handleDelete = async (id) => {
-    const confirmDelete = window.confirm(
-      "¿Estás seguro de que deseas eliminar este usuario?"
-    );
-
-    if (!confirmDelete) {
-      return;
-    }
-
+    let isDeleted = false;
+    let errorMessages = [];
+  
     try {
       await AxiosInstance.delete(`/pasadia/${id}`);
-      const response = await AxiosInstance.get("/pasadia-clientes");
-      // console.log("muestra de datos: ",JSON.stringify(response.data))
-      const usuariosOrdenados = response.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
-      setUsers(usuariosOrdenados);
+      console.log("Pasadia eliminado con éxito");
+      isDeleted = true;
+      actualizartTabla();
     } catch (error) {
-      console.error("Error al eliminar usuario:", error);
-      alert("Error al eliminar usuario. Por favor, inténtalo de nuevo más tarde.");
+        console.log("error delete register")
+    }
+    
+    if (!isDeleted) {
+      try {
+        await AxiosInstance.delete(`/cabania/${id}`);
+        console.log("Cabania eliminada con éxito");
+        isDeleted = true;
+        actualizartTabla();
+      } catch (error) {
+
+      }
+    }
+    if (!isDeleted) {
+      try {
+        await AxiosInstance.delete(`/habitaciones/${id}`);
+        console.log("Habitación eliminada con éxito");
+        isDeleted = true;
+        actualizartTabla();
+      } catch (error) {
+        
+      }
+    }
+    if (!isDeleted) {
+      alert("No se encontró el usuario en ninguna de las colecciones para eliminar. Errores: " + errorMessages.join(", "));
     }
   };
   
+  
+  
+  
 
-  // const agregarHistorial = (usuario, datosTransferencia) => {
-  //   const registroHistorial = {
-  //     fechaTransferencia: new Date().toISOString(),
-  //     ...datosTransferencia,
-  //   };
-  
-  //   setTransferencia(prevState => {
-  //     if (prevState.identificacion === usuario.identificacion) {
-  //       return {
-  //         ...prevState,
-  //         historial: [...prevState.historial, registroHistorial]
-  //       };
-  //     } else {
-  //       return {
-  //         identificacion: usuario.identificacion,
-  //         historial: [registroHistorial]
-  //       };
-  //     }
-  //   });
-  // };
-  
-  
-  
+
+
+
+
+
+
 
 
   return (
     <div className='pt-20 flex'>
 
       <div className="flex flex-col ml-5 mr-5">
-      <form className="flex flex-col gap-6 w-80 border-2 border-emerald-400 pt-3 pb-3 pl-3 pr-3 rounded-xl" style={{zIndex:"1"}} >
-                  <Input   value={busqueda}
-                    onChange={handleSearchChange} label="Identificación" placeholder="Enter your email" type="text" className='mb-2' />
-                    
-                  <Input
-                    label="Nombre"
-                    placeholder="Enter your name"
-                    type="password"
-                  
-                  />
-                  <Input
-                    label="Apellidos"
-                    placeholder="Enter your last name"
-                    type="password"
-                  
-                  />
-                  <p className="text-center text-small">
-                    busqueda de usuarios {" "}
-                    <Link to="/home" size="sm" className='font-medium text-blue-500'>
-                      Inicio
-                    </Link>
-                  </p>
-                </form>
+        <form className="flex flex-col gap-6 w-80 border-2 border-emerald-400 pt-3 pb-3 pl-3 pr-3 rounded-xl" style={{ zIndex: "1" }} >
+          <Input value={busqueda}
+            onChange={handleSearchChange} label="Identificación" placeholder="Enter your email" type="text" className='mb-2' />
+
+          <Input
+            label="Nombre"
+            placeholder="Enter your name"
+            type="password"
+
+          />
+          <Input
+            label="Apellidos"
+            placeholder="Enter your last name"
+            type="password"
+
+          />
+          <p className="text-center text-small">
+            busqueda de usuarios {" "}
+            <Link to="/home" size="sm" className='font-medium text-blue-500'>
+              Inicio
+            </Link>
+          </p>
+        </form>
       </div>
 
       <Table aria-label="Example static collection table" className=' pl-5 pr-5' >
@@ -180,7 +198,7 @@ const TransferirData = () => {
           <TableColumn className='text-center' >NAME</TableColumn>
           <TableColumn className='text-center' >STATUS</TableColumn>
         </TableHeader>
-        <TableBody>
+        <TableBody emptyContent="No hay elementos por mostrar">
           {datosFiltrados.map((data) => (
             <TableRow key={data._id} >
               <TableCell className='text-center'>{data.identificacion}</TableCell>
@@ -203,21 +221,44 @@ const TransferirData = () => {
                         startContent={<AddNoteIcon className={iconClasses} />}
                         className="font-semibold"
                         style={{ fontWeight: "700" }}
-                        onClick={() => enviarDatos( data._id ,  data.identificacion, 
-                          data.nombre,
-                          data.reserva,
-                          data.cantidadPersonas.adultos,
-                          data.cantidadPersonas.ninios,
-                          data.mediosDePago,
-                          data.pagoAnticipado,
-                          data.mediosDePagoPendiente,
-                          data.pagoPendiente,
-                          data.bebidas,
-                          data.restaurante,
-                          data.servicio)}
+                        onClick={() => {
+                          Swal.fire({
+                            title: "Quieres transferir los datos?",
+                            text: "¡No podrás revertir esto!",
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonColor: "#28a745",
+                            cancelButtonColor: "#d33",
+                            confirmButtonText: "¡Sí, realizar!"
+                          }).then((result) => {
+                            if (result.isConfirmed) {
+                              enviarDatos(
+                                data._id,
+                                data.identificacion,
+                                data.nombre,
+                                data.reserva,
+                                data.cantidadPersonas.adultos,
+                                data.cantidadPersonas.ninios,
+                                data.mediosDePago,
+                                data.pagoAnticipado,
+                                data.mediosDePagoPendiente,
+                                data.pagoPendiente,
+                                data.bebidas,
+                                data.restaurante,
+                                data.servicio
+                              );
+                              Swal.fire({
+                                title: "Deleted!",
+                                text: "Your file has been deleted.",
+                                icon: "success"
+                              });
+                            }
+                          });
+                        }}
                       >
                         Transferir datos
                       </DropdownItem>
+
                       <DropdownItem
                         key="copy"
                         shortcut="⌘C"
