@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { Accordion, AccordionItem, Avatar, AvatarIcon, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, NavbarContent } from "@nextui-org/react";
 import Hotel from "../images/hotel1.png"
+import AvatarPerfil from "../images/avatar_25.jpg"
 import stock from "../images/bolsa-de-la-compra.png"
 import Finca from "../images/vaquero.png"
 import Dashboard from "../images/data-analytics.png"
@@ -57,8 +58,9 @@ const NavMenu = () => {
 
                 <Dropdown placement="bottom-end">
                     <DropdownTrigger className="">
-                        <Avatar icon={<AvatarIcon />} classNames={{ base: "bg-gradient-to-br from-[#FFB457] to-[#FF705B]", icon: "text-black/80" }}
+                        <Avatar   classNames={{ base: "bg-gradient-to-br from-[#FFB457] to-[#FF705B]", icon: "text-black/80" }}
                             className='cursor-pointer'
+                            src={AvatarPerfil}
                         />
 
                     </DropdownTrigger>

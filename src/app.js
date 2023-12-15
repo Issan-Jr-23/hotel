@@ -15,6 +15,7 @@ import mensajeRoutes from "./routes/mesaje.routes.js"
 import inventarioRanch from "./routes/inventario.ranch.routes.js"
 import preciosRanch from "./routes/precios.ranch.routes.js"
 import welcome from "./routes/welcome.routes.js"
+import transferencia from "./routes/transferencia.routes.js"
 
 const app = express();
 
@@ -40,6 +41,7 @@ app.use("/api", grahpsStock);
 app.use("/api", inventarioRanch);
 app.use("/api", preciosRanch);
 app.use("/api", welcome);
+app.use("/api", transferencia);
 
 if (process.env.NODE_ENV === "production") {
   const path = await import("path");

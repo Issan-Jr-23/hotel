@@ -28,6 +28,7 @@ const TransferirData = () => {
     const fetchData = async () => {
       try {
         const response = await AxiosInstance.get("/pasadia-clientes");
+        // console.log("muestra de datos: ",JSON.stringify(response.data))
         const usuariosOrdenados = response.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
         setUsers(usuariosOrdenados);
       } catch (error) {
@@ -49,28 +50,72 @@ const TransferirData = () => {
     setBusqueda(event.target.value);
   };
 
-  const enviarDatos = async (identificacion, userName, bebidas, restaurante, personas) => {
-    console.log("id del usuario seleccionado: "+identificacion, userName, bebidas, restaurante, personas)
+  const enviarDatos = async (id,identificacion,nombre,reserva,ninios,adultos,metodoPago,pago,metodoPagoPendiente,pagoPendiente,bebidas, restaurante,servicio) => {
     if (!identificacion) {
       console.error("No hay usuario seleccionado para transferir");
       return;
     }
-    try {
-      const response = await AxiosInstance.post('/create-historial', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(identificacion, userName, bebidas, restaurante, personas),
-      });
   
-      if (response.ok) {
+    const datosHistorial = {
+      nombre,
+      reserva,
+      ninios,
+      adultos,
+      metodoPago,
+      pago,
+      metodoPagoPendiente,
+      pagoPendiente,
+      bebidas,
+      restaurante,
+      servicio
+      
+    };
+  
+    const datosParaEnviar = {
+      identificacion: identificacion,
+      datosHistorial
+    };
+
+    console.log("datos del usuario: ",datosParaEnviar)
+  
+    // Llamar a la función que hace la solicitud HTTP con estos datos
+    await realizarSolicitudHTTP(datosParaEnviar);
+    await handleDelete(id)
+  };
+  
+  const realizarSolicitudHTTP = async (datos) => {
+    try {
+      const response = await AxiosInstance.post('create-historial', datos);
+      console.log("muestra los datos enviados al servidor: ",JSON.stringify(response.data))
+      if (response.status === 200) {
         console.log("Datos transferidos con éxito");
       } else {
-        console.error("Error al transferir datos");
+        console.error("Error al transferir datos: ", response);
       }
     } catch (error) {
-      console.error("Error de red", error);
+      console.error("Error de red: ", error);
+      
+    }
+  };
+
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm(
+      "¿Estás seguro de que deseas eliminar este usuario?"
+    );
+
+    if (!confirmDelete) {
+      return;
+    }
+
+    try {
+      await AxiosInstance.delete(`/pasadia/${id}`);
+      const response = await AxiosInstance.get("/pasadia-clientes");
+      // console.log("muestra de datos: ",JSON.stringify(response.data))
+      const usuariosOrdenados = response.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
+      setUsers(usuariosOrdenados);
+    } catch (error) {
+      console.error("Error al eliminar usuario:", error);
+      alert("Error al eliminar usuario. Por favor, inténtalo de nuevo más tarde.");
     }
   };
   
@@ -158,7 +203,18 @@ const TransferirData = () => {
                         startContent={<AddNoteIcon className={iconClasses} />}
                         className="font-semibold"
                         style={{ fontWeight: "700" }}
-                        onClick={() => enviarDatos(data._id, data.nombre, data.bebidas, data.restaurante, data.cantidadPersonas)}
+                        onClick={() => enviarDatos( data._id ,  data.identificacion, 
+                          data.nombre,
+                          data.reserva,
+                          data.cantidadPersonas.adultos,
+                          data.cantidadPersonas.ninios,
+                          data.mediosDePago,
+                          data.pagoAnticipado,
+                          data.mediosDePagoPendiente,
+                          data.pagoPendiente,
+                          data.bebidas,
+                          data.restaurante,
+                          data.servicio)}
                       >
                         Transferir datos
                       </DropdownItem>
