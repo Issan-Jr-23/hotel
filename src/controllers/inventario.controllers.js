@@ -461,6 +461,91 @@ export const obtenerSubProductos = async (req, res) => {
   }
 };
 
+export const actualizarSubproducto = async (req, res) => {
+  try {
+      const { foodId, subproductoId, cantidad } = req.body;
+
+      // Encuentra el producto padre por ID
+      const producto = await Bebida.findById(foodId);
+      if (!producto) {
+          return res.status(404).send({ message: 'Producto no encontrado.' });
+      }
+
+      // Encuentra el subproducto específico y actualiza su cantidad vendida
+      const subproducto = producto.subproductos.id(subproductoId);
+      if (!subproducto) {
+          return res.status(404).send({ message: 'Subproducto no encontrado.' });
+      }
+
+      subproducto.ProductosVendidos += cantidad;
+
+      await producto.save();
+
+      res.status(200).send({ message: 'Subproducto actualizado con éxito.' });
+  } catch (error) {
+      console.error('Error al actualizar el subproducto:', error);
+      res.status(500).send({ error: 'Error interno del servidor.' });
+  }
+};
+
+export const updateStockSubproductos = async (req, res) => {
+  const {foodId} = req.body;
+  const subproductoId = req.body.subproductoId;
+  const  {cantidad}  = req.body;
+  console.log("Ver informacion del producto principal",foodId)
+  console.log("Ver informacion del subproducto",subproductoId)
+  console.log("Ver informacion de la cantidad inicial",cantidad)
+
+  console.log("Cantidad a restar del subproducto: " + cantidad);
+
+  if (!foodId || !subproductoId || cantidad === undefined) {
+    return res.status(400).send({ message: 'Faltan datos requeridos (foodId, subProductId y cantidad).' });
+  }
+
+  if (cantidad < 0) {
+    return res.status(400).send({ message: 'La cantidad no puede ser negativa.' });
+  }
+
+  try {
+    const alimento = await Bebida.findById(foodId);
+
+    if (!alimento) {
+      return res.status(404).send({ message: 'Alimento no encontrado.' });
+    }
+
+    // Encuentra el subproducto específico
+    const subProducto = alimento.subproductos.find(subProd => subProd._id.toString() === subproductoId);
+
+    if (!subProducto) {
+      return res.status(404).send({ message: 'Subproducto no encontrado.' });
+    }
+
+    // Actualiza la cantidad del subproducto
+    subProducto.ProductosVendidos += cantidad;
+
+    // Resta la cantidad del subproducto del stock total del producto principal
+    const nuevaCantidadInicial = alimento.CantidadInicial - cantidad;
+    console.log("Nueva cantidad del producto principal: " + nuevaCantidadInicial);
+
+    if (nuevaCantidadInicial < 0) {
+      return res.status(400).send({ message: 'La cantidad a restar excede el stock inicial del producto principal.' });
+    }
+
+    alimento.CantidadInicial = nuevaCantidadInicial;
+
+    // Guardar los cambios en la base de datos
+    const alimentoActualizado = await alimento.save();
+    console.log("Alimento actualizado: ", alimentoActualizado);
+
+    res.status(200).send({ message: 'Stock inicial y subproducto actualizados correctamente', alimento: alimentoActualizado });
+  } catch (error) {
+    console.error('Error al actualizar el stock inicial y subproducto:', error);
+    res.status(500).send({ message: 'Error interno del servidor' });
+  }
+};
+
+
+
 
 
 
