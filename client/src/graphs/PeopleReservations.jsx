@@ -12,21 +12,29 @@ const DoughnutChart = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstance.get('/grahps-reservas');
-        const reservasSi = response.data.filter(item => item.reserva === 'Si').map(item => ({
-          name: item.tipo,
-          y: 1
-        }));
-
+        const response = await AxiosInstance.get('/obtener-historial-reservas-si');
+        console.log(response);
+  
+        let reservasSi = [];
+        response.data.forEach(usuario => {
+          usuario.reservasSi.forEach(reserva => {
+            reservasSi.push({
+              name: "SI",
+              y: 1
+            });
+          });
+        });
+  
         setData(reservasSi);
         setTotalReservas(reservasSi.length);
       } catch (error) {
         console.error('Error al obtener los datos: ', error);
       }
     };
-
+  
     fetchData();
   }, []);
+  
 
   useEffect(() => {
     const processedData = data.reduce((acc, item) => {

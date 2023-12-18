@@ -58,3 +58,14 @@
   .ostias{
     backdrop-filter: blur(45px) saturate(40%) brightness(380%);
   }
+
+  .informacion-adicional {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease-out;
+  }
+  
+  .expandido {
+    max-height: 500px; 
+  }
+

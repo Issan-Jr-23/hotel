@@ -7,30 +7,37 @@ HC_accessibility(Highcharts);
 
 const DoughnutChart = () => {
   const [data, setData] = useState([]);
-  const [totalReservas, setTotalReservas] = useState(0);
+  const [totalReservas, setTotalReservas] = useState(0); 
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstance.get('/grahps-reservas');
-        const reservasNo = response.data.filter(item => item.reserva === 'No').map(item => ({
-          name: item.tipo,
-          y: 1
-        }));
-
-        setData(reservasNo);
-        setTotalReservas(reservasNo.length);
+        const response = await AxiosInstance.get('/obtener-historial-reservas-no');
+        console.log(response);
+  
+        let reservasSi = [];
+        response.data.forEach(usuario => {
+          usuario.reservasSi.forEach(reserva => {
+            reservasSi.push({
+              name: "NO",
+              y: 1
+            });
+          });
+        });
+  
+        setData(reservasSi);
+        setTotalReservas(reservasSi.length);
       } catch (error) {
         console.error('Error al obtener los datos: ', error);
       }
     };
-
+  
     fetchData();
   }, []);
 
   useEffect(() => {
     // Paleta de colores personalizada
-    const colors = ['#FF5733', '#33FF57', '#3357FF', '#FF33F6', '#F6FF33'];
+    const colors = ['#33FF57', '#3357FF', '#FF33F6', '#F6FF33'];
 
     const processedData = data.reduce((acc, item, index) => {
       const existing = acc.find(({name}) => name === item.name);

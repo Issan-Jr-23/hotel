@@ -63,3 +63,81 @@ export const obtenerHistorialDeUsuario = async (req, res) => {
   }
 };
 
+export const obtenerHistorialReservasSi = async (req, res) => {
+  try {
+      const usuarios = await Usuario.find(); 
+
+      const historialReservasSi = usuarios.map(usuario => ({
+          identificacion: usuario.identificacion,
+          reservasSi: usuario.historial.filter(item => item.reserva === 'Si')
+      }));
+
+      res.json(historialReservasSi);
+  } catch (error) {
+      console.error('Error al obtener los datos: ', error);
+      res.status(500).send('Error al procesar la solicitud');
+  }
+};
+
+export const obtenerHistorialReservasNo = async (req, res) => {
+  try {
+      const usuarios = await Usuario.find(); 
+
+      const historialReservasSi = usuarios.map(usuario => ({
+          identificacion: usuario.identificacion,
+          reservasSi: usuario.historial.filter(item => item.reserva === 'No')
+      }));
+
+      res.json(historialReservasSi);
+  } catch (error) {
+      console.error('Error al obtener los datos: ', error);
+      res.status(500).send('Error al procesar la solicitud');
+  }
+};
+
+export const obtenerTotalesNiniosYAdultosEnPasadia = async (req, res) => {
+  try {
+      const usuarios = await Usuario.find(); // Obtiene todos los usuarios
+
+      let totalNinios = 0;
+      let totalAdultos = 0;
+
+      usuarios.forEach(usuario => {
+          usuario.historial.forEach(reserva => {
+              if (reserva.servicio === 'pasadia') {
+                  totalNinios += reserva.ninios || 0; // Asegurarse de que ninios sea un número
+                  totalAdultos += reserva.adultos || 0; // Asegurarse de que adultos sea un número
+              }
+          });
+      });
+
+      res.json({ totalNinios, totalAdultos });
+  } catch (error) {
+      console.error('Error al obtener los datos: ', error);
+      res.status(500).send('Error al procesar la solicitud');
+  }
+};
+
+export const totalgenerado = async (req, res) => {
+  try {
+      const usuarios = await Usuario.find();
+
+      let totalPago = 0;
+      let totalPagoPendiente = 0;
+
+      usuarios.forEach(usuario => {
+          usuario.historial.forEach(reserva => {
+              if (reserva.servicio === 'pasadia') {
+                totalPago += reserva.pago || 0; 
+                totalPagoPendiente += reserva.pagoPendiente || 0;
+              }
+          });
+      });
+
+      res.json({ totalPago, totalPagoPendiente });
+  } catch (error) {
+      console.error('Error al obtener los datos: ', error);
+      res.status(500).send('Error al procesar la solicitud');
+  }
+};
+

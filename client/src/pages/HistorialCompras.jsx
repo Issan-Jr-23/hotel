@@ -116,13 +116,13 @@ const TransferirData = () => {
                           <DropdownItem
                             key="new"
                             shortcut="⌘N"
-                            description="Transference a new file"
+                            description="View user history."
                             startContent={<AddNoteIcon className={iconClasses} />}
                             className="font-semibold"
                             style={{ fontWeight: "700" }}
                             onClick={() => verHistorial(data.identificacion)}
                           >
-                            Transferir datos
+                            Ver historial
                           </DropdownItem>
 
                           
