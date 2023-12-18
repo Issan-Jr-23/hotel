@@ -20,4 +20,5 @@ router.put("/pasadia-clientes/:id/cortesias",auth, updateClientCts);
 router.put("/facturacion",auth, actualizarFacturacion)
 router.get('/pasadia-clientes-identificacion/:identificacion', auth, getClienteByIdentificacion);
 
+
 export default router;

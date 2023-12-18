@@ -105,7 +105,7 @@ function Row(props) {
                         </IconButton>
                     )}
                 </TableCell>
-                <TableCell component="th" scope="row" style={{ width: "230px" }}>
+                <TableCell component="th" scope="row" style={{ width: "230px", textTransform:"uppercase" }}>
                     {isEditing ? (
                         <input
                             className='outline-none h-10 w-32 border-2 border-blue-300 rounded-xl'
@@ -118,7 +118,7 @@ function Row(props) {
                         row.Descripcion
                     )}
                 </TableCell>
-                <TableCell align="center">
+                <TableCell align="center" className='uppercase'>
                     {isEditing ? (
                         <input
                             className='outline-none h-10 w-32 border-2 border-blue-300 rounded-xl'
@@ -191,10 +191,12 @@ function Row(props) {
                     )
                     }
                 </TableCell>
-                    <TableCell>{row.Cortesias}</TableCell>
-                <TableCell align="center">{row.ProductosVendidos * row.ValorUnitario}</TableCell>
+                    <TableCell align='center'>{row.Cortesias}</TableCell>
+                <TableCell align="center">{(row.ProductosVendidos - row.Cortesias) * row.ValorUnitario}</TableCell>
                 <TableCell align="center">{row.ValorUnitario * row.CantidadInicial}</TableCell>
                 <TableCell className='flex' style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "75px" }}>
+                    <div style={{width:"120px"}} className='flex justify-evenly items-center' >
+
                     {isEditing ? (
                         <>
                             <button onClick={handleSaveEdit}>Save</button>
@@ -206,6 +208,7 @@ function Row(props) {
                             <DeleteIcon className='cursor-pointer' onClick={() => onDelete(row._id)} />
                         </>
                     )}
+                    </div>
                 </TableCell>
             </TableRow>
             {hasSubproducts && (
@@ -232,10 +235,10 @@ function Row(props) {
                                             row.subproductsData.map((subproduct) => (
                                                 <TableRow key={subproduct._id}>
                                                     <TableCell >{subproduct.Descripcion}</TableCell>
-                                                    <TableCell align="center">{subproduct.ValorUnitario}</TableCell>
-                                                    <TableCell align="center">{subproduct.ProductosVendidos}</TableCell>
-                                                    <TableCell align="center">{subproduct.Cortesias}</TableCell>
-                                                    <TableCell align="center">{subproduct.ProductosVendidos * subproduct.ValorUnitario}</TableCell>
+                                                    <TableCell align="center" className='uppercase'>{subproduct.ValorUnitario}</TableCell>
+                                                    <TableCell align="center" className='uppercase'>{subproduct.ProductosVendidos}</TableCell>
+                                                    <TableCell align="center" className='uppercase'>{subproduct.Cortesias}</TableCell>
+                                                    <TableCell align="center" className='uppercase'>{(subproduct.ProductosVendidos - subproduct.Cortesias ) * subproduct.ValorUnitario}</TableCell>
                                                     {/* <TableCell align="center" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                                                         <CloudDownloadIcon />
                                                         <EditIcon onClick={handleEditClick} />
@@ -286,7 +289,7 @@ export default function CollapsibleTable() {
                         product.CantidadInicial,
                         product.ValorUnitario,
                         product.ProductosVendidos,
-                        product.Cortesia,
+                        product.Cortesias,
                         historyArray,
                         subproductsData
                     );
@@ -351,16 +354,16 @@ export default function CollapsibleTable() {
                     <TableHead style={{ height: "20px", marginLeft: "10px" }} >
                         <TableRow>
                             <TableCell />
-                            <TableCell style={{ width: "170px" }} ><Typography variant="caption" style={{ fontWeight: "600", color: "#96969c" }} >descripcion del producto</Typography></TableCell>
-                            <TableCell align="center"> <Typography style={{ fontWeight: "600", color: "#96969c" }} variant="caption">tipo</Typography></TableCell>
-                            <TableCell align="center"><Typography style={{ fontWeight: "600", color: "#96969c" }} variant="caption">Fecha de Caducidad</Typography></TableCell>
-                            <TableCell align="center"><Typography style={{ fontWeight: "600", color: "#96969c" }} variant="caption">Cantidad</Typography></TableCell>
-                            <TableCell style={{ padding: "10px", width: "175px" }} align="center"><Typography style={{ fontWeight: "600", color: "#96969c" }} variant="caption">precio de venta</Typography></TableCell>
-                            <TableCell style={{ padding: "10px", width: "175px" }} align="center"><Typography style={{ fontWeight: "600", color: "#96969c" }} variant="caption">Productos vendidos</Typography></TableCell>
-                            <TableCell style={{ padding: "10px", width: "175px" }} align="center"><Typography style={{ fontWeight: "600", color: "#96969c" }} variant="caption">#Cortesias</Typography></TableCell>
-                            <TableCell style={{ padding: "10px", width: "175px" }} align="center"><Typography style={{ fontWeight: "600", color: "#96969c" }} variant="caption">Total de la venta</Typography></TableCell>
-                            <TableCell style={{ padding: "10px", width: "175px" }} align="center"><Typography style={{ fontWeight: "600", color: "#96969c" }} variant="caption">Valor total</Typography></TableCell>
-                            <TableCell align="center"><Typography style={{ fontWeight: "600", color: "#96969c" }} variant="caption">acción</Typography></TableCell>
+                            <TableCell style={{ width: "170px", textTransform:"uppercase" }} ><Typography variant="caption" style={{ fontWeight: "600", color: "#96969c" }} >Producto</Typography></TableCell>
+                            <TableCell align="center"> <Typography style={{ fontWeight: "600", color: "#96969c",  textTransform:"uppercase" }} variant="caption">tipo</Typography></TableCell>
+                            <TableCell align="center"><Typography style={{ fontWeight: "600", color: "#96969c",  textTransform:"uppercase" }} variant="caption">Fecha de Caducidad</Typography></TableCell>
+                            <TableCell align="center"><Typography style={{ fontWeight: "600", color: "#96969c",  textTransform:"uppercase" }} variant="caption">Cantidad</Typography></TableCell>
+                            <TableCell style={{ padding: "10px", width: "175px",  textTransform:"uppercase"}} align="center"><Typography style={{ fontWeight: "600", color: "#96969c" }} variant="caption">precio de venta</Typography></TableCell>
+                            <TableCell style={{ padding: "10px", width: "175px",  textTransform:"uppercase" }} align="center"><Typography style={{ fontWeight: "600", color: "#96969c" }} variant="caption">Productos vendidos</Typography></TableCell>
+                            <TableCell style={{ padding: "10px", width: "175px",  textTransform:"uppercase" }} align="center"><Typography style={{ fontWeight: "600", color: "#96969c" }} variant="caption">#Cortesias</Typography></TableCell>
+                            <TableCell style={{ padding: "10px", width: "175px",  textTransform:"uppercase" }} align="center"><Typography style={{ fontWeight: "600", color: "#96969c" }} variant="caption">Total de la venta</Typography></TableCell>
+                            <TableCell style={{ padding: "10px", width: "175px",  textTransform:"uppercase" }} align="center"><Typography style={{ fontWeight: "600", color: "#96969c" }} variant="caption">Valor total</Typography></TableCell>
+                            <TableCell align="center"><Typography style={{ fontWeight: "600", color: "#96969c",  textTransform:"uppercase" }} variant="caption">acción</Typography></TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>

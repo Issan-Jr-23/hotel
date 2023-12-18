@@ -238,6 +238,8 @@ export const updateClientCts = async (req, res) => {
   }
 };
 
+
+
 export const actualizarFacturacion = async (req, res) => {
   try {
     const { bebidas, restaurante, clienteId } = req.body;
@@ -265,7 +267,7 @@ export const actualizarFacturacion = async (req, res) => {
 export const getClienteByIdentificacion = async (req, res) => {
   try {
     const identificacion = req.params.identificacion;
-    const cliente = await Cliente.findOne({ identificacion: identificacion }); // Busca por el campo 'identificacion'
+    const cliente = await Cliente.findOne({ identificacion: identificacion });
 
     if (!cliente) {
       return res.status(404).send('Cliente no encontrado');
@@ -277,3 +279,6 @@ export const getClienteByIdentificacion = async (req, res) => {
     res.status(500).send('Error interno del servidor');
   }
 };
+
+
+

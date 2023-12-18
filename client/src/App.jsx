@@ -21,6 +21,8 @@ import Message from "./pages/Mesagge.jsx";
 import HomeSu from "./pages/HomeSu.jsx";
 import TransferenciaData from "./pages/tablePasadia/TransferirData.jsx";
 import AppWithAuth from './context/apiWitchAuth.jsx';
+import HistorialCompras from "./pages/HistorialCompras.jsx";
+import HistorialUsuario from "./pages/Historial.jsx";
 
 function App() {
   return (
@@ -40,6 +42,7 @@ function App() {
                 <Route path="/cabanias" element={<Cabanias />} />
                 <Route path="/inventario" element={<InvBebidas />} />
                 <Route path="/habitaciones" element={<Habitaciones />} />
+                <Route path="/historial/:id" element={<HistorialUsuario />} />
               </Route>
               <Route element={<ProtectedRoute allowedRoles={["superUser"]}/>}>
                 <Route path="/hotel-graphs" element={<Hotel_graphs />}/>
@@ -50,6 +53,7 @@ function App() {
                 <Route path="/inventario-ranch" element={<InventarioRanch/>}/>
                 <Route path="/precios" element={<PreciosRanch/>}/>
                 <Route path="/transferencia-data" element={<TransferenciaData/>}/>
+                <Route path="/historial-compras" element={<HistorialCompras/>}/>
               </Route>
               <Route element={<ProtectedRoute allowedRoles={["editor"]} />}>
                 <Route path="/Register" element={<Register/>} />

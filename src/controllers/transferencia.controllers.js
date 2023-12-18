@@ -31,3 +31,35 @@ import Usuario from '../models/transferencia.model.js';
   }
 };
 
+
+export const obtenerHistorial = async (req, res) => {
+  try {
+    const clientesObtenidos = await Usuario.find();
+    res.status(200).json(clientesObtenidos);
+    console.log(clientesObtenidos)
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .send("Error al obtener los clientes desde la base de datos");
+  }
+};
+
+
+export const obtenerHistorialDeUsuario = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+      const usuario = await Usuario.findOne({ identificacion: id });
+
+      if (!usuario) {
+          return res.status(404).send('Usuario no encontrado');
+      }
+
+      res.json(usuario.historial);
+  } catch (error) {
+      console.error('Error al obtener el historial del usuario:', error);
+      res.status(500).send('Error interno del servidor');
+  }
+};
+

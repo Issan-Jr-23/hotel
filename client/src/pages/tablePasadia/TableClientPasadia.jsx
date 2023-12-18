@@ -624,6 +624,24 @@ export default function App() {
   };
   //#endregion 
 
+  const guardarCortesiaFoodInventory = async (foodId, cantidad) => {
+    console.log("datos de las cortesias que se guardaran: ",foodId, cantidad)
+    try {
+      const response = await AxiosInstances.post('/guardar-cortesias-inventario', {
+        foodId,
+        cantidad
+      });
+  
+      if (response.status === 200) {
+        console.log('Cortesías guardadas correctamente:', response.data);
+      } else {
+        console.error('Error en la respuesta del servidor:', response.status);
+      }
+    } catch (error) {
+      console.error('Error al enviar la petición:', error.message);
+    }
+  };
+
   const actualizarInventarioFood = async (foodId, cantidad) => {
     try {
       const response = await AxiosInstances.post('/actualizar-inventario-food', {
@@ -771,6 +789,7 @@ export default function App() {
               fechaDeMarca: ""
             };
             await guardarFood(foodCortesia);
+            await guardarCortesiaFoodInventory( foodSeleccionadaId, cantidadFood)
             atLeastOneCortesiaSaved = true;
           }
         }
@@ -1658,7 +1677,7 @@ export default function App() {
     }
   };
 
-  const guardarCortesiaItenInventory = async (foodId, subproductoId, cantidad) => {
+  const guardarCortesiaItemInventory = async (foodId, subproductoId, cantidad) => {
     console.log("datos de las cortesias que se guardaran: ",foodId, subproductoId, cantidad)
     try {
       const response = await AxiosInstances.post('/guardar-cortesia-inventario', {
@@ -1804,7 +1823,7 @@ export default function App() {
             };
             let subproductoId = subItemSeleccionadoId;
             await guardarItem(itemCortesia);
-            await guardarCortesiaItenInventory( itemSeleccionadoId,subproductoId , cantidadItem)
+            await guardarCortesiaItemInventory( itemSeleccionadoId,subproductoId , cantidadItem)
             atLeastOneCortesiaSaved = true;
           }
         }

@@ -164,139 +164,142 @@ const TransferirData = () => {
 
 
   return (
-    <div className='pt-20 flex'>
+    <div className='pt-20 flex flex-col'>
 
-      <div className="flex flex-col ml-5 mr-5">
-        <form className="flex flex-col gap-6 w-80 border-2 border-emerald-400 pt-3 pb-3 pl-3 pr-3 rounded-xl" style={{ zIndex: "1" }} >
-          <Input value={busqueda}
-            onChange={handleSearchChange} label="Identificación" placeholder="Enter your email" type="text" className='mb-2' />
+      <h1 className='h-14 flex justify-center items-center text-4xl mb-10' >TRANSFERENCIA DE DATOS</h1>
+        <div className='flex '>
+          <div className="flex flex-col ml-5 mr-5">
+            <form className="flex flex-col gap-6 w-80 border-2 border-emerald-400 pt-3 pb-3 pl-3 pr-3 rounded-xl" style={{ zIndex: "1" }} >
+              <Input value={busqueda}
+                onChange={handleSearchChange} label="Identificación" placeholder="Enter your email" type="text" className='mb-2' />
 
-          <Input
-            label="Nombre"
-            placeholder="Enter your name"
-            type="password"
+              <Input
+                label="Nombre"
+                placeholder="Enter your name"
+                type="password"
 
-          />
-          <Input
-            label="Apellidos"
-            placeholder="Enter your last name"
-            type="password"
+              />
+              <Input
+                label="Apellidos"
+                placeholder="Enter your last name"
+                type="password"
 
-          />
-          <p className="text-center text-small">
-            busqueda de usuarios {" "}
-            <Link to="/home" size="sm" className='font-medium text-blue-500'>
-              Inicio
-            </Link>
-          </p>
-        </form>
-      </div>
-
-      <Table aria-label="Example static collection table" className=' pl-5 pr-5' >
-        <TableHeader className='text-center' >
-          <TableColumn className='text-center' >IDENTIFICACIÓN</TableColumn>
-          <TableColumn className='text-center' >NAME</TableColumn>
-          <TableColumn className='text-center' >STATUS</TableColumn>
-        </TableHeader>
-        <TableBody emptyContent="No hay elementos por mostrar">
-          {datosFiltrados.map((data) => (
-            <TableRow key={data._id} >
-              <TableCell className='text-center'>{data.identificacion}</TableCell>
-              <TableCell className='uppercase text-center' >{data.nombre}</TableCell>
-              <TableCell key={data._id} className='text-center'  >
-                <Dropdown >
-                  <DropdownTrigger>
-                    <Button
-                      className="bg-inherit "
-                    >
-                      <VerticalDotsIcon />
-                    </Button>
-                  </DropdownTrigger>
-                  <DropdownMenu variant="faded" aria-label="Dropdown menu with description">
-                    <DropdownSection title="Actions" showDivider>
-                      <DropdownItem
-                        key="new"
-                        shortcut="⌘N"
-                        description="Transference a new file"
-                        startContent={<AddNoteIcon className={iconClasses} />}
-                        className="font-semibold"
-                        style={{ fontWeight: "700" }}
-                        onClick={() => {
-                          Swal.fire({
-                            title: "Quieres transferir los datos?",
-                            text: "¡No podrás revertir esto!",
-                            icon: "warning",
-                            showCancelButton: true,
-                            confirmButtonColor: "#28a745",
-                            cancelButtonColor: "#d33",
-                            confirmButtonText: "¡Sí, realizar!"
-                          }).then((result) => {
-                            if (result.isConfirmed) {
-                              enviarDatos(
-                                data._id,
-                                data.identificacion,
-                                data.nombre,
-                                data.reserva,
-                                data.cantidadPersonas.adultos,
-                                data.cantidadPersonas.ninios,
-                                data.mediosDePago,
-                                data.pagoAnticipado,
-                                data.mediosDePagoPendiente,
-                                data.pagoPendiente,
-                                data.bebidas,
-                                data.restaurante,
-                                data.servicio
-                              );
+              />
+              <p className="text-center text-small">
+                busqueda de usuarios {" "}
+                <Link to="/home" size="sm" className='font-medium text-blue-500'>
+                  Inicio
+                </Link>
+              </p>
+            </form>
+          </div>
+          <Table aria-label="Example static collection table" className=' pl-5 pr-5' >
+            <TableHeader className='text-center' >
+              <TableColumn className='text-center' >IDENTIFICACIÓN</TableColumn>
+              <TableColumn className='text-center' >NAME</TableColumn>
+              <TableColumn className='text-center' >STATUS</TableColumn>
+            </TableHeader>
+            <TableBody emptyContent="No hay elementos por mostrar">
+              {datosFiltrados.map((data) => (
+                <TableRow key={data._id} >
+                  <TableCell className='text-center'>{data.identificacion}</TableCell>
+                  <TableCell className='uppercase text-center' >{data.nombre}</TableCell>
+                  <TableCell key={data._id} className='text-center'  >
+                    <Dropdown >
+                      <DropdownTrigger>
+                        <Button
+                          className="bg-inherit "
+                        >
+                          <VerticalDotsIcon />
+                        </Button>
+                      </DropdownTrigger>
+                      <DropdownMenu variant="faded" aria-label="Dropdown menu with description">
+                        <DropdownSection title="Actions" showDivider>
+                          <DropdownItem
+                            key="new"
+                            shortcut="⌘N"
+                            description="Transference a new file"
+                            startContent={<AddNoteIcon className={iconClasses} />}
+                            className="font-semibold"
+                            style={{ fontWeight: "700" }}
+                            onClick={() => {
                               Swal.fire({
-                                title: "Deleted!",
-                                text: "Your file has been deleted.",
-                                icon: "success"
+                                title: "Quieres transferir los datos?",
+                                text: "¡No podrás revertir esto!",
+                                icon: "warning",
+                                showCancelButton: true,
+                                confirmButtonColor: "#28a745",
+                                cancelButtonColor: "#d33",
+                                confirmButtonText: "¡Sí, realizar!"
+                              }).then((result) => {
+                                if (result.isConfirmed) {
+                                  enviarDatos(
+                                    data._id,
+                                    data.identificacion,
+                                    data.nombre,
+                                    data.reserva,
+                                    data.cantidadPersonas.adultos,
+                                    data.cantidadPersonas.ninios,
+                                    data.mediosDePago,
+                                    data.pagoAnticipado,
+                                    data.mediosDePagoPendiente,
+                                    data.pagoPendiente,
+                                    data.bebidas,
+                                    data.restaurante,
+                                    data.servicio
+                                  );
+                                  Swal.fire({
+                                    title: "Deleted!",
+                                    text: "Your file has been deleted.",
+                                    icon: "success"
+                                  });
+                                }
                               });
-                            }
-                          });
-                        }}
-                      >
-                        Transferir datos
-                      </DropdownItem>
+                            }}
+                          >
+                            Transferir datos
+                          </DropdownItem>
 
-                      <DropdownItem
-                        key="copy"
-                        shortcut="⌘C"
-                        description="Copy the file link"
-                        startContent={<CopyDocumentIcon className={iconClasses} />}
-                      >
-                        Copy link
-                      </DropdownItem>
-                      <DropdownItem
-                        key="edit"
-                        shortcut="⌘⇧E"
-                        description="Allows you to edit the file"
-                        startContent={<EditDocumentIcon className={iconClasses} />}
-                      >
-                        Edit file
-                      </DropdownItem>
-                    </DropdownSection>
-                    <DropdownSection title="Danger zone">
-                      <DropdownItem
-                        key="delete"
-                        className="text-danger"
-                        color="danger"
-                        shortcut="⌘⇧D"
-                        description="Permanently delete the file"
-                        startContent={<DeleteDocumentIcon className={cn(iconClasses, "text-danger")} />}
-                      >
-                        Delete file
-                      </DropdownItem>
-                    </DropdownSection>
-                  </DropdownMenu>
-                </Dropdown>
-              </TableCell>
-            </TableRow>
+                          <DropdownItem
+                            key="copy"
+                            shortcut="⌘C"
+                            description="Copy the file link"
+                            startContent={<CopyDocumentIcon className={iconClasses} />}
+                          >
+                            Copy link
+                          </DropdownItem>
+                          <DropdownItem
+                            key="edit"
+                            shortcut="⌘⇧E"
+                            description="Allows you to edit the file"
+                            startContent={<EditDocumentIcon className={iconClasses} />}
+                          >
+                            Edit file
+                          </DropdownItem>
+                        </DropdownSection>
+                        <DropdownSection title="Danger zone">
+                          <DropdownItem
+                            key="delete"
+                            className="text-danger"
+                            color="danger"
+                            shortcut="⌘⇧D"
+                            description="Permanently delete the file"
+                            startContent={<DeleteDocumentIcon className={cn(iconClasses, "text-danger")} />}
+                          >
+                            Delete file
+                          </DropdownItem>
+                        </DropdownSection>
+                      </DropdownMenu>
+                    </Dropdown>
+                  </TableCell>
+                </TableRow>
 
 
-          ))}
-        </TableBody>
-      </Table>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+
     </div>
   )
 }

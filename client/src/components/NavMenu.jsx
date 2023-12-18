@@ -121,6 +121,7 @@ const NavMenu = () => {
                                 )}
                                 <Link to="price" className='mb-1 pt-2 pb-2' >Precios</Link>
                                 <Link to="/transferencia-data" className='mb-1 pt-2 pb-2' >Transferencia de datos</Link>
+                                <Link to="/historial-compras" className='mb-1 pt-2 pb-2' >Historial</Link>
                         </div>
                     </AccordionItem>
                 </Accordion>
