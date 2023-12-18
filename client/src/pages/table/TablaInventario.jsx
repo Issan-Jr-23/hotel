@@ -646,7 +646,7 @@ export default function App() {
                       <img
                         className="w-8 h-8 mr-4 cursor-pointer"
                         src={editar}
-                        alt="Edit"
+                        alt="Edit" 
                         onClick={() => {
                           setEditedName(inventario.Descripcion);
                           setEditedType(inventario.tipo);

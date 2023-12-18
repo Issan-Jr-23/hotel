@@ -19,11 +19,9 @@ import "../table/table.css"
 import logo from "../../images/logo.png"
 import wave from "../../images/wave.png"
 import svg from "../../images/svg.png"
-import eye from "../../images/eye.png"
 import AxiosInstances from "../../api/axios.js";
 import { PlusIcon } from "../finca/PlusIcon.jsx";
 import { useAuth } from "../../context/authContext.jsx";
-import TransferirData from "./TransferirData.jsx"
 // import SubMenu from "./SubMenu.jsx"
 
 
@@ -162,6 +160,7 @@ export default function App() {
   const [precioItemSeleccionado, setPrecioItemSeleccionado] = useState("");
   const [itemSeleccionadoId, setItemSeleccionadoId] = useState("");
   const [subItemSeleccionadoId, setSubItemSeleccionadoId] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
 
   const options = ["Si", "No"];
@@ -185,34 +184,8 @@ export default function App() {
   });
 
 
-
-  const [transferencia, setTransferencia] = useState({
-    identificacion: "",
-    historial: [
-      {
-        idHistorial: "",
-        nombre: "",
-        reserva: "",
-        cantidadPersonas: {
-          adultos: 0,
-          ninios: 0
-        },
-        mediosDePago: "",
-        pagoAnticipado: 0,
-        metodosDePagopendientes: "",
-        fechaPasadia: "",
-        bebidas: [],
-        restaurante: []
-      }
-    ]
-  });
-
-
-
   //#endregion
-
   //#region 
-
 
   const [busqueda, setBusqueda] = useState('');
   const [pasadiaAdultos, setPasadiaAdultos] = useState(null)
@@ -635,15 +608,7 @@ export default function App() {
         bebida,
       });
       toast.success('Bebida guardada exitosamente!');
-      setCantidadBebida("");
-      setBebidaSeleccionada('');
-      setPrecioBebidaSeleccionada("");
-      setBebidaSeleccionadaId('');
-
-      setCantidadBebida1("");
-      setBebida1Seleccionada('');
-      setPrecioBebida1Seleccionada("");
-      setBebida1SeleccionadaId('');
+      limpiarCampos();
 
       setEsCortesia(false);
       const responses = await AxiosInstances.get("/pasadia-clientes");
@@ -690,6 +655,10 @@ export default function App() {
   };
 
   const handleGuardarFood = async () => {
+    if (isSaving) return;
+
+    setIsSaving(true);
+
     if (!selectedClientId || (!foodSeleccionadaId && !food1SeleccionadaId && food2SeleccionadaId && food3SeleccionadaId && food4SeleccionadaId)) {
       toast.error('No se ha seleccionado un cliente o una comida.');
       return;
@@ -979,21 +948,13 @@ export default function App() {
         food,
       });
       toast.success('Comida guardada exitosamente!');
-      setCantidadFood("");
-      setFoodSeleccionada('');
-      setPrecioFoodSeleccionada("");
-      setFoodSeleccionadaId('');
 
-
-      setCantidadFood1("");
-      setFood1Seleccionada('');
-      setPrecioFood1Seleccionada("");
-      setFood1SeleccionadaId('');
-
+      limpiarCampos1();
 
       setEsCortesia(false);
 
       closeModalF();
+      setIsSaving(false);
       closeModalF();
       const responses = await AxiosInstances.get("/pasadia-clientes");
 
@@ -1106,20 +1067,7 @@ export default function App() {
     }
   };
   //#region 
-  const handleFormSubmitB = async () => {
-    try {
-      await AxiosInstances.post("/pasadia-registrar-cliente", formData);
-      onClose();
-      toast.success('bebida agregada exitosamente');
-      setFormData({
-        bebidas: ""
-      });
-      const response = await AxiosInstances.get("/pasadia-clientes");
-      setUsers(response.data);
-    } catch (error) {
-      toast.error('Ocurrió un error al agregar el cliente.');
-    }
-  };
+
 
   const handleEditUser = async (id) => {
     try {
@@ -1208,10 +1156,7 @@ export default function App() {
   const { isOpen: isFirstModalOpen, onOpen: openFirstModal, onClose: closeFirstModal } = useDisclosure();
   const sizes = ['4xl'];
 
-  const handleOpen = (size) => {
-    setSelectedSize(size);
-    openFirstModal();
-  };
+
 
   const handleOpenModal = (user) => {
     setSelectedUser(user);
@@ -1237,18 +1182,16 @@ export default function App() {
   const [ancho, setAncho] = React.useState('2xl')
   const sizesm = ["4xl"];
 
-  const handleOpenm = async (ancho, userId) => {
-    setAncho(ancho);
-    setSelectedClientId(userId);
-    openModalM();
-    setCantidadBebida(""); // o '' si quieres que el campo esté completamente vacío
+  const limpiarCampos = () =>{
+        
+    setCantidadBebida(""); 
     setBebidaSeleccionada('');
     setPrecioBebidaSeleccionada("");
     setBebidaSeleccionadaId('');
 
     setCantidadBebida1("");
-    setBebida1Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
-    setPrecioBebida1Seleccionada(""); // o el valor por defecto inicial
+    setBebida1Seleccionada('');
+    setPrecioBebida1Seleccionada("");
     setBebida1SeleccionadaId('');
 
     setCantidadBebida2("");
@@ -1277,22 +1220,9 @@ export default function App() {
     setCantidadBebida2Disponible("")
     setCantidadBebida3Disponible("")
     setCantidadBebida4Disponible("")
+  }
 
-    const response = await AxiosInstances.get("/drinks");
-    setDrinks(response.data);
-    const responses = await AxiosInstances.get("/food");
-    setSnacks(responses.data);
-
-  };
-
-  const [selectedSize, setSelectedSize] = React.useState('md');
-
-  const handleOpenmf = async (size, userId) => {
-    setSelectedSize(size);
-    setSelectedClientId(userId);
-    openModalF();
-
-    // Sin números
+  const limpiarCampos1 = () => {
     setCantidadFood("");
     setFoodSeleccionada(''); // Establecer como vacío o el valor por defecto que desees
     setPrecioFoodSeleccionada(""); // o el valor por defecto inicial
@@ -1333,6 +1263,32 @@ export default function App() {
     setCantidadFood2Disponible("")
     setCantidadFood3Disponible("")
     setCantidadFood4Disponible("")
+  }
+
+  const handleOpenm = async (ancho, userId) => {
+    setAncho(ancho);
+    setSelectedClientId(userId);
+    openModalM();
+
+    limpiarCampos();
+
+
+    const response = await AxiosInstances.get("/drinks");
+    setDrinks(response.data);
+    const responses = await AxiosInstances.get("/food");
+    setSnacks(responses.data);
+
+  };
+
+  const [selectedSize, setSelectedSize] = React.useState('md');
+
+  const handleOpenmf = async (size, userId) => {
+    setSelectedSize(size);
+    setSelectedClientId(userId);
+    openModalF();
+
+    limpiarCampos1();
+   
 
     const response = await AxiosInstances.get("/drinks");
     setDrinks(response.data);
@@ -1343,20 +1299,7 @@ export default function App() {
   };
 
 
-  const { isOpen: isModalOpenMc, onOpen: openModalMc, onClose: closeModalMc } = useDisclosure();
 
-
-  const sizesmc = ["xs"];
-
-  const handleOpenmc = (size) => {
-    setSize(size)
-    openModalMc();
-  }
-
-  const handleOpenModalBca = (cliente) => {
-    // setSelectedClientId(cliente._id);
-    setModalOpen(true);
-  };
 
 
   const [selectedClienteId, setSelectedClienteId] = useState(null);
@@ -1651,6 +1594,30 @@ export default function App() {
   //#endregion
 
 
+  const limpiarItems = async ()=>{
+    setItemSeleccionado("");
+    setCantidadItem("");
+    setPrecioItemSeleccionado("");
+    setItemSeleccionadoId("");
+    setSubItemSeleccionadoId("");
+    setCantidadFoodDisponible("");
+
+    const response = await AxiosInstances.get("/food");
+    const allProducts = response.data;
+
+    let subProducts = [];
+    allProducts.forEach(product => {
+      if (product.subproductos) {
+        const subProductosConCantidadPadre = product.subproductos.map(sub => {
+          return { ...sub, cantidadPadre: product.CantidadInicial, idPadre: product._id };
+        });
+        subProducts = subProducts.concat(subProductosConCantidadPadre);
+      }
+    });
+
+    setComidas(subProducts);
+  }
+
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm(
       "¿Estás seguro de que deseas eliminar este usuario?"
@@ -1690,29 +1657,31 @@ export default function App() {
       throw error;
     }
   };
-  
 
-  const actualizarSubproducto = async (foodId, subproductoId, cantidad) => {
+  const guardarCortesiaItenInventory = async (foodId, subproductoId, cantidad) => {
+    console.log("datos de las cortesias que se guardaran: ",foodId, subproductoId, cantidad)
     try {
-      const response = await AxiosInstances.post('/actualizar-subproducto', {
+      const response = await AxiosInstances.post('/guardar-cortesia-inventario', {
         foodId,
         subproductoId,
-        cantidad 
+        cantidad
       });
   
       if (response.status === 200) {
-        console.log("Subproducto actualizado con éxito.");
+        console.log('Cortesías guardadas correctamente:', response.data);
       } else {
-        console.error(`Error al actualizar el subproducto. Estado de la respuesta: ${response.status}`);
+        console.error('Error en la respuesta del servidor:', response.status);
       }
     } catch (error) {
-      console.error('Error al actualizar el subproducto:', error.message);
-      throw error;
+      console.error('Error al enviar la petición:', error.message);
     }
   };
-
+  
 
   const handleGuardarItem = async () => {
+    if (isSaving) return;
+
+    setIsSaving(true);
     if (!selectedClientId || (!subItemSeleccionadoId)) {
       toast.error('No se ha seleccionado un cliente o una comida.');
       return;
@@ -1740,6 +1709,7 @@ export default function App() {
       console.log("numero de cortesias: " + cantidadTotalCortesia)
       console.log("cantidad de bebidas del usuario" + JSON.stringify(numeroDeFood, null, 2))
       const totalPersonas = ninios + adultos;
+      console.log("cantidad de personas en cortesias: ",totalPersonas)
 
       if (foodSeleccionada && disponibleInventario === 0) {
         toast.error('Algun producto esta agotado',
@@ -1768,7 +1738,7 @@ export default function App() {
         }
 
         if (cantidad > disponibleInventario) {
-          alert(`Solo quedan 1 ${disponibleInventario} unidades disponibles en el inventario.`);
+          alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
           return false;
         }
 
@@ -1806,7 +1776,7 @@ export default function App() {
       let subproductoId = subItemSeleccionadoId;
       console.log("..... muestra de datos",subproductoId)
       await actualizarInventarioItem(foodId,subproductoId, cantidad);
-      await actualizarSubproducto(foodId,subproductoId, cantidad)
+      // await actualizarSubproducto(foodId,subproductoId, cantidad)
 
       return true;
     };
@@ -1817,6 +1787,35 @@ export default function App() {
       if (!selectedClientId || (!subItemSeleccionadoId)) {
         throw new Error('No se ha seleccionado un cliente o una bebida.');
       }
+
+
+      if (esCortesia) {
+        let atLeastOneCortesiaSaved = false;
+
+        if (cantidadItem > 0 && itemSeleccionadoId) {
+          if (await checkStockAndUpdateInventory(itemSeleccionadoId, cantidadItem)) {
+            const itemCortesia = {
+              id: subItemSeleccionadoId,
+              nombre: itemSeleccionado,
+              cantidad: cantidadItem,
+              precio: 0,
+              mensaje: "Cortesía",
+              fechaDeMarca: ""
+            };
+            let subproductoId = subItemSeleccionadoId;
+            await guardarItem(itemCortesia);
+            await guardarCortesiaItenInventory( itemSeleccionadoId,subproductoId , cantidadItem)
+            atLeastOneCortesiaSaved = true;
+          }
+        }
+ 
+
+        if (atLeastOneCortesiaSaved) {
+          onClose();
+        }
+        return;
+      }
+
 
       let isBebidaAdded = false;
 
@@ -1855,11 +1854,10 @@ export default function App() {
       toast.success('Comida guardada exitosamente!');
       setEsCortesia(false);
 
-      setItemSeleccionado();
-      setCantidadItem();
-      setItemSeleccionadoId();
-      setSubItemSeleccionadoId();
-      setCantidadFoodDisponible("");
+      limpiarItems();
+      closeModalF()
+
+      setIsSaving(false);
    
       const responses = await AxiosInstances.get("/pasadia-clientes");
 
@@ -2116,13 +2114,7 @@ export default function App() {
 
         >
           <TableHeader className="text-center">
-            <TableColumn>
-              {isAdmin || isEditor ? (
-                <div>
-                  Historial
-                </div>
-              ) : null}
-            </TableColumn>
+            
             <TableColumn className="text-center">+</TableColumn>
             <TableColumn className="text-center max-w-xs">ID</TableColumn>
             <TableColumn className="text-center ">Nombre</TableColumn>
@@ -2139,7 +2131,6 @@ export default function App() {
               ) : null
               }
             </TableColumn>
-            <TableColumn>Transferencia data</TableColumn>
 
           </TableHeader>
 
@@ -2150,30 +2141,12 @@ export default function App() {
 
               <TableRow className="cursor-pointer hover:bg-blue-200" key={cliente._id}>
 
-                <TableCell className="flex justify-center items-center">
-
-                  <Popover placement="right">
-                    <PopoverTrigger>
-                      <h2>
-                        <img className="w-6" src={eye} alt="" />
-                      </h2>
-                    </PopoverTrigger>
-                    <PopoverContent>
-                      <div className="px-1 w-56">
-                        {"ver datos"}
-                      </div>
-                    </PopoverContent>
-                  </Popover>
-
-                </TableCell>
-
-
                 {/* -------------------MODAL DE PRODUCTOS SELECCIONADOS*/}
 
                 <TableCell>
                   {sizess.map((size) => (
 
-                    <Button className="bg-white" key={size} onPress={() => handleOpenM(size)} onClick={() => handleOpenModal(cliente)}>
+                    <Button className="bg-inherent" key={size} onPress={() => handleOpenM(size)} onClick={() => handleOpenModal(cliente)}>
                       <img className="w-4" src={chevron} alt="" />
                     </Button>
                   ))}
@@ -2529,7 +2502,7 @@ export default function App() {
 
 
 
-                <TableCell key={cliente._id} className=" ">
+                <TableCell key={cliente._id} className="">
 
                   <div className=" flex justify-center">
                     <div className="flex flex-wrap gap-3">
@@ -2867,13 +2840,15 @@ export default function App() {
 
                 </TableCell>
 
-                <TableCell key={cliente.id} className="text-center flex justify-center items-center">
+                <TableCell key={cliente.id} className="">
+                  <div className="flex justify-center">
                   <div className="flex flex-wrap gap-3">
                     {sizesm.map((size) => (
                       <Button className="bg-white-100" key={size} onPress={() => handleOpenmf(size, cliente._id)}>
                         <img className="w-7 h-7" src={plusb} alt="" />
                       </Button>
                     ))}
+                  </div>
                   </div>
 
 
@@ -3202,7 +3177,7 @@ export default function App() {
                                 <Button color="danger" variant="light" onPress={closeModalF}>
                                   Close
                                 </Button>
-                                <Button color="primary" onClick={handleGuardarFood}>
+                                <Button color="primary" onClick={handleGuardarFood} disabled={isSaving} >
                                   Ahorrar
                                 </Button>
                               </ModalFooter>
@@ -3282,7 +3257,7 @@ export default function App() {
                                 <Button color="danger" variant="light" onPress={closeModalF}>
                                   Close
                                 </Button>
-                                <Button color="primary" onClick={handleGuardarItem}>
+                                <Button color="primary" onClick={handleGuardarItem} disabled={isSaving} >
                                   Ahorrar
                                 </Button>
                               </ModalFooter>
@@ -3327,8 +3302,6 @@ export default function App() {
                       />
                     </div>
                   ) : null}
-                </TableCell>
-                <TableCell>
                 </TableCell>
 
               </TableRow>

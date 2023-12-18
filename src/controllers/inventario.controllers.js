@@ -461,32 +461,32 @@ export const obtenerSubProductos = async (req, res) => {
   }
 };
 
-export const actualizarSubproducto = async (req, res) => {
-  try {
-      const { foodId, subproductoId, cantidad } = req.body;
+// export const actualizarSubproducto = async (req, res) => {
+//   try {
+//       const { foodId, subproductoId, cantidad } = req.body;
 
-      // Encuentra el producto padre por ID
-      const producto = await Bebida.findById(foodId);
-      if (!producto) {
-          return res.status(404).send({ message: 'Producto no encontrado.' });
-      }
+//       // Encuentra el producto padre por ID
+//       const producto = await Bebida.findById(foodId);
+//       if (!producto) {
+//           return res.status(404).send({ message: 'Producto no encontrado.' });
+//       }
 
-      // Encuentra el subproducto específico y actualiza su cantidad vendida
-      const subproducto = producto.subproductos.id(subproductoId);
-      if (!subproducto) {
-          return res.status(404).send({ message: 'Subproducto no encontrado.' });
-      }
+//       // Encuentra el subproducto específico y actualiza su cantidad vendida
+//       const subproducto = producto.subproductos.id(subproductoId);
+//       if (!subproducto) {
+//           return res.status(404).send({ message: 'Subproducto no encontrado.' });
+//       }
 
-      subproducto.ProductosVendidos += cantidad;
+//       subproducto.ProductosVendidos += cantidad;
 
-      await producto.save();
+//       await producto.save();
 
-      res.status(200).send({ message: 'Subproducto actualizado con éxito.' });
-  } catch (error) {
-      console.error('Error al actualizar el subproducto:', error);
-      res.status(500).send({ error: 'Error interno del servidor.' });
-  }
-};
+//       res.status(200).send({ message: 'Subproducto actualizado con éxito.' });
+//   } catch (error) {
+//       console.error('Error al actualizar el subproducto:', error);
+//       res.status(500).send({ error: 'Error interno del servidor.' });
+//   }
+// };
 
 export const updateStockSubproductos = async (req, res) => {
   const {foodId} = req.body;
@@ -543,6 +543,47 @@ export const updateStockSubproductos = async (req, res) => {
     res.status(500).send({ message: 'Error interno del servidor' });
   }
 };
+
+export const guardarCortesiaItemInventory = async (req, res) => {
+  const { foodId, subproductoId, cantidad } = req.body;
+  console.log("datos de las cotersias que se guardaran - mensaje desde el servidor: ",foodId, subproductoId, cantidad)
+
+  // Validar que todos los datos necesarios estén presentes
+  if (!foodId || !subproductoId || cantidad === undefined) {
+    return res.status(400).send({ message: 'Faltan datos requeridos (foodId, subproductoId y cantidad).' });
+  }
+
+  if (cantidad < 0) {
+    return res.status(400).send({ message: 'La cantidad no puede ser negativa.' });
+  }
+
+  try {
+    // Encuentra el alimento usando el modelo apropiado (ejemplo: Bebida)
+    const alimento = await Bebida.findById(foodId);
+    if (!alimento) {
+      return res.status(404).send({ message: 'Alimento no encontrado.' });
+    }
+
+    // Encuentra el subproducto específico
+    const subProducto = alimento.subproductos.find(subProd => subProd._id.toString() === subproductoId);
+    if (!subProducto) {
+      return res.status(404).send({ message: 'Subproducto no encontrado.' });
+    }
+
+    // Aquí asumimos que tienes un campo en el subproducto para manejar las cortesías
+    subProducto.Cortesias = (subProducto.Cortesias || 0) + cantidad;
+
+    // Guardar los cambios en la base de datos
+    const alimentoActualizado = await alimento.save();
+    console.log("Alimento actualizado con cortesías: ", alimentoActualizado);
+
+    res.status(200).send({ message: 'Cortesías actualizadas correctamente', alimento: alimentoActualizado });
+  } catch (error) {
+    console.error('Error al actualizar las cortesías:', error);
+    res.status(500).send({ message: 'Error interno del servidor' });
+  }
+};
+
 
 
 

@@ -18,7 +18,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 
-function createData(_id, Descripcion, tipo, Caducidad, CantidadInicial, ValorUnitario, ProductosVendidos, history, subproductsData) {
+function createData(_id, Descripcion, tipo, Caducidad, CantidadInicial, ValorUnitario, ProductosVendidos,Cortesias, history, subproductsData) {
     return {
         _id,
         Descripcion,
@@ -27,6 +27,7 @@ function createData(_id, Descripcion, tipo, Caducidad, CantidadInicial, ValorUni
         CantidadInicial,
         ValorUnitario,
         ProductosVendidos,
+        Cortesias,
         history,
         subproductsData,
     };
@@ -190,7 +191,7 @@ function Row(props) {
                     )
                     }
                 </TableCell>
-                    <TableCell>En progreso</TableCell>
+                    <TableCell>{row.Cortesias}</TableCell>
                 <TableCell align="center">{row.ProductosVendidos * row.ValorUnitario}</TableCell>
                 <TableCell align="center">{row.ValorUnitario * row.CantidadInicial}</TableCell>
                 <TableCell className='flex' style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "75px" }}>
@@ -221,6 +222,7 @@ function Row(props) {
                                             <TableCell>Descripcion del subproducto</TableCell>
                                             <TableCell align="center">precio</TableCell>
                                             <TableCell align="center">cantidad vendida</TableCell>
+                                            <TableCell align="center">#Cortesias</TableCell>
                                             <TableCell align="center">Total de la venta</TableCell>
                                             {/* <TableCell align="center">Acciones</TableCell> */}
                                         </TableRow>
@@ -232,6 +234,7 @@ function Row(props) {
                                                     <TableCell >{subproduct.Descripcion}</TableCell>
                                                     <TableCell align="center">{subproduct.ValorUnitario}</TableCell>
                                                     <TableCell align="center">{subproduct.ProductosVendidos}</TableCell>
+                                                    <TableCell align="center">{subproduct.Cortesias}</TableCell>
                                                     <TableCell align="center">{subproduct.ProductosVendidos * subproduct.ValorUnitario}</TableCell>
                                                     {/* <TableCell align="center" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                                                         <CloudDownloadIcon />
@@ -283,6 +286,7 @@ export default function CollapsibleTable() {
                         product.CantidadInicial,
                         product.ValorUnitario,
                         product.ProductosVendidos,
+                        product.Cortesia,
                         historyArray,
                         subproductsData
                     );

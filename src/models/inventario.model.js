@@ -14,6 +14,10 @@ const subproductoSchema = new mongoose.Schema({
     type: Number,
     default:0
   },
+  Cortesias:{
+    type:Number,
+    default:0
+  },
 });
 
 const inventarioSchema = new mongoose.Schema({
@@ -58,6 +62,10 @@ const inventarioSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  Cortesias:{
+    type:Number,
+    default:0
+  }
 });
 
 const Inventario = mongoose.model("Inventario", inventarioSchema);
