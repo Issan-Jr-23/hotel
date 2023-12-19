@@ -23,6 +23,8 @@ import TransferenciaData from "./pages/tablePasadia/TransferirData.jsx";
 import AppWithAuth from './context/apiWitchAuth.jsx';
 import HistorialCompras from "./pages/HistorialCompras.jsx";
 import HistorialUsuario from "./pages/Historial.jsx";
+import NotFoundPage from "./pages/Page404.jsx"
+import DashboardPasadia from "./pages/dashboard/dashboardPasadia.jsx";
 
 function App() {
   return (
@@ -32,6 +34,7 @@ function App() {
           <BrowserRouter basename="/meqo-soft">
             <AppWithAuth/>
             <Routes>
+             
               <Route path="/" element={<LoginPage />} />
               <Route path="/meqo-soft" element={<LoginPage />} />
               <Route path="/login" element={<LoginPage />} />
@@ -54,10 +57,12 @@ function App() {
                 <Route path="/precios" element={<PreciosRanch/>}/>
                 <Route path="/transferencia-data" element={<TransferenciaData/>}/>
                 <Route path="/historial-compras" element={<HistorialCompras/>}/>
+                <Route path="/dashboard-pasadia" element={<DashboardPasadia/>} ></Route>
               </Route>
               <Route element={<ProtectedRoute allowedRoles={["editor"]} />}>
                 <Route path="/Register" element={<Register/>} />
               </Route>
+              <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </BrowserRouter>
         </MenuProvider>

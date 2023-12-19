@@ -10,6 +10,7 @@ import PieNo from "../graphs/DoughnutAndPie.jsx"
 import { useAuth } from "../context/authContext.jsx";
 import AxiosInstance from '../api/axios.js'
 
+
 const HomeSu = () => {
   const { user } = useAuth();
   const [totalUsers, setTotalUsers] = useState([])
@@ -62,7 +63,8 @@ const HomeSu = () => {
           <div className=' rounded-3xl mr-5 flex' style={{ width: "60%", height: "280px", backgroundColor: "#d5f4e7", border: " 5px solid #d5f4e7" }}>
             <article className=' w-2/4 pl-8 pt-8 pr-4' style={{ borderRadius: " 20px 0px 0px 20px" }} >
               <h1 style={{ fontSize: "22px", fontWeight: "700", color: "#004b50" }} >Welcome back 👋 <br />  {user && <span className='uppercase'>{user.username}</span>} </h1>
-              <p style={{ fontSize: "14.2px", color: "#58918e" }} className='pt-2' >Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus molestiae illo natus.</p>
+              <p style={{ fontSize: "14.2px", color: "#58918e" }} className='pt-2' >
+                "Bienvenido de nuevo a Meqo: Tu herramienta clave para una administración hotelera eficaz y sencilla."</p>
               <Button className='mt-5 text-white' style={{ fontWeight: "700", backgroundColor: "#00a76f" }}>
                 Go now
               </Button>
@@ -150,53 +152,58 @@ const HomeSu = () => {
 
         <section className='flex'>
           <div className='flex flex-col w-6/12'>
+            <h3 className='flex justify-center items-center text-3xl mt-10 mb-10'>PROMEDIO DE RESERVAS</h3>
             <article className='' >
               <PieYes />
             </article>
-            <h3 className='flex justify-center items-center text-3xl mt-10 mb-10'>PROMEDIO DE RESERVAS</h3>
             <article className=''>
               <PieNo />
             </article>
           </div>
           <div className='w-6/12'>
             <div>
-            <h3 className='flex justify-center items-center text-3xl mt-10 mb-10'>USUARIOS MAS CONCURRENTES</h3>
+              <h3 className='flex justify-center items-center text-3xl mt-10 mb-10'>USUARIOS MAS CONCURRENTES</h3>
               <article>
 
-              <Table aria-label="Example static collection table">
-                <TableHeader>
-                  <TableColumn>NAME</TableColumn>
-                  <TableColumn>ROLE</TableColumn>
-                  <TableColumn>STATUS</TableColumn>
-                </TableHeader>
-                <TableBody>
-                  <TableRow key="1">
-                    <TableCell>Tony Reichert</TableCell>
-                    <TableCell>CEO</TableCell>
-                    <TableCell>Active</TableCell>
-                  </TableRow>
-                  <TableRow key="2">
-                    <TableCell>Zoey Lang</TableCell>
-                    <TableCell>Technical Lead</TableCell>
-                    <TableCell>Paused</TableCell>
-                  </TableRow>
-                  <TableRow key="3">
-                    <TableCell>Jane Fisher</TableCell>
-                    <TableCell>Senior Developer</TableCell>
-                    <TableCell>Active</TableCell>
-                  </TableRow>
-                  <TableRow key="4">
-                    <TableCell>William Howard</TableCell>
-                    <TableCell>Community Manager</TableCell>
-                    <TableCell>Vacation</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
+                <Table aria-label="Example static collection table" className='pt-5'>
+                  <TableHeader>
+                    <TableColumn>NAME</TableColumn>
+                    <TableColumn>ROLE</TableColumn>
+                    <TableColumn>STATUS</TableColumn>
+                  </TableHeader>
+                  <TableBody>
+                    <TableRow key="1" className='h-10'>
+                      <TableCell>Tony Reichert</TableCell>
+                      <TableCell>CEO</TableCell>
+                      <TableCell>Active</TableCell>
+                    </TableRow>
+                    <TableRow key="2" className='h-10'>
+                      <TableCell>Zoey Lang</TableCell>
+                      <TableCell>Technical Lead</TableCell>
+                      <TableCell>Paused</TableCell>
+                    </TableRow>
+                    <TableRow key="3" className='h-10'>
+                      <TableCell>Jane Fisher</TableCell>
+                      <TableCell>Senior Developer</TableCell>
+                      <TableCell>Active</TableCell>
+                    </TableRow>
+                    <TableRow key="4" className='h-10'>
+                      <TableCell>William Howard</TableCell>
+                      <TableCell>Community Manager</TableCell>
+                      <TableCell>Vacation</TableCell>
+                    </TableRow>
+                    <TableRow key="5" className='h-10'>
+                      <TableCell>William Howard</TableCell>
+                      <TableCell>Community Manager</TableCell>
+                      <TableCell>Vacation</TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
               </article>
 
             </div>
-            <div className='mt-20'>
-            <h3 className='flex justify-center items-center text-3xl mt-10 mb-10'>COMPRAS DE USUARIOS</h3>
+            <div className='mt-14'>
+              <h3 className='flex justify-center items-center text-3xl  mb-10'>COMPRAS DE USUARIOS</h3>
               <article>
                 <Table aria-label="Example static collection table">
                   <TableHeader>
@@ -205,22 +212,27 @@ const HomeSu = () => {
                     <TableColumn>STATUS</TableColumn>
                   </TableHeader>
                   <TableBody>
-                    <TableRow key="1">
+                    <TableRow key="1" className='h-10'>
                       <TableCell>Tony Reichert</TableCell>
                       <TableCell>CEO</TableCell>
                       <TableCell>Active</TableCell>
                     </TableRow>
-                    <TableRow key="2">
+                    <TableRow key="2" className='h-10'>
                       <TableCell>Zoey Lang</TableCell>
                       <TableCell>Technical Lead</TableCell>
                       <TableCell>Paused</TableCell>
                     </TableRow>
-                    <TableRow key="3">
+                    <TableRow key="3" className='h-10'>
                       <TableCell>Jane Fisher</TableCell>
                       <TableCell>Senior Developer</TableCell>
                       <TableCell>Active</TableCell>
                     </TableRow>
-                    <TableRow key="4">
+                    <TableRow key="4" className='h-10'>
+                      <TableCell>William Howard</TableCell>
+                      <TableCell>Community Manager</TableCell>
+                      <TableCell>Vacation</TableCell>
+                    </TableRow>
+                    <TableRow key="5" className='h-10'>
                       <TableCell>William Howard</TableCell>
                       <TableCell>Community Manager</TableCell>
                       <TableCell>Vacation</TableCell>

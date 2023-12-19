@@ -53,7 +53,7 @@ const NavMenu = () => {
 
     return (
         <div className={`cont-nav text-white ${menuAbierto ? 'mostrar' : ''}`}>
-            <div className='barra-superior ostias h-14 flex justify-between items-center border-2' style={{ zIndex: "8" }}>
+            <div className='barra-superior ostias h-14 flex justify-between items-center' style={{ zIndex: "8" }}>
                 <img className='w-8 ml-5 z-10 cursor-pointer' src={open} alt="" onClick={abrirMenu} />
 
                 <Dropdown placement="bottom-end">
@@ -99,7 +99,7 @@ const NavMenu = () => {
                     }
                         style={{ height: "auto", display: "flex", flexDirection: "column", overflow: "hidden" }}>
                         <div className=' flex flex-col pl-9' style={{ overflow: "hidden" }} >
-                            <Link className='mb-1 pt-2 pb-2' >Dashboard</Link>
+                            <Link to="/dashboard-pasadia" className='mb-1 pt-2 pb-2' >Dashboard pasadia</Link>
                             <Link className='mb-1 pt-2 pb-2' >Dashboard</Link>
                         </div>
                     </AccordionItem>
