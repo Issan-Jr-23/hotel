@@ -17,7 +17,7 @@ class ApexSpline extends Component {
             show: false,
           }
         },
-        colors: ['#FF0000'], // Color de la línea en rojo
+        colors: ['#009B00'], // Color de la línea en rojo
         fill: {
           type: 'gradient',
           gradient: {
@@ -28,12 +28,12 @@ class ApexSpline extends Component {
             colorStops: [
               {
                 offset: 0,
-                color: "#FF0000",
+                color: "#009600",
                 opacity: 1
               },
               {
                 offset: 100,
-                color: "#FF0000",
+                color: "#00A700",
                 opacity: 0.5
               },
             ]

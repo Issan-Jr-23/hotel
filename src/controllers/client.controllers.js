@@ -280,5 +280,67 @@ export const getClienteByIdentificacion = async (req, res) => {
   }
 };
 
+export const totalPructosVendidos = async (req, res) => {
+  try {
+      const usuarios = await Cliente.find();
+
+      let totalPago = 0;
+      let cantidadVendidos = 0;
+
+      usuarios.forEach(usuario => {
+              if (usuario.servicio === 'pasadia') {
+                usuario.restaurante.forEach( item => {
+                  if (item.precio > 0){
+                    totalPago += item.cantidad * item.precio;
+                    cantidadVendidos += item.cantidad
+                  }
+                })
+                usuario.bebidas.forEach( item => {
+                  if (item.precio > 0) {
+                    totalPago += item.cantidad * item.precio;
+                    cantidadVendidos += item.cantidad;
+                  }
+                })
+              }
+      });
+
+      res.json({ totalPago, cantidadVendidos });
+  } catch (error) {
+      console.error('Error al obtener los datos: ', error);
+      res.status(500).send('Error al procesar la solicitud');
+  }
+};
+
+export const totalPructosVendidosCortesias = async (req, res) => {
+  try {
+      const usuarios = await Cliente.find();
+
+      let totalPago = 0;
+      let cantidadVendidos = 0;
+
+      usuarios.forEach(usuario => {
+              if (usuario.servicio === 'pasadia') {
+                usuario.restaurante.forEach( item => {
+                  if (item.precio === 0){
+                    totalPago += item.cantidad * item.precio;
+                    cantidadVendidos += item.cantidad
+                  }
+                })
+                usuario.bebidas.forEach( item => {
+                  if (item.precio === 0) {
+                    totalPago += item.cantidad * item.precio;
+                    cantidadVendidos += item.cantidad;
+                  }
+                })
+              }
+      });
+
+      res.json({ totalPago, cantidadVendidos });
+  } catch (error) {
+      console.error('Error al obtener los datos: ', error);
+      res.status(500).send('Error al procesar la solicitud');
+  }
+};
+
 
 

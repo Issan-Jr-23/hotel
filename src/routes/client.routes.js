@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {actualizarFacturacion, addFood, getClienteByIdentificacion, obtenerCPI, obtenerClientes, updateClientCts, updatePP} from "../controllers/client.controllers.js";
+import {actualizarFacturacion, addFood, getClienteByIdentificacion, obtenerCPI, obtenerClientes, totalPructosVendidos, totalPructosVendidosCortesias, updateClientCts, updatePP} from "../controllers/client.controllers.js";
 import {crearCliente} from "../controllers/client.controllers.js";
 import {deleteClient} from "../controllers/client.controllers.js";
 import {updateClient} from "../controllers/client.controllers.js";
@@ -19,6 +19,8 @@ router.put('/pasadia-clientes/:id/actualizar',auth, updatePP)
 router.put("/pasadia-clientes/:id/cortesias",auth, updateClientCts);
 router.put("/facturacion",auth, actualizarFacturacion)
 router.get('/pasadia-clientes-identificacion/:identificacion', auth, getClienteByIdentificacion);
+router.get("/pasadia-productos-vendidos", totalPructosVendidos)
+router.get("/pasadia-productos-cortesias", totalPructosVendidosCortesias)
 
 
 export default router;

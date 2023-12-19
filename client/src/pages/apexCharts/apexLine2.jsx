@@ -17,28 +17,6 @@ class ApexSpline extends Component {
             show: false,
           }
         },
-        colors: ['#FF0000'], // Color de la línea en rojo
-        fill: {
-          type: 'gradient',
-          gradient: {
-            shadeIntensity: 1,
-            opacityFrom: 0.7,
-            opacityTo: 0.9,
-            stops: [0, 90, 100],
-            colorStops: [
-              {
-                offset: 0,
-                color: "#FF0000",
-                opacity: 1
-              },
-              {
-                offset: 100,
-                color: "#FF0000",
-                opacity: 0.5
-              },
-            ]
-          }
-        },
         dataLabels: {
           enabled: false
         },

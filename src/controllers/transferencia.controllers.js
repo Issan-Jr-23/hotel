@@ -141,3 +141,71 @@ export const totalgenerado = async (req, res) => {
   }
 };
 
+export const totalPructosVendidos = async (req, res) => {
+  try {
+      const usuarios = await Usuario.find();
+
+      let totalPago = 0;
+      let cantidadVendidos = 0;
+
+      usuarios.forEach(usuario => {
+          usuario.historial.forEach(reserva => {
+              if (reserva.servicio === 'pasadia') {
+                reserva.restaurante.forEach( item => {
+                  if (item.precio > 0){
+                    totalPago += item.cantidad * item.precio;
+                    cantidadVendidos += item.cantidad
+                  }
+                })
+                reserva.bebidas.forEach( item => {
+                  if (item.precio > 0) {
+                    totalPago += item.cantidad * item.precio;
+                    cantidadVendidos += item.cantidad;
+                  }
+                })
+              }
+          });
+      });
+
+      res.json({ totalPago, cantidadVendidos });
+  } catch (error) {
+      console.error('Error al obtener los datos: ', error);
+      res.status(500).send('Error al procesar la solicitud');
+  }
+};
+
+export const totalPructosCortesias = async (req, res) => {
+  try {
+      const usuarios = await Usuario.find();
+
+      let totalPago = 0;
+      let cantidadVendidos = 0;
+
+      usuarios.forEach(usuario => {
+          usuario.historial.forEach(reserva => {
+              if (reserva.servicio === 'pasadia') {
+                reserva.restaurante.forEach( item => {
+                  if (item.precio === 0){
+                    totalPago += item.cantidad * item.precio;
+                    cantidadVendidos += item.cantidad
+                  }
+                })
+                reserva.bebidas.forEach( item => {
+                  if (item.precio === 0) {
+                    totalPago += item.cantidad * item.precio;
+                    cantidadVendidos += item.cantidad;
+                  }
+                })
+              }
+          });
+      });
+
+      res.json({ totalPago, cantidadVendidos });
+  } catch (error) {
+      console.error('Error al obtener los datos: ', error);
+      res.status(500).send('Error al procesar la solicitud');
+  }
+};
+
+
+
