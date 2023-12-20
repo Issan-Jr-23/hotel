@@ -5,6 +5,7 @@ import ApexLine2 from "../apexCharts/apexLine2.jsx"
 import ApexLine3 from "../apexCharts/apexLine3.jsx"
 import ApexPie from "../apexCharts/apexPie.jsx"
 import TableUsers from "./tableUsersPasadia.jsx"
+import TableProductos from "./tableUsers.jsx"
 import AxiosInstance from '../../api/axios.js'
 import users from "../../images/iconly-glass-tick.svg"
 import { Button, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@nextui-org/react"
@@ -200,7 +201,7 @@ const dashboardPasadia = () => {
         </div>
         <div className='cont-table-user'>
 
-          <TableUsers />
+          <TableProductos />
         </div>
       </div>
     </div>

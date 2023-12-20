@@ -293,7 +293,7 @@ export const totalPructosVendidos = async (req, res) => {
                 usuario.restaurante.forEach( item => {
                   if (item.precio > 0){
                     totalPago += item.cantidad * item.precio;
-                    cantidadVendidos += item.cantidad
+                    cantidadVendidos += item.cantidad;
                   }
                 })
                 usuario.bebidas.forEach( item => {
@@ -343,30 +343,148 @@ export const totalPructosVendidosCortesias = async (req, res) => {
   }
 };
 
-
 export const obtenerResumenCompras = async (req, res) => {
   try {
-      const clientes = await Cliente.find({}).select('identificacion');
-      const usuarios = await Usuario.find({}).select('identificacion');
+    const clientes = await Cliente.find({}).select('identificacion bebidas restaurante servicio');
+    const usuarios = await Usuario.find({}).select('identificacion historial');
 
-      // Crear sets de identificaciones
-      const identificacionesClientes = new Set(clientes.map(c => c.identificacion));
-      const identificacionesUsuarios = new Set(usuarios.map(u => u.identificacion));
+    const resumenCompras = new Map();
 
-      // Calcular identificaciones iguales (intersección)
-      const identificacionesIguales = new Set([...identificacionesClientes].filter(x => identificacionesUsuarios.has(x)));
+    clientes.forEach(cliente => {
+      if (cliente.servicio === 'pasadia') {
+        let totalBebidas = 0;
+        let totalRestaurantes = 0;
+        let cantidadBebidas = 0;
+        let cantidadRestaurantes = 0;
 
-      // Calcular cantidad de identificaciones iguales y diferentes
-      const cantidadIguales = identificacionesIguales.size;
-      const cantidadDiferentes = Math.max(identificacionesClientes.size, identificacionesUsuarios.size) - cantidadIguales;
+        cliente.bebidas.forEach(bebida => {
+          if (bebida.precio > 0) {
+            totalBebidas += bebida.precio * bebida.cantidad;
+            cantidadBebidas += bebida.cantidad;
+          }
+        });
 
-      res.status(200).json({ 
-        cantidadIdentificacionesIguales: cantidadIguales,
-        cantidadIdentificacionesDiferentes: cantidadDiferentes,
-        identificacionesPasadia: clientes,
-        identificacionesHistorial: usuarios
+        cliente.restaurante.forEach(restaurante => {
+          if (restaurante.precio > 0) {
+            totalRestaurantes += restaurante.precio * restaurante.cantidad;
+            cantidadRestaurantes += restaurante.cantidad;
+          }
+        });
+
+        resumenCompras.set(cliente.identificacion, {
+          identificacion: cliente.identificacion,
+          cantidadTotal: cantidadBebidas + cantidadRestaurantes,
+          valorTotal: totalBebidas + totalRestaurantes
+        });
+      }
+    });
+
+    usuarios.forEach(usuario => {
+      let cantidadTotalBebidas = 0;
+      let cantidadTotalRestaurantes = 0;
+      let valorTotalBebidas = 0;
+      let valorTotalRestaurantes = 0;
+
+      usuario.historial.forEach(h => {
+        if (h.servicio === 'pasadia') {
+          h.bebidas.forEach(bebida => {
+            if (bebida.precio > 0) {
+              cantidadTotalBebidas += bebida.cantidad;
+              valorTotalBebidas += bebida.precio * bebida.cantidad;
+            }
+          });
+
+          h.restaurante.forEach(restaurante => {
+            if (restaurante.precio > 0) {
+              cantidadTotalRestaurantes += restaurante.cantidad;
+              valorTotalRestaurantes += restaurante.precio * restaurante.cantidad;
+            }
+          });
+        }
       });
-  } catch (error){
 
+      const cantidadTotal = cantidadTotalBebidas + cantidadTotalRestaurantes;
+      const valorTotal = valorTotalBebidas + valorTotalRestaurantes;
+
+      if (resumenCompras.has(usuario.identificacion)) {
+        let datosUsuario = resumenCompras.get(usuario.identificacion);
+        datosUsuario.cantidadTotal += cantidadTotal;
+        datosUsuario.valorTotal += valorTotal;
+      } else {
+        resumenCompras.set(usuario.identificacion, {
+          identificacion: usuario.identificacion,
+          cantidadTotal,
+          valorTotal
+        });
+      }
+    });
+
+    const resultadoFinal = Array.from(resumenCompras.values());
+
+    res.status(200).json(resultadoFinal);
+
+  } catch (error) {
+    res.status(500).json({ mensaje: "Error al obtener el resumen de compras" });
   }
-}
+};
+
+
+export const obtenerProductosCop = async (req, res) => {
+  try {
+    // Obtener datos de las colecciones de clientes y usuarios
+    const clientes = await Cliente.find({}).select("bebidas restaurante");
+    const usuarios = await Usuario.find({}).select("historial");
+
+    let productosCombinados = {};
+
+    // Función para agregar o actualizar productos en el objeto combinado
+    const agregarProducto = (producto, esBebida) => {
+      const { id, nombre, cantidad, precio } = producto;
+      if (precio > 0) {
+        if (productosCombinados[id]) {
+          // Si el producto ya existe, actualizar cantidad
+          productosCombinados[id].cantidad += cantidad;
+          productosCombinados[id].total += cantidad * precio;
+        } else {
+          // Si no existe, agregar nuevo producto
+          productosCombinados[id] = { id, nombre, cantidad, total: cantidad * precio, tipo: esBebida ? 'bebida' : 'restaurante' };
+        }
+      }
+    };
+
+    // Procesar productos de la colección de clientes
+    clientes.forEach(cliente => {
+      cliente.bebidas.forEach(bebida => agregarProducto(bebida, true));
+      cliente.restaurante.forEach(restaurante => agregarProducto(restaurante, false));
+    });
+
+    // Procesar productos del historial de la colección de usuarios
+    usuarios.forEach(usuario => {
+      usuario.historial.forEach(historialItem => {
+        historialItem.bebidas.forEach(bebida => agregarProducto(bebida, true));
+        historialItem.restaurante.forEach(restaurante => agregarProducto(restaurante, false));
+      });
+    });
+
+    // Convertir el objeto en un array para la respuesta
+    const resultado = Object.values(productosCombinados);
+
+    // Enviar la respuesta combinada
+    res.json(resultado);
+  } catch (error) {
+    // Manejar cualquier error que ocurra en el proceso
+    res.status(500).send(error.message);
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+

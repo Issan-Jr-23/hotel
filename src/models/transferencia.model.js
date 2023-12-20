@@ -24,7 +24,7 @@ const historialSchema = new mongoose.Schema({
 });
 
 const transferenciaSchema = new mongoose.Schema({
-  identificacion: { type: String, required: true },
+  identificacion: { type: Number, required: true },
   historial: [historialSchema]
 });
 

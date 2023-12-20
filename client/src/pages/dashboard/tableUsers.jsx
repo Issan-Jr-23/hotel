@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import AxiosInstance from "../../api/axios.js"
+import AxiosInstance from "../../api/axios.js";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -8,17 +8,16 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
-
-export default function BasicTable() {
+function ProductosTable() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstance.get('/pasadia-obtener-compras'); // Usa el endpoint específico para obtener los datos
+        const response = await AxiosInstance.get('/pasadia-obtener-productosCop');
         setData(response.data);
       } catch (error) {
-        console.error('Error al obtener los datos:', error);
+        console.error("Error al obtener los datos: ", error);
       }
     };
 
@@ -27,7 +26,7 @@ export default function BasicTable() {
 
   return (
     <TableContainer component={Paper} className='bg-red-500'>
-      <Table sx={{ }} aria-label="simple table" className='table-users-box'>
+      <Table sx={{}} aria-label="simple table" className='table-users-box'>
         <TableHead>
           <TableRow>
             <TableCell>Identificación</TableCell>
@@ -38,14 +37,14 @@ export default function BasicTable() {
         <TableBody>
           {data.map((row, index) => (
             <TableRow
-              key={row.identificacion + index}
+              key={index}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
               <TableCell component="th" scope="row">
-                {row.identificacion}
+                {row.nombre}
               </TableCell>
-              <TableCell align="center">{row.cantidadTotal}</TableCell>
-              <TableCell align="center">{row.valorTotal}</TableCell>
+              <TableCell align="center">{row.cantidad}</TableCell>
+              <TableCell align="center">{row.total}</TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -53,3 +52,5 @@ export default function BasicTable() {
     </TableContainer>
   );
 }
+
+export default ProductosTable;

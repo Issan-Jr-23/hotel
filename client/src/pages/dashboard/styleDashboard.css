@@ -43,13 +43,12 @@
  }
 
  .cont-table-user{
-    width: 77vw;
+    width: 100%;
     margin-left: 20px;
  }
 
  .box-pie-table{
     background-color: rgb(226, 241, 255);
-    width: 23vw;
  }
 
 @media only screen
