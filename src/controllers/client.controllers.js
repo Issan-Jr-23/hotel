@@ -1,5 +1,6 @@
 import { now } from "mongoose";
 import Cliente from "../models/client.model.js";
+import Usuario from '../models/transferencia.model.js';
 
 export const obtenerClientes = async (req, res) => {
   try {
@@ -343,4 +344,29 @@ export const totalPructosVendidosCortesias = async (req, res) => {
 };
 
 
+export const obtenerResumenCompras = async (req, res) => {
+  try {
+      const clientes = await Cliente.find({}).select('identificacion');
+      const usuarios = await Usuario.find({}).select('identificacion');
 
+      // Crear sets de identificaciones
+      const identificacionesClientes = new Set(clientes.map(c => c.identificacion));
+      const identificacionesUsuarios = new Set(usuarios.map(u => u.identificacion));
+
+      // Calcular identificaciones iguales (intersección)
+      const identificacionesIguales = new Set([...identificacionesClientes].filter(x => identificacionesUsuarios.has(x)));
+
+      // Calcular cantidad de identificaciones iguales y diferentes
+      const cantidadIguales = identificacionesIguales.size;
+      const cantidadDiferentes = Math.max(identificacionesClientes.size, identificacionesUsuarios.size) - cantidadIguales;
+
+      res.status(200).json({ 
+        cantidadIdentificacionesIguales: cantidadIguales,
+        cantidadIdentificacionesDiferentes: cantidadDiferentes,
+        identificacionesPasadia: clientes,
+        identificacionesHistorial: usuarios
+      });
+  } catch (error){
+
+  }
+}
