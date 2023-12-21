@@ -345,10 +345,26 @@ export const totalPructosVendidosCortesias = async (req, res) => {
 
 export const obtenerResumenCompras = async (req, res) => {
   try {
-    const clientes = await Cliente.find({}).select('identificacion bebidas restaurante servicio');
-    const usuarios = await Usuario.find({}).select('identificacion historial');
+    const clientes = await Cliente.find({}).select('identificacion nombre bebidas restaurante servicio');
+    const usuarios = await Usuario.find({}).select('identificacion nombre historial');
 
     const resumenCompras = new Map();
+
+    // Función para actualizar o agregar al resumen
+    const actualizarResumen = (identificacion, nombre, cantidad, valor) => {
+      if (resumenCompras.has(identificacion)) {
+        let datosUsuario = resumenCompras.get(identificacion);
+        datosUsuario.cantidadTotal += cantidad;
+        datosUsuario.valorTotal += valor;
+      } else {
+        resumenCompras.set(identificacion, {
+          identificacion,
+          nombre, // Agregando el nombre del usuario
+          cantidadTotal: cantidad,
+          valorTotal: valor
+        });
+      }
+    };
 
     clientes.forEach(cliente => {
       if (cliente.servicio === 'pasadia') {
@@ -371,11 +387,7 @@ export const obtenerResumenCompras = async (req, res) => {
           }
         });
 
-        resumenCompras.set(cliente.identificacion, {
-          identificacion: cliente.identificacion,
-          cantidadTotal: cantidadBebidas + cantidadRestaurantes,
-          valorTotal: totalBebidas + totalRestaurantes
-        });
+        actualizarResumen(cliente.identificacion, cliente.nombre, cantidadBebidas + cantidadRestaurantes, totalBebidas + totalRestaurantes);
       }
     });
 
@@ -406,16 +418,9 @@ export const obtenerResumenCompras = async (req, res) => {
       const cantidadTotal = cantidadTotalBebidas + cantidadTotalRestaurantes;
       const valorTotal = valorTotalBebidas + valorTotalRestaurantes;
 
-      if (resumenCompras.has(usuario.identificacion)) {
-        let datosUsuario = resumenCompras.get(usuario.identificacion);
-        datosUsuario.cantidadTotal += cantidadTotal;
-        datosUsuario.valorTotal += valorTotal;
-      } else {
-        resumenCompras.set(usuario.identificacion, {
-          identificacion: usuario.identificacion,
-          cantidadTotal,
-          valorTotal
-        });
+      // Solo actualiza si el nombre aún no está en el resumen
+      if (!resumenCompras.has(usuario.identificacion) || !resumenCompras.get(usuario.identificacion).nombre) {
+        actualizarResumen(usuario.identificacion, usuario.nombre, cantidadTotal, valorTotal);
       }
     });
 
@@ -429,11 +434,61 @@ export const obtenerResumenCompras = async (req, res) => {
 };
 
 
+
+// export const obtenerProductosCop = async (req, res) => {
+//   try {
+//     // Obtener datos de las colecciones de clientes y usuarios
+//     const clientes = await Cliente.find({}).select("bebidas restaurante");
+//     const usuarios = await Usuario.find({}).select("historial");
+
+//     let productosCombinados = {};
+
+//     // Función para agregar o actualizar productos en el objeto combinado
+//     const agregarProducto = (producto, esBebida) => {
+//       const { id, nombre, cantidad, precio } = producto;
+//       if (precio > 0) {
+//         if (productosCombinados[id]) {
+//           // Si el producto ya existe, actualizar cantidad
+//           productosCombinados[id].cantidad += cantidad;
+//           productosCombinados[id].total += cantidad * precio;
+//         } else {
+//           // Si no existe, agregar nuevo producto
+//           productosCombinados[id] = { id, nombre, cantidad, total: cantidad * precio, tipo: esBebida ? 'bebida' : 'restaurante' };
+//         }
+//       }
+//     };
+
+//     // Procesar productos de la colección de clientes
+//     clientes.forEach(cliente => {
+//       cliente.bebidas.forEach(bebida => agregarProducto(bebida, true));
+//       cliente.restaurante.forEach(restaurante => agregarProducto(restaurante, false));
+//     });
+
+//     // Procesar productos del historial de la colección de usuarios
+//     usuarios.forEach(usuario => {
+//       usuario.historial.forEach(historialItem => {
+//         historialItem.bebidas.forEach(bebida => agregarProducto(bebida, true));
+//         historialItem.restaurante.forEach(restaurante => agregarProducto(restaurante, false));
+//       });
+//     });
+
+//     // Convertir el objeto en un array para la respuesta
+//     const resultado = Object.values(productosCombinados);
+
+//     // Enviar la respuesta combinada
+//     res.json(resultado);
+//   } catch (error) {
+//     // Manejar cualquier error que ocurra en el proceso
+//     res.status(500).send(error.message);
+//   }
+// };
+
+
 export const obtenerProductosCop = async (req, res) => {
   try {
     // Obtener datos de las colecciones de clientes y usuarios
-    const clientes = await Cliente.find({}).select("bebidas restaurante");
-    const usuarios = await Usuario.find({}).select("historial");
+    const clientes = await Cliente.find({ servicio: 'pasadia' }).select("bebidas restaurante");
+    const usuarios = await Usuario.find({ 'historial.servicio': 'pasadia' }).select("historial");
 
     let productosCombinados = {};
 
@@ -442,7 +497,7 @@ export const obtenerProductosCop = async (req, res) => {
       const { id, nombre, cantidad, precio } = producto;
       if (precio > 0) {
         if (productosCombinados[id]) {
-          // Si el producto ya existe, actualizar cantidad
+          // Si el producto ya existe, actualizar cantidad y total
           productosCombinados[id].cantidad += cantidad;
           productosCombinados[id].total += cantidad * precio;
         } else {
@@ -461,22 +516,26 @@ export const obtenerProductosCop = async (req, res) => {
     // Procesar productos del historial de la colección de usuarios
     usuarios.forEach(usuario => {
       usuario.historial.forEach(historialItem => {
-        historialItem.bebidas.forEach(bebida => agregarProducto(bebida, true));
-        historialItem.restaurante.forEach(restaurante => agregarProducto(restaurante, false));
+        if (historialItem.servicio === 'pasadia') {
+          historialItem.bebidas.forEach(bebida => agregarProducto(bebida, true));
+          historialItem.restaurante.forEach(restaurante => agregarProducto(restaurante, false));
+        }
       });
     });
 
-    // Convertir el objeto en un array para la respuesta
-    const resultado = Object.values(productosCombinados);
+    // Convertir el objeto en un array y ordenar por total de mayor a menor
+    let productosOrdenados = Object.values(productosCombinados).sort((a, b) => b.total - a.total);
 
-    // Enviar la respuesta combinada
+    // Limitar la respuesta a los primeros 7 productos
+    const resultado = productosOrdenados.slice(0, 7);
+
+    // Enviar la respuesta
     res.json(resultado);
   } catch (error) {
     // Manejar cualquier error que ocurra en el proceso
     res.status(500).send(error.message);
   }
 };
-
 
 
 

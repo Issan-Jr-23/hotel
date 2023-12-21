@@ -5,7 +5,7 @@
 }
 
 .fondo{
-    background-color: aliceblue;
+    /* background-color: aliceblue; */
 }
 
 .box-grafic{
@@ -16,7 +16,7 @@
  }
 
  .box-apex{
-    width: 65vw;
+    width: 58vw;
     background-color: rgb(226, 241, 255);
     margin-left: 20px;
     border-radius: 20px;
@@ -25,7 +25,7 @@
  }
 
  .box-table{
-    width: 35vw;
+    width: 42vw;
     height: 56vh;
     border-radius: 20px;
     overflow: hidden;
