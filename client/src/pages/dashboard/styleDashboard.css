@@ -1,7 +1,9 @@
 .box-style {
-   background-color: rgb(216, 236, 255);
+   background-color: rgb(255, 255, 255);
    height: 160px;
    width: 30vw;
+   border: 1px solid rgb(231, 231, 231);
+   box-shadow: 0px 5px 10px 0px rgb(216, 216, 216);
 }
 
 .fondo{
@@ -17,11 +19,12 @@
 
  .box-apex{
     width: 58vw;
-    background-color: rgb(226, 241, 255);
     margin-left: 20px;
     border-radius: 20px;
     padding-top: 10px;
     padding-right: 10px;
+    border: 1px solid rgb(231, 231, 231);
+    box-shadow: 0px 5px 10px 0px rgb(216, 216, 216);
  }
 
  .box-table{
@@ -29,26 +32,40 @@
     height: 56vh;
     border-radius: 20px;
     overflow: hidden;
+    border: 1px solid rgb(231, 231, 231);
+    box-shadow: 0px 5px 10px 0px rgb(216, 216, 216);
  }
 
  .table-users-box{
-    background-color: rgb(226, 241, 255);
     
  }
 
  .box-table-ventas{
     margin-top: 20px;
-    border-radius: 20px;
     overflow: hidden;
  }
 
  .cont-table-user{
     width: 100%;
     margin-left: 20px;
+    border: 1px solid rgb(219, 219, 219);
+    border-radius: 0 0 23px 23px;
+    box-shadow: 0px 5px 10px 0px rgb(216, 216, 216);
+    margin-bottom: 20px;
+    margin-left: 20px;
+    overflow:"hidden"
  }
 
  .box-pie-table{
-    background-color: rgb(226, 241, 255);
+   border: 1px solid rgb(219, 219, 219);
+    border-radius: 23px;
+    box-shadow: 0px 5px 10px 0px rgb(216, 216, 216);
+    margin-bottom: 20px;
+    margin-left: 20px;
+ }
+
+ .contenedor-table{
+
  }
 
 @media only screen

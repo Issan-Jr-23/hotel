@@ -1,7 +1,7 @@
 //#region 
 import React, { useState, useEffect, useMemo } from "react";
 import {
-  Table, TableHeader, Tabs, TableColumn, TableBody, TableRow, TableCell, Button, Input, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Select, SelectItem, Checkbox, Popover, PopoverTrigger, PopoverContent, Tab, Card, CardBody
+  Table, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, TableHeader, Tabs, TableColumn, TableBody, TableRow, TableCell, Button, Input, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Select, SelectItem, Checkbox, Popover, PopoverTrigger, PopoverContent, Tab, Card, CardBody
 } from "@nextui-org/react";
 
 import editar from "../../images/boligrafo.png";
@@ -22,6 +22,7 @@ import svg from "../../images/svg.png"
 import AxiosInstances from "../../api/axios.js";
 import { PlusIcon } from "../finca/PlusIcon.jsx";
 import { useAuth } from "../../context/authContext.jsx";
+import { VerticalDotsIcon } from "../iconos/VerticalDotsIcon.jsx"
 // import SubMenu from "./SubMenu.jsx"
 
 
@@ -625,13 +626,13 @@ export default function App() {
   //#endregion 
 
   const guardarCortesiaFoodInventory = async (foodId, cantidad) => {
-    console.log("datos de las cortesias que se guardaran: ",foodId, cantidad)
+    console.log("datos de las cortesias que se guardaran: ", foodId, cantidad)
     try {
       const response = await AxiosInstances.post('/guardar-cortesias-inventario', {
         foodId,
         cantidad
       });
-  
+
       if (response.status === 200) {
         console.log('Cortesías guardadas correctamente:', response.data);
       } else {
@@ -789,7 +790,7 @@ export default function App() {
               fechaDeMarca: ""
             };
             await guardarFood(foodCortesia);
-            await guardarCortesiaFoodInventory( foodSeleccionadaId, cantidadFood)
+            await guardarCortesiaFoodInventory(foodSeleccionadaId, cantidadFood)
             atLeastOneCortesiaSaved = true;
           }
         }
@@ -1201,9 +1202,9 @@ export default function App() {
   const [ancho, setAncho] = React.useState('2xl')
   const sizesm = ["4xl"];
 
-  const limpiarCampos = () =>{
-        
-    setCantidadBebida(""); 
+  const limpiarCampos = () => {
+
+    setCantidadBebida("");
     setBebidaSeleccionada('');
     setPrecioBebidaSeleccionada("");
     setBebidaSeleccionadaId('');
@@ -1307,7 +1308,7 @@ export default function App() {
     openModalF();
 
     limpiarCampos1();
-   
+
 
     const response = await AxiosInstances.get("/drinks");
     setDrinks(response.data);
@@ -1613,7 +1614,7 @@ export default function App() {
   //#endregion
 
 
-  const limpiarItems = async ()=>{
+  const limpiarItems = async () => {
     setItemSeleccionado("");
     setCantidadItem("");
     setPrecioItemSeleccionado("");
@@ -1654,19 +1655,19 @@ export default function App() {
       alert("Error al eliminar usuario. Por favor, inténtalo de nuevo más tarde.");
     }
   };
-  
+
 
   const actualizarInventarioItem = async (foodId, subproductoId, cantidad) => {
-    console.log("peticion actualizar inventari item: "+foodId, subproductoId, cantidad)
+    console.log("peticion actualizar inventari item: " + foodId, subproductoId, cantidad)
     try {
       const response = await AxiosInstances.post('/update-cantidad-inicial', {
         foodId,
         subproductoId,
         cantidad
       });
-  
+
       console.log("Datos enviados al servidor - FoodID: " + foodId + ", SubProductoID: " + subproductoId);
-  
+
       if (response.status < 200 || response.status >= 300) {
         throw new Error(`Error al actualizar el inventario. Estado de la respuesta: ${response.status}`);
       }
@@ -1678,14 +1679,14 @@ export default function App() {
   };
 
   const guardarCortesiaItemInventory = async (foodId, subproductoId, cantidad) => {
-    console.log("datos de las cortesias que se guardaran: ",foodId, subproductoId, cantidad)
+    console.log("datos de las cortesias que se guardaran: ", foodId, subproductoId, cantidad)
     try {
       const response = await AxiosInstances.post('/guardar-cortesia-inventario', {
         foodId,
         subproductoId,
         cantidad
       });
-  
+
       if (response.status === 200) {
         console.log('Cortesías guardadas correctamente:', response.data);
       } else {
@@ -1695,7 +1696,7 @@ export default function App() {
       console.error('Error al enviar la petición:', error.message);
     }
   };
-  
+
 
   const handleGuardarItem = async () => {
     if (isSaving) return;
@@ -1707,10 +1708,10 @@ export default function App() {
     }
 
     const subproductoId = subItemSeleccionadoId;
-    console.log("..... muestra de datos",subproductoId)
+    console.log("..... muestra de datos", subproductoId)
 
     const checkStockAndUpdateInventory = async (foodId, cantidad) => {
-      console.log("quiero ver quien pasa ese id y cantidad: ",foodId,cantidad)
+      console.log("quiero ver quien pasa ese id y cantidad: ", foodId, cantidad)
       const response = await AxiosInstances.get(`/verificar-disponibilidad/${foodId}`);
 
       let fecha = new Date();
@@ -1728,7 +1729,7 @@ export default function App() {
       console.log("numero de cortesias: " + cantidadTotalCortesia)
       console.log("cantidad de bebidas del usuario" + JSON.stringify(numeroDeFood, null, 2))
       const totalPersonas = ninios + adultos;
-      console.log("cantidad de personas en cortesias: ",totalPersonas)
+      console.log("cantidad de personas en cortesias: ", totalPersonas)
 
       if (foodSeleccionada && disponibleInventario === 0) {
         toast.error('Algun producto esta agotado',
@@ -1793,8 +1794,8 @@ export default function App() {
       console.log("id de la comida seleccionada : " + foodSeleccionadaId)
 
       let subproductoId = subItemSeleccionadoId;
-      console.log("..... muestra de datos",subproductoId)
-      await actualizarInventarioItem(foodId,subproductoId, cantidad);
+      console.log("..... muestra de datos", subproductoId)
+      await actualizarInventarioItem(foodId, subproductoId, cantidad);
       // await actualizarSubproducto(foodId,subproductoId, cantidad)
 
       return true;
@@ -1823,11 +1824,11 @@ export default function App() {
             };
             let subproductoId = subItemSeleccionadoId;
             await guardarItem(itemCortesia);
-            await guardarCortesiaItemInventory( itemSeleccionadoId,subproductoId , cantidadItem)
+            await guardarCortesiaItemInventory(itemSeleccionadoId, subproductoId, cantidadItem)
             atLeastOneCortesiaSaved = true;
           }
         }
- 
+
 
         if (atLeastOneCortesiaSaved) {
           onClose();
@@ -1877,7 +1878,7 @@ export default function App() {
       closeModalF()
 
       setIsSaving(false);
-   
+
       const responses = await AxiosInstances.get("/pasadia-clientes");
 
       const usuariosOrdenados = responses.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
@@ -2133,7 +2134,7 @@ export default function App() {
 
         >
           <TableHeader className="text-center">
-            
+
             <TableColumn className="text-center">+</TableColumn>
             <TableColumn className="text-center max-w-xs">ID</TableColumn>
             <TableColumn className="text-center ">Nombre</TableColumn>
@@ -2150,6 +2151,8 @@ export default function App() {
               ) : null
               }
             </TableColumn>
+            <TableColumn>p,c,a,f</TableColumn>
+            <TableColumn>...</TableColumn>
 
           </TableHeader>
 
@@ -2861,13 +2864,13 @@ export default function App() {
 
                 <TableCell key={cliente.id} className="">
                   <div className="flex justify-center">
-                  <div className="flex flex-wrap gap-3">
-                    {sizesm.map((size) => (
-                      <Button className="bg-white-100" key={size} onPress={() => handleOpenmf(size, cliente._id)}>
-                        <img className="w-7 h-7" src={plusb} alt="" />
-                      </Button>
-                    ))}
-                  </div>
+                    <div className="flex flex-wrap gap-3">
+                      {sizesm.map((size) => (
+                        <Button className="bg-white-100" key={size} onPress={() => handleOpenmf(size, cliente._id)}>
+                          <img className="w-7 h-7" src={plusb} alt="" />
+                        </Button>
+                      ))}
+                    </div>
                   </div>
 
 
@@ -3321,6 +3324,27 @@ export default function App() {
                       />
                     </div>
                   ) : null}
+                </TableCell>
+                <TableCell>
+                        <div className="flex"> <span> <span>.</span> </span> <span>Activo</span> </div>
+                </TableCell>
+                <TableCell>
+                  <Dropdown>
+                    <DropdownTrigger>
+                      <Button
+
+                        className="bg-inherent"
+                      >
+                        <VerticalDotsIcon />
+                      </Button>
+                    </DropdownTrigger>
+                    <DropdownMenu aria-label="Static Actions">
+                      <DropdownItem key="new" color="success" className="">Activo</DropdownItem>
+                      <DropdownItem key="copy" color="danger" >Cancelado</DropdownItem>
+                      <DropdownItem key="edit" color="primary">Pendiente</DropdownItem>
+                      <DropdownItem key="edit" color="secondary" >Finalizado</DropdownItem>
+                    </DropdownMenu>
+                  </Dropdown>
                 </TableCell>
 
               </TableRow>

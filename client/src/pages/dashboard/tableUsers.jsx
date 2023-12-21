@@ -42,12 +42,13 @@ function ProductosTable() {
   };
 
   return (
-    <TableContainer component={Paper} className='bg-red-500'>
+    <div className=' contenedor-table overflow-hidden'>
+    <TableContainer component={Paper} className=''>
       <Table sx={{}} aria-label="simple table" className='table-users-box'>
-        <TableHead>
+        <TableHead className='bg-gray-200'>
           <TableRow>
             <TableCell align="center">Ranking</TableCell>
-            <TableCell>Identificación</TableCell>
+            <TableCell align="center" >Identificación</TableCell>
             <TableCell align="center">Cantidad Total</TableCell>
             <TableCell align="center">Valor Total</TableCell>
           </TableRow>
@@ -61,7 +62,7 @@ function ProductosTable() {
               <TableCell align="center">
                 {chooseIcon(index)} {/* Ícono según el índice */}
               </TableCell>
-              <TableCell component="th" scope="row">
+              <TableCell component="th" scope="row" align="center">
                 {row.nombre}
               </TableCell>
               <TableCell align="center">{row.cantidad}</TableCell>
@@ -71,6 +72,8 @@ function ProductosTable() {
         </TableBody>
       </Table>
     </TableContainer>
+
+    </div>
   );
 }
 

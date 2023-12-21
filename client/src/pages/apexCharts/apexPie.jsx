@@ -50,11 +50,11 @@ const DoughnutChart = () => {
     }, []);
 
     const options = {
-      chart: { type: 'pie', backgroundColor: "#E2F1FF" },
+      chart: { type: 'pie', backgroundColor: "#fff" },
       accessibility: { enabled: false },
       title: { 
         text: 'ESTADO DE RESERVAS', 
-        style: { color: '#E2F1FF' } 
+        style: { color: '#fff' } 
       },
       plotOptions: {
         pie: {
@@ -86,7 +86,7 @@ const DoughnutChart = () => {
   }, [data]);
 
   return (
-    <div className='w-12/12 ml-5 mr-5'>
+    <div className='w-12/12 ml-5 mr-5' >
       <div style={{ backgroundColor: "white", borderRadius: "15px", color: "white" }}>
         <div id="chart-container-rn"></div>
       </div>

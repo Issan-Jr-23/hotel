@@ -8,7 +8,9 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import GenderDetectionComponent from './generador.jsx'; // Asegúrate de importar correctamente el componente
+import Brightness1Icon from '@mui/icons-material/Brightness1';
+import { green, purple, yellow, red } from '@mui/material/colors';
+import GenderDetectionComponent from './generador.jsx';
 
 export default function BasicTable() {
   const [data, setData] = useState([]);
@@ -16,7 +18,7 @@ export default function BasicTable() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstance.get('/pasadia-obtener-compras'); // Usa el endpoint específico para obtener los datos
+        const response = await AxiosInstance.get('/pasadia-obtener-compras');
         setData(response.data);
       } catch (error) {
         console.error('Error al obtener los datos:', error);
@@ -26,16 +28,30 @@ export default function BasicTable() {
     fetchData();
   }, []);
 
+  const chooseIcon = (index) => {
+    switch(index) {
+      case 0:
+        return <Brightness1Icon style={{ color: purple[500], width:"18px" }} />;
+      case 1:
+        return <Brightness1Icon style={{ color: yellow[700], width:"18px"}} />;
+        case 2:
+        return <Brightness1Icon style={{ color: green[300], width:"18px" }} />;
+      default:
+        return <Brightness1Icon style={{ color: red[500], width:"18px" }} />;
+    }
+  };
+
+
   return (
     <TableContainer component={Paper} className='bg-red-500'>
       <Table sx={{ }} aria-label="simple table" className='table-users-box'> 
-        <TableHead>
+        <TableHead className='bg-blue-100'>
           <TableRow>
+            <TableCell></TableCell>
             <TableCell>Identificación</TableCell>
             <TableCell align="center">Nombre</TableCell>
             <TableCell align="center">Cantidad Total</TableCell>
             <TableCell align="center">Valor Total</TableCell>
-            <TableCell align="center">Imagen</TableCell> {/* Nueva columna para la imagen */}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -44,16 +60,16 @@ export default function BasicTable() {
               key={row.identificacion + index}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
+             <TableCell align="center">
+                {chooseIcon(index)} {/* Ícono según el índice */}
+              </TableCell>
               <TableCell component="th" scope="row">
                 {row.identificacion}
               </TableCell>
+
               <TableCell align="center">{row.nombre}</TableCell>
               <TableCell align="center">{row.cantidadTotal}</TableCell>
               <TableCell align="center">{row.valorTotal}</TableCell>
-              <TableCell align="center">
-                {/* Integración del componente de detección de género */}
-                <GenderDetectionComponent userText={row.nombre} />
-              </TableCell>
             </TableRow>
           ))}
         </TableBody>

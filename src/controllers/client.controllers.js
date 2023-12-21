@@ -356,16 +356,22 @@ export const obtenerResumenCompras = async (req, res) => {
         let datosUsuario = resumenCompras.get(identificacion);
         datosUsuario.cantidadTotal += cantidad;
         datosUsuario.valorTotal += valor;
+
+        // Comprobar si ambos nombres existen antes de comparar
+        if (nombre && datosUsuario.nombre && nombre.split(' ').length > datosUsuario.nombre.split(' ').length) {
+          datosUsuario.nombre = nombre;
+        }
       } else {
         resumenCompras.set(identificacion, {
           identificacion,
-          nombre, // Agregando el nombre del usuario
+          nombre: nombre || '', // Asegurarse de que el nombre no sea undefined
           cantidadTotal: cantidad,
           valorTotal: valor
         });
       }
     };
 
+    // Procesamiento de clientes
     clientes.forEach(cliente => {
       if (cliente.servicio === 'pasadia') {
         let totalBebidas = 0;
@@ -391,6 +397,7 @@ export const obtenerResumenCompras = async (req, res) => {
       }
     });
 
+    // Procesamiento de usuarios
     usuarios.forEach(usuario => {
       let cantidadTotalBebidas = 0;
       let cantidadTotalRestaurantes = 0;
@@ -418,20 +425,23 @@ export const obtenerResumenCompras = async (req, res) => {
       const cantidadTotal = cantidadTotalBebidas + cantidadTotalRestaurantes;
       const valorTotal = valorTotalBebidas + valorTotalRestaurantes;
 
-      // Solo actualiza si el nombre aún no está en el resumen
-      if (!resumenCompras.has(usuario.identificacion) || !resumenCompras.get(usuario.identificacion).nombre) {
-        actualizarResumen(usuario.identificacion, usuario.nombre, cantidadTotal, valorTotal);
-      }
+      actualizarResumen(usuario.identificacion, usuario.nombre, cantidadTotal, valorTotal);
     });
 
-    const resultadoFinal = Array.from(resumenCompras.values());
+    // Convertir el Map en un arreglo, ordenarlo por valorTotal y limitar a 7 registros
+    const resultadoOrdenado = Array.from(resumenCompras.values())
+      .sort((a, b) => b.valorTotal - a.valorTotal)
+      .slice(0, 7);
 
-    res.status(200).json(resultadoFinal);
+    res.status(200).json(resultadoOrdenado);
 
   } catch (error) {
     res.status(500).json({ mensaje: "Error al obtener el resumen de compras" });
   }
 };
+
+
+
 
 
 
