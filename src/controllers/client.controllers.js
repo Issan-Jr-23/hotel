@@ -550,6 +550,26 @@ export const obtenerProductosCop = async (req, res) => {
 
 
 
+export const updateUserStatus = async (req, res) => {
+  const { userId, estado } = req.body;
+  console.log(userId, estado);
+
+
+
+  try {
+    const clienteActualizado = await Cliente.findByIdAndUpdate(userId, { estado }, { new: true });
+
+    if (!clienteActualizado) {
+      return res.status(404).json({ error: "Cliente no encontrado" });
+    }
+
+    res.status(200).json({ message: "Estado actualizado con éxito", cliente: clienteActualizado });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Error al actualizar el estado" });
+  }
+};
+
 
 
 

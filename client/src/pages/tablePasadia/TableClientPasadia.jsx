@@ -1894,6 +1894,20 @@ export default function App() {
 
   const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
 
+  const handleStatus = async (userId, nuevoEstado) => {
+    console.log(userId, nuevoEstado)
+    try {
+      const response = await AxiosInstances.put('/pasadia-actualizar-estado', {
+        userId: userId,
+        estado: nuevoEstado
+      });
+      console.log('Estado actualizado con éxito:', response.data);
+    } catch (error) {
+      console.error('Hubo un problema con la petición Axios:', error);
+    }
+  }
+
+
   return (
     <div className="max-w-full w-98 mx-auto">
       <Toaster position="top-right" />
@@ -3339,10 +3353,9 @@ export default function App() {
                       </Button>
                     </DropdownTrigger>
                     <DropdownMenu aria-label="Static Actions">
-                      <DropdownItem key="new" color="success" className="">Activo</DropdownItem>
-                      <DropdownItem key="copy" color="danger" >Cancelado</DropdownItem>
-                      <DropdownItem key="edit" color="primary">Pendiente</DropdownItem>
-                      <DropdownItem key="edit" color="secondary" >Finalizado</DropdownItem>
+                      <DropdownItem key="activo" color="success" className="" onClick={() => handleStatus("activo", cliente._id)} >Activo</DropdownItem>
+                      <DropdownItem key="cancelado" color="danger" onClick={()=> handleStatus("cancelado")}>Cancelado</DropdownItem>
+                      <DropdownItem key="pendiente" color="primary" onClick={() => handleStatus("finalizado", cliente._id)}>Finalizado</DropdownItem>
                     </DropdownMenu>
                   </Dropdown>
                 </TableCell>
