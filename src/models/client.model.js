@@ -69,7 +69,13 @@ const clienteSchema = new mongoose.Schema({
     default: 0
   },
   servicio:{type:String, default:"pasadia"},
-  estado:{type:String, defauld:"pendiente"}
+  estado:{
+    type:String, 
+    default:"pendiente"},
+    fechaActivacion: {
+      type: Date, 
+      default: null  
+  }
 });
 
 

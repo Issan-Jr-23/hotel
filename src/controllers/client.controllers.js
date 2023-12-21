@@ -350,28 +350,25 @@ export const obtenerResumenCompras = async (req, res) => {
 
     const resumenCompras = new Map();
 
-    // Función para actualizar o agregar al resumen
     const actualizarResumen = (identificacion, nombre, cantidad, valor) => {
       if (resumenCompras.has(identificacion)) {
         let datosUsuario = resumenCompras.get(identificacion);
         datosUsuario.cantidadTotal += cantidad;
         datosUsuario.valorTotal += valor;
 
-        // Comprobar si ambos nombres existen antes de comparar
         if (nombre && datosUsuario.nombre && nombre.split(' ').length > datosUsuario.nombre.split(' ').length) {
           datosUsuario.nombre = nombre;
         }
       } else {
         resumenCompras.set(identificacion, {
           identificacion,
-          nombre: nombre || '', // Asegurarse de que el nombre no sea undefined
+          nombre: nombre || '', 
           cantidadTotal: cantidad,
           valorTotal: valor
         });
       }
     };
 
-    // Procesamiento de clientes
     clientes.forEach(cliente => {
       if (cliente.servicio === 'pasadia') {
         let totalBebidas = 0;
@@ -397,7 +394,6 @@ export const obtenerResumenCompras = async (req, res) => {
       }
     });
 
-    // Procesamiento de usuarios
     usuarios.forEach(usuario => {
       let cantidadTotalBebidas = 0;
       let cantidadTotalRestaurantes = 0;
@@ -428,7 +424,6 @@ export const obtenerResumenCompras = async (req, res) => {
       actualizarResumen(usuario.identificacion, usuario.nombre, cantidadTotal, valorTotal);
     });
 
-    // Convertir el Map en un arreglo, ordenarlo por valorTotal y limitar a 7 registros
     const resultadoOrdenado = Array.from(resumenCompras.values())
       .sort((a, b) => b.valorTotal - a.valorTotal)
       .slice(0, 7);
@@ -439,10 +434,6 @@ export const obtenerResumenCompras = async (req, res) => {
     res.status(500).json({ mensaje: "Error al obtener el resumen de compras" });
   }
 };
-
-
-
-
 
 
 // export const obtenerProductosCop = async (req, res) => {
@@ -496,34 +487,28 @@ export const obtenerResumenCompras = async (req, res) => {
 
 export const obtenerProductosCop = async (req, res) => {
   try {
-    // Obtener datos de las colecciones de clientes y usuarios
     const clientes = await Cliente.find({ servicio: 'pasadia' }).select("bebidas restaurante");
     const usuarios = await Usuario.find({ 'historial.servicio': 'pasadia' }).select("historial");
 
     let productosCombinados = {};
 
-    // Función para agregar o actualizar productos en el objeto combinado
     const agregarProducto = (producto, esBebida) => {
       const { id, nombre, cantidad, precio } = producto;
       if (precio > 0) {
         if (productosCombinados[id]) {
-          // Si el producto ya existe, actualizar cantidad y total
           productosCombinados[id].cantidad += cantidad;
           productosCombinados[id].total += cantidad * precio;
         } else {
-          // Si no existe, agregar nuevo producto
           productosCombinados[id] = { id, nombre, cantidad, total: cantidad * precio, tipo: esBebida ? 'bebida' : 'restaurante' };
         }
       }
     };
 
-    // Procesar productos de la colección de clientes
     clientes.forEach(cliente => {
       cliente.bebidas.forEach(bebida => agregarProducto(bebida, true));
       cliente.restaurante.forEach(restaurante => agregarProducto(restaurante, false));
     });
 
-    // Procesar productos del historial de la colección de usuarios
     usuarios.forEach(usuario => {
       usuario.historial.forEach(historialItem => {
         if (historialItem.servicio === 'pasadia') {
@@ -533,16 +518,12 @@ export const obtenerProductosCop = async (req, res) => {
       });
     });
 
-    // Convertir el objeto en un array y ordenar por total de mayor a menor
     let productosOrdenados = Object.values(productosCombinados).sort((a, b) => b.total - a.total);
 
-    // Limitar la respuesta a los primeros 7 productos
     const resultado = productosOrdenados.slice(0, 7);
 
-    // Enviar la respuesta
     res.json(resultado);
   } catch (error) {
-    // Manejar cualquier error que ocurra en el proceso
     res.status(500).send(error.message);
   }
 };
@@ -551,16 +532,30 @@ export const obtenerProductosCop = async (req, res) => {
 
 
 export const updateUserStatus = async (req, res) => {
-  const { userId, estado } = req.body;
-  console.log(userId, estado);
-
-
+  const { userId } = req.body;
+  const { estado } = req.body;
+  console.log("user id", userId);
+  console.log("estado del usuario", estado);
 
   try {
-    const clienteActualizado = await Cliente.findByIdAndUpdate(userId, { estado }, { new: true });
+    let update = { estado };
+
+    if (estado === 'activo') {
+      const fechaActual = new Date();
+      fechaActual.setUTCHours(0, 0, 0, 0); 
+
+      update.fechaActivacion = fechaActual;
+    }
+
+    const clienteActualizado = await Cliente.findByIdAndUpdate(userId, update, { new: true });
 
     if (!clienteActualizado) {
       return res.status(404).json({ error: "Cliente no encontrado" });
+    }
+
+    if (clienteActualizado.fechaActivacion) {
+      const fechaFormateada = clienteActualizado.fechaActivacion.toISOString().split('T')[0];
+      clienteActualizado.fechaActivacion = fechaFormateada;
     }
 
     res.status(200).json({ message: "Estado actualizado con éxito", cliente: clienteActualizado });
@@ -573,6 +568,29 @@ export const updateUserStatus = async (req, res) => {
 
 
 
+
+export const fechaActivacion = async (req, res) => {
+  try {
+      const clientes = await Cliente.find({});
+      const fechasActivacion = clientes.map(cliente => {
+          const fecha = new Date(cliente.fechaActivacion);
+          return fecha.toISOString().split('T')[0]; 
+      });
+
+      const conteoFechas = fechasActivacion.reduce((contador, fecha) => {
+          contador[fecha] = (contador[fecha] || 0) + 1;
+          return contador;
+      }, {});
+
+      const resultado = Object.keys(conteoFechas).map(fecha => {
+          return { activacion: fecha, cantidad: conteoFechas[fecha] };
+      });
+
+      res.json(resultado);
+  } catch (error) {
+      res.status(500).send(error.message);
+  }
+};
 
 
 

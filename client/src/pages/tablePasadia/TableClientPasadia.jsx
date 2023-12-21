@@ -23,6 +23,8 @@ import AxiosInstances from "../../api/axios.js";
 import { PlusIcon } from "../finca/PlusIcon.jsx";
 import { useAuth } from "../../context/authContext.jsx";
 import { VerticalDotsIcon } from "../iconos/VerticalDotsIcon.jsx"
+import Brightness1Icon from '@mui/icons-material/Brightness1';
+import { green, purple, blue, red } from '@mui/material/colors';
 // import SubMenu from "./SubMenu.jsx"
 
 
@@ -1894,18 +1896,44 @@ export default function App() {
 
   const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
 
-  const handleStatus = async (userId, nuevoEstado) => {
+  const handleStatus = async (nuevoEstado, userId) => {
     console.log(userId, nuevoEstado)
     try {
       const response = await AxiosInstances.put('/pasadia-actualizar-estado', {
         userId: userId,
         estado: nuevoEstado
       });
+      const responses = await AxiosInstances.get("/pasadia-clientes");
+        const usuariosOrdenados = responses.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
+        setUsers(usuariosOrdenados);
       console.log('Estado actualizado con éxito:', response.data);
     } catch (error) {
       console.error('Hubo un problema con la petición Axios:', error);
     }
   }
+
+  const EstadoIcono = ({ estado }) => {
+    let color;
+
+    switch (estado) {
+      case 'activo':
+        color = green[500]; 
+        break;
+      case 'pendiente':
+        color = blue[500]; 
+        break;
+      case 'cancelado':
+        color = red[600]; 
+        break;
+      case 'finalizado':
+        color = purple[500]; 
+        break;
+      default:
+        color = grey[500]; 
+    }
+
+    return <Brightness1Icon style={{ color, width:"14px" }} />;
+  };
 
 
   return (
@@ -2165,8 +2193,8 @@ export default function App() {
               ) : null
               }
             </TableColumn>
-            <TableColumn>p,c,a,f</TableColumn>
-            <TableColumn>...</TableColumn>
+            <TableColumn className="text-center">Estado</TableColumn>
+            <TableColumn></TableColumn>
 
           </TableHeader>
 
@@ -3339,8 +3367,13 @@ export default function App() {
                     </div>
                   ) : null}
                 </TableCell>
-                <TableCell>
-                        <div className="flex"> <span> <span>.</span> </span> <span>Activo</span> </div>
+                <TableCell className="text-center" style={{width:"150px"}}>
+                  <div className="flex items-center text-center ">
+                    <span className=" mr-2">
+                    <EstadoIcono estado={cliente.estado}/>
+                    </span>
+                    {cliente.estado}
+                  </div>
                 </TableCell>
                 <TableCell>
                   <Dropdown>
@@ -3354,7 +3387,7 @@ export default function App() {
                     </DropdownTrigger>
                     <DropdownMenu aria-label="Static Actions">
                       <DropdownItem key="activo" color="success" className="" onClick={() => handleStatus("activo", cliente._id)} >Activo</DropdownItem>
-                      <DropdownItem key="cancelado" color="danger" onClick={()=> handleStatus("cancelado")}>Cancelado</DropdownItem>
+                      <DropdownItem key="cancelado" color="danger" onClick={() => handleStatus("cancelado", cliente._id)}>Cancelado</DropdownItem>
                       <DropdownItem key="pendiente" color="primary" onClick={() => handleStatus("finalizado", cliente._id)}>Finalizado</DropdownItem>
                     </DropdownMenu>
                   </Dropdown>
