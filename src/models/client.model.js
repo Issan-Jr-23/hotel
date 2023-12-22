@@ -73,7 +73,7 @@ const clienteSchema = new mongoose.Schema({
     type:String, 
     default:"pendiente"},
     fechaActivacion: {
-      type: Date, 
+      type: String, 
       default: null  
   }
 });

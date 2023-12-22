@@ -542,20 +542,22 @@ export const updateUserStatus = async (req, res) => {
 
     if (estado === 'activo') {
       const fechaActual = new Date();
-      fechaActual.setUTCHours(0, 0, 0, 0); 
+      fechaActual.setUTCHours(0, 0, 0, 0);
 
-      update.fechaActivacion = fechaActual;
+      // Restar 5 horas
+      fechaActual.setHours(fechaActual.getHours() - 5);
+
+      // Formatear fecha a DD-MM-YYYY
+      let dia = fechaActual.getDate().toString().padStart(2, '0');
+      let mes = (fechaActual.getMonth() + 1).toString().padStart(2, '0'); // Meses son de 0-11
+      let año = fechaActual.getFullYear();
+      update.fechaActivacion = `${dia}-${mes}-${año}`;
     }
 
     const clienteActualizado = await Cliente.findByIdAndUpdate(userId, update, { new: true });
 
     if (!clienteActualizado) {
       return res.status(404).json({ error: "Cliente no encontrado" });
-    }
-
-    if (clienteActualizado.fechaActivacion) {
-      const fechaFormateada = clienteActualizado.fechaActivacion.toISOString().split('T')[0];
-      clienteActualizado.fechaActivacion = fechaFormateada;
     }
 
     res.status(200).json({ message: "Estado actualizado con éxito", cliente: clienteActualizado });
@@ -569,28 +571,38 @@ export const updateUserStatus = async (req, res) => {
 
 
 
+
 export const fechaActivacion = async (req, res) => {
   try {
-      const clientes = await Cliente.find({});
-      const fechasActivacion = clientes.map(cliente => {
-          const fecha = new Date(cliente.fechaActivacion);
-          return fecha.toISOString().split('T')[0]; 
-      });
+    // Obtener todos los clientes
+    const clientes = await Cliente.find({});
 
-      const conteoFechas = fechasActivacion.reduce((contador, fecha) => {
-          contador[fecha] = (contador[fecha] || 0) + 1;
-          return contador;
-      }, {});
+    // Filtrar solo los clientes activados
+    const clientesActivados = clientes.filter(cliente => cliente.estado === 'activo');
 
-      const resultado = Object.keys(conteoFechas).map(fecha => {
-          return { activacion: fecha, cantidad: conteoFechas[fecha] };
-      });
+    // Mapear las fechas de activación de los clientes activados
+    const fechasActivacion = clientesActivados.map(cliente => cliente.fechaActivacion);
 
-      res.json(resultado);
+    // Contar las fechas de activación
+    const conteoFechas = fechasActivacion.reduce((contador, fecha) => {
+      contador[fecha] = (contador[fecha] || 0) + 1;
+      return contador;
+    }, {});
+
+    // Convertir el objeto de conteo en un array para la respuesta
+    const resultado = Object.keys(conteoFechas).map(fecha => {
+      return { activacion: fecha, cantidad: conteoFechas[fecha] };
+    });
+
+    // Enviar la respuesta
+    res.json(resultado);
   } catch (error) {
-      res.status(500).send(error.message);
+    res.status(500).send(error.message);
   }
 };
+
+
+
 
 
 

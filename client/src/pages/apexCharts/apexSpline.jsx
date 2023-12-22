@@ -7,14 +7,14 @@ class ApexSpline extends Component {
     super(props);
     this.state = {
       series: [{
-        name: 'series1',
+        name: 'Activaciones',
         data: [] 
       }],
       options: {
         chart: {
           type: 'area'
         },
-        colors: ['#7828FC'], 
+        colors: ['#7828FC'],
         fill: {
           type: 'gradient',
           gradient: {
@@ -51,6 +51,13 @@ class ApexSpline extends Component {
             format: 'dd/MM/yy'
           },
         },
+        yaxis: {
+          labels: {
+            formatter: function(val) {
+              return val.toFixed(0); // Redondea el valor a un número entero
+            }
+          }
+        }
       },
     };
   }
@@ -58,7 +65,11 @@ class ApexSpline extends Component {
   async componentDidMount() {
     try {
       const response = await AxiosInstance.get('/pasadia-fecha-activacion');
-      const fechas = response.data.map(item => item.activacion);
+      const fechas = response.data.map(item => {
+        const parts = item.activacion.split('-');
+        const date = new Date(parts[2], parts[1] - 1, parts[0]);
+        return date.getTime();
+      });
       const cantidades = response.data.map(item => item.cantidad);
       
       this.setState({

@@ -1928,8 +1928,6 @@ export default function App() {
       case 'finalizado':
         color = purple[500]; 
         break;
-      default:
-        color = grey[500]; 
     }
 
     return <Brightness1Icon style={{ color, width:"14px" }} />;
