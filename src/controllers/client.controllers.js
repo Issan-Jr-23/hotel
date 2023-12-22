@@ -1,4 +1,5 @@
 import { now } from "mongoose";
+import moment from 'moment';
 import Cliente from "../models/client.model.js";
 import Usuario from '../models/transferencia.model.js';
 
@@ -531,27 +532,25 @@ export const obtenerProductosCop = async (req, res) => {
 
 
 
+
 export const updateUserStatus = async (req, res) => {
-  const { userId } = req.body;
-  const { estado } = req.body;
-  console.log("user id", userId);
-  console.log("estado del usuario", estado);
+  const { userId, estado } = req.body;
+
+  if (!userId) {
+    return res.status(400).json({ error: "Falta el userId" });
+  }
+
+  if (!estado) {
+    return res.status(400).json({ error: "Falta el estado" });
+  }
 
   try {
     let update = { estado };
 
     if (estado === 'activo') {
-      const fechaActual = new Date();
-      fechaActual.setUTCHours(0, 0, 0, 0);
+      const fechaConResta = moment().subtract(5, 'hours').toDate();
 
-      // Restar 5 horas
-      fechaActual.setHours(fechaActual.getHours() - 5);
-
-      // Formatear fecha a DD-MM-YYYY
-      let dia = fechaActual.getDate().toString().padStart(2, '0');
-      let mes = (fechaActual.getMonth() + 1).toString().padStart(2, '0'); // Meses son de 0-11
-      let año = fechaActual.getFullYear();
-      update.fechaActivacion = `${dia}-${mes}-${año}`;
+      update.fechaActivacion = fechaConResta;
     }
 
     const clienteActualizado = await Cliente.findByIdAndUpdate(userId, update, { new: true });
@@ -562,7 +561,7 @@ export const updateUserStatus = async (req, res) => {
 
     res.status(200).json({ message: "Estado actualizado con éxito", cliente: clienteActualizado });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({ error: "Error al actualizar el estado" });
   }
 };
@@ -572,35 +571,100 @@ export const updateUserStatus = async (req, res) => {
 
 
 
+
 export const fechaActivacion = async (req, res) => {
   try {
-    // Obtener todos los clientes
     const clientes = await Cliente.find({});
 
-    // Filtrar solo los clientes activados
     const clientesActivados = clientes.filter(cliente => cliente.estado === 'activo');
 
-    // Mapear las fechas de activación de los clientes activados
     const fechasActivacion = clientesActivados.map(cliente => cliente.fechaActivacion);
 
-    // Contar las fechas de activación
     const conteoFechas = fechasActivacion.reduce((contador, fecha) => {
-      contador[fecha] = (contador[fecha] || 0) + 1;
+      const fechaFormateada = moment(fecha).format('YYYY-MM-DD');
+      contador[fechaFormateada] = (contador[fechaFormateada] || 0) + 1;
       return contador;
     }, {});
 
-    // Convertir el objeto de conteo en un array para la respuesta
     const resultado = Object.keys(conteoFechas).map(fecha => {
       return { activacion: fecha, cantidad: conteoFechas[fecha] };
     });
 
-    // Enviar la respuesta
     res.json(resultado);
   } catch (error) {
     res.status(500).send(error.message);
   }
 };
 
+
+
+
+export const fechaFinalizacion = async (req, res) => {
+  try {
+    const clientes = await Cliente.find({});
+
+    const clientesActivados = clientes.filter(cliente => cliente.estado === 'finalizado');
+
+    const fechasActivacion = clientesActivados.map(cliente => cliente.fechaActivacion);
+
+    const conteoFechas = fechasActivacion.reduce((contador, fecha) => {
+      const fechaFormateada = moment(fecha).format('YYYY-MM-DD');
+      contador[fechaFormateada] = (contador[fechaFormateada] || 0) + 1;
+      return contador;
+    }, {});
+
+    const resultado = Object.keys(conteoFechas).map(fecha => {
+      return { activacion: fecha, cantidad: conteoFechas[fecha] };
+    });
+
+    res.json(resultado);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
+
+
+export const obtenerFechasCompras = async (req, res) => {
+  try {
+    const clientes = await Cliente.find();
+
+    let sumaPorFecha = {};
+    clientes.forEach(cliente => {
+        if (cliente.bebidas && cliente.bebidas.length > 0) {
+            cliente.bebidas.forEach(bebida => {
+                if (bebida.fecha && bebida.cantidad != null) {
+                    const fechaFormateada = new Date(bebida.fecha).toISOString().split('T')[0];
+
+                    sumaPorFecha[fechaFormateada] = (sumaPorFecha[fechaFormateada] || 0) + bebida.cantidad;
+                }
+            });
+        }
+    });
+    clientes.forEach(cliente => {
+        if (cliente.restaurante && cliente.restaurante.length > 0) {
+            cliente.restaurante.forEach(restaurante => {
+                if (restaurante.fecha && restaurante.cantidad != null) {
+                    const fechaFormateada = new Date(restaurante.fecha).toISOString().split('T')[0];
+
+                    sumaPorFecha[fechaFormateada] = (sumaPorFecha[fechaFormateada] || 0) + restaurante.cantidad;
+                }
+            });
+        }
+    });
+
+    let resultado = [];
+    for (let fecha in sumaPorFecha) {
+        resultado.push({
+            fecha: fecha,
+            cantidad: sumaPorFecha[fecha]
+        });
+    }
+
+    res.status(200).json(resultado);
+} catch (error) {
+    res.status(500).json({ mensaje: "Error al sumar las cantidades de bebidas por fecha", error });
+}
+};
 
 
 

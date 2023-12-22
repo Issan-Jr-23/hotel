@@ -1,6 +1,14 @@
 import mongoose from "mongoose";
 import moment from "moment-timezone";
 
+
+function getCurrentDateMinus5Hours() {
+  const now = new Date();
+  now.setHours(now.getHours() - 5);
+  return now;
+}
+
+
 const clienteSchema = new mongoose.Schema({
   identificacion: {
     type: Number,
@@ -58,11 +66,19 @@ const clienteSchema = new mongoose.Schema({
     type: Array,
     required: false,
     default: [],
+    fecha: {
+      type: Date,
+      default: getCurrentDateMinus5Hours
+  }
   },
   restaurante: {
     type: Array,
     required: false,
     default: [],
+    fecha: {
+      type: Date,
+      default: getCurrentDateMinus5Hours
+  }
   },
   nuevoTotal: {
     type: Number,
@@ -73,7 +89,7 @@ const clienteSchema = new mongoose.Schema({
     type:String, 
     default:"pendiente"},
     fechaActivacion: {
-      type: String, 
+      type: Date, 
       default: null  
   }
 });

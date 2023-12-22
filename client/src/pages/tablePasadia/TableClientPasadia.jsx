@@ -25,6 +25,7 @@ import { useAuth } from "../../context/authContext.jsx";
 import { VerticalDotsIcon } from "../iconos/VerticalDotsIcon.jsx"
 import Brightness1Icon from '@mui/icons-material/Brightness1';
 import { green, purple, blue, red } from '@mui/material/colors';
+import { subHours } from 'date-fns';
 // import SubMenu from "./SubMenu.jsx"
 
 
@@ -194,6 +195,13 @@ export default function App() {
   const [pasadiaAdultos, setPasadiaAdultos] = useState(null)
   const [pasadiaNinios, setPasadiaNinios] = useState(null)
   const [ccDisponibles, setCcDisponibles] = useState(null)
+
+  function obtenerFechaConAjuste() {
+    const fechaActual = new Date();
+    fechaActual.setHours(fechaActual.getHours() - 5);
+    return fechaActual.toISOString();
+  }
+  console.log("fecha modificada", obtenerFechaConAjuste);
 
 
   useEffect(() => {
@@ -436,7 +444,8 @@ export default function App() {
               cantidad: cantidadBebida,
               precio: 0,
               mensaje: "Cortesía",
-              fechaDeMarca: ""
+              fechaDeMarca: "",
+              fecha: obtenerFechaConAjuste()
             };
             await guardarBebida(bebidaCortesia);
             atLeastOneCortesiaSaved = true;
@@ -452,7 +461,8 @@ export default function App() {
               cantidad: cantidadBebida1,
               precio: 0,
               mensaje: "Cortesía",
-              fechaDeMarca: ""
+              fechaDeMarca: "",
+              fecha: obtenerFechaConAjuste()
             };
             await guardarBebida(bebidaCortesia1);
             atLeastOneCortesiaSaved = true;
@@ -468,7 +478,8 @@ export default function App() {
               cantidad: cantidadBebida2,
               precio: 0,
               mensaje: "Cortesía",
-              fechaDeMarca: ""
+              fechaDeMarca: "",
+              fecha: obtenerFechaConAjuste()
             };
             await guardarBebida(bebidaCortesia2);
             atLeastOneCortesiaSaved = true;
@@ -484,7 +495,8 @@ export default function App() {
               cantidad: cantidadBebida3,
               precio: 0,
               mensaje: "Cortesía",
-              fechaDeMarca: ""
+              fechaDeMarca: "",
+              fecha: obtenerFechaConAjuste()
             };
             await guardarBebida(bebidaCortesia3);
             atLeastOneCortesiaSaved = true;
@@ -500,7 +512,8 @@ export default function App() {
               cantidad: cantidadBebida4,
               precio: 0,
               mensaje: "Cortesía",
-              fechaDeMarca: ""
+              fechaDeMarca: "",
+              fecha: obtenerFechaConAjuste()
             };
             await guardarBebida(bebidaCortesia4);
             atLeastOneCortesiaSaved = true;
@@ -521,7 +534,8 @@ export default function App() {
           nombre: bebidaSeleccionada,
           cantidad: cantidadBebida,
           precio: precioBebidaSeleccionada,
-          fechaDeMarca: ""
+          fechaDeMarca: "",
+          fecha: obtenerFechaConAjuste()
         };
 
         if (await checkStockAndUpdateInventory(bebidaSeleccionadaId, cantidadBebida)) {
@@ -530,14 +544,14 @@ export default function App() {
         }
       }
 
-      // Handle the second drink selection
       if (cantidadBebida1 > 0 && bebida1SeleccionadaId) {
         const bebidaAdultos1 = {
           id: bebida1SeleccionadaId,
           nombre: bebida1Seleccionada,
           cantidad: cantidadBebida1,
           precio: precioBebida1Seleccionada,
-          fechaDeMarca: ""
+          fechaDeMarca: "",
+          fecha: obtenerFechaConAjuste()
         };
 
         if (await checkStockAndUpdateInventory(bebida1SeleccionadaId, cantidadBebida1)) {
@@ -553,7 +567,8 @@ export default function App() {
           nombre: bebida2Seleccionada,
           cantidad: cantidadBebida2,
           precio: precioBebida2Seleccionada,
-          fechaDeMarca: ""
+          fechaDeMarca: "",
+          fecha: obtenerFechaConAjuste()
         };
 
         if (await checkStockAndUpdateInventory(bebida2SeleccionadaId, cantidadBebida2)) {
@@ -569,7 +584,8 @@ export default function App() {
           nombre: bebida3Seleccionada,
           cantidad: cantidadBebida3,
           precio: precioBebida3Seleccionada,
-          fechaDeMarca: ""
+          fechaDeMarca: "",
+          fecha: obtenerFechaConAjuste()
         };
 
         if (await checkStockAndUpdateInventory(bebida3SeleccionadaId, cantidadBebida3)) {
@@ -585,7 +601,8 @@ export default function App() {
           nombre: bebida4Seleccionada,
           cantidad: cantidadBebida4,
           precio: precioBebida4Seleccionada,
-          fechaDeMarca: ""
+          fechaDeMarca: "",
+          fecha: obtenerFechaConAjuste()
         };
 
         if (await checkStockAndUpdateInventory(bebida4SeleccionadaId, cantidadBebida4)) {
@@ -875,7 +892,8 @@ export default function App() {
           nombre: foodSeleccionada,
           cantidad: cantidadFood,
           precio: precioFoodSeleccionada,
-          fechaDeMarca: ""
+          fechaDeMarca: "",
+          fecha: obtenerFechaConAjuste()
         };
 
         if (await checkStockAndUpdateInventory(foodSeleccionadaId, cantidadFood)) {
