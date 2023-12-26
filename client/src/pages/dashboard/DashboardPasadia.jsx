@@ -193,7 +193,7 @@ const dashboardPasadia = () => {
         </div>
 
         <div className='box-apex'>
-
+ 
           <ApexSpline />
         </div>
       </div>
@@ -206,7 +206,7 @@ const dashboardPasadia = () => {
           <TableProductos />
         </div>
       </div>
-      <div className='flex container-apexPie-box'>
+      <div className='flex container-apexPie-box border-2'>
         <div className='container-apex-pie'>
           <ApexPie/>
         </div>

@@ -7,7 +7,7 @@ import Crown from "../../images/crown.png"
 const box = () => {
   return (
     <div>
-        <section className='box-box mb-5' >
+        <section className='box-box mb-5' > 
           {/* <span className='box-span-img'>
             <img className='img-box' src={Crown} alt="" />
           </span> */}

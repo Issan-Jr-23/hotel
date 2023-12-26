@@ -13,6 +13,7 @@ import {
   Tooltip,
   Legend
 } from 'chart.js';
+import { Button } from '@mui/material';
 
 ChartJS.register(
   CategoryScale,
@@ -57,7 +58,7 @@ const App = () => {
     const fetchDatos = async () => {
       try {
         const responseActivacion = await AxiosInstance.get(`/pasadia-fecha-activacion?inicio=${fechaInicio}&fin=${fechaFin}`);
-        const responseFinalizacion = await AxiosInstance.get(`/pasadia-fecha-finalizacion?inicio=${fechaInicio}&fin=${fechaFin}`);
+        const responseFinalizacion = await AxiosInstance.get(`/pasadia-fecha-finalizacion?inicio=${fechaInicio}&fin=${fechaFin}` );
 
         let intervalo;
         let formatoFecha;
@@ -75,10 +76,11 @@ const App = () => {
             formatoFecha = 'yyyy';
             break;
           default:
-            // Por defecto, usamos mes
             intervalo = eachMonthOfInterval({ start: new Date(fechaInicio), end: new Date(fechaFin) });
             formatoFecha = 'MMM yyyy';
         }
+
+     
 
         let labels = intervalo.map(date => format(date, formatoFecha));
         let datosActivacion = new Array(labels.length).fill(0);
@@ -116,6 +118,7 @@ const App = () => {
     fetchDatos();
   }, [fechaInicio, fechaFin, filtroTipo]);
 
+
   const handleFechaInicioChange = (e) => {
     setFechaInicio(e.target.value);
   };
@@ -150,17 +153,20 @@ const App = () => {
     <div style={{ height: '100%', width: '100%' }}>
       <div>
         <label htmlFor="filtroTipo">Tipo de Filtro:</label>
-        <select id="filtroTipo" value={filtroTipo} onChange={handleFiltroTipoChange}>
+        <select className=' rounded-xl h-6 outline-none bg-teal-50 mr-2 text-gray-700' id="filtroTipo" value={filtroTipo} onChange={handleFiltroTipoChange} style={{backgroundColor:"white", border:"2px solid #8cd4d7"}}>
           <option value="dia">Día</option>
           <option value="mes">Mes</option>
           <option value="año">Año</option>
         </select>
 
         <label htmlFor="fechaInicio">Fecha Inicio:</label>
-        <input type="date" id="fechaInicio" value={fechaInicio} onChange={handleFechaInicioChange} />
+        <input className='rounded-2xl pl-1 pr-1 outline-none ' type="date" id="fechaInicio" value={fechaInicio} onChange={handleFechaInicioChange} style={{border:"2px solid #fb8fa8"}}  />
 
         <label htmlFor="fechaFin">Fecha Fin:</label>
-        <input type="date" id="fechaFin" value={fechaFin} onChange={handleFechaFinChange} />
+        <input className='rounded-2xl pl-1 pr-1 outline-none ' type="date" id="fechaFin" value={fechaFin} onChange={handleFechaFinChange}  style={{border:"2px solid #fb8fa8"}} />
+        <Button className='bg-white border-1 rounded-2xl p-1 ml-2' >
+          refrescar
+        </Button>
       </div>
       {error ? (
         <p>{error}</p>
