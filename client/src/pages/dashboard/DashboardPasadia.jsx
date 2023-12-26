@@ -3,13 +3,15 @@ import ApexSpline from "../apexCharts/apexSpline.jsx"
 import ApexLine from "../apexCharts/apexLine.jsx"
 import ApexLine2 from "../apexCharts/apexLine2.jsx"
 import ApexLine3 from "../apexCharts/apexLine3.jsx"
-import ApexPie from "../apexCharts/apexPie.jsx"
+import ApexPie from "../apexCharts/apexChartSpline.jsx"
 import TableUsers from "./tableUsersPasadia.jsx"
+import Box from "./box.jsx"
 import TableProductos from "./tableUsers.jsx"
 import AxiosInstance from '../../api/axios.js'
 import users from "../../images/iconly-glass-tick.svg"
 import { Button, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@nextui-org/react"
 import "./styleDashboard.css"
+import down from "../../images/down.png"
 
 const dashboardPasadia = () => {
 
@@ -139,47 +141,47 @@ const dashboardPasadia = () => {
 
   return (
     <div className=' fondo pt-20 pl-5 pr-5 pb-20'>
-      <h1 className='text-4xl mb-5'>Descripción general</h1>
-      <div className='flex justify-evenly flex-wrap'>
+      <h1 className='text-4xl mb-5'>Overview</h1>
+      <div className='flex justify-between flex-wrap'>
         <div className='box-style  flex rounded-2xl '>
-          <span className='box-grafic justify-around flex flex-col p-4'>
-            <h3 style={{ fontWeight: "600", fontSize: "20px" }} >Ventas</h3>
-            <p style={{ fontWeight: "600" }}>
-              ${typeof totalVentaPasadia === 'number' ? totalVentaPasadia.toLocaleString('es-CO') : '0'} COP
+          <span className='box-grafic justify-between flex flex-col p-4'>
+            <h3 className='fondo-text' style={{ fontWeight: "600", fontSize: "20px" }} >Sales operations</h3>
+            <p className='fondo-text flex' style={{ fontWeight: "500" }}>
+              ${typeof totalVentaPasadia === 'number' ? totalVentaPasadia.toLocaleString('es-CO') : '0'} 
+              {<span className='fondo-text alza flex items-center ml-2 text-green-600'> 
+              {/* <span className='alza'> 
+              <img className='down' src={down} alt="" /> </span>   */}
+              (+ 0.2%)</span>}
             </p>
-            <p className='text-3xl flex' style={{ fontWeight: "600" }}> <img className='w-8' src={users} alt="" />  {totalUsers}</p>
+            <p className=' fondo-text text-3xl flex' style={{ fontWeight: "400" }}>  {totalUsers}</p>
 
-          </span>
-          <span className='box-grafica'>
-            <ApexLine />
           </span>
 
         </div>
         <div className='box-style  flex rounded-2xl '>
           <span className='box-grafic justify-around flex flex-col p-4'>
-            <h3 style={{ fontWeight: "600", fontSize: "20px" }} >Products</h3>
-            <p style={{ fontWeight: "600" }}>
-              ${typeof sumaDeValores  === 'number' ? sumaDeValores.toLocaleString('es-CO') : '0'} COP
+            <h3 className='fondo-text' style={{ fontWeight: "400", fontSize: "20px" }} >Units Sold</h3>
+            <p className='fondo-text flex' style={{ fontWeight: "600" }}>
+              ${typeof sumaDeValores  === 'number' ? sumaDeValores.toLocaleString('es-CO') : '0'} 
+              {<span className='fondo-text alza flex items-center ml-2 text-red-600'> 
+              {/* <span className='alza'> 
+              <img className='down' src={down} alt="" /> </span>   */}
+              (-0.2%)</span>}
             </p>
-            <p className='text-3xl flex' style={{ fontWeight: "600" }}> <img className='w-8' src={users} alt="" />  {cantidadVendida + cantidadVendidaPasadia}</p>
+            <p className= ' fondo-text text-3xl flex' style={{ fontWeight: "600" }}>   {cantidadVendida + cantidadVendidaPasadia}</p>
 
-          </span>
-          <span className='box-grafica'>
-            <ApexLine2 />
           </span>
 
         </div>
         <div className='box-style  flex rounded-2xl '>
           <span className='box-grafic justify-around flex flex-col p-4'>
-          <h3 style={{ fontWeight: "600", fontSize: "20px" }} >Cortesias</h3>
-            <p style={{ fontWeight: "600" }}>
-              ${typeof valorVentaCortesias === 'number' ? valorVentaCortesias.toLocaleString('es-CO') : '0'} COP
+          <h3 className='fondo-text' style={{ fontWeight: "600", fontSize: "20px" }} >courtesies for clients</h3>
+            <p className='fondo-text' style={{ fontWeight: "600" }}>
+              ${typeof valorVentaCortesias === 'number' ? valorVentaCortesias.toLocaleString('es-CO') : '0'} {"( )"}
             </p>
-            <p className='text-3xl flex' style={{ fontWeight: "600" }}> <img className='w-8' src={users} alt="" />  {cantidadVendidaCortesias}</p>
+            <p className=' fondo-text text-3xl flex' style={{ fontWeight: "600" }}> 
+             {cantidadVendidaCortesias}</p>
 
-          </span>
-          <span className='box-grafica'>
-            <ApexLine3 />
           </span>
 
         </div>
@@ -196,12 +198,21 @@ const dashboardPasadia = () => {
         </div>
       </div>
       <div className='box-table-ventas flex'>
-        <div className='box-pie-table' >
+        {/* <div className='box-pie-table' >
           <ApexPie />
-        </div>
+        </div> */}
         <div className='cont-table-user'>
 
           <TableProductos />
+        </div>
+      </div>
+      <div className='flex container-apexPie-box'>
+        <div className='container-apex-pie'>
+          <ApexPie/>
+        </div>
+        <div  className='container-apex-box'>
+
+        <Box/>
         </div>
       </div>
     </div>

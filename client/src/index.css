@@ -10,13 +10,15 @@
   padding: 0;
   box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
+ 
 }
 
 body {
   /* background-image: linear-gradient(60deg, #347a56,#2d7e90); */
   /* background-image: bg-slate-900; */
-
+  background-color: #f1f1fb;
 }
+
 
 
 /* Estilo para la barra de desplazamiento en su totalidad */

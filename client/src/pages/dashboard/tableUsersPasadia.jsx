@@ -31,27 +31,27 @@ export default function BasicTable() {
   const chooseIcon = (index) => {
     switch(index) {
       case 0:
-        return <Brightness1Icon style={{ color: purple[500], width:"18px" }} />;
+        return <Brightness1Icon style={{ color: purple[500], width:"12px" }} />;
       case 1:
-        return <Brightness1Icon style={{ color: yellow[700], width:"18px"}} />;
+        return <Brightness1Icon style={{ color: yellow[700], width:"12px"}} />;
         case 2:
-        return <Brightness1Icon style={{ color: green[300], width:"18px" }} />;
+        return <Brightness1Icon style={{ color: green[300], width:"12px" }} />;
       default:
-        return <Brightness1Icon style={{ color: red[500], width:"18px" }} />;
+        return <Brightness1Icon style={{ color: red[500], width:"12px" }} />;
     }
   };
 
 
   return (
-    <TableContainer component={Paper} className='bg-red-500'>
-      <Table sx={{ }} aria-label="simple table" className='table-users-box'> 
-        <TableHead className='bg-blue-100'>
-          <TableRow>
+    <TableContainer component={Paper} className='h-full'>
+      <Table sx={{height: 320 }} spacing={2} aria-label="simple table" className='table-users-box'> 
+        <TableHead style={{backgroundColor:"#000135", color:"white"}}>
+          <TableRow style={{color:"white"}} >
             <TableCell></TableCell>
-            <TableCell>Identificación</TableCell>
-            <TableCell align="center">Nombre</TableCell>
-            <TableCell align="center">Cantidad Total</TableCell>
-            <TableCell align="center">Valor Total</TableCell>
+            <TableCell className='uppercase' > <p className='text-white'>identification</p></TableCell>
+            <TableCell className='uppercase ' align="center"> <p className='text-white' >Client Name</p></TableCell>
+            <TableCell className='uppercase ' align="center"><p className='text-white' >Total Quantity</p></TableCell>
+            <TableCell className='uppercase ' align="center"> <p className='text-white'> Total Value </p></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>

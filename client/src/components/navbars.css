@@ -97,13 +97,7 @@
     font-size: 16px;
   }
 
-  .vista-cantidades{
-    width: 31.333%;
-    height: 150px;
-    border-radius: 10px;
-    position: relative;
-    overflow: hidden;
-  }
+
 
   .separadores{
     margin-left: 20px;

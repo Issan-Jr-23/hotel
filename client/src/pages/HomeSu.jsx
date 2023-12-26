@@ -9,6 +9,7 @@ import PieYes from "../graphs/PeopleReservations.jsx"
 import PieNo from "../graphs/DoughnutAndPie.jsx"
 import { useAuth } from "../context/authContext.jsx";
 import AxiosInstance from '../api/axios.js'
+import "./css/homeSu.css"
 
 
 const HomeSu = () => {
@@ -56,7 +57,7 @@ const HomeSu = () => {
 
 
   return (
-    <div className='bg-white min-h-screen'>
+    <div className=' min-h-screen'>
       {/* <NavMenu/> */}
       <div style={{ marginLeft: "20px", marginRight: "20px", paddingTop: "60px", fontSize: "black" }} >
         <section className=' flex justify-between flex-wrap' >
@@ -74,35 +75,21 @@ const HomeSu = () => {
             </article>
           </div>
           <div className='cover1 ml-5 rounded-3xl' style={{ width: "35%", height: "280px" }} >
-            <h2 className=' text-cover'>Title</h2>
+            <h2 className=' text-cover text-inherit'>Title</h2>
             <p className=' text-cover1'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe delectus voluptate aliquam et eos molestias nisi amet ut ipsam iure...</p>
           </div>
 
         </section>
         <section className=' pt-2 mt-5 pb-2 flex justify-between'>
-          <article className=' vista-cantidades  border-1 pl-5 flex'>
-            <span className='w-1/2 justify-around flex flex-col'>
-              <h3 style={{ fontWeight: "600" }} >Total Pasadia</h3>
-              <p style={{ fontWeight: "600" }}>
+          <article className=' vista-cantidades  border-1 flex'>
+            <span className='box-style-hs justify-around flex flex-col'>
+              <h3 className='fondo-text-hs' style={{ fontWeight: "600" }} >Total Pasadia</h3>
+              <p className='fondo-text-hs' style={{ fontWeight: "600" }}>
                 ${typeof totalVentaPasadia === 'number' ? totalVentaPasadia.toLocaleString('es-CO') : '0'} COP
               </p>
-              <p className='text-3xl flex' style={{ fontWeight: "600" }}> <img className='w-8' src={users} alt="" />  {totalUsers}</p>
+              <p className=' fondo-text-hs text-3xl flex' style={{ fontWeight: "600" }}>  {totalUsers}</p>
 
             </span>
-            <article className='w-1/2 h-full flex items-center justify-center' >
-              <span className='flex items-end'>
-                <span className='barrag'></span>
-                <span className='barrag1'></span>
-                <span className='barrag2'></span>
-                <span className='barrag3'></span>
-                <span className='barrag4'></span>
-                <span className='barrag5'></span>
-                <span className='barrag6'></span>
-                <span className='barrag7'></span>
-
-              </span>
-
-            </article>
           </article>
           <article className=' separadores vista-cantidades  border-1 pl-5 flex'>
             <span className='w-1/2 justify-around flex flex-col'>

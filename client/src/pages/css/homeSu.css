@@ -1,0 +1,23 @@
+
+
+.box-style-hs {
+    background-color: #000135;
+    width: 100%;
+    height: 150px;
+    border-radius: 20px;
+    padding: 15px;
+ }
+
+   .box-grafic-hs{
+    width: 100%;
+    background-color: #000135;
+   }
+
+   .fondo-text-hs{
+    background-color: #000135;
+    color: white;
+   }
+
+   .vista-cantidades{
+    width: 31.333%;
+  }
