@@ -16,6 +16,10 @@ const HomeSu = () => {
   const { user } = useAuth();
   const [totalUsers, setTotalUsers] = useState([])
   const [totalVentaPasadia, setTotalVentaPasadia] = useState([])
+  const [totalUsersC, setTotalUsersC] = useState([])
+  const [totalVentaCabania, setTotalVentaCabania] = useState([])
+  const [totalUsersH, setTotalUsersH] = useState([])
+  const [totalVentaHabitaciones, setTotalVentaHabitaciones] = useState([])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,6 +50,82 @@ const HomeSu = () => {
         console.log("Total generados: ", totalPago);
         console.log("Total generado: ", totalPagoPendiente);
         setTotalVentaPasadia(totalPago + totalPagoPendiente);
+
+      } catch (error) {
+        console.error('Error al obtener los datos: ', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await AxiosInstance.get('/cabania-obtener-cantidad-usuarios');
+        console.log(response);
+
+        const { totalNinios, totalAdultos } = response.data;
+        console.log("Total niños: ", totalNinios);
+        console.log("Total adultos: ", totalAdultos);
+        setTotalUsersC(totalNinios + totalAdultos)
+
+      } catch (error) {
+        console.error('Error al obtener los datos: ', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await AxiosInstance.get('/cabania-total-generado');
+        console.log(response);
+
+        const { totalPago, totalPagoPendiente } = response.data;
+        console.log("Total generados: ", totalPago);
+        console.log("Total generado: ", totalPagoPendiente);
+        setTotalVentaCabania(totalPago + totalPagoPendiente);
+
+      } catch (error) {
+        console.error('Error al obtener los datos: ', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await AxiosInstance.get('/habitaciones-obtener-cantidad-usuarios');
+        console.log(response);
+
+        const { totalNinios, totalAdultos } = response.data;
+        console.log("Total niños: ", totalNinios);
+        console.log("Total adultos: ", totalAdultos);
+        setTotalUsersH(totalNinios + totalAdultos)
+
+      } catch (error) {
+        console.error('Error al obtener los datos: ', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await AxiosInstance.get('/habitaciones-total-generado');
+        console.log(response);
+
+        const { totalPago, totalPagoPendiente } = response.data;
+        console.log("Total generados: ", totalPago);
+        console.log("Total generado: ", totalPagoPendiente);
+        setTotalVentaHabitaciones(totalPago + totalPagoPendiente);
 
       } catch (error) {
         console.error('Error al obtener los datos: ', error);
@@ -91,49 +171,25 @@ const HomeSu = () => {
 
             </span>
           </article>
-          <article className=' separadores vista-cantidades  border-1 pl-5 flex'>
-            <span className='w-1/2 justify-around flex flex-col'>
-              <h3 style={{ fontWeight: "600" }} >Total Cabañas</h3>
-              <p style={{ fontWeight: "600" }} > $200,000 COP</p>
-              <p className='text-3xl flex' style={{ fontWeight: "600" }}> <img className='w-8' src={users} alt="" /> 332.000</p>
+          <article className=' separadores vista-cantidades  border-1 flex'>
+            <span className='box-style-hs justify-around flex flex-col'>
+              <h3 className='fondo-text-hs' style={{ fontWeight: "600" }} >Total Cabañas</h3>
+              <p className='fondo-text-hs' style={{ fontWeight: "600" }}>
+                ${typeof totalVentaCabania === 'number' ? totalVentaCabania.toLocaleString('es-CO') : '0'} COP
+              </p>
+              <p className=' fondo-text-hs text-3xl flex' style={{ fontWeight: "600" }}> {totalUsersC}</p>
 
             </span>
-            <article className='w-1/2 h-full flex items-center justify-center' >
-              <span className='flex items-end'>
-                <span className='barragf'></span>
-                <span className='barragf1'></span>
-                <span className='barragf2'></span>
-                <span className='barragf3'></span>
-                <span className='barragf4'></span>
-                <span className='barragf5'></span>
-                <span className='barragf6'></span>
-                <span className='barragf7'></span>
-
-              </span>
-
-            </article>
           </article>
           <article className=' separadores vista-cantidades  border-1 pl-5 flex'>
-            <span className='w-1/2 justify-around flex flex-col'>
-              <h3 style={{ fontWeight: "600" }} >Total Habitaciones</h3>
-              <p style={{ fontWeight: "600" }} >$723,000 COP</p>
-              <p className='text-3xl flex' style={{ fontWeight: "600" }}> <img className='w-8' src={users} alt="" />  700.120</p>
+            <span className='box-style-hs justify-around flex flex-col'>
+              <h3 className='fondo-text-hs'  style={{ fontWeight: "600" }} >Total Habitaciones</h3>
+              <p className='fondo-text-hs' style={{ fontWeight: "600" }}>
+                ${typeof totalVentaHabitaciones === 'number' ? totalVentaHabitaciones.toLocaleString('es-CO') : '0'} COP
+              </p>
+              <p className='  fondo-text-hs text-3xl flex' style={{ fontWeight: "600" }}>{totalUsersH}</p>
 
             </span>
-            <article className='w-1/2 h-full flex items-center justify-center' >
-              <span className='flex items-end'>
-                <span className='barra'></span>
-                <span className='barra1'></span>
-                <span className='barra2'></span>
-                <span className='barra3'></span>
-                <span className='barra4'></span>
-                <span className='barra5'></span>
-                <span className='barra6'></span>
-                <span className='barra7'></span>
-
-              </span>
-
-            </article>
           </article>
         </section>
 
