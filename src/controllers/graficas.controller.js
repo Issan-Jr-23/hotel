@@ -1,6 +1,7 @@
 import Cabania from "../models/client.cabania.model.js";
 import Usuario from '../models/transferencia.model.js';
 import Habitaciones from "../models/cliente.habitaciones.model.js";
+import Cliente from "../models/client.model.js";
 
 export const obtenerTotalesNiniosYAdultosEnPasadia = async (req, res) => {
     try {
@@ -129,50 +130,154 @@ export const obtenerTotalesNiniosYAdultosEnHabitaciones = async (req, res) => {
   
   export const usuariosQueMasCompraron = async (req, res) => {
     try {
-        const calcularTotalPorUsuario = (coleccion) => coleccion.aggregate([
-            // Desagrupar los arrays de restaurante y bebidas
-            { $unwind: "$restaurante" },
-            { $unwind: "$bebidas" },
-            // Filtrar para incluir solo los items con precio mayor a 0
-            { $match: { "restaurante.precio": { $gt: 0 }, "bebidas.precio": { $gt: 0 } } },
-            // Calcular el total gastado en cada reserva
-            {
-                $project: {
-                    identificacion: 1,
-                    totalGastadoRestaurante: { $multiply: ["$restaurante.cantidad", "$restaurante.precio"] },
-                    totalGastadoBebidas: { $multiply: ["$bebidas.cantidad", "$bebidas.precio"] }
-                }
-            },
-            // Sumar el total de restaurante y bebidas
-            {
-                $group: {
-                    _id: "$identificacion",
-                    totalGastado: { $sum: { $add: ["$totalGastadoRestaurante", "$totalGastadoBebidas"] } }
-                }
-            }
-        ]);
+        const clientes = await Cliente.find({});
+        const cabanias = await Cabania.find({});
+        const habitaciones = await Habitaciones.find({});
 
-        // Obtener los totales de cada colección
-        const [Usuario, Cabanias, Habitaciones] = await Promise.all([
-            calcularTotalPorUsuario(Usuario),
-            calcularTotalPorUsuario(Cabanias),
-            calcularTotalPorUsuario(Habitaciones)
-        ]);
+        let resultadosCombinados = {};
 
-        // Combinar los resultados
-        let totalGastos = {};
-        [Usuario, Cabanias, Habitaciones].forEach(coleccion => {
-            coleccion.forEach(item => {
-                totalGastos[item._id] = (totalGastos[item._id] || 0) + item.totalGastado;
-            });
+        // Procesar clientes
+        clientes.forEach(cliente => {
+            let valorTotal = cliente.bebidas?.reduce((acc, bebida) => acc + bebida.cantidad * bebida.precio, 0) || 0;
+            valorTotal += cliente.restaurante?.reduce((acc, item) => acc + item.cantidad * item.precio, 0) || 0;
+
+            resultadosCombinados[cliente.identificacion] = {
+                identificacion: cliente.identificacion,
+                nombre: cliente.nombre,
+                valorTotal: valorTotal
+            };
         });
 
-        // Convertir a array y ordenar
-        const usuariosOrdenados = Object.keys(totalGastos).map(id => ({ identificacion: id, totalGastado: totalGastos[id] }));
-        usuariosOrdenados.sort((a, b) => b.totalGastado - a.totalGastado);
+        // Procesar cabañas
+        cabanias.forEach(cabania => {
+            let valorTotal = cabania.bebidas?.reduce((acc, item) => acc + item.cantidad * item.precio, 0) || 0;
+            valorTotal += cabania.restaurante?.reduce((acc, item) => acc + item.cantidad * item.precio, 0) || 0;
 
-        res.json(usuariosOrdenados);
+            if (resultadosCombinados[cabania.identificacion]) {
+                resultadosCombinados[cabania.identificacion].valorTotal += valorTotal;
+            } else {
+                resultadosCombinados[cabania.identificacion] = {
+                    identificacion: cabania.identificacion,
+                    nombre: cabania.nombre,
+                    valorTotal: valorTotal
+                };
+            }
+        });
+
+        // Procesar habitaciones
+        habitaciones.forEach(habitacion => {
+            let valorTotal = habitacion.bebidas?.reduce((acc, item) => acc + item.cantidad * item.precio, 0) || 0;
+            valorTotal += habitacion.restaurante?.reduce((acc, item) => acc + item.cantidad * item.precio, 0) || 0;
+
+            if (resultadosCombinados[habitacion.identificacion]) {
+                resultadosCombinados[habitacion.identificacion].valorTotal += valorTotal;
+            } else {
+                resultadosCombinados[habitacion.identificacion] = {
+                    identificacion: habitacion.identificacion,
+                    nombre: habitacion.nombre,
+                    valorTotal: valorTotal
+                };
+            }
+        });
+
+        // Convertir el objeto en un arreglo para la respuesta
+        const resultadosArray = Object.values(resultadosCombinados);
+
+        res.status(200).json(resultadosArray);
     } catch (error) {
-        res.status(500).send('Error en el servidor: ' + error.message);
+        console.log(error)
+        res.status(500).send('Error en el servidor');
     }
+};
+
+export const obtenerTotal = async (req, res) => {
+  try {
+    const documentos = await Usuario.find({});
+
+    const totalesPorUsuario = documentos.map(doc => {
+      let valorTotal = 0;
+      let nombres = [];
+
+      // Recolectar nombres y calcular el valor total
+      doc.historial.forEach(historialItem => {
+        nombres.push(historialItem.nombre);
+
+        historialItem.bebidas.forEach(item => {
+          valorTotal += item.cantidad * item.precio;
+        });
+
+        historialItem.restaurante.forEach(item => {
+          valorTotal += item.cantidad * item.precio;
+        });
+      });
+
+      // Obtener el nombre más completo
+      let nombreMasCompleto = nombres.reduce((nombreActual, nombreSiguiente) => {
+        return nombreActual.split(' ').length > nombreSiguiente.split(' ').length ? nombreActual : nombreSiguiente;
+      }, '');
+
+      return {
+        identificacion: doc.identificacion,
+        nombre: nombreMasCompleto,
+        valorTotal
+      };
+    });
+
+    res.json(totalesPorUsuario);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error.message);
+  }
+};
+
+export const productosMasComprados = async (req, res) => {
+  try {
+    const clientes = await Cliente.find({});
+    const cabanias = await Cabania.find({});
+    const habitaciones = await Habitaciones.find({});
+
+    let resultados = {
+        bebidas: {},
+        restaurante: {},
+        valorTotal: 0
+    };
+
+    // Función auxiliar para procesar y acumular los elementos
+    const acumularElementos = (elementos, tipo) => {
+        elementos.forEach(elemento => {
+            if (resultados[tipo][elemento._id]) {
+                resultados[tipo][elemento._id].cantidad += elemento.cantidad;
+                resultados[tipo][elemento._id].valorTotal += elemento.cantidad * elemento.precio;
+            } else {
+                resultados[tipo][elemento._id] = {
+                    nombre: elemento.nombre,
+                    cantidad: elemento.cantidad,
+                    precio: elemento.precio,
+                    valorTotal: elemento.cantidad * elemento.precio
+                };
+            }
+            resultados.valorTotal += elemento.cantidad * elemento.precio;
+        });
+    };
+
+    // Procesar clientes, cabañas y habitaciones
+    [clientes, cabanias, habitaciones].forEach(coleccion => {
+        coleccion.forEach(item => {
+            acumularElementos(item.bebidas || [], 'bebidas');
+            acumularElementos(item.restaurante || [], 'restaurante');
+        });
+    });
+
+    // Convertir los resultados en arreglos para la respuesta
+    const resultadosArray = {
+        bebidas: Object.values(resultados.bebidas),
+        restaurante: Object.values(resultados.restaurante),
+       
+    };
+
+    res.status(200).json(resultadosArray);
+} catch (error) {
+    console.log(error)
+    res.status(500).send('Error en el servidor');
 }
+};

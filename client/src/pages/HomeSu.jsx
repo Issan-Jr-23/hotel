@@ -20,6 +20,24 @@ const HomeSu = () => {
   const [totalVentaCabania, setTotalVentaCabania] = useState([])
   const [totalUsersH, setTotalUsersH] = useState([])
   const [totalVentaHabitaciones, setTotalVentaHabitaciones] = useState([])
+  const [productos, setProductos] = useState([]);
+
+  useEffect(() => {
+      const obtenerProductos = async () => {
+          try {
+              const respuesta = await AxiosInstance.get('/productos-mas-comprados'); // Reemplaza con la ruta correcta de tu API
+              const datos = respuesta.data;
+                
+              let productosCombinados = [...datos.bebidas, ...datos.restaurante];
+              productosCombinados.sort((a, b) => a.valorTotal - b.valorTotal);
+
+              setProductos(productosCombinados.slice(0, 10));
+          } catch (error) {
+              console.error('Hubo un error al obtener los productos:', error);
+          }
+      };
+      obtenerProductos();
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -183,7 +201,7 @@ const HomeSu = () => {
           </article>
           <article className=' separadores vista-cantidades  border-1 pl-5 flex'>
             <span className='box-style-hs justify-around flex flex-col'>
-              <h3 className='fondo-text-hs'  style={{ fontWeight: "600" }} >Total Habitaciones</h3>
+              <h3 className='fondo-text-hs' style={{ fontWeight: "600" }} >Total Habitaciones</h3>
               <p className='fondo-text-hs' style={{ fontWeight: "600" }}>
                 ${typeof totalVentaHabitaciones === 'number' ? totalVentaHabitaciones.toLocaleString('es-CO') : '0'} COP
               </p>
@@ -207,39 +225,20 @@ const HomeSu = () => {
             <div>
               <h3 className='flex justify-center items-center text-3xl mt-10 mb-10'>USUARIOS MAS CONCURRENTES</h3>
               <article>
-
                 <Table aria-label="Example static collection table" className='pt-5'>
                   <TableHeader>
                     <TableColumn>NAME</TableColumn>
-                    <TableColumn>ROLE</TableColumn>
-                    <TableColumn>STATUS</TableColumn>
+                    <TableColumn>CANTIDAD</TableColumn>
+                    <TableColumn>VALOR TOTAL</TableColumn>
                   </TableHeader>
                   <TableBody>
-                    <TableRow key="1" className='h-10'>
-                      <TableCell>Tony Reichert</TableCell>
-                      <TableCell>CEO</TableCell>
-                      <TableCell>Active</TableCell>
-                    </TableRow>
-                    <TableRow key="2" className='h-10'>
-                      <TableCell>Zoey Lang</TableCell>
-                      <TableCell>Technical Lead</TableCell>
-                      <TableCell>Paused</TableCell>
-                    </TableRow>
-                    <TableRow key="3" className='h-10'>
-                      <TableCell>Jane Fisher</TableCell>
-                      <TableCell>Senior Developer</TableCell>
-                      <TableCell>Active</TableCell>
-                    </TableRow>
-                    <TableRow key="4" className='h-10'>
-                      <TableCell>William Howard</TableCell>
-                      <TableCell>Community Manager</TableCell>
-                      <TableCell>Vacation</TableCell>
-                    </TableRow>
-                    <TableRow key="5" className='h-10'>
-                      <TableCell>William Howard</TableCell>
-                      <TableCell>Community Manager</TableCell>
-                      <TableCell>Vacation</TableCell>
-                    </TableRow>
+                    {productos.slice(0, 10).map((producto, index) => (
+                      <TableRow key={index} className='h-10'>
+                        <TableCell>{producto.nombre}</TableCell>
+                        <TableCell>{producto.cantidad}</TableCell>
+                        <TableCell>{producto.valorTotal}</TableCell>
+                      </TableRow>
+                    ))}
                   </TableBody>
                 </Table>
               </article>
