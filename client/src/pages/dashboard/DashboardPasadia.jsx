@@ -201,12 +201,12 @@ const dashboardPasadia = () => {
         {/* <div className='box-pie-table' >
           <ApexPie />
         </div> */}
-        <div className='cont-table-user'>
+        <div className='cont-table-user'> 
 
           <TableProductos />
         </div>
       </div>
-      <div className='flex container-apexPie-box border-2 flex-wrap'>
+      <div className='flex container-apexPie-box '>
         <div className='container-apex-pie'>
           <ApexPie/>
         </div>

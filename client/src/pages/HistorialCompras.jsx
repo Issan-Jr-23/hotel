@@ -65,10 +65,10 @@ const TransferirData = () => {
   return (
     <div className='pt-20 flex flex-col'>
 
-      <h1 className='h-14 flex justify-center items-center text-4xl mb-10' >HISTORIAL DE USUARIO</h1>
-        <div className='flex '>
-          <div className="flex flex-col ml-5 mr-5">
-            <form className="flex flex-col gap-6 w-80 border-2 border-emerald-400 pt-3 pb-3 pl-3 pr-3 rounded-xl" style={{ zIndex: "1" }} >
+      <h1 className='mhdu-h1' >HISTORIAL DE USUARIO</h1>
+        <div className=' hdu flex '>
+          <div className=" flex flex-col ml-5 mr-5">
+            <form className=" mhdu " style={{ zIndex: "1" }}>
               <Input value={busqueda}
                 onChange={handleSearchChange} label="Identificación" placeholder="Enter your email" type="text" className='mb-2' />
 
@@ -92,7 +92,7 @@ const TransferirData = () => {
               </p>
             </form>
           </div>
-          <Table aria-label="Example static collection table" className=' pl-5 pr-5' >
+          <Table aria-label="Example static collection table" className='pt-3 pl-5 pr-5' >
             <TableHeader className='text-center' >
               <TableColumn className='text-center' >IDENTIFICACIÓN</TableColumn>
               <TableColumn className='text-center' >HISTORIAL</TableColumn>

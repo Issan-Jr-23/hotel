@@ -203,11 +203,11 @@ const HomeSu = () => {
     <div className=' min-h-screen pb-20'>
       {/* <NavMenu/> */}
       <div style={{ marginLeft: "20px", marginRight: "20px", paddingTop: "60px", fontSize: "black" }} >
-        <section className=' flex justify-between flex-wrap' >
+        <section className=' container-card-home-mui flex justify-between flex-wrap' >
           <div className='card-home-mui rounded-3xl flex'>
-            <article className=' w-2/4 pl-8 pt-8 pr-4' style={{ borderRadius: " 20px 0px 0px 20px" }} >
+            <article className=' article-go  pr-4' style={{ borderRadius: " 20px 0px 0px 20px" }} >
               <h1 style={{ fontSize: "22px", fontWeight: "700", color: "#004b50" }} >Welcome back 👋 <br />  {user && <span className='uppercase'>{user.username}</span>} </h1>
-              <p style={{ fontSize: "14.2px", color: "#58918e" }} className='pt-2' >
+              <p className='pt-2 go-now' >
                 "Bienvenido de nuevo a Meqo: Tu herramienta clave para una administración hotelera eficaz y sencilla."</p>
               <Button className='mt-5 text-white' style={{ fontWeight: "700", backgroundColor: "#00a76f" }}>
                 Go now
@@ -217,14 +217,14 @@ const HomeSu = () => {
               <img className='h-full w-full' src={mockup} alt="" style={{ borderRadius: "0px 20px 20px 0px" }} />
             </article>
           </div>
-          {/* <div className='cover1 ml-5 rounded-3xl' style={{ width: "35%", height: "280px" }} >
+          <div className='cover1 ml-5 rounded-3xl' style={{ width: "35%", height: "280px" }} >
             <h2 className=' text-cover text-inherit'>Title</h2>
             <p className=' text-cover1'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe delectus voluptate aliquam et eos molestias nisi amet ut ipsam iure...</p>
-          </div> */}
+          </div>
 
         </section>
-        <section className=' pt-2 mt-5 pb-2 flex justify-between'>
-          <article className=' vista-cantidades  border-1 flex'>
+        <section className='section-cards pt-2 mt-5 pb-2 flex '>
+          <article className=' vista-cantidades '>
             <span className='box-style-hs justify-around flex flex-col'>
               <h3 className='fondo-text-hs' style={{ fontWeight: "600" }} >Total Pasadia</h3>
               <p className='fondo-text-hs' style={{ fontWeight: "600" }}>
@@ -234,7 +234,7 @@ const HomeSu = () => {
 
             </span>
           </article>
-          <article className=' separadores vista-cantidades  border-1 flex'>
+          <article className=' vista-cantidades  border-1 flex'>
             <span className='box-style-hs justify-around flex flex-col'>
               <h3 className='fondo-text-hs' style={{ fontWeight: "600" }} >Total Cabañas</h3>
               <p className='fondo-text-hs' style={{ fontWeight: "600" }}>
@@ -244,7 +244,7 @@ const HomeSu = () => {
 
             </span>
           </article>
-          <article className=' separadores vista-cantidades  border-1 pl-5 flex'>
+          <article className=' vista-cantidades  border-1  flex'>
             <span className='box-style-hs justify-around flex flex-col'>
               <h3 className='fondo-text-hs' style={{ fontWeight: "600" }} >Total Habitaciones</h3>
               <p className='fondo-text-hs' style={{ fontWeight: "600" }}>
@@ -256,10 +256,10 @@ const HomeSu = () => {
           </article>
         </section>
 
-        <section className='flex'>
-          <div className='flex flex-col w-6/12'>
-            <h3 className='flex justify-center items-center text-xl mt-20 mb-2'>PROMEDIO DE RESERVAS</h3>
-            <article className=' mb-10 bg-white cont-pieYes' >
+        <section className='section-cont-pieyes flex'>
+          <div className= ' div-cont-pieyes'>
+            <h3 className='flex justify-center items-center text-xl mb-2'>PROMEDIO DE RESERVAS</h3>
+            <article className=' bg-white cont-pieYes2' >
               <PieYes />
             </article>
             <h3 className='flex justify-center items-center text-xl mt-4'>COMPRAS DE USUARIOS</h3>
@@ -282,9 +282,9 @@ const HomeSu = () => {
                 </Table>
               </article>
           </div>
-          <div className='w-6/12'>
-            <div>
-              <h3 className='flex justify-center items-center text-xl uppercase mt-20 mb-2'  >Clientes con mas compras</h3>
+          <div className='div-graf'>
+            <div className=''>
+              <h3 className='flex justify-center items-center text-xl uppercase mb-2'  >Clientes con mas compras</h3>
               <article className='article-alto'>
                 <Table aria-label="Example dynamic collection table" className='overflow-y-auto '>
                   <TableHeader >
@@ -305,9 +305,9 @@ const HomeSu = () => {
               </article>
 
             </div>
-            <div className='mt-14'>
+            <div className='const-pieno'>
               <h3 className='flex justify-center items-center text-xl'>COMPRAS DE USUARIOS</h3>
-              <article className='article-alto cont-graf bg-white'>
+              <article className='article-alto cont-pieYes bg-white'>
                 <PieNo/>
               </article>
 

@@ -1,0 +1,46 @@
+
+
+@media only screen
+and (min-width: 320px)
+and (max-width: 736px)
+{ 
+
+    .div-trf{
+        padding-top: 100px;
+        display: flex;
+        flex-direction: column;
+        /* pt-20 flex flex-col */
+    }
+
+.trfd{
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 23px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    /* h-14 flex justify-center items-center text-4xl mb-10 */
+}
+
+.cont-trs{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    /* flex border-4 */
+}
+
+.form-trs{
+    display: flex;
+    flex-direction: column;
+    border: 2px solid rgb(0, 212, 35);
+    width: 100%;
+    border-radius: 15px;
+    gap: 6;
+    height: 250px;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    /* flex flex-col gap-6 w-80 border-2 border-emerald-400 pt-3 pb-3 pl-3 pr-3 rounded-xl */
+}
+
+}

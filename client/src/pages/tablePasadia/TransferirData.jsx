@@ -8,6 +8,7 @@ import { AddNoteIcon } from "../iconos/AddNoteIcon.jsx";
 import { VerticalDotsIcon } from "../iconos/VerticalDotsIcon.jsx";
 import AxiosInstance from '../../api/axios.js';
 import Swal from "sweetalert2"
+import "./trf.css"
 
 const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
 
@@ -164,12 +165,12 @@ const TransferirData = () => {
 
 
   return (
-    <div className='pt-20 flex flex-col'>
+    <div className=' div-trf pb-20'>
 
-      <h1 className='h-14 flex justify-center items-center text-4xl mb-10' >TRANSFERENCIA DE DATOS</h1>
-        <div className='flex '>
-          <div className="flex flex-col ml-5 mr-5">
-            <form className="flex flex-col gap-6 w-80 border-2 border-emerald-400 pt-3 pb-3 pl-3 pr-3 rounded-xl" style={{ zIndex: "1" }} >
+      <h1 className='trfd' >TRANSFERENCIA DE DATOS</h1>
+        <div className='cont-trs'>
+          <div className="flex flex-col pl-5 pr-5">
+            <form className="form-trs" style={{ zIndex: "1" }} >
               <Input value={busqueda}
                 onChange={handleSearchChange} label="Identificación" placeholder="Enter your email" type="text" className='mb-2' />
 

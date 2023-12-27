@@ -47,12 +47,10 @@
 
  .cont-table-user{
     width: 100%;
-    margin-left: 20px;
     border: 1px solid rgb(219, 219, 219);
     border-radius: 0 0 23px 23px;
     box-shadow: 0px 5px 10px 0px rgb(216, 216, 216);
     margin-bottom: 20px;
-    margin-left: 20px;
     overflow:"hidden"
  }
 
@@ -143,16 +141,22 @@
 
 
  .container-apex-pie{
-   width: 50vw;
-
-   height: 60vh;
+   width: 60vw;
+   height: 75vh;
+   position: relative;
+   padding-bottom: 60px;
  }
 
  .container-apex-box{
-   width: 50vw;
+   width: 40vw;
    display: flex;
    justify-content: center;
-   align-items: center;
+   align-items: end;
+ }
+
+ .container-apexPie-box{ 
+  height: auto;
+  display: flex;
  }
  
 
@@ -184,7 +188,7 @@ and (max-width: 736px)
       margin-bottom: 50px;
      }
 
-     .container-apexPie-box{
+     .container-apexPie-box{ 
       height: auto;
      }
 
@@ -227,6 +231,11 @@ and (max-width: 736px)
 
     .container-apex-pie{
       height: 300px;
+    }
+
+    .container-apexPie-box {
+      display: flex;
+      flex-direction: column;
     }
 
    

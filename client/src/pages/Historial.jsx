@@ -57,7 +57,7 @@ const Historial = () => {
 
     return (
         <div className='pt-20 pb-20' >
-            <h1 className=' h-20 flex justify-center items-center text-4xl uppercase '>Historial del Usuario</h1>
+            <h1 className='hdlu'>Historial del Usuario</h1>
             <section className='mt-10'>
                 {historial && historial.length > 0 ? (
                     historial.map((item, index) => (
