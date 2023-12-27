@@ -21,23 +21,68 @@ const HomeSu = () => {
   const [totalUsersH, setTotalUsersH] = useState([])
   const [totalVentaHabitaciones, setTotalVentaHabitaciones] = useState([])
   const [productos, setProductos] = useState([]);
+  const [datos, setDatos] = useState([]);
 
   useEffect(() => {
-      const obtenerProductos = async () => {
-          try {
-              const respuesta = await AxiosInstance.get('/productos-mas-comprados'); // Reemplaza con la ruta correcta de tu API
-              const datos = respuesta.data;
-                
-              let productosCombinados = [...datos.bebidas, ...datos.restaurante];
-              productosCombinados.sort((a, b) => a.valorTotal - b.valorTotal);
+    const obtenerProductos = async () => {
+      try {
+        const respuesta = await AxiosInstance.get('/productos-mas-comprados'); // Reemplaza con la ruta correcta de tu API
+        const datos = respuesta.data;
 
-              setProductos(productosCombinados.slice(0, 10));
-          } catch (error) {
-              console.error('Hubo un error al obtener los productos:', error);
-          }
-      };
-      obtenerProductos();
+        let productosCombinados = [...datos.bebidas, ...datos.restaurante];
+        productosCombinados.sort((a, b) => a.valorTotal - b.valorTotal);
+
+        setProductos(productosCombinados.slice(0, 10));
+      } catch (error) {
+        console.error('Hubo un error al obtener los productos:', error);
+      }
+    };
+    obtenerProductos();
   }, []);
+
+  useEffect(() => {
+    const cargarDatos = async () => {
+      try {
+        const respuestaMayorCompra = await AxiosInstance.get('/mayor-compra');
+        const datosMayorCompra = respuestaMayorCompra.data;
+
+        const respuestaTotal = await AxiosInstance.get('/obtener-historial-usuarios');
+        const datosTotal = respuestaTotal.data;
+
+        const datosCombinados = combinarYProcesarDatos(datosMayorCompra, datosTotal);
+
+        const datosOrdenados = datosCombinados.sort((a, b) => b.valorTotal - a.valorTotal).slice(0, 10);
+
+        setDatos(datosOrdenados);
+
+      } catch (error) {
+        console.error('Error al cargar datos:', error);
+      }
+    };
+
+    cargarDatos();
+  }, []);
+  
+  const combinarYProcesarDatos = (datosMayorCompra, datosTotal) => {
+    const mapaUsuarios = new Map();
+  
+    datosMayorCompra.forEach(usuario => {
+      mapaUsuarios.set(usuario.identificacion, usuario);
+    });
+  
+    datosTotal.forEach(usuario => {
+      if (mapaUsuarios.has(usuario.identificacion)) {
+        const usuarioExistente = mapaUsuarios.get(usuario.identificacion);
+        usuarioExistente.valorTotal += usuario.valorTotal;
+        mapaUsuarios.set(usuario.identificacion, usuarioExistente);
+      } else {
+        mapaUsuarios.set(usuario.identificacion, usuario);
+      }
+    });
+  
+    return Array.from(mapaUsuarios.values());
+  };
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -155,11 +200,11 @@ const HomeSu = () => {
 
 
   return (
-    <div className=' min-h-screen'>
+    <div className=' min-h-screen pb-20'>
       {/* <NavMenu/> */}
       <div style={{ marginLeft: "20px", marginRight: "20px", paddingTop: "60px", fontSize: "black" }} >
         <section className=' flex justify-between flex-wrap' >
-          <div className=' rounded-3xl mr-5 flex' style={{ width: "60%", height: "280px", backgroundColor: "#d5f4e7", border: " 5px solid #d5f4e7" }}>
+          <div className='card-home-mui rounded-3xl flex'>
             <article className=' w-2/4 pl-8 pt-8 pr-4' style={{ borderRadius: " 20px 0px 0px 20px" }} >
               <h1 style={{ fontSize: "22px", fontWeight: "700", color: "#004b50" }} >Welcome back 👋 <br />  {user && <span className='uppercase'>{user.username}</span>} </h1>
               <p style={{ fontSize: "14.2px", color: "#58918e" }} className='pt-2' >
@@ -172,10 +217,10 @@ const HomeSu = () => {
               <img className='h-full w-full' src={mockup} alt="" style={{ borderRadius: "0px 20px 20px 0px" }} />
             </article>
           </div>
-          <div className='cover1 ml-5 rounded-3xl' style={{ width: "35%", height: "280px" }} >
+          {/* <div className='cover1 ml-5 rounded-3xl' style={{ width: "35%", height: "280px" }} >
             <h2 className=' text-cover text-inherit'>Title</h2>
             <p className=' text-cover1'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe delectus voluptate aliquam et eos molestias nisi amet ut ipsam iure...</p>
-          </div>
+          </div> */}
 
         </section>
         <section className=' pt-2 mt-5 pb-2 flex justify-between'>
@@ -213,19 +258,13 @@ const HomeSu = () => {
 
         <section className='flex'>
           <div className='flex flex-col w-6/12'>
-            <h3 className='flex justify-center items-center text-3xl mt-10 mb-10'>PROMEDIO DE RESERVAS</h3>
-            <article className='' >
+            <h3 className='flex justify-center items-center text-xl mt-20 mb-2'>PROMEDIO DE RESERVAS</h3>
+            <article className=' mb-10 bg-white cont-pieYes' >
               <PieYes />
             </article>
-            <article className=''>
-              <PieNo />
-            </article>
-          </div>
-          <div className='w-6/12'>
-            <div>
-              <h3 className='flex justify-center items-center text-3xl mt-10 mb-10'>USUARIOS MAS CONCURRENTES</h3>
-              <article>
-                <Table aria-label="Example static collection table" className='pt-5'>
+            <h3 className='flex justify-center items-center text-xl mt-4'>COMPRAS DE USUARIOS</h3>
+            <article className='article-alto'>
+                <Table aria-label="Example static collection table" className='overflow-y-auto'>
                   <TableHeader>
                     <TableColumn>NAME</TableColumn>
                     <TableColumn>CANTIDAD</TableColumn>
@@ -242,46 +281,36 @@ const HomeSu = () => {
                   </TableBody>
                 </Table>
               </article>
-
-            </div>
-            <div className='mt-14'>
-              <h3 className='flex justify-center items-center text-3xl  mb-10'>COMPRAS DE USUARIOS</h3>
-              <article>
-                <Table aria-label="Example static collection table">
-                  <TableHeader>
-                    <TableColumn>NAME</TableColumn>
-                    <TableColumn>ROLE</TableColumn>
-                    <TableColumn>STATUS</TableColumn>
+          </div>
+          <div className='w-6/12'>
+            <div>
+              <h3 className='flex justify-center items-center text-xl uppercase mt-20 mb-2'  >Clientes con mas compras</h3>
+              <article className='article-alto'>
+                <Table aria-label="Example dynamic collection table" className='overflow-y-auto '>
+                  <TableHeader >
+                    <TableColumn>ID</TableColumn>
+                    <TableColumn>Nombre</TableColumn>
+                    <TableColumn>Valor Total</TableColumn>
                   </TableHeader>
-                  <TableBody>
-                    <TableRow key="1" className='h-10'>
-                      <TableCell>Tony Reichert</TableCell>
-                      <TableCell>CEO</TableCell>
-                      <TableCell>Active</TableCell>
-                    </TableRow>
-                    <TableRow key="2" className='h-10'>
-                      <TableCell>Zoey Lang</TableCell>
-                      <TableCell>Technical Lead</TableCell>
-                      <TableCell>Paused</TableCell>
-                    </TableRow>
-                    <TableRow key="3" className='h-10'>
-                      <TableCell>Jane Fisher</TableCell>
-                      <TableCell>Senior Developer</TableCell>
-                      <TableCell>Active</TableCell>
-                    </TableRow>
-                    <TableRow key="4" className='h-10'>
-                      <TableCell>William Howard</TableCell>
-                      <TableCell>Community Manager</TableCell>
-                      <TableCell>Vacation</TableCell>
-                    </TableRow>
-                    <TableRow key="5" className='h-10'>
-                      <TableCell>William Howard</TableCell>
-                      <TableCell>Community Manager</TableCell>
-                      <TableCell>Vacation</TableCell>
-                    </TableRow>
+                  <TableBody >
+                    {datos.map((item) => (
+                      <TableRow key={item.identificacion} className='h-10 '>
+                        <TableCell>{item.identificacion}</TableCell>
+                        <TableCell>{item.nombre}</TableCell>
+                        <TableCell>{item.valorTotal}</TableCell>
+                      </TableRow>
+                    ))}
                   </TableBody>
                 </Table>
               </article>
+
+            </div>
+            <div className='mt-14'>
+              <h3 className='flex justify-center items-center text-xl'>COMPRAS DE USUARIOS</h3>
+              <article className='article-alto cont-graf bg-white'>
+                <PieNo/>
+              </article>
+
             </div>
           </div>
         </section>

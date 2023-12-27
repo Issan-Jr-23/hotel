@@ -136,7 +136,6 @@ export const obtenerTotalesNiniosYAdultosEnHabitaciones = async (req, res) => {
 
         let resultadosCombinados = {};
 
-        // Procesar clientes
         clientes.forEach(cliente => {
             let valorTotal = cliente.bebidas?.reduce((acc, bebida) => acc + bebida.cantidad * bebida.precio, 0) || 0;
             valorTotal += cliente.restaurante?.reduce((acc, item) => acc + item.cantidad * item.precio, 0) || 0;
@@ -148,7 +147,6 @@ export const obtenerTotalesNiniosYAdultosEnHabitaciones = async (req, res) => {
             };
         });
 
-        // Procesar cabañas
         cabanias.forEach(cabania => {
             let valorTotal = cabania.bebidas?.reduce((acc, item) => acc + item.cantidad * item.precio, 0) || 0;
             valorTotal += cabania.restaurante?.reduce((acc, item) => acc + item.cantidad * item.precio, 0) || 0;
@@ -164,7 +162,6 @@ export const obtenerTotalesNiniosYAdultosEnHabitaciones = async (req, res) => {
             }
         });
 
-        // Procesar habitaciones
         habitaciones.forEach(habitacion => {
             let valorTotal = habitacion.bebidas?.reduce((acc, item) => acc + item.cantidad * item.precio, 0) || 0;
             valorTotal += habitacion.restaurante?.reduce((acc, item) => acc + item.cantidad * item.precio, 0) || 0;
@@ -180,7 +177,6 @@ export const obtenerTotalesNiniosYAdultosEnHabitaciones = async (req, res) => {
             }
         });
 
-        // Convertir el objeto en un arreglo para la respuesta
         const resultadosArray = Object.values(resultadosCombinados);
 
         res.status(200).json(resultadosArray);
@@ -198,7 +194,6 @@ export const obtenerTotal = async (req, res) => {
       let valorTotal = 0;
       let nombres = [];
 
-      // Recolectar nombres y calcular el valor total
       doc.historial.forEach(historialItem => {
         nombres.push(historialItem.nombre);
 
@@ -211,7 +206,6 @@ export const obtenerTotal = async (req, res) => {
         });
       });
 
-      // Obtener el nombre más completo
       let nombreMasCompleto = nombres.reduce((nombreActual, nombreSiguiente) => {
         return nombreActual.split(' ').length > nombreSiguiente.split(' ').length ? nombreActual : nombreSiguiente;
       }, '');

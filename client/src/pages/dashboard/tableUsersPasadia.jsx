@@ -12,7 +12,7 @@ import Brightness1Icon from '@mui/icons-material/Brightness1';
 import { green, purple, yellow, red } from '@mui/material/colors';
 import GenderDetectionComponent from './generador.jsx';
 
-export default function BasicTable() {
+export default function BasicTable() { 
   const [data, setData] = useState([]);
 
   useEffect(() => {

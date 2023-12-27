@@ -144,14 +144,14 @@ const dashboardPasadia = () => {
       <h1 className='text-4xl mb-5'>Overview</h1>
       <div className='flex justify-between flex-wrap'>
         <div className='box-style  flex rounded-2xl '>
-          <span className='box-grafic justify-between flex flex-col p-4'>
+          <span className='box-grafic justify-between flex flex-col p-4' >
             <h3 className='fondo-text' style={{ fontWeight: "600", fontSize: "20px" }} >Sales operations</h3>
             <p className='fondo-text flex' style={{ fontWeight: "500" }}>
               ${typeof totalVentaPasadia === 'number' ? totalVentaPasadia.toLocaleString('es-CO') : '0'} 
-              {<span className='fondo-text alza flex items-center ml-2 text-green-600'> 
+              {<span className='fondo-text alza flex flex-row items-center ml-2 text-green-600'> 
               {/* <span className='alza'> 
               <img className='down' src={down} alt="" /> </span>   */}
-              (+ 0.2%)</span>}
+              (+0.2%)</span>}
             </p>
             <p className=' fondo-text text-3xl flex' style={{ fontWeight: "400" }}>  {totalUsers}</p>
 
@@ -187,7 +187,7 @@ const dashboardPasadia = () => {
         </div>
 
       </div>
-      <div className=' flex mt-10'>
+      <div className=' flex mt-10 cont-table-apexg '>
         <div className='box-table'>
           <TableUsers />
         </div>
@@ -206,7 +206,7 @@ const dashboardPasadia = () => {
           <TableProductos />
         </div>
       </div>
-      <div className='flex container-apexPie-box border-2'>
+      <div className='flex container-apexPie-box border-2 flex-wrap'>
         <div className='container-apex-pie'>
           <ApexPie/>
         </div>
