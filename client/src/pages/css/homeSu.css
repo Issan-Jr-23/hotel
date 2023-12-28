@@ -93,6 +93,10 @@
   width: 50%;
 }
 
+.article-go {
+  width: 70%;
+}
+
 @media only screen and (min-width: 320px) and (max-width: 736px) {
   .card-home-mui {
     width: 100%;
@@ -131,7 +135,7 @@
   }
 
   .article-go {
-    width: 100%;
+    width: 50%;
     padding-top: 0;
   }
 

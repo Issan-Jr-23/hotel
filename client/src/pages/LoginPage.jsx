@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Card, Message, ButtonNext, Input, Label } from "../components/ui";
+import { Card, Message, ButtonNext, InputNext, Label } from "../components/ui";
 // import { Button, Input } from "@nextui-org/react"
 import { loginSchema } from "../schemas/auth";
 import { LockIcon } from "./iconos/LockIcon.jsx"
@@ -91,7 +91,7 @@ export function LoginPage() {
           </div>
           {/* <h4 className="subtitle-login">Nos alegra verte de nuevo.</h4> */}
           <p className="pd-login">En Meqo, cada día es una oportunidad para hacer más eficiente la gestión de tu hotel. Estamos aquí para ayudarte a lograrlo.</p>
-          <Input
+          <InputNext
             endContent={
               <MailIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
             }
@@ -99,11 +99,11 @@ export function LoginPage() {
             placeholder="Enter your email"
             autoComplete="off"
             className="mb-5"
-            style={{ color: "#e4e4e7" }}
+            style={{ }}
             {...register("email", { required: true })}
           />
-          <p>{errors.email?.message}</p>
-          <Input
+          <p className="text-red-500 mb-2" >{errors.email?.message}</p>
+          <InputNext
             endContent={
               <LockIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
             }
@@ -113,7 +113,8 @@ export function LoginPage() {
             className="mb-5 "
             {...register("password", { required: true, minLength: 6 })}
           />
-           <p>{errors.password?.message}</p>
+           <p className="text-red-500 mb-2" >{errors.password?.message}</p>
+           
           <span className="flex justify-end" >
             <ButtonNext color="primary" className="w-full" >
               Sign in

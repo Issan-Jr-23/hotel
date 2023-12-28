@@ -1,6 +1,6 @@
 import { useAuth } from "../context/authContext";
 import { Link, useNavigate } from "react-router-dom";
-import { Card, Message, Button, Input, Label } from "../components/ui";
+import { Card, Message, ButtonNext, Label, InputNext } from "../components/ui";
 import { useForm } from "react-hook-form";
 import { registerSchema } from "../schemas/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -41,7 +41,7 @@ function Register() {
           <div className="flex">
             <section className="mr-2">
           <Label htmlFor="username">Username:</Label>
-          <Input
+          <InputNext
             type="text"
             placeholder="Write your username"
             {...register("username")}
@@ -55,7 +55,7 @@ function Register() {
             <section className="ml-2">
 
           <Label htmlFor="email">Email:</Label>
-          <Input
+          <InputNext
             type="email"
             placeholder="hotel@meqo.com"
             {...register("email")}
@@ -68,7 +68,7 @@ function Register() {
 
 
           <Label htmlFor="password">Password:</Label>
-          <Input
+          <InputNext
             type="password"
             placeholder="********"
             {...register("password")}
@@ -78,7 +78,7 @@ function Register() {
           )}
 
           <Label htmlFor="confirmPassword">Confirm Password:</Label>
-          <Input
+          <InputNext
             type="password"
             placeholder="********"
             {...register("confirmPassword")}
@@ -100,7 +100,7 @@ function Register() {
             <p className="text-red-500">{errors.role.message}</p>
           )}
 
-          <Button type="submit">Submit</Button>
+          <ButtonNext type="submit">Submit</ButtonNext>
         </form>
       </Card>
       </div>

@@ -1,7 +1,7 @@
 //#region 
 import React, { useState, useEffect, useMemo } from "react";
 import {
-  Table, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, TableHeader, Tabs, TableColumn, TableBody, TableRow, TableCell, Button, Input, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Select, SelectItem, Checkbox, Popover, PopoverTrigger, PopoverContent, Tab, Card, CardBody
+  Table, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, TableHeader, Tabs, TableColumn, TableBody, TableRow, TableCell, Button, Input, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Select, SelectItem, Checkbox, Popover, PopoverTrigger, PopoverContent, Tab, DropdownSection
 } from "@nextui-org/react";
 
 import editar from "../../images/boligrafo.png";
@@ -24,8 +24,10 @@ import { PlusIcon } from "../finca/PlusIcon.jsx";
 import { useAuth } from "../../context/authContext.jsx";
 import { VerticalDotsIcon } from "../iconos/VerticalDotsIcon.jsx"
 import Brightness1Icon from '@mui/icons-material/Brightness1';
+import { AddNoteIcon } from "../iconos/AddNoteIcon.jsx";
 import { green, purple, blue, red } from '@mui/material/colors';
 import { subHours } from 'date-fns';
+import { useNavigate } from "react-router-dom";
 // import SubMenu from "./SubMenu.jsx"
 
 
@@ -49,6 +51,13 @@ export default function App() {
     xhr.responseType = 'blob';
     xhr.send();
   });
+
+  const navigate = useNavigate();
+
+  const adicional = (id) => {
+    navigate(`/adicional/${id}`);
+    console.log("id del usuario para ver el historial del usuario: "+id)
+  };
 
 
   //#region 
@@ -2198,7 +2207,7 @@ export default function App() {
             <TableColumn className="text-center ">Nombre</TableColumn>
             {/* <TableColumn className="text-center ">Reserva</TableColumn>
             <TableColumn className="text-center tables_im">fecha de inicio del pasadia</TableColumn> */}
-            <TableColumn className="text-center">agregar bebida</TableColumn>
+            <TableColumn className="text-center"> agregar bebida</TableColumn>
             <TableColumn className="text-center flex items-center justify-center">agregar comida</TableColumn>
             <TableColumn className="text-center">Pago pendiente</TableColumn>
             <TableColumn className="text-center">
@@ -2210,6 +2219,7 @@ export default function App() {
               }
             </TableColumn>
             <TableColumn className="text-center">Estado</TableColumn>
+            <TableColumn></TableColumn>
             <TableColumn></TableColumn>
 
           </TableHeader>
@@ -2596,6 +2606,19 @@ export default function App() {
                     <Modal
                       classNames={{
                         backdrop: "bg-inherit",
+                      }}
+                      motionProps={{
+
+                        transition: {
+                          duration: 5
+                        },
+                        open:{
+                          duration:0
+                        },
+                        exit: {
+                          duration:0
+                        }
+
                       }}
                       size={ancho} isOpen={isModalOpenM} onClose={closeModalM}>
                       <ModalContent>
@@ -3408,6 +3431,34 @@ export default function App() {
                     </DropdownMenu>
                   </Dropdown>
                 </TableCell>
+                <TableCell  className='text-center'  >
+                    <Dropdown >
+                      <DropdownTrigger>
+                        <Button
+                          className="bg-inherit "
+                        >
+                          <VerticalDotsIcon />
+                        </Button>
+                      </DropdownTrigger>
+                      <DropdownMenu variant="faded" aria-label="Dropdown menu with description">
+                        <DropdownSection title="Actions" showDivider>
+                          <DropdownItem
+                            key="new"
+                            shortcut="⌘N"
+                            description="View user history."
+                            startContent={<AddNoteIcon className={iconClasses} />}
+                            className="font-semibold"
+                            style={{ fontWeight: "700" }}
+                            onClick={() => adicional(cliente._id)}
+                          >
+                            Ver historial
+                          </DropdownItem>
+
+                          
+                        </DropdownSection>
+                      </DropdownMenu>
+                    </Dropdown>
+                  </TableCell>
 
               </TableRow>
             ))}

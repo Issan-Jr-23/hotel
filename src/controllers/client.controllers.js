@@ -1,4 +1,4 @@
-import { now } from "mongoose";
+import { mongoose } from "mongoose";
 import moment from 'moment';
 import Cliente from "../models/client.model.js";
 import Usuario from '../models/transferencia.model.js';
@@ -664,6 +664,33 @@ export const obtenerFechasCompras = async (req, res) => {
 } catch (error) {
     res.status(500).json({ mensaje: "Error al sumar las cantidades de bebidas por fecha", error });
 }
+};
+
+export const obtenerClienteId = async (req, res) => {
+  try {
+    const clientId = req.params.id;
+    console.log("id de usuario :", clientId);
+
+    if (!mongoose.Types.ObjectId.isValid(clientId)) {
+      return res.status(400).send("ID de cliente inválido");
+    }
+    const objectId = new mongoose.Types.ObjectId(clientId);
+
+    const cliente = await Cliente.findById(objectId);
+    console.log("datos del usuario: ", cliente);
+
+    if (!cliente) {
+      return res.status(404).send("Cliente no encontrado");
+    }
+
+    res.json({
+      nombre: cliente.nombre,
+      identificacion: cliente.identificacion
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Error al obtener los datos del cliente: " + error.message);
+  }
 };
 
 

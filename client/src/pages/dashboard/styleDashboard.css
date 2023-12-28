@@ -151,13 +151,15 @@
    width: 40vw;
    display: flex;
    justify-content: center;
-   align-items: end;
+   align-items: center;
  }
 
  .container-apexPie-box{ 
   height: auto;
   display: flex;
  }
+
+
  
 
 

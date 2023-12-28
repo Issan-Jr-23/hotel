@@ -2,3 +2,27 @@
     backdrop-filter: blur(5px) saturate(90%) brightness(123%);
     border-radius: 30px;
 }
+
+.button-next {
+    border: none;
+    border-radius: 0.75rem; /* 12px */
+    font-size: 1rem; /* 16px */
+    font-weight: 500; /* medium */
+    color: white;
+    background-color: #0070f0;
+    width: 100%;
+    height: 3rem; /* 48px */
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out;
+  }
+  
+  .button-next:hover {
+    background-color: #0056b3; /* Un color más oscuro para el efecto hover */
+  }
+  
+  .button-next:active {
+    transform: scale(0.98); /* Efecto de pulsación */
+  }
+
+  
+  

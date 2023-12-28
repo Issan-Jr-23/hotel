@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {actualizarFacturacion, addFood, fechaActivacion, fechaFinalizacion, getClienteByIdentificacion, obtenerCPI, obtenerClientes, obtenerFechasCompras, obtenerProductosCop, obtenerResumenCompras, totalPructosVendidos, totalPructosVendidosCortesias, updateClientCts, updatePP, updateUserStatus} from "../controllers/client.controllers.js";
+import {actualizarFacturacion, addFood, fechaActivacion, fechaFinalizacion, getClienteByIdentificacion, obtenerCPI, obtenerClienteId, obtenerClientes, obtenerFechasCompras, obtenerProductosCop, obtenerResumenCompras, totalPructosVendidos, totalPructosVendidosCortesias, updateClientCts, updatePP, updateUserStatus} from "../controllers/client.controllers.js";
 import {crearCliente} from "../controllers/client.controllers.js";
 import {deleteClient} from "../controllers/client.controllers.js";
 import {updateClient} from "../controllers/client.controllers.js";
@@ -27,6 +27,7 @@ router.put("/pasadia-actualizar-estado", updateUserStatus)
 router.get("/pasadia-fecha-activacion", fechaActivacion)
 router.get("/pasadia-fecha-finalizacion", fechaFinalizacion)
 router.get("/pasadia-fecha-compra", obtenerFechasCompras)
+router.get('/pasadia-cliente-info/:id', obtenerClienteId)
 
 
 export default router;

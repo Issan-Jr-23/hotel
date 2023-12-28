@@ -213,7 +213,7 @@ const HomeSu = () => {
                 Go now
               </Button>
             </article>
-            <article className='cont-cover1 w-2/4' style={{ borderRadius: " 0px 20px 20px 0px" }} >
+            <article className='cont-cover1' style={{ borderRadius: " 0px 20px 20px 0px" }} >
               <img className='h-full w-full' src={mockup} alt="" style={{ borderRadius: "0px 20px 20px 0px" }} />
             </article>
           </div>

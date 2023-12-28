@@ -1,9 +1,11 @@
 import { forwardRef } from "react";
+import { Input } from "@nextui-org/react";
 
-export const Input = forwardRef((props, ref) => (
-  <input
+export const InputNext = forwardRef((props, ref) => (
+  <Input
     {...props}
     ref={ref}
-    className="w-full bg-zinc-700 text-white px-4 py-2 rounded-md"
+    className="w-full   rounded-xl mb-4"
+    style={{fontWeight:"500", color: "#666666"}}
   />
 ));

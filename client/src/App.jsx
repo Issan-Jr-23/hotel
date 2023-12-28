@@ -25,6 +25,7 @@ import HistorialCompras from "./pages/HistorialCompras.jsx";
 import HistorialUsuario from "./pages/Historial.jsx";
 import NotFoundPage from "./pages/Page404.jsx"
 import DashboardPasadia from "./pages/dashboard/dashboardPasadia.jsx";
+import Adicionales from "./pages/tablePasadia/Adicionales.jsx";
 
 function App() {
   return (
@@ -46,6 +47,7 @@ function App() {
                 <Route path="/inventario" element={<InvBebidas />} />
                 <Route path="/habitaciones" element={<Habitaciones />} />
                 <Route path="/historial/:id" element={<HistorialUsuario />} />
+                <Route path="/adicional/:id" element={<Adicionales />} />
               </Route>
               <Route element={<ProtectedRoute allowedRoles={["superUser"]}/>}>
                 <Route path="/hotel-graphs" element={<Hotel_graphs />}/>

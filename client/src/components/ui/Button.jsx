@@ -1,10 +1,13 @@
-export function Button({ onClick, children }) {
+
+import "./login.css"
+export const ButtonNext = ({ onClick, children }) => {
   return (
     <button
-      className="rounded-xl mt-3 font-medium text-white bg-gradient-to-r from-emerald-400 to-cyan-500 w-28 h-10"
-      onClick={onClick}
+      className="button-next"
+      onClick={onClick} 
+      style={{ backgroundColor: "#0070f0" }}
     >
       {children}
     </button>
   );
-}
+};
