@@ -4,7 +4,7 @@ import { Tabs, Tab, Input, Link, Button, Card, CardBody, CardHeader, Table, Tabl
 import AxiosInstance from "../api/axios.js";
 import pen from "../images/pencil.png"
 import update from "../images/update.png"
-import toast, {Toaster} from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function App() {
   const [selected, setSelected] = React.useState("login");
@@ -50,32 +50,32 @@ export default function App() {
 
   const handleEditSave = async () => {
     try {
-        await AxiosInstance.put(`/precios/edit/${editedUserId}`, 
-            {
-                servicio: editServicio,
-                tipo: editTipo,
-                precio: editPrecio
-            }
-        );
+      await AxiosInstance.put(`/precios/edit/${editedUserId}`,
+        {
+          servicio: editServicio,
+          tipo: editTipo,
+          precio: editPrecio
+        }
+      );
 
-        const updatedPrices = preciosData.map((price) =>
-            price._id === editedUserId ? { ...price, servicio: editServicio, tipo: editTipo, precio: editPrecio } : price
-        );
-        setPreciosData(updatedPrices);
+      const updatedPrices = preciosData.map((price) =>
+        price._id === editedUserId ? { ...price, servicio: editServicio, tipo: editTipo, precio: editPrecio } : price
+      );
+      setPreciosData(updatedPrices);
 
-        setEditServicio("");
-        setEditTipo("");
-        setEditPrecio("");
-        setEditedUserId(null);
+      setEditServicio("");
+      setEditTipo("");
+      setEditPrecio("");
+      setEditedUserId(null);
 
-        toast.success('Precio actualizado exitosamente!');
-        const response = await AxiosInstance.get("/table-precios");
-        setPreciosData(response.data);
+      toast.success('Precio actualizado exitosamente!');
+      const response = await AxiosInstance.get("/table-precios");
+      setPreciosData(response.data);
     } catch (error) {
-        console.error("Error al editar el precio:", error);
-        alert("Error al editar el precio. Por favor, inténtalo de nuevo más tarde.");
+      console.error("Error al editar el precio:", error);
+      alert("Error al editar el precio. Por favor, inténtalo de nuevo más tarde.");
     }
-};
+  };
 
 
   const handleChange = (e) => {
@@ -89,7 +89,7 @@ export default function App() {
 
   return (
     <div className="flex flex-col w-full">
-       <Toaster/>
+      <Toaster />
       <div>
         {/* <Navbars /> */}
       </div>
@@ -160,33 +160,33 @@ export default function App() {
                 <TableCell className="text-3xl flex text-center justify-center items-center">
                   <div className="flex w-28 justify-center items-center">
                     {price._id === editedUserId && (
-                  <div className="h-10 w-10 border-2 flex justify-center items-center rounded-full border-green-400 cursor-pointer mr-2">
-                      <img
-                        className="w-6 h-6  cursor-pointer"
-                        src={update}
-                        alt="actualizar"
-                        onClick={() => handleEditSave(price._id)}
-                      />
-                  </div>
+                      <div className="h-10 w-10 border-2 flex justify-center items-center rounded-full border-green-400 cursor-pointer mr-2">
+                        <img
+                          className="w-6 h-6  cursor-pointer"
+                          src={update}
+                          alt="actualizar"
+                          onClick={() => handleEditSave(price._id)}
+                        />
+                      </div>
                     )}
 
-                  <div className="h-10 w-10 border-2 flex justify-center items-center rounded-full border-blue-400 cursor-pointer ml-2" onClick={() => {
-                        setEditPrecio(price.precio),
-                          setEditServicio(price.servicio),
-                          setEditTipo(price.tipo),
-                          setEditedUserId(price._id)
+                    <div className="h-10 w-10 border-2 flex justify-center items-center rounded-full border-blue-400 cursor-pointer ml-2" onClick={() => {
+                      setEditPrecio(price.precio),
+                        setEditServicio(price.servicio),
+                        setEditTipo(price.tipo),
+                        setEditedUserId(price._id)
 
-                      }
-                      }>
-                    <img
-                      className="w-4"
-                      
-                      src={pen}
-                      alt="" />
-                  </div> 
+                    }
+                    }>
+                      <img
+                        className="w-4"
+
+                        src={pen}
+                        alt="" />
+                    </div>
 
                   </div>
-                  </TableCell>
+                </TableCell>
               </TableRow>
 
             ))}
