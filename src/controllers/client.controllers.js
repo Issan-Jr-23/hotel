@@ -685,11 +685,49 @@ export const obtenerClienteId = async (req, res) => {
 
     res.json({
       nombre: cliente.nombre,
-      identificacion: cliente.identificacion
+      identificacion: cliente.identificacion 
     });
   } catch (error) {
     console.log(error);
     res.status(500).send("Error al obtener los datos del cliente: " + error.message);
+  }
+};
+
+export const addBebidaAdicional = async (req, res) => {
+  const {id} = req.params;
+  const { bebida } = req.body;
+
+  try {
+    const cliente = await Cliente.findById(id);
+
+    if (cliente) {
+      let index = -1;
+      index = cliente.bebidas.findIndex(
+        (b) =>
+          b.itemId === bebida.itemId &&
+          b.mensaje === bebida.mensaje && 
+          (b.fechaDeMarca === "" || !b.fechaDeMarca) 
+      );
+
+      if (index > -1) {
+        cliente.bebidas[index].cantidad += bebida.cantidad;
+      } else {
+        if (bebida.mensaje === "Cortesía") {
+          bebida.precio = 0;
+        }
+        bebida.fechaDeMarca = ""; 
+        cliente.bebidas.push(bebida);
+      }
+
+      cliente.markModified("bebidas");
+      await cliente.save();
+      res.status(200).json(cliente);
+    } else {
+      res.status(404).json({ message: "Cliente no encontrado" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al agregar la bebida al cliente" });
   }
 };
 

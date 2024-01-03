@@ -67,37 +67,52 @@ export const obtenerHistorialDeUsuario = async (req, res) => {
   }
 };
 
-export const obtenerHistorialReservasSi = async (req, res) => {
-  try {
-    const usuarios = await Usuario.find();
-
-    const historialReservasSi = usuarios.map((usuario) => ({
-      identificacion: usuario.identificacion,
-      reservasSi: usuario.historial.filter((item) => item.reserva === "Si"),
-    }));
-
-    res.json(historialReservasSi);
-  } catch (error) {
-    console.error("Error al obtener los datos: ", error);
-    res.status(500).send("Error al procesar la solicitud");
-  }
-};
-
 export const obtenerHistorialReservasNo = async (req, res) => {
   try {
     const usuarios = await Usuario.find();
+    const clientes = await Cliente.find();
 
     const historialReservasSi = usuarios.map((usuario) => ({
       identificacion: usuario.identificacion,
       reservasSi: usuario.historial.filter((item) => item.reserva === "No"),
     }));
 
-    res.json(historialReservasSi);
+    const reservasSiClientes = clientes.filter((cliente) => cliente.reserva === "No").map((cliente) => ({
+      identificacion: cliente.identificacion,
+      reserva: cliente.reserva,
+    }));
+
+    res.json({ historialReservasSi, reservasSiClientes });
   } catch (error) {
     console.error("Error al obtener los datos: ", error);
     res.status(500).send("Error al procesar la solicitud");
   }
 };
+
+export const obtenerHistorialReservasSi = async (req, res) => {
+  try {
+    const usuarios = await Usuario.find();
+    const clientes = await Cliente.find();
+
+    const historialReservasSi = usuarios.map((usuario) => ({
+      identificacion: usuario.identificacion,
+      reservasSi: usuario.historial.filter((item) => item.reserva === "Si"),
+    }));
+
+    // Filter the entire 'clientes' array
+    const reservasSiClientes = clientes.filter((cliente) => cliente.reserva === "Si").map((cliente) => ({
+      identificacion: cliente.identificacion,
+      reserva: cliente.reserva,
+    }));
+
+    res.json({ historialReservasSi, reservasSiClientes });
+  } catch (error) {
+    console.error("Error al obtener los datos: ", error);
+    res.status(500).send("Error al procesar la solicitud");
+  }
+};
+
+
 
 export const obtenerTotalesNiniosYAdultosEnPasadia = async (req, res) => {
   try {

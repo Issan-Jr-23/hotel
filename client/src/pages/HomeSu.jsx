@@ -224,7 +224,7 @@ const HomeSu = () => {
 
         </section>
         <section className='section-cards pt-2 mt-5 pb-2 flex '>
-          <article className=' vista-cantidades '>
+          <article className=' vista-cantidades bd-vc'>
             <span className='box-style-hs justify-around flex flex-col'>
               <h3 className='fondo-text-hs' style={{ fontWeight: "600" }} >Total Pasadia</h3>
               <p className='fondo-text-hs' style={{ fontWeight: "600" }}>
@@ -234,7 +234,7 @@ const HomeSu = () => {
 
             </span>
           </article>
-          <article className=' vista-cantidades  border-1 flex'>
+          <article className=' vista-cantidades bd-vc1  flex'>
             <span className='box-style-hs justify-around flex flex-col'>
               <h3 className='fondo-text-hs' style={{ fontWeight: "600" }} >Total Cabañas</h3>
               <p className='fondo-text-hs' style={{ fontWeight: "600" }}>
@@ -244,7 +244,7 @@ const HomeSu = () => {
 
             </span>
           </article>
-          <article className=' vista-cantidades  border-1  flex'>
+          <article className=' vista-cantidades bd-vc2    flex'>
             <span className='box-style-hs justify-around flex flex-col'>
               <h3 className='fondo-text-hs' style={{ fontWeight: "600" }} >Total Habitaciones</h3>
               <p className='fondo-text-hs' style={{ fontWeight: "600" }}>
