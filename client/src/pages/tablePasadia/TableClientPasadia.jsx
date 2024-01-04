@@ -56,7 +56,7 @@ export default function App() {
 
   const adicional = (id) => {
     navigate(`/adicional/${id}`);
-    console.log("id del usuario para ver el historial del usuario: "+id)
+    console.log("id del usuario para ver el historial del usuario: " + id)
   };
 
 
@@ -1931,8 +1931,8 @@ export default function App() {
         estado: nuevoEstado
       });
       const responses = await AxiosInstances.get("/pasadia-clientes");
-        const usuariosOrdenados = responses.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
-        setUsers(usuariosOrdenados);
+      const usuariosOrdenados = responses.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
+      setUsers(usuariosOrdenados);
       console.log('Estado actualizado con éxito:', response.data);
     } catch (error) {
       console.error('Hubo un problema con la petición Axios:', error);
@@ -1944,20 +1944,20 @@ export default function App() {
 
     switch (estado) {
       case 'activo':
-        color = green[500]; 
+        color = green[500];
         break;
       case 'pendiente':
-        color = blue[500]; 
+        color = blue[500];
         break;
       case 'cancelado':
-        color = red[600]; 
+        color = red[600];
         break;
       case 'finalizado':
-        color = purple[500]; 
+        color = purple[500];
         break;
     }
 
-    return <Brightness1Icon style={{ color, width:"14px" }} />;
+    return <Brightness1Icon style={{ color, width: "14px" }} />;
   };
 
 
@@ -2612,11 +2612,11 @@ export default function App() {
                         transition: {
                           duration: 5
                         },
-                        open:{
-                          duration:0
+                        open: {
+                          duration: 0
                         },
                         exit: {
-                          duration:0
+                          duration: 0
                         }
 
                       }}
@@ -2985,13 +2985,13 @@ export default function App() {
                                       const value = parseInt(e.target.value);
                                       setCantidadFood(isNaN(value) ? '' : value);
                                     }}
-                                    style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                    style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                   />
                                   <input
                                     disabled
                                     className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
                                     placeholder={` ${cantidadFoodDisponible}`}
-                                    style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                    style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                   />
                                   <Select
                                     className="ml-2"
@@ -3013,7 +3013,7 @@ export default function App() {
 
                                     }}
 
-                                    style={{height:"40px"}}
+                                    style={{ height: "40px" }}
 
                                   >
                                     {foodFiltradas.map((food) => (
@@ -3051,14 +3051,14 @@ export default function App() {
                                       const value = parseInt(e.target.value);
                                       setCantidadFood1(isNaN(value) ? '' : value);
                                     }}
-                                    style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                    style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                   />
                                   <input
                                     disabled
                                     label="Stock"
                                     className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
                                     placeholder={`   ${cantidadFood1Disponible}`}
-                                    style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                    style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                   />
                                   <Select
                                     className="ml-2"
@@ -3078,7 +3078,7 @@ export default function App() {
                                         setCantidadFood1Disponible(food1SeleccionadaInfo.CantidadInicial);
                                       }
                                     }}
-                                    style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                    style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                   >
                                     {foodFiltradas2.map((food) => (
                                       <SelectItem key={food.Descripcion}>
@@ -3115,14 +3115,14 @@ export default function App() {
                                       const value = parseInt(e.target.value);
                                       setCantidadFood2(isNaN(value) ? '' : value);
                                     }}
-                                    style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                    style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                   />
                                   <input
                                     disabled
                                     label="Stock"
                                     className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
                                     placeholder={`   ${cantidadFood2Disponible}`}
-                                    style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                    style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                   />
                                   <Select
                                     className="ml-2"
@@ -3140,7 +3140,7 @@ export default function App() {
                                         setCantidadFood2Disponible(food2SeleccionadaInfo.CantidadInicial);
                                       }
                                     }}
-                                    style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                    style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                   >
                                     {foodFiltradas3.map((food) => (
                                       <SelectItem key={food.Descripcion}>
@@ -3176,14 +3176,14 @@ export default function App() {
                                       const value = parseInt(e.target.value);
                                       setCantidadFood3(isNaN(value) ? '' : value);
                                     }}
-                                    style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                    style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                   />
                                   <input
                                     disabled
                                     label="Stock"
                                     className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
                                     placeholder={`   ${cantidadFood3Disponible}`}
-                                    style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                    style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                   />
                                   <Select
                                     className="ml-2"
@@ -3201,7 +3201,7 @@ export default function App() {
                                         setCantidadFood3Disponible(food3SeleccionadaInfo.CantidadInicial);
                                       }
                                     }}
-                                    style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                    style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                   >
                                     {foodFiltradas4.map((food) => (
                                       <SelectItem key={food.Descripcion}>
@@ -3237,14 +3237,14 @@ export default function App() {
                                       const value = parseInt(e.target.value);
                                       setCantidadFood4(isNaN(value) ? '' : value);
                                     }}
-                                    style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                    style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                   />
                                   <input
                                     disabled
                                     label="Stock"
                                     className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
                                     placeholder={`   ${cantidadFood4Disponible}`}
-                                    style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                    style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                   />
                                   <Select
                                     className="ml-2"
@@ -3262,7 +3262,7 @@ export default function App() {
                                         setCantidadFood4Disponible(food4SeleccionadaInfo.CantidadInicial);
                                       }
                                     }}
-                                    style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                    style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                   >
                                     {foodFiltradas5.map((food) => (
                                       <SelectItem key={food.Descripcion}>
@@ -3300,7 +3300,7 @@ export default function App() {
                             </Tab>
                             <Tab key="menu2" title="subProductos" className=" flex flex-col p-5">
                               <ModalHeader className="flex flex-col gap-1 pb-10">COMIDAS  </ModalHeader>
-                              
+
 
                               <div className="flex mb-3 ">
                                 <input
@@ -3313,14 +3313,14 @@ export default function App() {
                                     const value = parseInt(e.target.value);
                                     setCantidadItem(isNaN(value) ? '' : value);
                                   }}
-                                  style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                  style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 />
                                 <input
                                   disabled
                                   label="Stock"
                                   className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
                                   placeholder={` ${cantidadFoodDisponible}`}
-                                  style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                  style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 />
                                 <Select
                                   className="ml-2"
@@ -3340,7 +3340,7 @@ export default function App() {
                                       setCantidadFoodDisponible(itemSeleccionadaInfo.cantidadPadre);
                                     }
                                   }}
-                                  style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                  style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 >
                                   {comidas.map((food) => (
                                     <SelectItem key={food.Descripcion}>
@@ -3361,14 +3361,14 @@ export default function App() {
                                     const value = parseInt(e.target.value);
                                     setCantidadItem(isNaN(value) ? '' : value);
                                   }}
-                                  style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                  style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 />
                                 <input
                                   disabled
                                   label="Stock"
                                   className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
                                   placeholder={` ${cantidadFoodDisponible}`}
-                                  style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                  style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 />
                                 <Select
                                   className="ml-2"
@@ -3388,7 +3388,7 @@ export default function App() {
                                       setCantidadFoodDisponible(itemSeleccionadaInfo.cantidadPadre);
                                     }
                                   }}
-                                  style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                  style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 >
                                   {comidas.map((food) => (
                                     <SelectItem key={food.Descripcion}>
@@ -3409,14 +3409,14 @@ export default function App() {
                                     const value = parseInt(e.target.value);
                                     setCantidadItem(isNaN(value) ? '' : value);
                                   }}
-                                  style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                  style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 />
                                 <input
                                   disabled
                                   label="Stock"
                                   className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
                                   placeholder={` ${cantidadFoodDisponible}`}
-                                  style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                  style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 />
                                 <Select
                                   className="ml-2"
@@ -3436,7 +3436,7 @@ export default function App() {
                                       setCantidadFoodDisponible(itemSeleccionadaInfo.cantidadPadre);
                                     }
                                   }}
-                                  style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                  style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 >
                                   {comidas.map((food) => (
                                     <SelectItem key={food.Descripcion}>
@@ -3457,14 +3457,14 @@ export default function App() {
                                     const value = parseInt(e.target.value);
                                     setCantidadItem(isNaN(value) ? '' : value);
                                   }}
-                                  style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                  style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 />
                                 <input
                                   disabled
                                   label="Stock"
                                   className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
                                   placeholder={` ${cantidadFoodDisponible}`}
-                                  style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                  style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 />
                                 <Select
                                   className="ml-2"
@@ -3484,7 +3484,7 @@ export default function App() {
                                       setCantidadFoodDisponible(itemSeleccionadaInfo.cantidadPadre);
                                     }
                                   }}
-                                  style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                  style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 >
                                   {comidas.map((food) => (
                                     <SelectItem key={food.Descripcion}>
@@ -3505,14 +3505,14 @@ export default function App() {
                                     const value = parseInt(e.target.value);
                                     setCantidadItem(isNaN(value) ? '' : value);
                                   }}
-                                  style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                  style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 />
                                 <input
                                   disabled
                                   label="Stock"
                                   className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
                                   placeholder={` ${cantidadFoodDisponible}`}
-                                  style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                  style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 />
                                 <Select
                                   className="ml-2"
@@ -3532,7 +3532,7 @@ export default function App() {
                                       setCantidadFoodDisponible(itemSeleccionadaInfo.cantidadPadre);
                                     }
                                   }}
-                                  style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                  style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 >
                                   {comidas.map((food) => (
                                     <SelectItem key={food.Descripcion}>
@@ -3591,10 +3591,10 @@ export default function App() {
                     </div>
                   ) : null}
                 </TableCell>
-                <TableCell className="text-center" style={{width:"150px"}}>
+                <TableCell className="text-center" style={{ width: "150px" }}>
                   <div className="flex items-center text-center ">
                     <span className=" mr-2">
-                    <EstadoIcono estado={cliente.estado}/>
+                      <EstadoIcono estado={cliente.estado} />
                     </span>
                     {cliente.estado}
                   </div>
@@ -3616,34 +3616,34 @@ export default function App() {
                     </DropdownMenu>
                   </Dropdown>
                 </TableCell>
-                <TableCell  className='text-center'  >
-                    <Dropdown >
-                      <DropdownTrigger>
-                        <Button
-                          className="bg-inherit "
+                <TableCell className='text-center'  >
+                  <Dropdown >
+                    <DropdownTrigger>
+                      <Button
+                        className="bg-inherit "
+                      >
+                        <VerticalDotsIcon />
+                      </Button>
+                    </DropdownTrigger>
+                    <DropdownMenu variant="faded" aria-label="Dropdown menu with description">
+                      <DropdownSection title="Actions" showDivider>
+                        <DropdownItem
+                          key="new"
+                          shortcut="⌘N"
+                          description="View user history."
+                          startContent={<AddNoteIcon className={iconClasses} />}
+                          className="font-semibold"
+                          style={{ fontWeight: "700" }}
+                          onClick={() => adicional(cliente._id)}
                         >
-                          <VerticalDotsIcon />
-                        </Button>
-                      </DropdownTrigger>
-                      <DropdownMenu variant="faded" aria-label="Dropdown menu with description">
-                        <DropdownSection title="Actions" showDivider>
-                          <DropdownItem
-                            key="new"
-                            shortcut="⌘N"
-                            description="View user history."
-                            startContent={<AddNoteIcon className={iconClasses} />}
-                            className="font-semibold"
-                            style={{ fontWeight: "700" }}
-                            onClick={() => adicional(cliente._id)}
-                          >
-                            Ver historial
-                          </DropdownItem>
+                          Ver historial
+                        </DropdownItem>
 
-                          
-                        </DropdownSection>
-                      </DropdownMenu>
-                    </Dropdown>
-                  </TableCell>
+
+                      </DropdownSection>
+                    </DropdownMenu>
+                  </Dropdown>
+                </TableCell>
 
               </TableRow>
             ))}

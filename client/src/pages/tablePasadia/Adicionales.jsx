@@ -840,6 +840,34 @@ const Adicionales = () => {
 
                         </article>
                     </article>
+
+                    <article>
+                        <p style={{ fontSize: "18px", fontWeight: "100" }} className='text-blue-300'>
+                            <span className='text-red-500' style={{ fontSize: "18px" }}>4.</span> cargo por descorche
+                        </p>
+                        <article>
+                            <span className='flex mr-5 w-4 h-4 rounded-full justify-center items-center bg-red-500 text-white '></span>
+                            <div>
+                            <span className='flex w-12/12 rounded mt-2'>
+                                <input type="number" placeholder='Valor del descorche' className='mb-5 w-6/12 h-14 mr-2 rounded-xl pl-2 outline-green-500' />
+                                <textarea name="" id="" cols="30" rows="10" className='w-6/12 h-14 outline-blue-500 p-2 ml 2 rounded-xl' placeholder='Ingrece la descripción'></textarea>
+                            </span>
+                            </div>
+
+                            <div>
+                            <span className='flex w-12/12 rounded '>
+                                <input type="number" placeholder='Valor del descorche' className='mb-2 w-6/12 h-14 mr-2 rounded-xl pl-2 outline-green-500' />
+                                <textarea name="" id="" cols="30" rows="10" className='w-6/12 h-14 outline-blue-500 p-2 ml 2 rounded-xl' placeholder='Ingrece la descripción'></textarea>
+                            </span>
+                            <span className='flex justify-end'>
+                                <Button color='danger' className='mt-5'>
+                                    Crear descorche
+                                </Button>
+                            </span>
+                            </div>
+
+                        </article>
+                    </article>
                 </section>
 
                 <section className='w-full min-h-screen pt-20 pr-5 pl-5'>

@@ -614,6 +614,26 @@ export const guardarCortesiaFoodInventory = async (req, res) => {
   }
 };
 
+export const deleteSubproduct = async (req, res) => {
+  const productId = req.params.id;
+  const subproductId = req.body.idSubproducto;
+
+  try {
+      const product = await Bebida.findById(productId);
+      if (!product) {
+          return res.status(404).send('Producto no encontrado');
+      }
+
+      product.subproductos = product.subproductos.filter(subprod => subprod.id !== subproductId);
+      await product.save();
+      res.status(200).send('Subproducto eliminado con éxito');
+  } catch (error) {
+      console.error(error);
+      res.status(500).send('Error al eliminar el subproducto');
+  }
+};
+
+
 
 
 

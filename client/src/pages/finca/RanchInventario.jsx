@@ -17,8 +17,15 @@ import AxiosInstance from "../../api/axios.js";
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+import { DeleteDocumentIcon } from "../iconos/DeleteDocumentIcon.jsx"
+import { EditDocumentIcon } from "../iconos/EditDocumentIcon.jsx"
+import { VerticalDotsIcon } from '../iconos/VerticalDotsIcon.jsx';
+import { Dropdown, DropdownTrigger, DropdownItem, DropdownMenu, Button } from '@nextui-org/react';
+import Backdrop from '@mui/material/Backdrop';
+import Modal from '@mui/material/Modal';
+import Fade from '@mui/material/Fade';
 
-function createData(_id, Descripcion, tipo, Caducidad, CantidadInicial, ValorUnitario, ProductosVendidos,Cortesias, history, subproductsData) {
+function createData(_id, Descripcion, tipo, Caducidad, CantidadInicial, ValorUnitario, ProductosVendidos, Cortesias, history, subproductsData) {
     return {
         _id,
         Descripcion,
@@ -34,10 +41,14 @@ function createData(_id, Descripcion, tipo, Caducidad, CantidadInicial, ValorUni
 }
 
 function Row(props) {
-    const { row, onDelete, onEdit, fetchProducts } = props;
+    const { row, subproduct, onDelete, onEdit, fetchProducts, onDeleteSubproducto, onEditSubproducto } = props;
     const hasSubproducts = Array.isArray(row.subproductsData) && row.subproductsData.length > 0;
     const [open, setOpen] = React.useState(false);
     const [isEditing, setIsEditing] = React.useState(false);
+    const [isEditingSubproducto, setIsEditingSubproducto] = React.useState(false);
+    const [openM, setOpenM] = React.useState(false);
+    const handleOpenM = () => setOpenM(true);
+    const handleCloseM = () => setOpenM(false);
     const [editedValues, setEditedValues] = React.useState({
         Descripcion: row.Descripcion,
         tipo: row.tipo,
@@ -46,10 +57,20 @@ function Row(props) {
         ValorUnitario: row.ValorUnitario,
         ProductosVendidos: row.ProductosVendidos
     });
-    
+
+    const [editedValuesSubproduct, setEditedValuesSubproduct] = React.useState({
+        Descripcion: hasSubproducts.Descripcion,
+        ValorUnitario: hasSubproducts.ValorUnitario,
+        ProductosVendidos: hasSubproducts.ProductosVendidos,
+        Cortesias: hasSubproducts.Cortesias
+    });
+
 
     const handleEditClick = () => {
         setIsEditing(true);
+    };
+    const handleEditClickSubproducto = () => {
+        setIsEditingSubproducto(true);
     };
 
     const handleCancelEdit = () => {
@@ -65,6 +86,16 @@ function Row(props) {
         });
     };
 
+    const handleCancelEditSubproduct = () => {
+        setIsEditingSubproducto(false);
+        // Reset edited values to the original values
+        setEditedValuesSubproduct({
+            ValorUnitario: subproduct.ValorUnitario,
+            ProductosVendidos: subproduct.ProductosVendidos,
+            Cortesias: subproduct.Cortesias
+        });
+    };
+
     const handleSaveEdit = async () => {
         setIsEditing(false);
         onEdit(
@@ -76,7 +107,18 @@ function Row(props) {
             editedValues.ValorUnitario,
             editedValues.ProductosVendidos
         );
-        // After saving the edit, fetch the updated data
+        await fetchProducts();
+    };
+
+    const handleSaveEditSubproduct = async () => {
+        setIsEditingSubproducto(false);
+        onEditSubproducto(
+            row._id,
+            editedValuesSubproduct.Descripcion,
+            editedValuesSubproduct.CantidadInicial,
+            editedValuesSubproduct.ValorUnitario,
+            editedValuesSubproduct.ProductosVendidos
+        );
         await fetchProducts();
     };
 
@@ -87,6 +129,17 @@ function Row(props) {
             [name]: value,
         }));
     };
+
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'background.paper',
+        boxShadow: 24,
+        p: 4,
+      };
 
 
 
@@ -105,7 +158,7 @@ function Row(props) {
                         </IconButton>
                     )}
                 </TableCell>
-                <TableCell component="th" scope="row" style={{ width: "230px", textTransform:"uppercase" }}>
+                <TableCell component="th" scope="row" style={{ width: "230px", textTransform: "uppercase" }}>
                     {isEditing ? (
                         <input
                             className='outline-none h-10 w-32 border-2 border-blue-300 rounded-xl'
@@ -134,14 +187,14 @@ function Row(props) {
                 <TableCell align="center">
                     {isEditing ? (
                         <input
-                        className='outline-none h-10 w-32 border-2 border-blue-300 rounded-xl'
-                        type="text"
-                        name="Caducidad"
-                        value={editedValues.Caducidad}
-                        onChange={handleInputChange}
-                    />
+                            className='outline-none h-10 w-32 border-2 border-blue-300 rounded-xl'
+                            type="text"
+                            name="Caducidad"
+                            value={editedValues.Caducidad}
+                            onChange={handleInputChange}
+                        />
 
-                    ): (
+                    ) : (
 
                         row.Caducidad
                     )
@@ -149,13 +202,13 @@ function Row(props) {
                 </TableCell>
                 <TableCell align="center">
                     {isEditing ? (
-                           <input
-                           className='outline-none h-10 w-32 border-2 border-blue-300 rounded-xl'
-                           type="text"
-                           name="CantidadInicial"
-                           value={editedValues.CantidadInicial}
-                           onChange={handleInputChange}
-                       />
+                        <input
+                            className='outline-none h-10 w-14 border-2 border-blue-300 rounded-xl'
+                            type="text"
+                            name="CantidadInicial"
+                            value={editedValues.CantidadInicial}
+                            onChange={handleInputChange}
+                        />
                     ) : (
 
                         row.CantidadInicial
@@ -164,14 +217,14 @@ function Row(props) {
                 </TableCell>
                 <TableCell align="center">
                     {isEditing ? (
-                           <input
-                           className='outline-none h-10 w-32 border-2 border-blue-300 rounded-xl'
-                           type="text"
-                           name="ValorUnitario"
-                           value={editedValues.ValorUnitario}
-                           onChange={handleInputChange}
-                       />
-                    ):(
+                        <input
+                            className='outline-none h-10 w-32 border-2 border-blue-300 rounded-xl'
+                            type="text"
+                            name="ValorUnitario"
+                            value={editedValues.ValorUnitario}
+                            onChange={handleInputChange}
+                        />
+                    ) : (
 
                         row.ValorUnitario
                     )
@@ -179,37 +232,64 @@ function Row(props) {
                 </TableCell>
                 <TableCell align="center">
                     {isEditing ? (
-                           <input
-                           className='outline-none h-10 w-32 border-2 border-blue-300 rounded-xl'
-                           type="text"
-                           name="ProductosVendidos"
-                           value={editedValues.ProductosVendidos}
-                           onChange={handleInputChange}
-                       />
-                    ):(
+                        <input
+                            className='outline-none h-10 w-14 border-2 border-blue-300 rounded-xl'
+                            type="text"
+                            name="ProductosVendidos"
+                            value={editedValues.ProductosVendidos}
+                            onChange={handleInputChange}
+                        />
+                    ) : (
                         row.ProductosVendidos
                     )
                     }
                 </TableCell>
-                    <TableCell align='center'>{row.Cortesias}</TableCell>
+                <TableCell align='center'>{row.Cortesias}</TableCell>
                 <TableCell align="center">{(row.ProductosVendidos - row.Cortesias) * row.ValorUnitario}</TableCell>
                 <TableCell align="center">{row.ValorUnitario * row.CantidadInicial}</TableCell>
                 <TableCell className='flex' style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "75px" }}>
-                    <div style={{width:"120px"}} className='flex justify-evenly items-center' >
+                    <div style={{ width: "120px" }} className='flex justify-evenly items-center' >
 
-                    {isEditing ? (
-                        <>
-                            <button onClick={handleSaveEdit}>Save</button>
-                            <button onClick={handleCancelEdit}>Cancel</button>
-                        </>
-                    ) : (
-                        <>
-                            <EditIcon onClick={handleEditClick} />
-                            <DeleteIcon className='cursor-pointer' onClick={() => onDelete(row._id)} />
-                        </>
-                    )}
+                        {isEditing ? (
+                            <>
+                                <button onClick={handleSaveEdit}>Save</button>
+                                <button onClick={handleCancelEdit}>Cancel</button>
+                            </>
+                        ) : (
+                            <>
+                                < EditDocumentIcon onClick={handleEditClick} className="cursor-pointer" />
+                                < DeleteDocumentIcon className='cursor-pointer' onClick={() => onDelete(row._id)} />
+                            </>
+                        )}
                     </div>
                 </TableCell>
+                {hasSubproducts ? (
+
+                    null
+
+                ) : (
+                    <TableCell>
+                        <Dropdown>
+                            <DropdownTrigger>
+                                <Button className='bg-inherent'>
+
+                                    <VerticalDotsIcon />
+                                </Button>
+                            </DropdownTrigger>
+                            <DropdownMenu aria-label="Static Actions">
+                                <DropdownItem key="new">Confirmacion entrega de dinero</DropdownItem>
+                                <DropdownItem key="copy">Copy link</DropdownItem>
+                                <DropdownItem key="edit">Edit file</DropdownItem>
+                                <DropdownItem key="delete" className="text-danger" color="danger">
+                                    Delete file
+                                </DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
+                    </TableCell>
+
+
+
+                )}
             </TableRow>
             {hasSubproducts && (
                 <TableRow>
@@ -227,7 +307,7 @@ function Row(props) {
                                             <TableCell align="center">cantidad vendida</TableCell>
                                             <TableCell align="center">#Cortesias</TableCell>
                                             <TableCell align="center">Total de la venta</TableCell>
-                                            {/* <TableCell align="center">Acciones</TableCell> */}
+                                            <TableCell align="center">Acciones</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
@@ -238,12 +318,66 @@ function Row(props) {
                                                     <TableCell align="center" className='uppercase'>{subproduct.ValorUnitario}</TableCell>
                                                     <TableCell align="center" className='uppercase'>{subproduct.ProductosVendidos}</TableCell>
                                                     <TableCell align="center" className='uppercase'>{subproduct.Cortesias}</TableCell>
-                                                    <TableCell align="center" className='uppercase'>{(subproduct.ProductosVendidos - subproduct.Cortesias ) * subproduct.ValorUnitario}</TableCell>
-                                                    {/* <TableCell align="center" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                                                        <CloudDownloadIcon />
-                                                        <EditIcon onClick={handleEditClick} />
-                                                        <DeleteIcon onClick={() => onDelete(row._id)} />
-                                                    </TableCell> */}
+                                                    <TableCell align="center" className='uppercase'>{(subproduct.ProductosVendidos - subproduct.Cortesias) * subproduct.ValorUnitario}</TableCell>
+                                                    <TableCell align="center" style={{ display: "flex", justifyContent: "center", alignItems: "center" }} className='h-20'>
+                                                        <div style={{ width: "120px" }} className='flex justify-evenly items-center' >
+
+                                                            {isEditing ? (
+                                                                <>
+                                                                    <button onClick={handleSaveEditSubproduct}> Save </button>
+                                                                    <button onClick={handleCancelEditSubproduct}>Cancel</button>
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    <EditDocumentIcon onClick={handleEditClickSubproducto} className="cursor-pointer" />
+                                                                    < DeleteDocumentIcon className='cursor-pointer' onClick={() => onDelete(row._id)} />
+                                                                </>
+                                                            )}
+                                                        </div>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <Dropdown>
+                                                            <DropdownTrigger>
+                                                                <Button className='bg-inherent' >
+
+                                                                    <VerticalDotsIcon />
+                                                                </Button>
+                                                            </DropdownTrigger>
+                                                            <DropdownMenu aria-label="Static Actions">
+                                                                <DropdownItem key="copy" color='primary'>Confirmación de pago</DropdownItem>
+                                                                <DropdownItem key="new" onClick={() => onDeleteSubproducto(row._id, subproduct._id)} color='danger' className="text-danger" >Delete file</DropdownItem>
+                                                                <DropdownItem key="edit" onClick={handleOpenM}>Edit file</DropdownItem>
+                                                                <DropdownItem key="delete" className="text-danger" color="danger">
+                                                                    Delete file
+                                                                </DropdownItem>
+                                                            </DropdownMenu>
+                                                        </Dropdown>
+                                                        <Modal
+                                                            aria-labelledby="transition-modal-title"
+                                                            aria-describedby="transition-modal-description"
+                                                            open={openM}
+                                                            onClose={handleCloseM}
+                                                            closeAfterTransition
+                                                            slots={{ backdrop: Backdrop }}
+                                                            slotProps={{
+                                                                backdrop: {
+                                                                    timeout: 500,
+                                                                },
+                                                            }}
+                                                        >
+                                                            <Fade in={openM}>
+                                                                <Box sx={style}>
+                                                                    <Typography id="transition-modal-title" variant="h6" component="h2">
+                                                                        Editar Subproducto
+                                                                    </Typography>
+                                                                    <Typography id="transition-modal-description" sx={{ mt: 2 }}>
+                                                                        <input type="text" className='h-12 border-b-2 border-blue-300 outline-none pl-2 mt-2 mb-2'/>
+                                                                        <input type="text" className='h-12 border-b-2 border-blue-300 outline-none pl-2 mt-2 mb-2'/>
+                                                                    </Typography>
+                                                                </Box>
+                                                            </Fade>
+                                                        </Modal>
+                                                    </TableCell>
                                                 </TableRow>
                                             ))}
                                     </TableBody>
@@ -302,6 +436,8 @@ export default function CollapsibleTable() {
         }
     };
 
+
+
     useEffect(() => {
         // Initial fetch of products
         fetchProducts();
@@ -347,6 +483,19 @@ export default function CollapsibleTable() {
         }
     };
 
+    const handleDeleteSubproducto = async (id, idSubproducto) => {
+        try {
+            await AxiosInstance.delete(`eliminar-subproduct/${id}`, {
+                data: {
+                    idSubproducto: idSubproducto
+                }
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+
     return (
         <div className='pl-5 pr-5 mt-10'>
             <TableContainer component={Paper} style={{ borderRadius: "15px", overflow: "x" }}>
@@ -354,16 +503,16 @@ export default function CollapsibleTable() {
                     <TableHead style={{ height: "20px", marginLeft: "10px" }} >
                         <TableRow>
                             <TableCell />
-                            <TableCell style={{ width: "170px", textTransform:"uppercase" }} ><Typography variant="caption" style={{ fontWeight: "600", color: "#96969c" }} >Producto</Typography></TableCell>
-                            <TableCell align="center"> <Typography style={{ fontWeight: "600", color: "#96969c",  textTransform:"uppercase" }} variant="caption">tipo</Typography></TableCell>
-                            <TableCell align="center"><Typography style={{ fontWeight: "600", color: "#96969c",  textTransform:"uppercase" }} variant="caption">Fecha de Caducidad</Typography></TableCell>
-                            <TableCell align="center"><Typography style={{ fontWeight: "600", color: "#96969c",  textTransform:"uppercase" }} variant="caption">Cantidad</Typography></TableCell>
-                            <TableCell style={{ padding: "10px", width: "175px",  textTransform:"uppercase"}} align="center"><Typography style={{ fontWeight: "600", color: "#96969c" }} variant="caption">precio de venta</Typography></TableCell>
-                            <TableCell style={{ padding: "10px", width: "175px",  textTransform:"uppercase" }} align="center"><Typography style={{ fontWeight: "600", color: "#96969c" }} variant="caption">Productos vendidos</Typography></TableCell>
-                            <TableCell style={{ padding: "10px", width: "175px",  textTransform:"uppercase" }} align="center"><Typography style={{ fontWeight: "600", color: "#96969c" }} variant="caption">#Cortesias</Typography></TableCell>
-                            <TableCell style={{ padding: "10px", width: "175px",  textTransform:"uppercase" }} align="center"><Typography style={{ fontWeight: "600", color: "#96969c" }} variant="caption">Total de la venta</Typography></TableCell>
-                            <TableCell style={{ padding: "10px", width: "175px",  textTransform:"uppercase" }} align="center"><Typography style={{ fontWeight: "600", color: "#96969c" }} variant="caption">Valor total</Typography></TableCell>
-                            <TableCell align="center"><Typography style={{ fontWeight: "600", color: "#96969c",  textTransform:"uppercase" }} variant="caption">acción</Typography></TableCell>
+                            <TableCell style={{ width: "170px", textTransform: "uppercase" }} ><Typography variant="caption" style={{ fontWeight: "600", color: "#96969c" }} >Producto</Typography></TableCell>
+                            <TableCell align="center"> <Typography style={{ fontWeight: "600", color: "#96969c", textTransform: "uppercase" }} variant="caption">tipo</Typography></TableCell>
+                            <TableCell align="center"><Typography style={{ fontWeight: "600", color: "#96969c", textTransform: "uppercase" }} variant="caption">Fecha de Caducidad</Typography></TableCell>
+                            <TableCell align="center"><Typography style={{ fontWeight: "600", color: "#96969c", textTransform: "uppercase" }} variant="caption">Cantidad</Typography></TableCell>
+                            <TableCell style={{ padding: "10px", width: "175px", textTransform: "uppercase" }} align="center"><Typography style={{ fontWeight: "600", color: "#96969c" }} variant="caption">precio de venta</Typography></TableCell>
+                            <TableCell style={{ padding: "10px", width: "175px", textTransform: "uppercase" }} align="center"><Typography style={{ fontWeight: "600", color: "#96969c" }} variant="caption">Productos vendidos</Typography></TableCell>
+                            <TableCell style={{ padding: "10px", width: "175px", textTransform: "uppercase" }} align="center"><Typography style={{ fontWeight: "600", color: "#96969c" }} variant="caption">#Cortesias</Typography></TableCell>
+                            <TableCell style={{ padding: "10px", width: "175px", textTransform: "uppercase" }} align="center"><Typography style={{ fontWeight: "600", color: "#96969c" }} variant="caption">Total de la venta</Typography></TableCell>
+                            <TableCell style={{ padding: "10px", width: "175px", textTransform: "uppercase" }} align="center"><Typography style={{ fontWeight: "600", color: "#96969c" }} variant="caption">Valor total</Typography></TableCell>
+                            <TableCell align="center"><Typography style={{ fontWeight: "600", color: "#96969c", textTransform: "uppercase" }} variant="caption">acción</Typography></TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -373,6 +522,7 @@ export default function CollapsibleTable() {
                                 row={filas}
                                 onDelete={handleDelete}
                                 onEdit={handleEdit}
+                                onDeleteSubproducto={handleDeleteSubproducto}
                                 fetchProducts={fetchProducts}
                             />
                         ))}
