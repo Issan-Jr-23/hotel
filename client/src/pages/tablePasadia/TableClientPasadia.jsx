@@ -2960,16 +2960,11 @@ export default function App() {
                       backdrop: "bg-inherit",
                     }}
                   >
-
-
                     <ModalContent >
                       {(closeModalF) => (
-
                         <>
                           <Tabs className="">
                             <Tab key="productos" title="Productos">
-
-
 
                               <ModalHeader className="flex flex-col gap-1">COMIDAS  </ModalHeader>
                               <ModalBody>
@@ -2980,22 +2975,23 @@ export default function App() {
                                   Cortesía pasadia
                                 </Checkbox>
                                 <div className="flex">
-                                  <Input
-                                    className="mr-2"
+                                  <input
+                                    className="mr-2 rounded-xl outline-none pl-5"
                                     name="restaurante"
-                                    label="Ingrese la cantidad"
+                                    placeholder="Ingrese la cantidad"
                                     type="number"
                                     value={isNaN(cantidadFood) ? '' : cantidadFood}
                                     onChange={(e) => {
                                       const value = parseInt(e.target.value);
                                       setCantidadFood(isNaN(value) ? '' : value);
                                     }}
+                                    style={{height:"40px", backgroundColor:"#f4f4f5"}}
                                   />
-                                  <Input
+                                  <input
                                     disabled
-                                    label="Stock"
                                     className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
                                     placeholder={` ${cantidadFoodDisponible}`}
+                                    style={{height:"40px", backgroundColor:"#f4f4f5"}}
                                   />
                                   <Select
                                     className="ml-2"
@@ -3016,6 +3012,9 @@ export default function App() {
                                       }
 
                                     }}
+
+                                    style={{height:"40px"}}
+
                                   >
                                     {foodFiltradas.map((food) => (
                                       <SelectItem key={food.Descripcion}>
@@ -3023,7 +3022,7 @@ export default function App() {
                                       </SelectItem>
                                     ))}
                                   </Select>
-                                  <aside className="search-button">
+                                  {/* <aside className="search-button">
                                     <div className="container">
                                       <span className="lupa">
                                         <SearchIcon />
@@ -3037,27 +3036,29 @@ export default function App() {
                                           setFoodFiltro(e.target.value);
                                         }} />
                                     </div>
-                                  </aside>
+                                  </aside> */}
                                 </div>
 
                                 <div className="flex">
 
-                                  <Input
-                                    className="mr-2"
+                                  <input
+                                    className="mr-2 pl-5 rounded-xl"
                                     name="restaurante"
-                                    label="Ingrese la cantidad"
+                                    placeholder="Ingrese la cantidad"
                                     type="number"
                                     value={isNaN(cantidadFood1) ? '' : cantidadFood1}
                                     onChange={(e) => {
                                       const value = parseInt(e.target.value);
                                       setCantidadFood1(isNaN(value) ? '' : value);
                                     }}
+                                    style={{height:"40px", backgroundColor:"#f4f4f5"}}
                                   />
-                                  <Input
+                                  <input
                                     disabled
                                     label="Stock"
                                     className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
                                     placeholder={`   ${cantidadFood1Disponible}`}
+                                    style={{height:"40px", backgroundColor:"#f4f4f5"}}
                                   />
                                   <Select
                                     className="ml-2"
@@ -3077,6 +3078,7 @@ export default function App() {
                                         setCantidadFood1Disponible(food1SeleccionadaInfo.CantidadInicial);
                                       }
                                     }}
+                                    style={{height:"40px", backgroundColor:"#f4f4f5"}}
                                   >
                                     {foodFiltradas2.map((food) => (
                                       <SelectItem key={food.Descripcion}>
@@ -3085,7 +3087,7 @@ export default function App() {
                                     ))}
                                   </Select>
 
-                                  <aside className="search-button">
+                                  {/* <aside className="search-button">
                                     <div className="container">
                                       <span className="lupa">
                                         <SearchIcon />
@@ -3099,26 +3101,28 @@ export default function App() {
                                           setFoodFiltro2(e.target.value);
                                         }} />
                                     </div>
-                                  </aside>
+                                  </aside> */}
                                 </div>
                                 <div className="flex">
 
-                                  <Input
-                                    className="mr-2"
+                                  <input
+                                    className="mr-2 pl-5 rounded-xl"
                                     name="restaurante"
-                                    label="Ingrese la cantidad"
+                                    placeholder="Ingrese la cantidad"
                                     type="number"
                                     value={isNaN(cantidadFood2) ? '' : cantidadFood2}
                                     onChange={(e) => {
                                       const value = parseInt(e.target.value);
                                       setCantidadFood2(isNaN(value) ? '' : value);
                                     }}
+                                    style={{height:"40px", backgroundColor:"#f4f4f5"}}
                                   />
-                                  <Input
+                                  <input
                                     disabled
                                     label="Stock"
                                     className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
                                     placeholder={`   ${cantidadFood2Disponible}`}
+                                    style={{height:"40px", backgroundColor:"#f4f4f5"}}
                                   />
                                   <Select
                                     className="ml-2"
@@ -3136,6 +3140,7 @@ export default function App() {
                                         setCantidadFood2Disponible(food2SeleccionadaInfo.CantidadInicial);
                                       }
                                     }}
+                                    style={{height:"40px", backgroundColor:"#f4f4f5"}}
                                   >
                                     {foodFiltradas3.map((food) => (
                                       <SelectItem key={food.Descripcion}>
@@ -3143,7 +3148,7 @@ export default function App() {
                                       </SelectItem>
                                     ))}
                                   </Select>
-                                  <aside className="search-button">
+                                  {/* <aside className="search-button">
                                     <div className="container">
                                       <span className="lupa">
                                         <SearchIcon />
@@ -3157,26 +3162,28 @@ export default function App() {
                                           setFoodFiltro3(e.target.value);
                                         }} />
                                     </div>
-                                  </aside>
+                                  </aside> */}
                                 </div>
                                 <div className="flex">
 
-                                  <Input
-                                    className="mr-2"
+                                  <input
+                                    className="mr-2 pl-5 rounded-xl"
                                     name="restaurante"
-                                    label="Ingrese la cantidad"
+                                    placeholder="Ingrese la cantidad"
                                     type="number"
                                     value={isNaN(cantidadFood3) ? '' : cantidadFood3}
                                     onChange={(e) => {
                                       const value = parseInt(e.target.value);
                                       setCantidadFood3(isNaN(value) ? '' : value);
                                     }}
+                                    style={{height:"40px", backgroundColor:"#f4f4f5"}}
                                   />
-                                  <Input
+                                  <input
                                     disabled
                                     label="Stock"
                                     className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
                                     placeholder={`   ${cantidadFood3Disponible}`}
+                                    style={{height:"40px", backgroundColor:"#f4f4f5"}}
                                   />
                                   <Select
                                     className="ml-2"
@@ -3194,6 +3201,7 @@ export default function App() {
                                         setCantidadFood3Disponible(food3SeleccionadaInfo.CantidadInicial);
                                       }
                                     }}
+                                    style={{height:"40px", backgroundColor:"#f4f4f5"}}
                                   >
                                     {foodFiltradas4.map((food) => (
                                       <SelectItem key={food.Descripcion}>
@@ -3201,7 +3209,7 @@ export default function App() {
                                       </SelectItem>
                                     ))}
                                   </Select>
-                                  <aside className="search-button">
+                                  {/* <aside className="search-button">
                                     <div className="container">
                                       <span className="lupa">
                                         <SearchIcon />
@@ -3215,26 +3223,28 @@ export default function App() {
                                           setFoodFiltro4(e.target.value);
                                         }} />
                                     </div>
-                                  </aside>
+                                  </aside> */}
                                 </div>
                                 <div className="flex">
 
-                                  <Input
-                                    className="mr-2"
+                                  <input
+                                    className="mr-2 pl-5 rounded-xl"
                                     name="restaurante"
-                                    label="Ingrese la cantidad"
+                                    placeholder="Ingrese la cantidad"
                                     type="number"
                                     value={isNaN(cantidadFood4) ? '' : cantidadFood4}
                                     onChange={(e) => {
                                       const value = parseInt(e.target.value);
                                       setCantidadFood4(isNaN(value) ? '' : value);
                                     }}
+                                    style={{height:"40px", backgroundColor:"#f4f4f5"}}
                                   />
-                                  <Input
+                                  <input
                                     disabled
                                     label="Stock"
                                     className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
                                     placeholder={`   ${cantidadFood4Disponible}`}
+                                    style={{height:"40px", backgroundColor:"#f4f4f5"}}
                                   />
                                   <Select
                                     className="ml-2"
@@ -3252,6 +3262,7 @@ export default function App() {
                                         setCantidadFood4Disponible(food4SeleccionadaInfo.CantidadInicial);
                                       }
                                     }}
+                                    style={{height:"40px", backgroundColor:"#f4f4f5"}}
                                   >
                                     {foodFiltradas5.map((food) => (
                                       <SelectItem key={food.Descripcion}>
@@ -3259,7 +3270,7 @@ export default function App() {
                                       </SelectItem>
                                     ))}
                                   </Select>
-                                  <aside className="search-button">
+                                  {/* <aside className="search-button">
                                     <div className="container">
                                       <span className="lupa">
                                         <SearchIcon />
@@ -3273,7 +3284,7 @@ export default function App() {
                                           setFoodFiltro5(e.target.value);
                                         }} />
                                     </div>
-                                  </aside>
+                                  </aside> */}
                                 </div>
                               </ModalBody>
                               <ModalFooter>
@@ -3287,32 +3298,29 @@ export default function App() {
 
 
                             </Tab>
-                            <Tab key="menu2" title="subProductos" className=" flex flex-col">
-                              <ModalHeader className="flex flex-col gap-1">COMIDAS  </ModalHeader>
-                              <Checkbox
-                                checked={esCortesia}
-                                onChange={handleCortesiaChange}
-                              >
-                                Cortesía pasadia
-                              </Checkbox>
+                            <Tab key="menu2" title="subProductos" className=" flex flex-col p-5">
+                              <ModalHeader className="flex flex-col gap-1 pb-10">COMIDAS  </ModalHeader>
+                              
 
-                              <div className="flex mb-3">
-                                <Input
-                                  className="mr-2"
+                              <div className="flex mb-3 ">
+                                <input
+                                  className="mr-2 pl-5 rounded-xl"
                                   name="restaurante"
-                                  label="Ingrese la cantidad"
+                                  placeholder="Ingrese la cantidad"
                                   type="number"
                                   value={isNaN(cantidadItem) ? '' : cantidadItem}
                                   onChange={(e) => {
                                     const value = parseInt(e.target.value);
                                     setCantidadItem(isNaN(value) ? '' : value);
                                   }}
+                                  style={{height:"40px", backgroundColor:"#f4f4f5"}}
                                 />
-                                <Input
+                                <input
                                   disabled
                                   label="Stock"
                                   className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
                                   placeholder={` ${cantidadFoodDisponible}`}
+                                  style={{height:"40px", backgroundColor:"#f4f4f5"}}
                                 />
                                 <Select
                                   className="ml-2"
@@ -3332,6 +3340,7 @@ export default function App() {
                                       setCantidadFoodDisponible(itemSeleccionadaInfo.cantidadPadre);
                                     }
                                   }}
+                                  style={{height:"40px", backgroundColor:"#f4f4f5"}}
                                 >
                                   {comidas.map((food) => (
                                     <SelectItem key={food.Descripcion}>
@@ -3339,22 +3348,198 @@ export default function App() {
                                     </SelectItem>
                                   ))}
                                 </Select>
+                              </div>
 
-                                <aside className="search-button">
-                                  <div className="container">
-                                    <span className="lupa">
-                                      <SearchIcon />
-                                    </span>
-                                    <input
-                                      type="search"
-                                      id="search"
-                                      placeholder="¿Qué quieres buscar?"
-                                      value={foodFiltro}
-                                      onChange={(e) => {
-                                        setFoodFiltro(e.target.value);
-                                      }} />
-                                  </div>
-                                </aside>
+                              <div className="flex mb-3">
+                                <input
+                                  className="mr-2 pl-5 rounded-xl"
+                                  name="restaurante"
+                                  placeholder="Ingrese la cantidad"
+                                  type="number"
+                                  value={isNaN(cantidadItem) ? '' : cantidadItem}
+                                  onChange={(e) => {
+                                    const value = parseInt(e.target.value);
+                                    setCantidadItem(isNaN(value) ? '' : value);
+                                  }}
+                                  style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                />
+                                <input
+                                  disabled
+                                  label="Stock"
+                                  className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
+                                  placeholder={` ${cantidadFoodDisponible}`}
+                                  style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                />
+                                <Select
+                                  className="ml-2"
+                                  name="restaurante"
+                                  label="Seleccionar comida"
+                                  value={itemSeleccionado}
+                                  onChange={(e) => {
+                                    const selectedItem = e.target.value;
+                                    setItemSeleccionado(selectedItem);
+
+                                    const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
+
+                                    if (itemSeleccionadaInfo) {
+                                      setPrecioItemSeleccionado(itemSeleccionadaInfo.ValorUnitario);
+                                      setItemSeleccionadoId(itemSeleccionadaInfo.idPadre);
+                                      setSubItemSeleccionadoId(itemSeleccionadaInfo._id)
+                                      setCantidadFoodDisponible(itemSeleccionadaInfo.cantidadPadre);
+                                    }
+                                  }}
+                                  style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                >
+                                  {comidas.map((food) => (
+                                    <SelectItem key={food.Descripcion}>
+                                      {food.Descripcion}
+                                    </SelectItem>
+                                  ))}
+                                </Select>
+                              </div>
+
+                              <div className="flex mb-3">
+                                <input
+                                  className="mr-2 pl-5 rounded-xl"
+                                  name="restaurante"
+                                  placeholder="Ingrese la cantidad"
+                                  type="number"
+                                  value={isNaN(cantidadItem) ? '' : cantidadItem}
+                                  onChange={(e) => {
+                                    const value = parseInt(e.target.value);
+                                    setCantidadItem(isNaN(value) ? '' : value);
+                                  }}
+                                  style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                />
+                                <input
+                                  disabled
+                                  label="Stock"
+                                  className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
+                                  placeholder={` ${cantidadFoodDisponible}`}
+                                  style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                />
+                                <Select
+                                  className="ml-2"
+                                  name="restaurante"
+                                  label="Seleccionar comida"
+                                  value={itemSeleccionado}
+                                  onChange={(e) => {
+                                    const selectedItem = e.target.value;
+                                    setItemSeleccionado(selectedItem);
+
+                                    const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
+
+                                    if (itemSeleccionadaInfo) {
+                                      setPrecioItemSeleccionado(itemSeleccionadaInfo.ValorUnitario);
+                                      setItemSeleccionadoId(itemSeleccionadaInfo.idPadre);
+                                      setSubItemSeleccionadoId(itemSeleccionadaInfo._id)
+                                      setCantidadFoodDisponible(itemSeleccionadaInfo.cantidadPadre);
+                                    }
+                                  }}
+                                  style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                >
+                                  {comidas.map((food) => (
+                                    <SelectItem key={food.Descripcion}>
+                                      {food.Descripcion}
+                                    </SelectItem>
+                                  ))}
+                                </Select>
+                              </div>
+
+                              <div className="flex mb-3">
+                                <input
+                                  className="mr-2 pl-5 rounded-xl"
+                                  name="restaurante"
+                                  placeholder="Ingrese la cantidad"
+                                  type="number"
+                                  value={isNaN(cantidadItem) ? '' : cantidadItem}
+                                  onChange={(e) => {
+                                    const value = parseInt(e.target.value);
+                                    setCantidadItem(isNaN(value) ? '' : value);
+                                  }}
+                                  style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                />
+                                <input
+                                  disabled
+                                  label="Stock"
+                                  className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
+                                  placeholder={` ${cantidadFoodDisponible}`}
+                                  style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                />
+                                <Select
+                                  className="ml-2"
+                                  name="restaurante"
+                                  label="Seleccionar comida"
+                                  value={itemSeleccionado}
+                                  onChange={(e) => {
+                                    const selectedItem = e.target.value;
+                                    setItemSeleccionado(selectedItem);
+
+                                    const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
+
+                                    if (itemSeleccionadaInfo) {
+                                      setPrecioItemSeleccionado(itemSeleccionadaInfo.ValorUnitario);
+                                      setItemSeleccionadoId(itemSeleccionadaInfo.idPadre);
+                                      setSubItemSeleccionadoId(itemSeleccionadaInfo._id)
+                                      setCantidadFoodDisponible(itemSeleccionadaInfo.cantidadPadre);
+                                    }
+                                  }}
+                                  style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                >
+                                  {comidas.map((food) => (
+                                    <SelectItem key={food.Descripcion}>
+                                      {food.Descripcion}
+                                    </SelectItem>
+                                  ))}
+                                </Select>
+                              </div>
+
+                              <div className="flex mb-3">
+                                <input
+                                  className="mr-2 pl-5 rounded-xl"
+                                  name="restaurante"
+                                  placeholder="Ingrese la cantidad"
+                                  type="number"
+                                  value={isNaN(cantidadItem) ? '' : cantidadItem}
+                                  onChange={(e) => {
+                                    const value = parseInt(e.target.value);
+                                    setCantidadItem(isNaN(value) ? '' : value);
+                                  }}
+                                  style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                />
+                                <input
+                                  disabled
+                                  label="Stock"
+                                  className="w-40 text-blue-500 border-2 border-blue-400 rounded-xl"
+                                  placeholder={` ${cantidadFoodDisponible}`}
+                                  style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                />
+                                <Select
+                                  className="ml-2"
+                                  name="restaurante"
+                                  label="Seleccionar comida"
+                                  value={itemSeleccionado}
+                                  onChange={(e) => {
+                                    const selectedItem = e.target.value;
+                                    setItemSeleccionado(selectedItem);
+
+                                    const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
+
+                                    if (itemSeleccionadaInfo) {
+                                      setPrecioItemSeleccionado(itemSeleccionadaInfo.ValorUnitario);
+                                      setItemSeleccionadoId(itemSeleccionadaInfo.idPadre);
+                                      setSubItemSeleccionadoId(itemSeleccionadaInfo._id)
+                                      setCantidadFoodDisponible(itemSeleccionadaInfo.cantidadPadre);
+                                    }
+                                  }}
+                                  style={{height:"40px", backgroundColor:"#f4f4f5"}}
+                                >
+                                  {comidas.map((food) => (
+                                    <SelectItem key={food.Descripcion}>
+                                      {food.Descripcion}
+                                    </SelectItem>
+                                  ))}
+                                </Select>
                               </div>
                               <ModalFooter>
                                 <Button color="danger" variant="light" onPress={closeModalF}>
