@@ -492,7 +492,7 @@ export default function App() {
 
 
       </div>
-      <section className="flex coluns-2  mx-5">
+      {/* <section className="flex coluns-2  mx-5">
         <Table className=" text-center uppercase max-w-full overflow-y-auto table-fixed" aria-label="Lista de Usuarios"
           color="danger"
           selectionMode="multiple"
@@ -504,10 +504,8 @@ export default function App() {
             <TableColumn className="text-center">Tipo</TableColumn>
             <TableColumn className="text-center">fecha de caducidad</TableColumn>
             <TableColumn className="text-center">Cantidad</TableColumn>
-            {/* --------------------------------------------------------------- */}
             <TableColumn className="text-center">Valor De Venta</TableColumn>
             <TableColumn className="text-center">Productos Vendidos</TableColumn>
-            {/* --------------------------------------------------------------- */}
             <TableColumn className="text-center">Total de la venta</TableColumn>
             <TableColumn className="text-center">Cantidad restante</TableColumn>
             <TableColumn className="text-center">
@@ -670,7 +668,7 @@ export default function App() {
             ))}
           </TableBody>
         </Table>
-      </section>
+      </section> */}
 
 
     </div>

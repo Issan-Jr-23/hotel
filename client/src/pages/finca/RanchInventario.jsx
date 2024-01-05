@@ -21,12 +21,14 @@ import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import { DeleteDocumentIcon } from "../iconos/DeleteDocumentIcon.jsx"
 import { EditDocumentIcon } from "../iconos/EditDocumentIcon.jsx"
 import { VerticalDotsIcon } from '../iconos/VerticalDotsIcon.jsx';
-import { Dropdown, DropdownTrigger, DropdownItem, DropdownMenu, Button } from '@nextui-org/react';
+// import { Dropdown, DropdownTrigger, DropdownItem, DropdownMenu, Button } from '@nextui-org/react';
 import Backdrop from '@mui/material/Backdrop';
 import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
 import pi from "../../images/personajes-ilustrados.png"
 import "../css/inventario.css"
+import { MenuItem, Menu } from '@mui/material';
+import Button from '@mui/material/Button';
 
 function createData(_id, Descripcion, tipo, Caducidad, CantidadInicial, ValorUnitario, ProductosVendidos, Cortesias, history, subproductsData) {
     return {
@@ -50,8 +52,55 @@ function Row(props) {
     const [isEditing, setIsEditing] = React.useState(false);
     const [isEditingSubproducto, setIsEditingSubproducto] = React.useState(false);
     const [openM, setOpenM] = React.useState(false);
-    const handleOpenM = () => setOpenM(true);
+    const [openMod, setOpenMod] = React.useState(false);
+    // const handleOpenMod = () => setOpenMod(true);
+    const handleCloseMod = () => setOpenMod(false);
     const handleCloseM = () => setOpenM(false);
+    const [productoSeleccionado, setProductoSeleccionado] = useState({})
+    const [subProductoSeleccionado, setSubProductoSeleccionado] = useState({})
+    const [miValor, setMiValor] = useState('');
+    const [miValorM, setMiValorM] = useState('');
+
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const opens = Boolean(anchorEl);
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+
+    const handleOpenM = () => {
+        setProductoSeleccionado(row);
+        setOpenM(true)
+
+    }
+
+    const handleOpenMod = (idSubproducto) => {
+        const subproductoEncontrado = row.subproductsData.find(subproducto => subproducto._id === idSubproducto);
+
+        if (subproductoEncontrado) {
+            setSubProductoSeleccionado(subproductoEncontrado);
+            setOpenMod(true);
+        } else {
+            console.error("Subproducto no encontrado");
+        }
+    };
+
+
+    const handleChange = (event) => {
+        setMiValor(event.target.value);
+    };
+
+    const handleChanges = (event) => {
+        setSubProductoSeleccionado({
+            ...subProductoSeleccionado,
+            [event.target.name]: event.target.value
+        });
+    };
+
+
     const [editedValues, setEditedValues] = React.useState({
         Descripcion: row.Descripcion,
         tipo: row.tipo,
@@ -61,24 +110,14 @@ function Row(props) {
         ProductosVendidos: row.ProductosVendidos
     });
 
-    const [editedValuesSubproduct, setEditedValuesSubproduct] = React.useState({
-        Descripcion: hasSubproducts.Descripcion,
-        ValorUnitario: hasSubproducts.ValorUnitario,
-        ProductosVendidos: hasSubproducts.ProductosVendidos,
-        Cortesias: hasSubproducts.Cortesias
-    });
-
 
     const handleEditClick = () => {
         setIsEditing(true);
     };
-    const handleEditClickSubproducto = () => {
-        setIsEditingSubproducto(true);
-    };
+
 
     const handleCancelEdit = () => {
         setIsEditing(false);
-        // Reset edited values to the original values
         setEditedValues({
             Descripcion: row.Descripcion,
             tipo: row.tipo,
@@ -89,15 +128,7 @@ function Row(props) {
         });
     };
 
-    const handleCancelEditSubproduct = () => {
-        setIsEditingSubproducto(false);
-        // Reset edited values to the original values
-        setEditedValuesSubproduct({
-            ValorUnitario: subproduct.ValorUnitario,
-            ProductosVendidos: subproduct.ProductosVendidos,
-            Cortesias: subproduct.Cortesias
-        });
-    };
+
 
     const handleSaveEdit = async () => {
         setIsEditing(false);
@@ -113,6 +144,40 @@ function Row(props) {
         await fetchProducts();
     };
 
+
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setEditedValues((prevValues) => ({
+            ...prevValues,
+            [name]: value,
+        }));
+    };
+
+    //*********************************** Edición de subproductos ***************************
+
+    const [editedValuesSubproduct, setEditedValuesSubproduct] = React.useState({
+        Descripcion: hasSubproducts.Descripcion,
+        ValorUnitario: hasSubproducts.ValorUnitario,
+        ProductosVendidos: hasSubproducts.ProductosVendidos,
+        Cortesias: hasSubproducts.Cortesias
+    });
+
+    const handleEditClickSubproducto = () => {
+        setIsEditingSubproducto(true);
+    };
+
+
+    const handleCancelEditSubproduct = () => {
+        setIsEditingSubproducto(false);
+        // Reset edited values to the original values
+        setEditedValuesSubproduct({
+            ValorUnitario: subproduct.ValorUnitario,
+            ProductosVendidos: subproduct.ProductosVendidos,
+            Cortesias: subproduct.Cortesias
+        });
+    };
+
     const handleSaveEditSubproduct = async () => {
         setIsEditingSubproducto(false);
         onEditSubproducto(
@@ -125,13 +190,14 @@ function Row(props) {
         await fetchProducts();
     };
 
-    const handleInputChange = (e) => {
+    const handleInputChangeSubproducto = (e) => {
         const { name, value } = e.target;
-        setEditedValues((prevValues) => ({
+        setEditedValuesSubproduct((prevValues) => ({
             ...prevValues,
             [name]: value,
         }));
     };
+
 
     const style = {
         position: 'absolute',
@@ -145,6 +211,50 @@ function Row(props) {
         boxShadow: 24,
         p: 4,
     };
+
+
+
+    // const handleSave = async () => {
+
+    //     try {
+    //         const response = await AxiosInstance.put(`ruta-para-actualizar${id_del_regisro}`, {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             body: JSON.stringify(updatedData),
+    //         });
+
+    //         if (response.ok) {
+    //             console.log("Datos actualizados con éxito");
+    //             handleCloseMod();
+    //         } else {
+    //             console.error("Error al actualizar los datos");
+    //         }
+    //     } catch (error) {
+    //         console.error("Error en la petición: ", error);
+    //     }
+    // };
+
+    const handleSave = async (id, editedName) => {
+        console.log( "  *********************  " , id)
+        console.log("id********", editedName)
+        try {
+            await AxiosInstance.put(
+                `/update-producto-subproducto/${id}`,
+                {
+                    Descripcion: editedName,
+                }
+            );
+            // Optional: Show a success message
+            console.log('Product updated successfully');
+        } catch (error) {
+            console.error("Error al actualizar producto:", error);
+            alert("Error al actualizar producto. Por favor, inténtalo de nuevo más tarde.");
+        }
+    };
+
+
 
 
 
@@ -268,91 +378,121 @@ function Row(props) {
                         )}
                     </div>
                 </TableCell>
-                {hasSubproducts ? (
 
-                    null
+                <TableCell>
+                    <Button
+                        id="basic-button"
+                        aria-controls={opens ? 'basic-menu' : undefined}
+                        aria-haspopup="true"
+                        aria-expanded={opens ? 'true' : undefined}
+                        onClick={handleClick}
+                    >
+                        <VerticalDotsIcon />
+                    </Button>
+                    <Menu
+                        id="basic-menu"
+                        anchorEl={anchorEl}
+                        open={opens}
+                        onClose={handleClose}
+                        MenuListProps={{
+                            'aria-labelledby': 'basic-button',
+                        }}
+                    >
+                        <MenuItem onClick={handleOpenM}>edit file</MenuItem>
 
-                ) : (
-                    <TableCell>
-                        <Dropdown>
-                            <DropdownTrigger>
-                                <Button className='bg-inherent'>
+                    </Menu>
+                    <Modal
+                        aria-labelledby="transition-modal-title"
+                        aria-describedby="transition-modal-description"
+                        open={openM}
+                        onClose={handleCloseM}
+                        closeAfterTransition
+                        slots={{ backdrop: Backdrop }}
+                        slotProps={{
+                            backdrop: {
+                                timeout: 500,
+                            },
+                        }}
+                    >
+                        <Fade in={openM}>
+                            <Box sx={style}>
+                                <Typography id="transition-modal-title" variant="h6" component="h2">
+                                    Product Details
+                                </Typography>
+                                <div id="transition-modal-description">
+                                    <figure className='inventario-box-option-00-figure'>
+                                        <img className='inventario-box-option-00-img' src={pi} alt="" />
+                                    </figure>
+                                    <section>
 
-                                    <VerticalDotsIcon />
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu aria-label="Static Actions">
-                                <DropdownItem key="new">Confirmacion entrega de dinero</DropdownItem>
-                                <DropdownItem key="copy">Copy link</DropdownItem>
-                                <DropdownItem key="edit" onClick={handleOpenM}>Edit file</DropdownItem>
-                                <DropdownItem key="delete" className="text-danger" color="danger">
-                                    Delete file
-                                </DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
-                        <Modal
-                            aria-labelledby="transition-modal-title"
-                            aria-describedby="transition-modal-description"
-                            open={openM}
-                            onClose={handleCloseM}
-                            closeAfterTransition
-                            slots={{ backdrop: Backdrop }}
-                            slotProps={{
-                                backdrop: {
-                                    timeout: 500,
-                                },
-                            }}
-                        >
-                            <Fade in={openM}>
-                                <Box sx={style}>
-                                    <Typography id="transition-modal-title" variant="h6" component="h2">
-                                        Detalles del productos
-                                    </Typography>
-                                    <Typography id="transition-modal-description">
-                                        <div>
-                                            <figure className='inventario-box-option-00-figure'>
-
-                                                <img className='inventario-box-option-00-img' src={pi} alt="" />
-                                            </figure>
-                                            <section>
-                                                <span className='inventario-box-option-cont-input-01 '>
-                                                    <label htmlFor="" className='inventario-box-option-input-01-label'>Name</label>
-                                                    <input type="text" className=' inventario-box-option-input-01 outline-none pl-2 mb-2' />
-                                                </span>
-                                                <span className='inventario-box-option-cont-input-01 '>
-                                                    <label htmlFor="" className='inventario-box-option-input-01-label'>Category</label>
-                                                    <input type="text" className=' inventario-box-option-input-01 outline-none pl-2 mb-2' />
-                                                </span>
-
-                                                <article className='inventario-box-option-cont-input-02-article'>
-                                                    <span className='inventario-box-option-cont-input-01 mr-2'>
-                                                        <label htmlFor="" className='inventario-box-option-input-01-label'>Price</label>
-                                                        <input type="text" className=' inventario-box-option-input-01 outline-none pl-2 mb-2' />
-                                                    </span>
-                                                    <span className='inventario-box-option-cont-input-01 ml-2'>
-                                                        <label htmlFor="" className='inventario-box-option-input-01-label'>Quantity</label>
-                                                        <input type="text" className=' inventario-box-option-input-01 outline-none pl-2 mb-2' />
-                                                    </span>
-                                                </article>
-                                            </section>
-                                            <div className='flex justify-end mt-3'>
-                                                <Button variant="outlined" startIcon={<DeleteIcon />} className="mr-2" style={{ border: "2px solid rgb(7, 182, 213)", color: "rgb(7, 182, 213)", fontWeight: "600" }}>
-                                                    Cancelar
-                                                </Button>
-                                                <Button variant="contained" endIcon={<SendIcon />} style={{ backgroundColor: "rgb(7, 182, 213)", color: "white", fontWeight: "600" }}>
-                                                    Guardar
-                                                </Button>
-                                            </div>
+                                        <div className='inventario-box-option-cont-input-01 '>
+                                            <label htmlFor="" className='inventario-box-option-input-01-label'>Name</label>
+                                            <input
+                                                type="text"
+                                                value={productoSeleccionado.Descripcion || ''}
+                                                onChange={handleChange}
+                                                className=' inventario-box-option-input-01 outline-none pl-2 mb-2' />
                                         </div>
-                                    </Typography>
-                                </Box>
-                            </Fade>
-                        </Modal>
-                    </TableCell>
+
+
+                                        <div className='inventario-box-option-cont-input-01 '>
+                                            <label htmlFor="" className='inventario-box-option-input-01-label'>Category</label>
+                                            <input
+                                                type="text"
+                                                value={productoSeleccionado.tipo || ''}
+                                                onChange={handleChange}
+                                                className=' inventario-box-option-input-01 outline-none pl-2 mb-2' />
+                                        </div>
+
+
+                                        <article className='inventario-box-option-cont-input-02-article'>
+                                            <div className='inventario-box-option-cont-input-01 mr-2'>
+                                                <label htmlFor="" className='inventario-box-option-input-01-label'>Price</label>
+                                                <input
+                                                    type="text"
+                                                    value={productoSeleccionado.ValorUnitario || ''}
+                                                    onChange={handleChange}
+                                                    className=' inventario-box-option-input-01 outline-none pl-2 mb-2' />
+                                            </div>
+                                            <div className='inventario-box-option-cont-input-01 ml-2'>
+                                                <label htmlFor="" className='inventario-box-option-input-01-label'>Quantity</label>
+                                                <input
+                                                    type="text"
+                                                    value={productoSeleccionado.CantidadInicial || ''}
+                                                    onChange={handleChange}
+                                                    className=' inventario-box-option-input-01 outline-none pl-2 mb-2' />
+                                            </div>
+                                        </article>
+
+
+                                        <div className='inventario-box-option-cont-input-01 '>
+                                            <label htmlFor="" className='inventario-box-option-input-01-label'>Productos Vendidos</label>
+                                            <input
+                                                type="text"
+                                                value={productoSeleccionado.ProductosVendidos || ''}
+                                                onChange={handleChange}
+                                                className=' inventario-box-option-input-01 outline-none pl-2 mb-2' />
+                                        </div>
+                                    </section>
+
+                                    <div className='flex justify-end mt-3'>
+                                        <Button variant="outlined" startIcon={<DeleteIcon />} className="mr-2" style={{ border: "2px solid rgb(7, 182, 213)", color: "rgb(7, 182, 213)", fontWeight: "600" }}>
+                                            Cancelar
+                                        </Button>
+                                        <Button  variant="contained" className='ml-2' endIcon={<SendIcon />} style={{ backgroundColor: "rgb(7, 182, 213)", color: "white", fontWeight: "600", marginLeft: "10px" }}>
+                                            Guardar
+                                        </Button>
+                                    </div>
+
+                                </div>
+                            </Box>
+                        </Fade>
+                    </Modal>
+                </TableCell>
 
 
 
-                )}
+
 
             </TableRow>
             {hasSubproducts && (
@@ -400,27 +540,33 @@ function Row(props) {
                                                         </div>
                                                     </TableCell>
                                                     <TableCell>
-                                                        <Dropdown>
-                                                            <DropdownTrigger>
-                                                                <Button className='bg-inherent' >
+                                                        <Button
+                                                            id="basic-button"
+                                                            aria-controls={opens ? 'basic-menu' : undefined}
+                                                            aria-haspopup="true"
+                                                            aria-expanded={opens ? 'true' : undefined}
+                                                            onClick={handleClick}
+                                                        >
+                                                            <VerticalDotsIcon />
+                                                        </Button>
+                                                        <Menu
+                                                            id="basic-menu"
+                                                            anchorEl={anchorEl}
+                                                            open={opens}
+                                                            onClose={handleClose}
+                                                            MenuListProps={{
+                                                                'aria-labelledby': 'basic-button',
+                                                            }}
+                                                        >
+                                                            <MenuItem onClick={() => handleOpenMod(subproduct._id)} >edit file</MenuItem>
+                                                            <MenuItem onClick={() => onDeleteSubproducto(row._id, subproduct._id)} >Delete file</MenuItem>
 
-                                                                    <VerticalDotsIcon />
-                                                                </Button>
-                                                            </DropdownTrigger>
-                                                            <DropdownMenu aria-label="Static Actions">
-                                                                <DropdownItem key="copy" color='primary'>Confirmación de pago</DropdownItem>
-                                                                <DropdownItem key="new" onClick={() => onDeleteSubproducto(row._id, subproduct._id)} color='danger' className="text-danger" >Delete file</DropdownItem>
-                                                                <DropdownItem key="edit" onClick={handleOpenM}>Edit file</DropdownItem>
-                                                                <DropdownItem key="delete" className="text-danger" color="danger">
-                                                                    Delete file
-                                                                </DropdownItem>
-                                                            </DropdownMenu>
-                                                        </Dropdown>
+                                                        </Menu>
                                                         <Modal
                                                             aria-labelledby="transition-modal-title"
                                                             aria-describedby="transition-modal-description"
-                                                            open={openM}
-                                                            onClose={handleCloseM}
+                                                            open={openMod}
+                                                            onClose={handleCloseMod}
                                                             closeAfterTransition
                                                             slots={{ backdrop: Backdrop }}
                                                             slotProps={{
@@ -429,12 +575,12 @@ function Row(props) {
                                                                 },
                                                             }}
                                                         >
-                                                            <Fade in={openM}>
+                                                            <Fade in={openMod}>
                                                                 <Box sx={style}>
                                                                     <Typography id="transition-modal-title" variant="h6" component="h2">
-                                                                        Detalles del productos
+                                                                        Product Details
                                                                     </Typography>
-                                                                    <Typography id="transition-modal-description">
+                                                                    <Typography id="transition-modal-description" component="div">
                                                                         <div>
                                                                             <figure className='inventario-box-option-00-figure'>
 
@@ -443,29 +589,45 @@ function Row(props) {
                                                                             <section>
                                                                                 <span className='inventario-box-option-cont-input-01 '>
                                                                                     <label htmlFor="" className='inventario-box-option-input-01-label'>Name</label>
-                                                                                    <input type="text" className=' inventario-box-option-input-01 outline-none pl-2 mb-2' />
+                                                                                    <input
+                                                                                        type="text"
+                                                                                        value={subProductoSeleccionado.Descripcion}
+                                                                                        onChange={handleChanges}
+                                                                                        className=' inventario-box-option-input-01 outline-none pl-2 mb-2' />
                                                                                 </span>
                                                                                 <span className='inventario-box-option-cont-input-01 '>
-                                                                                    <label htmlFor="" className='inventario-box-option-input-01-label'>Category</label>
-                                                                                    <input type="text" className=' inventario-box-option-input-01 outline-none pl-2 mb-2' />
+                                                                                    <label htmlFor="" className='inventario-box-option-input-01-label'>Cortesias</label>
+                                                                                    <input
+                                                                                        value={subProductoSeleccionado.Cortesias}
+                                                                                        onChange={handleChanges}
+                                                                                        type="text"
+                                                                                        className=' inventario-box-option-input-01 outline-none pl-2 mb-2' />
                                                                                 </span>
 
                                                                                 <article className='inventario-box-option-cont-input-02-article'>
                                                                                     <span className='inventario-box-option-cont-input-01 mr-2'>
                                                                                         <label htmlFor="" className='inventario-box-option-input-01-label'>Price</label>
-                                                                                        <input type="text" className=' inventario-box-option-input-01 outline-none pl-2 mb-2' />
+                                                                                        <input
+                                                                                            type="text"
+                                                                                            value={subProductoSeleccionado.ValorUnitario}
+                                                                                            onChange={handleChanges}
+                                                                                            className=' inventario-box-option-input-01 outline-none pl-2 mb-2' />
                                                                                     </span>
                                                                                     <span className='inventario-box-option-cont-input-01 ml-2'>
-                                                                                        <label htmlFor="" className='inventario-box-option-input-01-label'>Quantity</label>
-                                                                                        <input type="text" className=' inventario-box-option-input-01 outline-none pl-2 mb-2' />
+                                                                                        <label htmlFor="" className='inventario-box-option-input-01-label'>Quantit  y</label>   
+                                                                                        <input
+                                                                                            type="text"
+                                                                                            value={subProductoSeleccionado.ProductosVendidos}
+                                                                                            onChange={handleChanges}
+                                                                                            className=' inventario-box-option-input-01 outline-none pl-2 mb-2' />
                                                                                     </span>
                                                                                 </article>
                                                                             </section>
                                                                             <div className='flex justify-end mt-3'>
-                                                                                <Button variant="outlined" startIcon={<DeleteIcon />} className="mr-2" style={{ border: "2px solid rgb(7, 182, 213)", color: "rgb(7, 182, 213)", fontWeight: "600" }}>
+                                                                                <Button variant="outlined" startIcon={<DeleteIcon />} className="mr-2" style={{ border: "2px solid rgb(7, 182, 213)", color: "rgb(7, 182, 213)", fontWeight: "600" }} onClick={handleCloseMod}>
                                                                                     Cancelar
                                                                                 </Button>
-                                                                                <Button variant="contained" endIcon={<SendIcon />} style={{ backgroundColor: "rgb(7, 182, 213)", color: "white", fontWeight: "600" }}>
+                                                                                <Button variant="contained" className='ml-2' endIcon={<SendIcon />} style={{ backgroundColor: "rgb(7, 182, 213)", color: "white", fontWeight: "600", marginLeft: "10px" }} onClick={() => handleSave(subProductoSeleccionado._id, subProductoSeleccionado.Descripcion )}>
                                                                                     Guardar
                                                                                 </Button>
                                                                             </div>
@@ -591,6 +753,8 @@ export default function CollapsibleTable() {
             console.log(error);
         }
     };
+
+
 
 
     return (
