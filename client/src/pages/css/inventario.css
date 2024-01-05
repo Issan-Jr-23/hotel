@@ -1,0 +1,49 @@
+
+
+.inventario-box-option-00{
+    height: 300px;
+    overflow: hidden;
+    z-index: 20;
+}
+
+.inventario-box-option-00-figure{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.inventario-box-option-00-img{
+    height: 250px;
+    width: 280px;
+}
+
+.inventario-box-option-input-01-label{
+    font-weight: 600;
+}
+
+.inventario-box-option-input-01{
+    border: 1px solid rgb(164, 164, 164);
+    height: 40px;
+    width: 100%;
+    border-radius: 10px;
+    transition: 0.2s;
+    outline: none;
+    margin-top: 5px;
+}
+
+.inventario-box-option-input-01:hover{
+    border-color: rgb(35, 233, 255);
+    box-shadow: 0px 0px 3px 1px rgb(143, 244, 255)
+}
+
+.inventario-box-option-input-01:focus {
+    border-color: rgb(108, 240, 255);
+    box-shadow: 0px 0px 3px 1px rgb(0, 229, 255);
+    /* Aquí puedes agregar el estilo de outline que desees */
+    /* outline: 2px solid rgb(0, 229, 255);  */
+}
+
+.inventario-box-option-cont-input-02-article{
+    display: flex;
+}

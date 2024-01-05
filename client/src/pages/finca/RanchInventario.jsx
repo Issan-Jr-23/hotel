@@ -15,6 +15,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import AxiosInstance from "../../api/axios.js";
 import DeleteIcon from '@mui/icons-material/Delete';
+import SendIcon from '@mui/icons-material/Send';
 import EditIcon from '@mui/icons-material/Edit';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import { DeleteDocumentIcon } from "../iconos/DeleteDocumentIcon.jsx"
@@ -24,6 +25,8 @@ import { Dropdown, DropdownTrigger, DropdownItem, DropdownMenu, Button } from '@
 import Backdrop from '@mui/material/Backdrop';
 import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
+import pi from "../../images/personajes-ilustrados.png"
+import "../css/inventario.css"
 
 function createData(_id, Descripcion, tipo, Caducidad, CantidadInicial, ValorUnitario, ProductosVendidos, Cortesias, history, subproductsData) {
     return {
@@ -135,11 +138,13 @@ function Row(props) {
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
+        height: "90vh",
         width: 400,
+        overflow: "scroll",
         bgcolor: 'background.paper',
         boxShadow: 24,
         p: 4,
-      };
+    };
 
 
 
@@ -279,17 +284,76 @@ function Row(props) {
                             <DropdownMenu aria-label="Static Actions">
                                 <DropdownItem key="new">Confirmacion entrega de dinero</DropdownItem>
                                 <DropdownItem key="copy">Copy link</DropdownItem>
-                                <DropdownItem key="edit">Edit file</DropdownItem>
+                                <DropdownItem key="edit" onClick={handleOpenM}>Edit file</DropdownItem>
                                 <DropdownItem key="delete" className="text-danger" color="danger">
                                     Delete file
                                 </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
+                        <Modal
+                            aria-labelledby="transition-modal-title"
+                            aria-describedby="transition-modal-description"
+                            open={openM}
+                            onClose={handleCloseM}
+                            closeAfterTransition
+                            slots={{ backdrop: Backdrop }}
+                            slotProps={{
+                                backdrop: {
+                                    timeout: 500,
+                                },
+                            }}
+                        >
+                            <Fade in={openM}>
+                                <Box sx={style}>
+                                    <Typography id="transition-modal-title" variant="h6" component="h2">
+                                        Detalles del productos
+                                    </Typography>
+                                    <Typography id="transition-modal-description">
+                                        <div>
+                                            <figure className='inventario-box-option-00-figure'>
+
+                                                <img className='inventario-box-option-00-img' src={pi} alt="" />
+                                            </figure>
+                                            <section>
+                                                <span className='inventario-box-option-cont-input-01 '>
+                                                    <label htmlFor="" className='inventario-box-option-input-01-label'>Name</label>
+                                                    <input type="text" className=' inventario-box-option-input-01 outline-none pl-2 mb-2' />
+                                                </span>
+                                                <span className='inventario-box-option-cont-input-01 '>
+                                                    <label htmlFor="" className='inventario-box-option-input-01-label'>Category</label>
+                                                    <input type="text" className=' inventario-box-option-input-01 outline-none pl-2 mb-2' />
+                                                </span>
+
+                                                <article className='inventario-box-option-cont-input-02-article'>
+                                                    <span className='inventario-box-option-cont-input-01 mr-2'>
+                                                        <label htmlFor="" className='inventario-box-option-input-01-label'>Price</label>
+                                                        <input type="text" className=' inventario-box-option-input-01 outline-none pl-2 mb-2' />
+                                                    </span>
+                                                    <span className='inventario-box-option-cont-input-01 ml-2'>
+                                                        <label htmlFor="" className='inventario-box-option-input-01-label'>Quantity</label>
+                                                        <input type="text" className=' inventario-box-option-input-01 outline-none pl-2 mb-2' />
+                                                    </span>
+                                                </article>
+                                            </section>
+                                            <div className='flex justify-end mt-3'>
+                                                <Button variant="outlined" startIcon={<DeleteIcon />} className="mr-2" style={{ border: "2px solid rgb(7, 182, 213)", color: "rgb(7, 182, 213)", fontWeight: "600" }}>
+                                                    Cancelar
+                                                </Button>
+                                                <Button variant="contained" endIcon={<SendIcon />} style={{ backgroundColor: "rgb(7, 182, 213)", color: "white", fontWeight: "600" }}>
+                                                    Guardar
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    </Typography>
+                                </Box>
+                            </Fade>
+                        </Modal>
                     </TableCell>
 
 
 
                 )}
+
             </TableRow>
             {hasSubproducts && (
                 <TableRow>
@@ -368,11 +432,44 @@ function Row(props) {
                                                             <Fade in={openM}>
                                                                 <Box sx={style}>
                                                                     <Typography id="transition-modal-title" variant="h6" component="h2">
-                                                                        Editar Subproducto
+                                                                        Detalles del productos
                                                                     </Typography>
-                                                                    <Typography id="transition-modal-description" sx={{ mt: 2 }}>
-                                                                        <input type="text" className='h-12 border-b-2 border-blue-300 outline-none pl-2 mt-2 mb-2'/>
-                                                                        <input type="text" className='h-12 border-b-2 border-blue-300 outline-none pl-2 mt-2 mb-2'/>
+                                                                    <Typography id="transition-modal-description">
+                                                                        <div>
+                                                                            <figure className='inventario-box-option-00-figure'>
+
+                                                                                <img className='inventario-box-option-00-img' src={pi} alt="" />
+                                                                            </figure>
+                                                                            <section>
+                                                                                <span className='inventario-box-option-cont-input-01 '>
+                                                                                    <label htmlFor="" className='inventario-box-option-input-01-label'>Name</label>
+                                                                                    <input type="text" className=' inventario-box-option-input-01 outline-none pl-2 mb-2' />
+                                                                                </span>
+                                                                                <span className='inventario-box-option-cont-input-01 '>
+                                                                                    <label htmlFor="" className='inventario-box-option-input-01-label'>Category</label>
+                                                                                    <input type="text" className=' inventario-box-option-input-01 outline-none pl-2 mb-2' />
+                                                                                </span>
+
+                                                                                <article className='inventario-box-option-cont-input-02-article'>
+                                                                                    <span className='inventario-box-option-cont-input-01 mr-2'>
+                                                                                        <label htmlFor="" className='inventario-box-option-input-01-label'>Price</label>
+                                                                                        <input type="text" className=' inventario-box-option-input-01 outline-none pl-2 mb-2' />
+                                                                                    </span>
+                                                                                    <span className='inventario-box-option-cont-input-01 ml-2'>
+                                                                                        <label htmlFor="" className='inventario-box-option-input-01-label'>Quantity</label>
+                                                                                        <input type="text" className=' inventario-box-option-input-01 outline-none pl-2 mb-2' />
+                                                                                    </span>
+                                                                                </article>
+                                                                            </section>
+                                                                            <div className='flex justify-end mt-3'>
+                                                                                <Button variant="outlined" startIcon={<DeleteIcon />} className="mr-2" style={{ border: "2px solid rgb(7, 182, 213)", color: "rgb(7, 182, 213)", fontWeight: "600" }}>
+                                                                                    Cancelar
+                                                                                </Button>
+                                                                                <Button variant="contained" endIcon={<SendIcon />} style={{ backgroundColor: "rgb(7, 182, 213)", color: "white", fontWeight: "600" }}>
+                                                                                    Guardar
+                                                                                </Button>
+                                                                            </div>
+                                                                        </div>
                                                                     </Typography>
                                                                 </Box>
                                                             </Fade>
