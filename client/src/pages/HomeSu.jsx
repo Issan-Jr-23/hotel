@@ -4,10 +4,11 @@ import { Button, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell
 import mockup from "../images/proyecto.png"
 import hm from "../images/cover_1.jpeg"
 import users from "../images/usuario.png"
-import cabana from "../images/beach-cabana-st.png"
-import PieYes from "../graphs/PeopleReservations.jsx"
-import PieNo from "../graphs/DoughnutAndPie.jsx"
-import { useAuth } from "../context/authContext.jsx";
+import cabana from "../images/beach-cabana-st.png";
+import PieYes from "../graphs/PeopleReservations.jsx";
+import PieNo from "../graphs/DoughnutAndPie.jsx";
+import LineGrafict from "../pages/apexCharts/LineGrafict.jsx"
+import { useAuth } from "../context/authContext.jsx"; 
 import AxiosInstance from '../api/axios.js'
 import "./css/homeSu.css"
 
@@ -286,6 +287,15 @@ const HomeSu = () => {
             <div className=''>
               <h3 className='flex justify-center items-center text-xl uppercase mb-2'  >Clientes con mas compras</h3>
               <article className='article-alto'>
+                
+                <LineGrafict/>
+              </article>
+
+            </div>
+            <div className='const-pieno'>
+              <h3 className='flex justify-center items-center text-xl'>COMPRAS DE USUARIOS</h3>
+              <article className='article-alto cont-pieYes bg-white'>
+                {/* <PieNo/> */}
                 <Table aria-label="Example dynamic collection table" className='overflow-y-auto '>
                   <TableHeader >
                     <TableColumn>ID</TableColumn>
@@ -302,13 +312,6 @@ const HomeSu = () => {
                     ))}
                   </TableBody>
                 </Table>
-              </article>
-
-            </div>
-            <div className='const-pieno'>
-              <h3 className='flex justify-center items-center text-xl'>COMPRAS DE USUARIOS</h3>
-              <article className='article-alto cont-pieYes bg-white'>
-                <PieNo/>
               </article>
 
             </div>

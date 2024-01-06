@@ -12,21 +12,25 @@ const DoughnutChart = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstance.get('/obtener-historial-reservas-si');
-        console.log("Response data:", response.data); 
+        // Obtener reservas de "sí"
+        const responseSi = await AxiosInstance.get('/obtener-historial-reservas-si');
+        let totalReservasSi = responseSi.data.historialReservasSi ? responseSi.data.historialReservasSi.reduce((total, usuario) => total + usuario.reservasSi.length, 0) : 0;
+        totalReservasSi += responseSi.data.reservasSiClientes ? responseSi.data.reservasSiClientes.length : 0;
   
-        let totalReservasSi = 0;
+        // Obtener reservas de "no"
+        const responseNo = await AxiosInstance.get('/obtener-historial-reservas-no');
+        console.log("***************** respuesta de la api", responseNo)
+        let totalReservasNo = responseNo.data.historialReservasSi ? responseNo.data.historialReservasSi.reduce((total, usuario) => total + usuario.reservasSi.length, 0) : 0;
+        totalReservasNo += responseNo.data.reservasSiClientes ? responseNo.data.reservasSiClientes.length : 0;
   
-        response.data.historialReservasSi.forEach(usuario => {
-          totalReservasSi += usuario.reservasSi.length;
-        });
-  
-        totalReservasSi += response.data.reservasSiClientes.length;
-  
-        const dataForChart = [{ name: "Reserva Si", y: totalReservasSi }];
+        // Configurar datos para el gráfico
+        const dataForChart = [
+          { name: "Reserva Si", y: totalReservasSi },
+          { name: "Reserva No", y: totalReservasNo }
+        ];
   
         setData(dataForChart);
-        setTotalReservas(totalReservasSi);
+        setTotalReservas(totalReservasSi + totalReservasNo);
       } catch (error) {
         console.error('Error al obtener los datos: ', error);
       }
@@ -34,6 +38,7 @@ const DoughnutChart = () => {
   
     fetchData();
   }, []);
+  
   
   
   
@@ -59,7 +64,7 @@ const DoughnutChart = () => {
       },
       plotOptions: {
         pie: {
-          innerSize: '90%',
+          innerSize: '70%',
           showInLegend: true
         }
       },

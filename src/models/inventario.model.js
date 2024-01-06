@@ -31,13 +31,11 @@ const inventarioSchema = new mongoose.Schema({
   },
   Caducidad: {
     type: Date,
-    default: function () {
-      return moment().tz("America/Bogota").toDate();
-    },
     set: function (v) {
       return moment(v).tz("America/Bogota").toDate();
     },
   },
+  
   CantidadInicial: {
     type: Number,
     required: true,

@@ -2185,7 +2185,7 @@ export default function App() {
         </div>
 
       </div>
-
+      <h1 className='w-full h-16 flex justify-center items-center text-4xl mb-2 mt-10'>PASADIA</h1>
       <section className="flex mx-5 rounded-t-2xl flex-col">
         {/* Input de búsqueda */}
         <div className="flex justify-end">

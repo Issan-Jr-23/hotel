@@ -60,6 +60,7 @@ function Row(props) {
     const [subProductoSeleccionado, setSubProductoSeleccionado] = useState({})
     const [miValor, setMiValor] = useState('');
     const [miValorM, setMiValorM] = useState('');
+    const [rows, setRows] = useState([]);
 
     const [anchorEl, setAnchorEl] = React.useState(null);
     const opens = Boolean(anchorEl);
@@ -89,8 +90,16 @@ function Row(props) {
     };
 
 
-    const handleChange = (event) => {
-        setMiValor(event.target.value);
+    // const handleChange = (event) => {
+    //     setMiValor(event.target.value);
+    // };
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setProductoSeleccionado((prevValues) => ({
+            ...prevValues,
+            [name]: value,
+        }));
     };
 
     const handleChanges = (event) => {
@@ -114,6 +123,7 @@ function Row(props) {
     const handleEditClick = () => {
         setIsEditing(true);
     };
+
 
 
     const handleCancelEdit = () => {
@@ -214,40 +224,29 @@ function Row(props) {
 
 
 
-    // const handleSave = async () => {
 
-    //     try {
-    //         const response = await AxiosInstance.put(`ruta-para-actualizar${id_del_regisro}`, {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //             },
-    //             body: JSON.stringify(updatedData),
-    //         });
 
-    //         if (response.ok) {
-    //             console.log("Datos actualizados con éxito");
-    //             handleCloseMod();
-    //         } else {
-    //             console.error("Error al actualizar los datos");
-    //         }
-    //     } catch (error) {
-    //         console.error("Error en la petición: ", error);
-    //     }
-    // };
 
-    const handleSave = async (id, editedName) => {
-        console.log( "  *********************  " , id)
+
+    const handleSave = async (id, editedName, editedTipo, editedCaducidad,  editedPrecio , editedCi, editedCv) => {
+        console.log("  *********************  ", id)
         console.log("id********", editedName)
         try {
             await AxiosInstance.put(
-                `/update-producto-subproducto/${id}`,
+                `/update-producto/${id}`,
                 {
                     Descripcion: editedName,
+                    tipo: editedTipo,
+                    Caducidad: editedCaducidad,
+                    CantidadInicial:editedCi,
+                    ValorUnitario:editedPrecio,
+                    ProductosVendidos:editedCv
+
                 }
             );
-            // Optional: Show a success message
+            handleCloseM()
             console.log('Product updated successfully');
+            fetchProducts();
         } catch (error) {
             console.error("Error al actualizar producto:", error);
             alert("Error al actualizar producto. Por favor, inténtalo de nuevo más tarde.");
@@ -362,22 +361,6 @@ function Row(props) {
                 <TableCell align='center'>{row.Cortesias}</TableCell>
                 <TableCell align="center">{(row.ProductosVendidos - row.Cortesias) * row.ValorUnitario}</TableCell>
                 <TableCell align="center">{row.ValorUnitario * row.CantidadInicial}</TableCell>
-                <TableCell className='flex' style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "75px" }}>
-                    <div style={{ width: "120px" }} className='flex justify-evenly items-center' >
-
-                        {isEditing ? (
-                            <>
-                                <button onClick={handleSaveEdit}>Save</button>
-                                <button onClick={handleCancelEdit}>Cancel</button>
-                            </>
-                        ) : (
-                            <>
-                                < EditDocumentIcon onClick={handleEditClick} className="cursor-pointer" />
-                                < DeleteDocumentIcon className='cursor-pointer' onClick={() => onDelete(row._id)} />
-                            </>
-                        )}
-                    </div>
-                </TableCell>
 
                 <TableCell>
                     <Button
@@ -398,7 +381,8 @@ function Row(props) {
                             'aria-labelledby': 'basic-button',
                         }}
                     >
-                        <MenuItem onClick={handleOpenM}>edit file</MenuItem>
+                        <MenuItem onClick={handleOpenM}>Edit file</MenuItem>
+                        <MenuItem onClick={() => onDelete(row._id)}>Delete file</MenuItem>
 
                     </Menu>
                     <Modal
@@ -428,6 +412,7 @@ function Row(props) {
                                         <div className='inventario-box-option-cont-input-01 '>
                                             <label htmlFor="" className='inventario-box-option-input-01-label'>Name</label>
                                             <input
+                                                name='Descripcion'
                                                 type="text"
                                                 value={productoSeleccionado.Descripcion || ''}
                                                 onChange={handleChange}
@@ -439,7 +424,18 @@ function Row(props) {
                                             <label htmlFor="" className='inventario-box-option-input-01-label'>Category</label>
                                             <input
                                                 type="text"
+                                                name='tipo'
                                                 value={productoSeleccionado.tipo || ''}
+                                                onChange={handleChange}
+                                                className=' inventario-box-option-input-01 outline-none pl-2 mb-2' />
+                                        </div>
+
+                                        <div className='inventario-box-option-cont-input-01 '>
+                                            <label htmlFor="" className='inventario-box-option-input-01-label'>Category</label>
+                                            <input
+                                                type="text"
+                                                name='Caducidad'
+                                                value={productoSeleccionado.Caducidad || ''}
                                                 onChange={handleChange}
                                                 className=' inventario-box-option-input-01 outline-none pl-2 mb-2' />
                                         </div>
@@ -450,17 +446,30 @@ function Row(props) {
                                                 <label htmlFor="" className='inventario-box-option-input-01-label'>Price</label>
                                                 <input
                                                     type="text"
+                                                    name='ValorUnitario'
                                                     value={productoSeleccionado.ValorUnitario || ''}
                                                     onChange={handleChange}
+                                                    onKeyDown={(event) => {
+                                                        if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                          event.preventDefault();
+                                                        }
+                                                      }}
                                                     className=' inventario-box-option-input-01 outline-none pl-2 mb-2' />
                                             </div>
                                             <div className='inventario-box-option-cont-input-01 ml-2'>
                                                 <label htmlFor="" className='inventario-box-option-input-01-label'>Quantity</label>
                                                 <input
                                                     type="text"
+                                                    name='CantidadInicial'
                                                     value={productoSeleccionado.CantidadInicial || ''}
                                                     onChange={handleChange}
-                                                    className=' inventario-box-option-input-01 outline-none pl-2 mb-2' />
+                                                    onKeyDown={(event) => {
+                                                        if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                          event.preventDefault();
+                                                        }
+                                                      }}
+                                                    className='inventario-box-option-input-01 outline-none pl-2 mb-2' />
+
                                             </div>
                                         </article>
 
@@ -469,17 +478,29 @@ function Row(props) {
                                             <label htmlFor="" className='inventario-box-option-input-01-label'>Productos Vendidos</label>
                                             <input
                                                 type="text"
+                                                name='ProductosVendidos'
                                                 value={productoSeleccionado.ProductosVendidos || ''}
                                                 onChange={handleChange}
+                                                onKeyDown={(event) => {
+                                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                      event.preventDefault();
+                                                    }
+                                                  }}
                                                 className=' inventario-box-option-input-01 outline-none pl-2 mb-2' />
                                         </div>
                                     </section>
 
                                     <div className='flex justify-end mt-3'>
-                                        <Button variant="outlined" startIcon={<DeleteIcon />} className="mr-2" style={{ border: "2px solid rgb(7, 182, 213)", color: "rgb(7, 182, 213)", fontWeight: "600" }}>
+                                        <Button variant="outlined" startIcon={<DeleteIcon />} className="mr-2" style={{ border: "2px solid rgb(7, 182, 213)", color: "rgb(7, 182, 213)", fontWeight: "600" }} onClick={handleCloseM}>
                                             Cancelar
                                         </Button>
-                                        <Button  variant="contained" className='ml-2' endIcon={<SendIcon />} style={{ backgroundColor: "rgb(7, 182, 213)", color: "white", fontWeight: "600", marginLeft: "10px" }}>
+                                        <Button variant="contained" className='ml-2' endIcon={<SendIcon />} style={{ backgroundColor: "rgb(7, 182, 213)", color: "white", fontWeight: "600", marginLeft: "10px" }} onClick={() => handleSave(productoSeleccionado._id, 
+                                            productoSeleccionado.Descripcion, 
+                                            productoSeleccionado.tipo, 
+                                            productoSeleccionado.Caducidad,
+                                            productoSeleccionado.ValorUnitario, 
+                                            productoSeleccionado.CantidadInicial, 
+                                            productoSeleccionado.ProductosVendidos)}>
                                             Guardar
                                         </Button>
                                     </div>
@@ -614,7 +635,7 @@ function Row(props) {
                                                                                             className=' inventario-box-option-input-01 outline-none pl-2 mb-2' />
                                                                                     </span>
                                                                                     <span className='inventario-box-option-cont-input-01 ml-2'>
-                                                                                        <label htmlFor="" className='inventario-box-option-input-01-label'>Quantit  y</label>   
+                                                                                        <label htmlFor="" className='inventario-box-option-input-01-label'>Quantit  y</label>
                                                                                         <input
                                                                                             type="text"
                                                                                             value={subProductoSeleccionado.ProductosVendidos}
@@ -627,7 +648,7 @@ function Row(props) {
                                                                                 <Button variant="outlined" startIcon={<DeleteIcon />} className="mr-2" style={{ border: "2px solid rgb(7, 182, 213)", color: "rgb(7, 182, 213)", fontWeight: "600" }} onClick={handleCloseMod}>
                                                                                     Cancelar
                                                                                 </Button>
-                                                                                <Button variant="contained" className='ml-2' endIcon={<SendIcon />} style={{ backgroundColor: "rgb(7, 182, 213)", color: "white", fontWeight: "600", marginLeft: "10px" }} onClick={() => handleSave(subProductoSeleccionado._id, subProductoSeleccionado.Descripcion )}>
+                                                                                <Button variant="contained" className='ml-2' endIcon={<SendIcon />} style={{ backgroundColor: "rgb(7, 182, 213)", color: "white", fontWeight: "600", marginLeft: "10px" }} >
                                                                                     Guardar
                                                                                 </Button>
                                                                             </div>
@@ -713,7 +734,6 @@ export default function CollapsibleTable() {
             await AxiosInstance.delete(`/eliminar-mekato/${id}`);
             const updatedProducts = rows.filter((product) => product._id !== id);
             setRows(updatedProducts);
-            // Optional: Show a success message
             console.log('Product deleted successfully');
         } catch (error) {
             console.error("Error al eliminar producto:", error);
@@ -721,38 +741,8 @@ export default function CollapsibleTable() {
         }
     };
 
-    const handleEdit = async (id, editedName, editedType, editedDate, editedCantidad, editedValorUnitario, editedProductosVendidos) => {
-        try {
-            await AxiosInstance.put(
-                `/update-producto/${id}`,
-                {
-                    Descripcion: editedName,
-                    tipo: editedType,
-                    Caducidad: editedDate,
-                    CantidadInicial: editedCantidad,
-                    ValorUnitario: editedValorUnitario,
-                    ProductosVendidos: editedProductosVendidos,
-                }
-            );
-            // Optional: Show a success message
-            console.log('Product updated successfully');
-        } catch (error) {
-            console.error("Error al actualizar producto:", error);
-            alert("Error al actualizar producto. Por favor, inténtalo de nuevo más tarde.");
-        }
-    };
 
-    const handleDeleteSubproducto = async (id, idSubproducto) => {
-        try {
-            await AxiosInstance.delete(`eliminar-subproduct/${id}`, {
-                data: {
-                    idSubproducto: idSubproducto
-                }
-            });
-        } catch (error) {
-            console.log(error);
-        }
-    };
+
 
 
 
@@ -782,8 +772,6 @@ export default function CollapsibleTable() {
                                 key={index}
                                 row={filas}
                                 onDelete={handleDelete}
-                                onEdit={handleEdit}
-                                onDeleteSubproducto={handleDeleteSubproducto}
                                 fetchProducts={fetchProducts}
                             />
                         ))}
