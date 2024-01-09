@@ -203,6 +203,24 @@ export default function App() {
   const [itemSeleccionadoId1, setItemSeleccionadoId1] = useState("");
   const [subItemSeleccionadoId1, setSubItemSeleccionadoId1] = useState("");
 
+  const [cantidadItem2, setCantidadItem2] = useState("");
+  const [itemSeleccionado2, setItemSeleccionado2] = useState("");
+  const [precioItemSeleccionado2, setPrecioItemSeleccionado2] = useState("");
+  const [itemSeleccionadoId2, setItemSeleccionadoId2] = useState("");
+  const [subItemSeleccionadoId2, setSubItemSeleccionadoId2] = useState("");
+
+  const [cantidadItem3, setCantidadItem3] = useState("");
+  const [itemSeleccionado3, setItemSeleccionado3] = useState("");
+  const [precioItemSeleccionado3, setPrecioItemSeleccionado3] = useState("");
+  const [itemSeleccionadoId3, setItemSeleccionadoId3] = useState("");
+  const [subItemSeleccionadoId3, setSubItemSeleccionadoId3] = useState("");
+
+  const [cantidadItem4, setCantidadItem4] = useState("");
+  const [itemSeleccionado4, setItemSeleccionado4] = useState("");
+  const [precioItemSeleccionado4, setPrecioItemSeleccionado4] = useState("");
+  const [itemSeleccionadoId4, setItemSeleccionadoId4] = useState("");
+  const [subItemSeleccionadoId4, setSubItemSeleccionadoId4] = useState("");
+
 
   const [isSaving, setIsSaving] = useState(false);
 
@@ -241,7 +259,7 @@ export default function App() {
     fechaActual.setHours(fechaActual.getHours() - 5);
     return fechaActual.toISOString();
   }
-  console.log("fecha modificada", obtenerFechaConAjuste);
+
 
 
   useEffect(() => {
@@ -733,6 +751,7 @@ export default function App() {
   };
 
   const handleGuardarFood = async () => {
+    console.log("vista *** ", foodSeleccionadaId, foodSeleccionada, selectedClientId)
     if (isSaving) return;
 
     setIsSaving(true);
@@ -1370,7 +1389,7 @@ export default function App() {
 
   const [selectedSize, setSelectedSize] = React.useState('md');
 
-  const handleOpenmf = async (size, userId) => {
+  const handleOpenmf = async (userId) => {
     setSelectedSize(size);
     setSelectedClientId(userId);
     // openModalF();
@@ -1727,7 +1746,7 @@ export default function App() {
 
 
   const actualizarInventarioItem = async (foodId, subproductoId, cantidad) => {
-    console.log("peticion actualizar inventari item: " + foodId, subproductoId, cantidad)
+    console.log("peticion actualizar inventario item: " + foodId, subproductoId, cantidad)
     try {
       const response = await AxiosInstances.post('/update-cantidad-inicial', {
         foodId,
@@ -1768,18 +1787,18 @@ export default function App() {
 
 
   const handleGuardarItem = async () => {
-    if (isSaving) return;
+    console.log("handleGuardarItem ", subItemSeleccionadoId, cantidadItem, subItemSeleccionadoId)
+    // if (isSaving) return;
 
-    setIsSaving(true);
-    if (!selectedClientId || (!subItemSeleccionadoId)) {
+    // setIsSaving(true);
+    console.log()
+    if (!selectedClientId || (!subItemSeleccionadoId && !subItemSeleccionadoId1 && !subItemSeleccionadoId2 && !subItemSeleccionadoId3 && !subItemSeleccionadoId4)) {
       toast.error('No se ha seleccionado un cliente o una comida.');
       return;
     }
 
-    const subproductoId = subItemSeleccionadoId;
-    console.log("..... muestra de datos", subproductoId)
 
-    const checkStockAndUpdateInventory = async (foodId, cantidad) => {
+    const checkStockAndUpdateInventory = async (foodId, subProductoId, cantidad) => {
       console.log("quiero ver quien pasa ese id y cantidad: ", foodId, cantidad)
       const response = await AxiosInstances.get(`/verificar-disponibilidad/${foodId}`);
 
@@ -1862,9 +1881,9 @@ export default function App() {
       }
       console.log("id de la comida seleccionada : " + foodSeleccionadaId)
 
-      let subproductoId = subItemSeleccionadoId;
-      console.log("..... muestra de datos", subproductoId)
-      await actualizarInventarioItem(foodId, subproductoId, cantidad);
+      // let subproductoId = subItemSeleccionadoId;
+      // console.log("..... muestra de datos", subproductoId)
+      await actualizarInventarioItem(foodId, subProductoId, cantidad);
       // await actualizarSubproducto(foodId,subproductoId, cantidad)
 
       return true;
@@ -1873,7 +1892,7 @@ export default function App() {
 
 
     try {
-      if (!selectedClientId || (!subItemSeleccionadoId)) {
+      if (!selectedClientId || (!subItemSeleccionadoId && !subItemSeleccionadoId1 && !subItemSeleccionadoId2 && !subItemSeleccionadoId3 && !subItemSeleccionadoId4)) {
         throw new Error('No se ha seleccionado un cliente o una bebida.');
       }
 
@@ -1882,7 +1901,8 @@ export default function App() {
         let atLeastOneCortesiaSaved = false;
 
         if (cantidadItem > 0 && itemSeleccionadoId) {
-          if (await checkStockAndUpdateInventory(itemSeleccionadoId, cantidadItem)) {
+          let subproductoId = subItemSeleccionadoId;
+          if (await checkStockAndUpdateInventory(itemSeleccionadoId, subproductoId, cantidadItem)) {
             const itemCortesia = {
               id: subItemSeleccionadoId,
               nombre: itemSeleccionado,
@@ -1900,7 +1920,8 @@ export default function App() {
         }
 
         if (cantidadItem1 > 0 && itemSeleccionadoId1) {
-          if (await checkStockAndUpdateInventory(itemSeleccionadoId1, cantidadItem1)) {
+          let subproductoId = subItemSeleccionadoId1;
+          if (await checkStockAndUpdateInventory(itemSeleccionadoId1, subproductoId, cantidadItem1)) {
             const itemCortesia1 = {
               id: subItemSeleccionadoId1,
               nombre: itemSeleccionado1,
@@ -1913,6 +1934,63 @@ export default function App() {
             let subproductoId = subItemSeleccionadoId1;
             await guardarItem(itemCortesia1);
             await guardarCortesiaItemInventory(itemSeleccionadoId1, subproductoId, cantidadItem1)
+            atLeastOneCortesiaSaved = true;
+          }
+        }
+
+        if (cantidadItem2 > 0 && itemSeleccionadoId2) {
+          let subproductoId = subItemSeleccionadoId2;
+          if (await checkStockAndUpdateInventory(itemSeleccionadoId2, subproductoId, cantidadItem2)) {
+            const itemCortesia2 = {
+              id: subItemSeleccionadoId2,
+              nombre: itemSeleccionado2,
+              cantidad: cantidadItem2,
+              precio: 0,
+              mensaje: "Cortesía",
+              fechaDeMarca: "",
+              fecha: obtenerFechaConAjuste()
+            };
+            let subproductoId = subItemSeleccionadoId2;
+            await guardarItem(itemCortesia2);
+            await guardarCortesiaItemInventory(itemSeleccionadoId2, subproductoId, cantidadItem2)
+            atLeastOneCortesiaSaved = true;
+          }
+        }
+
+        if (cantidadItem3 > 0 && itemSeleccionadoId3) {
+          let subproductoId = subItemSeleccionadoId3;
+          if (await checkStockAndUpdateInventory(itemSeleccionadoId3, subproductoId, cantidadItem3)) {
+            const itemCortesia3 = {
+              id: subItemSeleccionadoId3,
+              nombre: itemSeleccionado3,
+              cantidad: cantidadItem3,
+              precio: 0,
+              mensaje: "Cortesía",
+              fechaDeMarca: "",
+              fecha: obtenerFechaConAjuste()
+            };
+            let subproductoId = subItemSeleccionadoId3;
+            await guardarItem(itemCortesia3);
+            await guardarCortesiaItemInventory(itemSeleccionadoId3, subproductoId, cantidadItem3)
+            atLeastOneCortesiaSaved = true;
+          }
+        }
+
+        if (cantidadItem4 > 0 && itemSeleccionadoId4) {
+          let subproductoId = subItemSeleccionadoId4;
+          if (await checkStockAndUpdateInventory(itemSeleccionadoId4, subproductoId, cantidadItem4)) {
+            const itemCortesia4 = {
+              id: subItemSeleccionadoId4,
+              nombre: itemSeleccionado4,
+              cantidad: cantidadItem4,
+              precio: 0,
+              mensaje: "Cortesía",
+              fechaDeMarca: "",
+              fecha: obtenerFechaConAjuste()
+            };
+            let subproductoId = subItemSeleccionadoId4;
+            await guardarItem(itemCortesia4);
+            await guardarCortesiaItemInventory(itemSeleccionadoId4, subproductoId, cantidadItem4)
             atLeastOneCortesiaSaved = true;
           }
         }
@@ -1936,14 +2014,16 @@ export default function App() {
           fechaDeMarca: "",
           fecha: obtenerFechaConAjuste()
         };
-        if (await checkStockAndUpdateInventory(itemSeleccionadoId, cantidadItem)) {
+        let subproductoId = subItemSeleccionadoId;
+        console.log("depuracion dentro del checkInventory: ", itemSeleccionadoId, subproductoId, cantidadItem)
+        if (await checkStockAndUpdateInventory(itemSeleccionadoId, subproductoId, cantidadItem)) {
           await guardarItem(item);
           isBebidaAdded = true;
         }
       }
 
       if (cantidadItem1 > 0 && itemSeleccionadoId1) {
-        const item = {
+        const item1 = {
           id: subItemSeleccionadoId1,
           nombre: itemSeleccionado1,
           cantidad: cantidadItem1,
@@ -1951,8 +2031,57 @@ export default function App() {
           fechaDeMarca: "",
           fecha: obtenerFechaConAjuste()
         };
-        if (await checkStockAndUpdateInventory(itemSeleccionadoId1, cantidadItem1)) {
-          await guardarItem(item);
+        let subproductoId = subItemSeleccionadoId1;
+        if (await checkStockAndUpdateInventory(itemSeleccionadoId1, subproductoId, cantidadItem1)) {
+          await guardarItem(item1);
+          isBebidaAdded = true;
+        }
+      }
+
+      if (cantidadItem2 > 0 && itemSeleccionadoId2) {
+        const item2 = {
+          id: subItemSeleccionadoId2,
+          nombre: itemSeleccionado2,
+          cantidad: cantidadItem2,
+          precio: precioItemSeleccionado2,
+          fechaDeMarca: "",
+          fecha: obtenerFechaConAjuste()
+        };
+        let subproductoId = subItemSeleccionadoId2;
+        if (await checkStockAndUpdateInventory(itemSeleccionadoId2, subproductoId, cantidadItem2)) {
+          await guardarItem(item2);
+          isBebidaAdded = true;
+        }
+      }
+
+      if (cantidadItem3 > 0 && itemSeleccionadoId3) {
+        const item3 = {
+          id: subItemSeleccionadoId3,
+          nombre: itemSeleccionado3,
+          cantidad: cantidadItem3,
+          precio: precioItemSeleccionado3,
+          fechaDeMarca: "",
+          fecha: obtenerFechaConAjuste()
+        };
+        let subproductoId = subItemSeleccionadoId3;
+        if (await checkStockAndUpdateInventory(itemSeleccionadoId3, subproductoId, cantidadItem3)) {
+          await guardarItem(item3);
+          isBebidaAdded = true;
+        }
+      }
+
+      if (cantidadItem4 > 0 && itemSeleccionadoId4) {
+        const item4 = {
+          id: subItemSeleccionadoId4,
+          nombre: itemSeleccionado4,
+          cantidad: cantidadItem4,
+          precio: precioItemSeleccionado4,
+          fechaDeMarca: "",
+          fecha: obtenerFechaConAjuste()
+        };
+        let subproductoId = subItemSeleccionadoId4;
+        if (await checkStockAndUpdateInventory(itemSeleccionadoId4, subproductoId, cantidadItem4)) {
+          await guardarItem(item4);
           isBebidaAdded = true;
         }
       }
@@ -2044,7 +2173,7 @@ export default function App() {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: 800,
-    height: "90vh",
+    height: "min-height-90vh",
     bgcolor: 'background.paper',
     overflow: "scroll",
     boxShadow: 0,
@@ -2058,12 +2187,12 @@ export default function App() {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: 600,
-    height: "90vh",
     bgcolor: 'background.paper',
     overflow: "scroll",
     boxShadow: 0,
     p: 4,
-    borderRadius: 5
+    borderRadius: 5,
+
   };
 
   return (
@@ -2136,7 +2265,11 @@ export default function App() {
             BackdropProps={{
               style: { backgroundColor: 'rgba(0, 0, 0, 0.1)' }
             }}>
-            < Box sx={styleAdd}>
+            < Box sx={styleAdd} style={{
+              maxHeight: "90vh",
+              minHeight: "min-content",
+              overflowY: "auto"
+            }} >
               <>
                 <Typography className="flex flex-col justify-center items-center " style={{ height: "300px", }}>
 
@@ -3158,21 +3291,6 @@ export default function App() {
                                     </SelectItem>
                                   ))}
                                 </Select>
-                                {/* <aside className="search-button">
-                                    <div className="container">
-                                      <span className="lupa">
-                                        <SearchIcon />
-                                      </span>
-                                      <input
-                                        type="search"
-                                        id="search"
-                                        placeholder="¿Qué quieres buscar?"
-                                        value={foodFiltro}
-                                        onChange={(e) => {
-                                          setFoodFiltro(e.target.value);
-                                        }} />
-                                    </div>
-                                  </aside> */}
                               </div>
 
                               <div className="flex">
@@ -3222,22 +3340,6 @@ export default function App() {
                                     </SelectItem>
                                   ))}
                                 </Select>
-
-                                {/* <aside className="search-button">
-                                    <div className="container">
-                                      <span className="lupa">
-                                        <SearchIcon />
-                                      </span>
-                                      <input
-                                        type="search"
-                                        id="search"
-                                        placeholder="¿Qué quieres buscar?"
-                                        value={foodFiltro2}
-                                        onChange={(e) => {
-                                          setFoodFiltro2(e.target.value);
-                                        }} />
-                                    </div>
-                                  </aside> */}
                               </div>
                               <div className="flex">
 
@@ -3284,21 +3386,6 @@ export default function App() {
                                     </SelectItem>
                                   ))}
                                 </Select>
-                                {/* <aside className="search-button">
-                                    <div className="container">
-                                      <span className="lupa">
-                                        <SearchIcon />
-                                      </span>
-                                      <input
-                                        type="search"
-                                        id="search"
-                                        placeholder="¿Qué quieres buscar?"
-                                        value={foodFiltro3}
-                                        onChange={(e) => {
-                                          setFoodFiltro3(e.target.value);
-                                        }} />
-                                    </div>
-                                  </aside> */}
                               </div>
                               <div className="flex">
 
@@ -3345,21 +3432,6 @@ export default function App() {
                                     </SelectItem>
                                   ))}
                                 </Select>
-                                {/* <aside className="search-button">
-                                    <div className="container">
-                                      <span className="lupa">
-                                        <SearchIcon />
-                                      </span>
-                                      <input
-                                        type="search"
-                                        id="search"
-                                        placeholder="¿Qué quieres buscar?"
-                                        value={foodFiltro4}
-                                        onChange={(e) => {
-                                          setFoodFiltro4(e.target.value);
-                                        }} />
-                                    </div>
-                                  </aside> */}
                               </div>
                               <div className="flex">
 
@@ -3427,7 +3499,8 @@ export default function App() {
                               <Button color="danger" variant="light" onPress={closeModalF}>
                                 Close
                               </Button>
-                              <Button color="primary" onClick={handleGuardarFood} disabled={isSaving} >
+                              <Button color="primary" onClick={handleGuardarFood} >
+                                {/* disabled={isSaving} */}
                                 Ahorrar
                               </Button>
                             </Typography>
@@ -3492,12 +3565,205 @@ export default function App() {
                               </Select>
                             </div>
 
-                            
+                            <div className="flex mb-1">
+                              <input
+                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                name="restaurante"
+                                placeholder="Ingrese la cantidad"
+                                type="number"
+                                value={isNaN(cantidadItem1) ? '' : cantidadItem1}
+                                onChange={(e) => {
+                                  const value = parseInt(e.target.value);
+                                  setCantidadItem1(isNaN(value) ? '' : value);
+                                }}
+                                style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                              />
+                              <input
+                                disabled
+                                label="Stock"
+                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 w-24"
+                                placeholder={` ${cantidadFood1Disponible}`}
+                                style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                              />
+                              <Select
+                                className="ml-2 mt-1"
+                                name="restaurante"
+                                label="Seleccionar comida"
+                                value={itemSeleccionado1}
+                                onChange={(e) => {
+                                  const selectedItem = e.target.value;
+                                  setItemSeleccionado1(selectedItem);
+
+                                  const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
+
+                                  if (itemSeleccionadaInfo) {
+                                    setPrecioItemSeleccionado1(itemSeleccionadaInfo.ValorUnitario);
+                                    setItemSeleccionadoId1(itemSeleccionadaInfo.idPadre);
+                                    setSubItemSeleccionadoId1(itemSeleccionadaInfo._id);
+                                    setCantidadFood1Disponible(itemSeleccionadaInfo.cantidadPadre);
+                                  }
+                                }}
+                                style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                              >
+                                {comidas.map((food) => (
+                                  <SelectItem key={food.Descripcion}>
+                                    {food.Descripcion}
+                                  </SelectItem>
+                                ))}
+                              </Select>
+                            </div>
+
+                            <div className="flex mb-1">
+                              <input
+                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                name="restaurante"
+                                placeholder="Ingrese la cantidad"
+                                type="number"
+                                value={isNaN(cantidadItem2) ? '' : cantidadItem2}
+                                onChange={(e) => {
+                                  const value = parseInt(e.target.value);
+                                  setCantidadItem2(isNaN(value) ? '' : value);
+                                }}
+                                style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                              />
+                              <input
+                                disabled
+                                label="Stock"
+                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 w-24"
+                                placeholder={` ${cantidadFood2Disponible}`}
+                                style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                              />
+                              <Select
+                                className="ml-2 mt-1"
+                                name="restaurante"
+                                label="Seleccionar comida"
+                                value={itemSeleccionado2}
+                                onChange={(e) => {
+                                  const selectedItem = e.target.value;
+                                  setItemSeleccionado2(selectedItem);
+
+                                  const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
+
+                                  if (itemSeleccionadaInfo) {
+                                    setPrecioItemSeleccionado2(itemSeleccionadaInfo.ValorUnitario);
+                                    setItemSeleccionadoId2(itemSeleccionadaInfo.idPadre);
+                                    setSubItemSeleccionadoId2(itemSeleccionadaInfo._id);
+                                    setCantidadFood2Disponible(itemSeleccionadaInfo.cantidadPadre);
+                                  }
+                                }}
+                                style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                              >
+                                {comidas.map((food) => (
+                                  <SelectItem key={food.Descripcion}>
+                                    {food.Descripcion}
+                                  </SelectItem>
+                                ))}
+                              </Select>
+                            </div>
+
+                            <div className="flex mb-1">
+                              <input
+                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                name="restaurante"
+                                placeholder="Ingrese la cantidad"
+                                type="number"
+                                value={isNaN(cantidadItem3) ? '' : cantidadItem3}
+                                onChange={(e) => {
+                                  const value = parseInt(e.target.value);
+                                  setCantidadItem3(isNaN(value) ? '' : value);
+                                }}
+                                style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                              />
+                              <input
+                                disabled
+                                label="Stock"
+                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 w-24"
+                                placeholder={` ${cantidadFood3Disponible}`}
+                                style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                              />
+                              <Select
+                                className="ml-2 mt-1"
+                                name="restaurante"
+                                label="Seleccionar comida"
+                                value={itemSeleccionado3}
+                                onChange={(e) => {
+                                  const selectedItem = e.target.value;
+                                  setItemSeleccionado3(selectedItem);
+
+                                  const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
+
+                                  if (itemSeleccionadaInfo) {
+                                    setPrecioItemSeleccionado3(itemSeleccionadaInfo.ValorUnitario);
+                                    setItemSeleccionadoId3(itemSeleccionadaInfo.idPadre);
+                                    setSubItemSeleccionadoId3(itemSeleccionadaInfo._id);
+                                    setCantidadFood3Disponible(itemSeleccionadaInfo.cantidadPadre);
+                                  }
+                                }}
+                                style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                              >
+                                {comidas.map((food) => (
+                                  <SelectItem key={food.Descripcion}>
+                                    {food.Descripcion}
+                                  </SelectItem>
+                                ))}
+                              </Select>
+                            </div>
+
+                            <div className="flex mb-1">
+                              <input
+                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                name="restaurante"
+                                placeholder="Ingrese la cantidad"
+                                type="number"
+                                value={isNaN(cantidadItem4) ? '' : cantidadItem4}
+                                onChange={(e) => {
+                                  const value = parseInt(e.target.value);
+                                  setCantidadItem4(isNaN(value) ? '' : value);
+                                }}
+                                style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                              />
+                              <input
+                                disabled
+                                label="Stock"
+                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 w-24"
+                                placeholder={` ${cantidadFood4Disponible}`}
+                                style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                              />
+                              <Select
+                                className="ml-2 mt-1"
+                                name="restaurante"
+                                label="Seleccionar comida"
+                                value={itemSeleccionado4}
+                                onChange={(e) => {
+                                  const selectedItem = e.target.value;
+                                  setItemSeleccionado4(selectedItem);
+
+                                  const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
+
+                                  if (itemSeleccionadaInfo) {
+                                    setPrecioItemSeleccionado4(itemSeleccionadaInfo.ValorUnitario);
+                                    setItemSeleccionadoId4(itemSeleccionadaInfo.idPadre);
+                                    setSubItemSeleccionadoId4(itemSeleccionadaInfo._id);
+                                    setCantidadFood4Disponible(itemSeleccionadaInfo.cantidadPadre);
+                                  }
+                                }}
+                                style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                              >
+                                {comidas.map((food) => (
+                                  <SelectItem key={food.Descripcion}>
+                                    {food.Descripcion}
+                                  </SelectItem>
+                                ))}
+                              </Select>
+                            </div>
+
+
+
                             <Typography component="div" >
                               <Button color="danger" variant="light" onPress={closeModalF}>
                                 Close
                               </Button>
-                              <Button color="primary" onClick={handleGuardarItem} disabled={isSaving} >
+                              <Button color="primary" onClick={handleGuardarItem} >
                                 Ahorrar
                               </Button>
                             </Typography>
@@ -3584,7 +3850,7 @@ export default function App() {
                   </Dropdown>
                 </TableCell>
 
-               
+
 
               </TableRow>
             ))}

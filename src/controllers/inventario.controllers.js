@@ -634,6 +634,38 @@ export const deleteSubproduct = async (req, res) => {
   }
 };
 
+export const updateSubproduct = async (req, res) => {
+  const productId = req.params.id;
+  const subproductId = req.body.idSubproducto;
+  const { Descripcion, ValorUnitario, ProductosVendidos, Cortesias } = req.body;
+
+  console.log("Detalles de la petición 200.OK", subproductId);
+
+  try {
+      const product = await Bebida.findById(productId);
+      if (!product) {
+          return res.status(404).send('Producto no encontrado');
+      }
+
+      const subproducto = product.subproductos.find(subprod => subprod.id === subproductId);
+      if (!subproducto) {
+          return res.status(404).send('Subproducto no encontrado');
+      }
+
+      subproducto.Descripcion = Descripcion;
+      subproducto.ValorUnitario = ValorUnitario;
+      subproducto.ProductosVendidos = ProductosVendidos;
+      subproducto.Cortesias = Cortesias;
+
+      await product.save();
+      res.status(200).send('Subproducto actualizado con éxito');
+  } catch (error) {
+      console.error(error);
+      res.status(500).send('Error al actualizar el subproducto');
+  }
+};
+
+
 
 
 

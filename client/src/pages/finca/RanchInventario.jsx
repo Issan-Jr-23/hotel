@@ -269,6 +269,8 @@ function Row(props) {
     }
 
 
+    const hadleUpdateSubProducto = async (id, idSubproducto, editedName, editedCortesias, editedProductosVendidos, editedValorUnitario)
+
 
 
 
@@ -370,7 +372,7 @@ function Row(props) {
                             onChange={handleInputChange}
                         />
                     ) : (
-                        row.ProductosVendidos 
+                        row.ProductosVendidos
                     )
                     }
                 </TableCell>
@@ -627,6 +629,7 @@ function Row(props) {
                                                                                 <span className='inventario-box-option-cont-input-01 '>
                                                                                     <label htmlFor="" className='inventario-box-option-input-01-label'>Name</label>
                                                                                     <input
+                                                                                        name='Descripcion'
                                                                                         type="text"
                                                                                         value={subProductoSeleccionado.Descripcion}
                                                                                         onChange={handleChanges}
@@ -635,6 +638,7 @@ function Row(props) {
                                                                                 <span className='inventario-box-option-cont-input-01 '>
                                                                                     <label htmlFor="" className='inventario-box-option-input-01-label'>Cortesias</label>
                                                                                     <input
+                                                                                        name='Cortesias'
                                                                                         value={subProductoSeleccionado.Cortesias}
                                                                                         onChange={handleChanges}
                                                                                         type="text"
@@ -645,6 +649,7 @@ function Row(props) {
                                                                                     <span className='inventario-box-option-cont-input-01 mr-2'>
                                                                                         <label htmlFor="" className='inventario-box-option-input-01-label'>Price</label>
                                                                                         <input
+                                                                                            name='ValorUnitario'
                                                                                             type="text"
                                                                                             value={subProductoSeleccionado.ValorUnitario}
                                                                                             onChange={handleChanges}
@@ -653,6 +658,7 @@ function Row(props) {
                                                                                     <span className='inventario-box-option-cont-input-01 ml-2'>
                                                                                         <label htmlFor="" className='inventario-box-option-input-01-label'>Quantit  y</label>
                                                                                         <input
+                                                                                            name='ProductosVendidos'
                                                                                             type="text"
                                                                                             value={subProductoSeleccionado.ProductosVendidos}
                                                                                             onChange={handleChanges}
@@ -664,7 +670,7 @@ function Row(props) {
                                                                                 <Button variant="outlined" startIcon={<DeleteIcon />} className="mr-2" style={{ border: "2px solid rgb(7, 182, 213)", color: "rgb(7, 182, 213)", fontWeight: "600" }} onClick={handleCloseMod}>
                                                                                     Cancelar
                                                                                 </Button>
-                                                                                <Button variant="contained" className='ml-2' endIcon={<SendIcon />} style={{ backgroundColor: "rgb(7, 182, 213)", color: "white", fontWeight: "600", marginLeft: "10px" }} >
+                                                                                <Button variant="contained" className='ml-2' endIcon={<SendIcon />} style={{ backgroundColor: "rgb(7, 182, 213)", color: "white", fontWeight: "600", marginLeft: "10px" }} onClick={() => hadleUpdateSubProducto(row._id, subproduct._id, subproduct.Descripcion, subproduct.Cortesias, subproduct.ValorUnitario, subproduct.ProductosVendidos)}>
                                                                                     Guardar
                                                                                 </Button>
                                                                             </div>
