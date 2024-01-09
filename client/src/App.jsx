@@ -36,7 +36,6 @@ function App() {
           <BrowserRouter basename="/meqo-soft">
             <AppWithAuth/>
             <Routes>
-             
               <Route path="/" element={<LoginPage />} />
               <Route path="/meqo-soft" element={<LoginPage />} />
               <Route path="/login" element={<LoginPage />} />

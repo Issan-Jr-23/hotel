@@ -638,6 +638,7 @@ export const updateSubproduct = async (req, res) => {
   const productId = req.params.id;
   const subproductId = req.body.idSubproducto;
   const { Descripcion, ValorUnitario, ProductosVendidos, Cortesias } = req.body;
+  console.log("datos del producto a actualizar: ", "id del producto: ", productId, "id del subproducto: ", subproductId, "Descripcion del subproducto", Descripcion, "Valor del subproducto", ValorUnitario, "subproductos vendidos", ProductosVendidos, "Cortesias ", Cortesias)
 
   console.log("Detalles de la petición 200.OK", subproductId);
 

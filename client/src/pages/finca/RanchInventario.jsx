@@ -79,6 +79,7 @@ function Row(props) {
     }
 
     const handleOpenMod = (idSubproducto) => {
+        console.log(idSubproducto)
         const subproductoEncontrado = row.subproductsData.find(subproducto => subproducto._id === idSubproducto);
 
         if (subproductoEncontrado) {
@@ -269,7 +270,20 @@ function Row(props) {
     }
 
 
-    const hadleUpdateSubProducto = async (id, idSubproducto, editedName, editedCortesias, editedProductosVendidos, editedValorUnitario)
+    const hadleUpdateSubProducto = async (id, idSubproducto, editedName, editedValorUnitario, editedProductosVendidos, editedCortesias) => {
+        try {
+            await AxiosInstance.put(`/update-prueba-subproducto/${id}`, {
+                idSubproducto: idSubproducto,
+                Descripcion: editedName,
+                ValorUnitario: editedValorUnitario,
+                ProductosVendidos: editedProductosVendidos,
+                Cortesias: editedCortesias,
+            })
+            console.log("succesfully")
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
 
 
@@ -562,29 +576,15 @@ function Row(props) {
                                                     <TableCell align="center" className='uppercase'>{subproduct.ProductosVendidos}</TableCell>
                                                     <TableCell align="center" className='uppercase'>{subproduct.Cortesias}</TableCell>
                                                     <TableCell align="center" className='uppercase'>{(subproduct.ProductosVendidos - subproduct.Cortesias) * subproduct.ValorUnitario}</TableCell>
-                                                    <TableCell align="center" style={{ display: "flex", justifyContent: "center", alignItems: "center" }} className='h-20'>
-                                                        <div style={{ width: "120px" }} className='flex justify-evenly items-center' >
 
-                                                            {isEditing ? (
-                                                                <>
-                                                                    <button onClick={handleSaveEditSubproduct}> Save </button>
-                                                                    <button onClick={handleCancelEditSubproduct}>Cancel</button>
-                                                                </>
-                                                            ) : (
-                                                                <>
-                                                                    <EditDocumentIcon onClick={handleEditClickSubproducto} className="cursor-pointer" />
-                                                                    < DeleteDocumentIcon className='cursor-pointer' onClick={() => handleDeleteSubproducto(row._id,)} />
-                                                                </>
-                                                            )}
-                                                        </div>
-                                                    </TableCell>
                                                     <TableCell>
                                                         <Button
                                                             id="basic-button"
                                                             aria-controls={opens ? 'basic-menu' : undefined}
                                                             aria-haspopup="true"
                                                             aria-expanded={opens ? 'true' : undefined}
-                                                            onClick={handleClick}
+                                                            onClick={() => handleOpenMod(subproduct._id)}
+
                                                         >
                                                             <VerticalDotsIcon />
                                                         </Button>
@@ -597,9 +597,8 @@ function Row(props) {
                                                                 'aria-labelledby': 'basic-button',
                                                             }}
                                                         >
-                                                            <MenuItem onClick={() => handleOpenMod(subproduct._id)} >edit file</MenuItem>
-                                                            <MenuItem onClick={() => handleDeleteSubproducto(row._id, subproduct._id)} >Delete file</MenuItem>
-
+                                                            <MenuItem onClick={() => handleOpenMod(subproduct._id)}>edit file</MenuItem>
+                                                            <MenuItem onClick={() => handleDeleteSubproducto()}>Delete file</MenuItem>
                                                         </Menu>
                                                         <Modal
                                                             aria-labelledby="transition-modal-title"
@@ -670,7 +669,12 @@ function Row(props) {
                                                                                 <Button variant="outlined" startIcon={<DeleteIcon />} className="mr-2" style={{ border: "2px solid rgb(7, 182, 213)", color: "rgb(7, 182, 213)", fontWeight: "600" }} onClick={handleCloseMod}>
                                                                                     Cancelar
                                                                                 </Button>
-                                                                                <Button variant="contained" className='ml-2' endIcon={<SendIcon />} style={{ backgroundColor: "rgb(7, 182, 213)", color: "white", fontWeight: "600", marginLeft: "10px" }} onClick={() => hadleUpdateSubProducto(row._id, subproduct._id, subproduct.Descripcion, subproduct.Cortesias, subproduct.ValorUnitario, subproduct.ProductosVendidos)}>
+                                                                                <Button variant="contained" className='ml-2' endIcon={<SendIcon />} style={{ backgroundColor: "rgb(7, 182, 213)", color: "white", fontWeight: "600", marginLeft: "10px" }} onClick={() => hadleUpdateSubProducto(
+                                                                                    row._id, 
+                                                                                    subProductoSeleccionado._id, 
+                                                                                    subProductoSeleccionado.Descripcion,
+                                                                                    subProductoSeleccionado.ValorUnitario, subProductoSeleccionado.ProductosVendidos,
+                                                                                    subProductoSeleccionado.Cortesias,)}>
                                                                                     Guardar
                                                                                 </Button>
                                                                             </div>
@@ -694,6 +698,7 @@ function Row(props) {
 }
 
 export default function CollapsibleTable() {
+
     const [rows, setRows] = useState([]);
 
     const fetchProducts = async () => {
@@ -738,8 +743,6 @@ export default function CollapsibleTable() {
         }
     };
 
-
-
     useEffect(() => {
         // Initial fetch of products
         fetchProducts();
@@ -762,12 +765,6 @@ export default function CollapsibleTable() {
             alert("Error al eliminar producto. Por favor, inténtalo de nuevo más tarde.");
         }
     };
-
-
-
-
-
-
 
     return (
         <div className='pl-5 pr-5 mt-10'>
