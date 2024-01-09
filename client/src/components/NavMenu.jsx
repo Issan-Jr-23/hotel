@@ -181,60 +181,8 @@ const NavMenu = () => {
                     }
                         style={{ height: "auto", display: "flex", flexDirection: "column", overflow: "hidden" }}>
                         <div className=' flex flex-col pl-9' style={{ overflow: "hidden" }} >
-                            <Accordion isCompact className="" style={{ overflow: "hidden" }}>
-                                <AccordionItem className='flex flex-col' key="1" aria-label="Accordion 1" title={
-                                    <div className='flex'>
-
-                                        <span className='ml-2 text-white'>Cabañas 1</span>
-                                    </div>
-
-                                }
-                                    style={{ height: "auto", display: "flex", flexDirection: "column", overflow: "hidden" }}>
-                                    <div className=' flex flex-col pl-9' style={{ overflow: "hidden" }} >
-                                        <Link className='mb-1 pt-2 pb-2' >List</Link>
-                                        <Link className='mb-1 pt-2 pb-2' >Create</Link>
-                                    </div>
-
-                                </AccordionItem>
-
-
-                            </Accordion>
-                            <Accordion isCompact className="" style={{ overflow: "hidden" }}>
-                                <AccordionItem className='flex flex-col' key="1" aria-label="Accordion 1" title={
-                                    <div className='flex'>
-
-                                        <span className='ml-2 text-white'>Cabañas 1</span>
-                                    </div>
-
-                                }
-                                    style={{ height: "auto", display: "flex", flexDirection: "column", overflow: "hidden" }}>
-                                    <div className=' flex flex-col pl-9' style={{ overflow: "hidden" }} >
-                                        <Link className='mb-1 pt-2 pb-2' >List</Link>
-                                        <Link className='mb-1 pt-2 pb-2' >Create</Link>
-                                    </div>
-
-                                </AccordionItem>
-
-
-                            </Accordion>
-                            <Accordion isCompact className="" style={{ overflow: "hidden" }}>
-                                <AccordionItem className='flex flex-col' key="1" aria-label="Accordion 1" title={
-                                    <div className='flex'>
-
-                                        <span className='ml-2 text-white'>Cabañas 1</span>
-                                    </div>
-
-                                }
-                                    style={{ height: "auto", display: "flex", flexDirection: "column", overflow: "hidden" }}>
-                                    <div className=' flex flex-col pl-9' style={{ overflow: "hidden" }} >
-                                        <Link className='mb-1 pt-2 pb-2' >List</Link>
-                                        <Link className='mb-1 pt-2 pb-2' >Create</Link>
-                                    </div>
-
-                                </AccordionItem>
-
-
-                            </Accordion>
+                            <Link to="/cabania-stock" className='mb-1 ml-5 pt-2 pb-2' >List</Link>
+                            <Link className='mb-1 ml-5 pt-2 pb-2' >Create</Link>
                         </div>
 
                     </AccordionItem>

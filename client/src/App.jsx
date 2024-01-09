@@ -26,6 +26,7 @@ import HistorialUsuario from "./pages/Historial.jsx";
 import NotFoundPage from "./pages/Page404.jsx"
 import DashboardPasadia from "./pages/dashboard/dashboardPasadia.jsx";
 import Adicionales from "./pages/tablePasadia/Adicionales.jsx";
+import CabaniasStock from "./pages/stock/CabaniasStock.jsx";
 
 function App() {
   return (
@@ -60,6 +61,7 @@ function App() {
                 <Route path="/transferencia-data" element={<TransferenciaData/>}/>
                 <Route path="/historial-compras" element={<HistorialCompras/>}/>
                 <Route path="/dashboard-pasadia" element={<DashboardPasadia/>} ></Route>
+                <Route path="/cabania-stock" element={<CabaniasStock/>} ></Route>
               </Route>
               <Route element={<ProtectedRoute allowedRoles={["editor"]} />}>
                 <Route path="/Register" element={<Register/>} />

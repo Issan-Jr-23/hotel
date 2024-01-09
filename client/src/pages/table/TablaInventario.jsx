@@ -74,7 +74,7 @@ export default function App() {
 
 
   const handleInputChange = (event) => {
-    const { name, value } = event.target;
+    const { name, value } = event.target; 
 
 
     setFormData({

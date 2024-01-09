@@ -614,9 +614,10 @@ export const guardarCortesiaFoodInventory = async (req, res) => {
   }
 };
 
-export const deleteSubproduct = async (req, res) => {
+export const deleteSubproduct = async (req, res) => { 
   const productId = req.params.id;
   const subproductId = req.body.idSubproducto;
+  console.log("detalles de la peticion 200.OK", subproductId)
 
   try {
       const product = await Bebida.findById(productId);

@@ -5,7 +5,7 @@ import Usuario from '../models/transferencia.model.js';
 
 export const obtenerClientes = async (req, res) => {
   try {
-    const clientesObtenidos = await Cliente.find();
+    const clientesObtenidos = await Cliente.find(); 
     res.status(200).json(clientesObtenidos);
   } catch (error) {
     console.error(error);

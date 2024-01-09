@@ -225,10 +225,7 @@ function Row(props) {
 
 
 
-
-
-
-    const handleSave = async (id, editedName, editedTipo, editedCaducidad,  editedPrecio , editedCi, editedCv) => {
+    const handleSave = async (id, editedName, editedTipo, editedCaducidad, editedPrecio, editedCi, editedCv) => {
         console.log("  *********************  ", id)
         console.log("id********", editedName)
         try {
@@ -238,9 +235,9 @@ function Row(props) {
                     Descripcion: editedName,
                     tipo: editedTipo,
                     Caducidad: editedCaducidad,
-                    CantidadInicial:editedCi,
-                    ValorUnitario:editedPrecio,
-                    ProductosVendidos:editedCv
+                    CantidadInicial: editedCi,
+                    ValorUnitario: editedPrecio,
+                    ProductosVendidos: editedCv
 
                 }
             );
@@ -252,6 +249,25 @@ function Row(props) {
             alert("Error al actualizar producto. Por favor, inténtalo de nuevo más tarde.");
         }
     };
+
+    const handleDeleteSubproducto = async (id, idSubproducto) => {
+        console.log("eliminar subproducto", id, idSubproducto);
+        const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar este subproducto?");
+        if (!confirmDelete) {
+            return;
+        }
+        try {
+            const options = {
+                data: { idSubproducto: idSubproducto }
+            };
+            await AxiosInstance.delete(`/eliminar-subproduct/${id}`, options);
+            console.log("successfully");
+            fetchProducts();
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
 
 
 
@@ -354,7 +370,7 @@ function Row(props) {
                             onChange={handleInputChange}
                         />
                     ) : (
-                        row.ProductosVendidos
+                        row.ProductosVendidos 
                     )
                     }
                 </TableCell>
@@ -451,9 +467,9 @@ function Row(props) {
                                                     onChange={handleChange}
                                                     onKeyDown={(event) => {
                                                         if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
-                                                          event.preventDefault();
+                                                            event.preventDefault();
                                                         }
-                                                      }}
+                                                    }}
                                                     className=' inventario-box-option-input-01 outline-none pl-2 mb-2' />
                                             </div>
                                             <div className='inventario-box-option-cont-input-01 ml-2'>
@@ -465,9 +481,9 @@ function Row(props) {
                                                     onChange={handleChange}
                                                     onKeyDown={(event) => {
                                                         if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
-                                                          event.preventDefault();
+                                                            event.preventDefault();
                                                         }
-                                                      }}
+                                                    }}
                                                     className='inventario-box-option-input-01 outline-none pl-2 mb-2' />
 
                                             </div>
@@ -483,9 +499,9 @@ function Row(props) {
                                                 onChange={handleChange}
                                                 onKeyDown={(event) => {
                                                     if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
-                                                      event.preventDefault();
+                                                        event.preventDefault();
                                                     }
-                                                  }}
+                                                }}
                                                 className=' inventario-box-option-input-01 outline-none pl-2 mb-2' />
                                         </div>
                                     </section>
@@ -494,12 +510,12 @@ function Row(props) {
                                         <Button variant="outlined" startIcon={<DeleteIcon />} className="mr-2" style={{ border: "2px solid rgb(7, 182, 213)", color: "rgb(7, 182, 213)", fontWeight: "600" }} onClick={handleCloseM}>
                                             Cancelar
                                         </Button>
-                                        <Button variant="contained" className='ml-2' endIcon={<SendIcon />} style={{ backgroundColor: "rgb(7, 182, 213)", color: "white", fontWeight: "600", marginLeft: "10px" }} onClick={() => handleSave(productoSeleccionado._id, 
-                                            productoSeleccionado.Descripcion, 
-                                            productoSeleccionado.tipo, 
+                                        <Button variant="contained" className='ml-2' endIcon={<SendIcon />} style={{ backgroundColor: "rgb(7, 182, 213)", color: "white", fontWeight: "600", marginLeft: "10px" }} onClick={() => handleSave(productoSeleccionado._id,
+                                            productoSeleccionado.Descripcion,
+                                            productoSeleccionado.tipo,
                                             productoSeleccionado.Caducidad,
-                                            productoSeleccionado.ValorUnitario, 
-                                            productoSeleccionado.CantidadInicial, 
+                                            productoSeleccionado.ValorUnitario,
+                                            productoSeleccionado.CantidadInicial,
                                             productoSeleccionado.ProductosVendidos)}>
                                             Guardar
                                         </Button>
@@ -555,7 +571,7 @@ function Row(props) {
                                                             ) : (
                                                                 <>
                                                                     <EditDocumentIcon onClick={handleEditClickSubproducto} className="cursor-pointer" />
-                                                                    < DeleteDocumentIcon className='cursor-pointer' onClick={() => onDelete(row._id)} />
+                                                                    < DeleteDocumentIcon className='cursor-pointer' onClick={() => handleDeleteSubproducto(row._id,)} />
                                                                 </>
                                                             )}
                                                         </div>
@@ -580,7 +596,7 @@ function Row(props) {
                                                             }}
                                                         >
                                                             <MenuItem onClick={() => handleOpenMod(subproduct._id)} >edit file</MenuItem>
-                                                            <MenuItem onClick={() => onDeleteSubproducto(row._id, subproduct._id)} >Delete file</MenuItem>
+                                                            <MenuItem onClick={() => handleDeleteSubproducto(row._id, subproduct._id)} >Delete file</MenuItem>
 
                                                         </Menu>
                                                         <Modal

@@ -1,0 +1,98 @@
+.cabania-stock-form-modal-01{
+    display: flex;
+    flex-direction: column;
+}
+
+.cabania-stock-form-modal-01-input{
+    border: 1px solid rgb(187, 187, 187);
+    height: 40px;
+    width: 100%;
+    border-radius: 10px;
+    outline: none;
+    padding: 0px 10px;
+
+}
+
+.cabania-stock-form-modal-01-input:hover{
+    border: 1px solid rgb(0, 232, 253);
+    box-shadow: 0px 0px 2px 1px rgb(0, 232, 253);
+}
+
+.cabania-stock-form-modal-01-input:focus{
+    border: 1px solid rgb(0, 232, 253);
+    box-shadow: 0px 0px 2px 1px rgb(0, 232, 253);
+}
+
+.cabania-stock-form-article{
+    display: flex;
+}
+
+
+
+/* ****************textarea*************** */
+
+.cabania-stock-form-modal-01-textarea{
+    border: 1px solid rgb(187, 187, 187);
+    height: 100px;
+    width: 100%;
+    border-radius: 10px;
+    outline: none;
+    padding: 0px 10px;
+
+}
+
+.cabania-stock-form-modal-01-textarea:hover{
+    border: 1px solid rgb(0, 232, 253);
+    box-shadow: 0px 0px 2px 1px rgb(0, 232, 253);
+}
+
+.cabania-stock-form-modal-01-textarea:focus{
+    border: 1px solid rgb(0, 232, 253);
+    box-shadow: 0px 0px 2px 1px rgb(0, 232, 253);
+}
+
+.cabania-stock-form-article{
+    display: flex;
+}
+
+
+.filters{
+    
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.mgi{
+    margin: 5px 5px;
+}
+
+.cont-filter-00{
+    display: flex;
+    justify-content: flex-end;
+
+}
+
+/* *********** filtros *********** */
+
+
+.cabania-stock-form-modal-01-input-filter{
+    height: 30px;
+    width: 150px;
+    border-radius: 10px;
+    outline: none;
+    padding: 0px 10px;
+    background-color: transparent;
+
+}
+
+.cabania-stock-form-modal-01-input-filter:hover{
+    border: 1px solid rgb(0, 232, 253);
+    box-shadow: 0px 0px 2px 1px rgb(0, 232, 253);
+}
+
+.cabania-stock-form-modal-01-input-filter:focus{
+    border: 1px solid rgb(0, 232, 253);
+    box-shadow: 0px 0px 2px 1px rgb(0, 232, 253);
+}

@@ -17,6 +17,7 @@ import preciosRanch from "./routes/precios.ranch.routes.js"
 import welcome from "./routes/welcome.routes.js"
 import transferencia from "./routes/transferencia.routes.js"
 import graficas from "./routes/graficas.routes.js"
+import cabaniaStock from "./routes/stockCabania.routes.js"
 
 const app = express();
 
@@ -44,6 +45,7 @@ app.use("/api", preciosRanch);
 app.use("/api", welcome);
 app.use("/api", transferencia);
 app.use("/api", graficas);
+app.use("/api", cabaniaStock);
 
 if (process.env.NODE_ENV === "production") {
   const path = await import("path");
