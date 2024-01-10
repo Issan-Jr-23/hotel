@@ -1,24 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import {
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
-  Button,
-  Input,
-  useDisclosure,
-  Select,
-  SelectItem,
-  Checkbox,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  Tabs,
-  Tab
+  Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button, Input, useDisclosure, Select, SelectItem, Checkbox, Popover, PopoverTrigger, PopoverContent, Tabs, Tab
 } from "@nextui-org/react";
-
 import editar from "../../images/boligrafo.png";
 import borrar from "../../images/borrar.png";
 import download from "../../images/download.png";
@@ -36,48 +19,24 @@ import logo from "../../images/logo.png"
 import wave from "../../images/wave.png"
 import svg from "../../images/svg.png"
 import AxiosInstance from "../../api/axios.js";
-
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 
+
 export default function App() {
-
-
-  const toBase64 = (url) => new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    xhr.onload = () => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        resolve(reader.result);
-      };
-      reader.readAsDataURL(xhr.response);
-    };
-    xhr.open('GET', url);
-    xhr.responseType = 'blob';
-    xhr.send();
-  });
-
-  //#region 
-
-  const [esCortesia, setEsCortesia] = useState(false);
-
-
-  const handleCortesiaChange = (event) => {
-    setEsCortesia(event.target.checked);
-  };
 
   const [users, setUsers] = useState([]);
   const [drinks, setDrinks] = useState([]);
   const [snacks, setSnacks] = useState([]);
   const [comidas, setComidas] = useState([]);
+  const [esCortesia, setEsCortesia] = useState(false);
 
+  //******bebidas******
   const [cantidadBebida, setCantidadBebida] = useState("");
   const [bebidaSeleccionada, setBebidaSeleccionada] = useState('');
   const [precioBebidaSeleccionada, setPrecioBebidaSeleccionada] = useState(0);
   const [bebidaSeleccionadaId, setBebidaSeleccionadaId] = useState(null);
-
-  //bebida 2
 
   const [cantidadBebida1, setCantidadBebida1] = useState("");
   const [bebida1Seleccionada, setBebida1Seleccionada] = useState('');
@@ -99,21 +58,16 @@ export default function App() {
   const [precioBebida4Seleccionada, setPrecioBebida4Seleccionada] = useState(0);
   const [bebida4SeleccionadaId, setBebida4SeleccionadaId] = useState(null);
 
-  //comida 1
-
+  //*****comidas*****
   const [cantidadFood, setCantidadFood] = useState("");
   const [foodSeleccionada, setFoodSeleccionada] = useState('');
   const [precioFoodSeleccionada, setPrecioFoodSeleccionada] = useState(0);
   const [foodSeleccionadaId, setFoodSeleccionadaId] = useState(null);
 
-  //comida 2
-
-
   const [cantidadFood1, setCantidadFood1] = useState("");
   const [food1Seleccionada, setFood1Seleccionada] = useState('');
   const [precioFood1Seleccionada, setPrecioFood1Seleccionada] = useState(0);
   const [food1SeleccionadaId, setFood1SeleccionadaId] = useState(null);
-
 
   const [cantidadFood2, setCantidadFood2] = useState("");
   const [food2Seleccionada, setFood2Seleccionada] = useState('');
@@ -125,26 +79,10 @@ export default function App() {
   const [precioFood3Seleccionada, setPrecioFood3Seleccionada] = useState(0);
   const [food3SeleccionadaId, setFood3SeleccionadaId] = useState(null);
 
-
   const [cantidadFood4, setCantidadFood4] = useState("");
   const [food4Seleccionada, setFood4Seleccionada] = useState('');
   const [precioFood4Seleccionada, setPrecioFood4Seleccionada] = useState(0);
   const [food4SeleccionadaId, setFood4SeleccionadaId] = useState(null);
-
-  const [selectedClientId, setSelectedClientId] = useState(null);
-  const [cantidadDeBebidas, setCantidadDeBebidas] = useState('');
-
-  const [editedUserId, setEditedUserId] = useState(null);
-  const [editedName, setEditedName] = useState("");
-  const [editPago, setEditPago] = useState("");
-
-  const [errorFechaPasadia, setErrorFechaPasadia] = useState(false);
-  const [errorIdentificacion, setErrorIdentificacion] = useState(false);
-  const [errorNombre, setErrorNombre] = useState(false);
-  const [errorReserva, setErrorReserva] = useState(false);
-  const [errorAdultos, setErrorAdultos] = useState(false);
-  const [errorCabania, setErrorCabania] = useState(false);
-
 
   const [cantidadFoodDisponible, setCantidadFoodDisponible] = useState(0);
   const [cantidadFood1Disponible, setCantidadFood1Disponible] = useState(0);
@@ -158,7 +96,7 @@ export default function App() {
   const [cantidadBebida3Disponible, setCantidadBebida3Disponible] = useState(0);
   const [cantidadBebida4Disponible, setCantidadBebida4Disponible] = useState(0);
 
-
+  //******items******
   const [cantidadItem, setCantidadItem] = useState("");
   const [itemSeleccionado, setItemSeleccionado] = useState("");
   const [precioItemSeleccionado, setPrecioItemSeleccionado] = useState("");
@@ -189,23 +127,49 @@ export default function App() {
   const [itemSeleccionadoId4, setItemSeleccionadoId4] = useState("");
   const [subItemSeleccionadoId4, setSubItemSeleccionadoId4] = useState("");
 
+  const [selectedClientId, setSelectedClientId] = useState(null);
+  const [cantidadDeBebidas, setCantidadDeBebidas] = useState('');
+
+  const [editedUserId, setEditedUserId] = useState(null);
+  const [editedName, setEditedName] = useState("");
+  const [editPago, setEditPago] = useState("");
+
+  const [errorFechaPasadia, setErrorFechaPasadia] = useState(false);
+  const [errorIdentificacion, setErrorIdentificacion] = useState(false);
+  const [errorNombre, setErrorNombre] = useState(false);
+  const [errorReserva, setErrorReserva] = useState(false);
+  const [errorAdultos, setErrorAdultos] = useState(false);
+  const [errorCabania, setErrorCabania] = useState(false);
 
   const [open, setOpen] = React.useState(false);
   const handleOpenMod = () => setOpen(true);
   const handleClose = () => setOpen(false);
-
   const [openTd, setOpenTd] = React.useState(false);
   const handleCloseTd = () => setOpenTd(false);
-
   const [openAb, setOpenAb] = React.useState(false);
   const handleCloseAb = () => setOpenAb(false);
-
   const [openAf, setOpenAf] = React.useState(false);
   const handleCloseAf = () => setOpenAf(false);
 
-  const options = ["Si", "No"];
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [backdrop, setBackdrop] = useState("blur");
+  const [valorCabania, setValorCabania] = useState(null);
+  const [valorCabaniaM, setValorCabaniaM] = useState(null);
+  const [valorPorPersonaAdicional, setValorPorPersonaAdicional] = useState(null);
+
+  const [busqueda, setBusqueda] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+
+  const [filtro, setFiltro] = useState('');
+  const [filtro2, setFiltro2] = useState('');
+  const [filtro3, setFiltro3] = useState('');
+  const [filtro4, setFiltro4] = useState('');
+  const [filtro5, setFiltro5] = useState('');
+
+  const [foodFiltro, setFoodFiltro] = useState('');
+  const [foodFiltro2, setFoodFiltro2] = useState('');
+  const [foodFiltro3, setFoodFiltro3] = useState('');
+  const [foodFiltro4, setFoodFiltro4] = useState('');
+  const [foodFiltro5, setFoodFiltro5] = useState('');
+
   const [formData, setFormData] = useState({
     identificacion: "",
     nombre: "",
@@ -223,18 +187,34 @@ export default function App() {
     nuevoTotal: ""
   });
 
+  const options = ["Si", "No"];
 
-  const [valorCabania, setValorCabania] = useState(null);
-  const [valorCabaniaM, setValorCabaniaM] = useState(null);
-  const [valorPorPersonaAdicional, setValorPorPersonaAdicional] = useState(null);
+  const toBase64 = (url) => new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.onload = () => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        resolve(reader.result);
+      };
+      reader.readAsDataURL(xhr.response);
+    };
+    xhr.open('GET', url);
+    xhr.responseType = 'blob';
+    xhr.send();
+  });
+  //#region 
+  const handleCortesiaChange = (event) => {
+    setEsCortesia(event.target.checked);
+  };
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [backdrop, setBackdrop] = useState("blur");
 
   function obtenerFechaConAjuste() {
     const fechaActual = new Date();
     fechaActual.setHours(fechaActual.getHours() - 5);
     return fechaActual.toISOString();
   }
-
-  const [busqueda, setBusqueda] = useState('');
 
   const datosFiltrados = useMemo(() => {
     if (!busqueda) return users;
@@ -243,8 +223,6 @@ export default function App() {
       return user.identificacion.toString().includes(busqueda);
     });
   }, [busqueda, users]);
-
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -279,13 +257,9 @@ export default function App() {
     fetchData();
   }, []);
 
-  console.log("precio de cabanias: " + valorCabania)
-
-
   const handleSearchChange = (event) => {
     setBusqueda(event.target.value);
   };
-
 
   const handleInputChange = (event, fieldName) => {
     const { name, value } = event.target;
@@ -377,8 +351,6 @@ export default function App() {
     }
   };
 
-
-
   const handleReservaChange = (selectedSize) => {
     setFormData({
       ...formData,
@@ -414,10 +386,14 @@ export default function App() {
   };
 
   const handleGuardarBebida = async () => {
+
+    if (isSaving) return;
+    setIsSaving(true);
+
     if (!selectedClientId || (!bebidaSeleccionadaId && !bebida1SeleccionadaId && !bebida2SeleccionadaId && !bebida3SeleccionadaId && !bebida4SeleccionadaId)) {
       toast.error('No se ha seleccionado un cliente o una Bebida.');
-      toast.
-        return;
+      setIsSaving(false);
+      return;
     }
 
     const checkStockAndUpdateInventory = async (bebidaId, cantidad) => {
@@ -483,6 +459,7 @@ export default function App() {
 
     try {
       if (!selectedClientId || (!bebidaSeleccionadaId && !bebida1SeleccionadaId && !bebida2SeleccionadaId && !bebida3SeleccionadaId && !bebida4SeleccionadaId)) {
+        setIsSaving(false);
         throw new Error('No se ha seleccionado un cliente o una bebida.');
       }
 
@@ -497,7 +474,8 @@ export default function App() {
               cantidad: cantidadBebida,
               precio: 0,
               mensaje: "Cortesía",
-              fechaDeMarca: ""
+              fechaDeMarca: "",
+              fecha: obtenerFechaConAjuste()
             };
             await guardarBebida(bebidaCortesia);
             atLeastOneCortesiaSaved = true;
@@ -512,7 +490,8 @@ export default function App() {
               cantidad: cantidadBebida1,
               precio: 0,
               mensaje: "Cortesía",
-              fechaDeMarca: ""
+              fechaDeMarca: "",
+              fecha: obtenerFechaConAjuste()
             };
             await guardarBebida(bebidaCortesia1);
             atLeastOneCortesiaSaved = true;
@@ -527,7 +506,8 @@ export default function App() {
               cantidad: cantidadBebida2,
               precio: 0,
               mensaje: "Cortesía",
-              fechaDeMarca: ""
+              fechaDeMarca: "",
+              fecha: obtenerFechaConAjuste()
             };
             await guardarBebida(bebidaCortesia2);
             atLeastOneCortesiaSaved = true;
@@ -542,7 +522,8 @@ export default function App() {
               cantidad: cantidadBebida3,
               precio: 0,
               mensaje: "Cortesía",
-              fechaDeMarca: ""
+              fechaDeMarca: "",
+              fecha: obtenerFechaConAjuste()
             };
             await guardarBebida(bebidaCortesia3);
             atLeastOneCortesiaSaved = true;
@@ -557,7 +538,8 @@ export default function App() {
               cantidad: cantidadBebida4,
               precio: 0,
               mensaje: "Cortesía",
-              fechaDeMarca: ""
+              fechaDeMarca: "",
+              fecha: obtenerFechaConAjuste()
             };
             await guardarBebida(bebidaCortesia4);
             atLeastOneCortesiaSaved = true;
@@ -578,7 +560,8 @@ export default function App() {
           nombre: bebidaSeleccionada,
           cantidad: cantidadBebida,
           precio: precioBebidaSeleccionada,
-          fechaDeMarca: ""
+          fechaDeMarca: "",
+          fecha: obtenerFechaConAjuste()
         };
 
         if (await checkStockAndUpdateInventory(bebidaSeleccionadaId, cantidadBebida)) {
@@ -593,7 +576,8 @@ export default function App() {
           nombre: bebida1Seleccionada,
           cantidad: cantidadBebida1,
           precio: precioBebida1Seleccionada,
-          fechaDeMarca: ""
+          fechaDeMarca: "",
+          fecha: obtenerFechaConAjuste()
         };
 
         if (await checkStockAndUpdateInventory(bebida1SeleccionadaId, cantidadBebida1)) {
@@ -608,7 +592,8 @@ export default function App() {
           nombre: bebida2Seleccionada,
           cantidad: cantidadBebida2,
           precio: precioBebida2Seleccionada,
-          fechaDeMarca: ""
+          fechaDeMarca: "",
+          fecha: obtenerFechaConAjuste()
         };
 
         if (await checkStockAndUpdateInventory(bebida2SeleccionadaId, cantidadBebida2)) {
@@ -623,7 +608,8 @@ export default function App() {
           nombre: bebida3Seleccionada,
           cantidad: cantidadBebida3,
           precio: precioBebida3Seleccionada,
-          fechaDeMarca: ""
+          fechaDeMarca: "",
+          fecha: obtenerFechaConAjuste()
         };
 
         if (await checkStockAndUpdateInventory(bebida3SeleccionadaId, cantidadBebida3)) {
@@ -638,7 +624,8 @@ export default function App() {
           nombre: bebida4Seleccionada,
           cantidad: cantidadBebida4,
           precio: precioBebida4Seleccionada,
-          fechaDeMarca: ""
+          fechaDeMarca: "",
+          fecha: obtenerFechaConAjuste()
         };
 
         if (await checkStockAndUpdateInventory(bebida4SeleccionadaId, cantidadBebida4)) {
@@ -648,16 +635,16 @@ export default function App() {
       }
 
       if (!isBebidaAdded) {
-        alert("No se ha agregado ninguna bebida");
+        toast.error("No se ha agregado ninguna bebida");
+        setIsSaving(false)
       } else {
         onClose();
       }
     } catch (error) {
-      console.error('Error al guardar las bebidas en el cliente:', error.message);
+      toast.error('Error al guardar las bebidas en el cliente:', error.message);
+      setIsSaving(false)
     }
   };
-
-
 
   const guardarBebida = async (bebida) => {
     try {
@@ -679,6 +666,7 @@ export default function App() {
       setEsCortesia(false);
 
       closeModalM();
+      setIsSaving(false);
 
       const responses = await AxiosInstance.get("/cabania-clientes");
 
@@ -688,6 +676,7 @@ export default function App() {
       // Actualiza el estado con los usuarios ordenados
       setUsers(usuariosOrdenados);
     } catch (error) {
+      setIsSaving(false);
       console.error('Error al guardar la bebida en el cliente:', error.message);
       throw error;
     }
@@ -708,6 +697,7 @@ export default function App() {
       throw error;
     }
   };
+
   const actualizarStockInicialFood = async (foodId, cantidad) => {
     try {
       const response = await AxiosInstance.post(`/actualizar-stock-inicial-food/${foodId}`, { cantidad });
@@ -720,14 +710,15 @@ export default function App() {
     }
   };
 
-
-
   const handleGuardarFood = async () => {
+
+    if (isSaving) return;
+    setIsSaving(true);
 
     if (!selectedClientId || (!foodSeleccionadaId && !food1SeleccionadaId && food2SeleccionadaId && food3SeleccionadaId && food4SeleccionadaId)) {
       toast.error('No se ha seleccionado un cliente o una comida.');
-      toast.
-        return;
+      setIsSaving(false);
+      return;
     }
 
     const checkStockAndUpdateInventory = async (foodId, cantidad) => {
@@ -813,6 +804,7 @@ export default function App() {
     };
     try {
       if (!selectedClientId || (!foodSeleccionadaId && !food1SeleccionadaId && !food2SeleccionadaId && !food3SeleccionadaId && !food4SeleccionadaId)) {
+        setIsSaving(false);
         throw new Error('No se ha seleccionado un cliente o una bebida.');
       }
 
@@ -842,7 +834,8 @@ export default function App() {
               cantidad: cantidadFood1,
               precio: 0,
               mensaje: "Cortesía",
-              fechaDeMarca: ""
+              fechaDeMarca: "",
+              fecha: obtenerFechaConAjuste()
             };
             await guardarFood(foodCortesia1);
             atLeastOneCortesiaSaved = true;
@@ -857,7 +850,8 @@ export default function App() {
               cantidad: cantidadFood2,
               precio: 0,
               mensaje: "Cortesía",
-              fechaDeMarca: ""
+              fechaDeMarca: "",
+              fecha: obtenerFechaConAjuste()
             };
             await guardarFood(foodCortesia2);
             atLeastOneCortesiaSaved = true;
@@ -872,7 +866,8 @@ export default function App() {
               cantidad: cantidadFood3,
               precio: 0,
               mensaje: "Cortesía",
-              fechaDeMarca: ""
+              fechaDeMarca: "",
+              fecha: obtenerFechaConAjuste()
             };
             await guardarFood(foodCortesia3);
             atLeastOneCortesiaSaved = true;
@@ -887,7 +882,8 @@ export default function App() {
               cantidad: cantidadFood4,
               precio: 0,
               mensaje: "Cortesía",
-              fechaDeMarca: ""
+              fechaDeMarca: "",
+              fecha: obtenerFechaConAjuste()
             };
             await guardarFood(foodCortesia4);
             atLeastOneCortesiaSaved = true;
@@ -908,7 +904,8 @@ export default function App() {
           nombre: foodSeleccionada,
           cantidad: cantidadFood,
           precio: precioFoodSeleccionada,
-          fechaDeMarca: ""
+          fechaDeMarca: "",
+          fecha: obtenerFechaConAjuste()
         };
 
         if (await checkStockAndUpdateInventory(foodSeleccionadaId, cantidadFood)) {
@@ -923,7 +920,8 @@ export default function App() {
           nombre: food1Seleccionada,
           cantidad: cantidadFood1,
           precio: precioFood1Seleccionada,
-          fechaDeMarca: ""
+          fechaDeMarca: "",
+          fecha: obtenerFechaConAjuste()
         };
 
         if (await checkStockAndUpdateInventory(food1SeleccionadaId, cantidadFood1)) {
@@ -938,7 +936,8 @@ export default function App() {
           nombre: food2Seleccionada,
           cantidad: cantidadFood2,
           precio: precioFood2Seleccionada,
-          fechaDeMarca: ""
+          fechaDeMarca: "",
+          fecha: obtenerFechaConAjuste()
         };
 
         if (await checkStockAndUpdateInventory(food2SeleccionadaId, cantidadFood2)) {
@@ -953,7 +952,8 @@ export default function App() {
           nombre: food3Seleccionada,
           cantidad: cantidadFood3,
           precio: precioFood3Seleccionada,
-          fechaDeMarca: ""
+          fechaDeMarca: "",
+          fecha: obtenerFechaConAjuste()
         };
 
         if (await checkStockAndUpdateInventory(food3SeleccionadaId, cantidadFood3)) {
@@ -968,7 +968,8 @@ export default function App() {
           nombre: food4Seleccionada,
           cantidad: cantidadFood4,
           precio: precioFood4Seleccionada,
-          fechaDeMarca: ""
+          fechaDeMarca: "",
+          fecha: obtenerFechaConAjuste()
         };
 
         if (await checkStockAndUpdateInventory(food4SeleccionadaId, cantidadFood4)) {
@@ -978,15 +979,16 @@ export default function App() {
       }
 
       if (!isBebidaAdded) {
-        alert("No se ha agregado ninguna bebida");
+        toast.promise("No se ha agregado ninguna comida");
+        setIsSaving(false);
       } else {
         closeModalF();
       }
     } catch (error) {
-      console.error('Error al guardar las bebidas en el cliente:', error.message);
+      toast.error('Error al guardar las bebidas en el cliente:', error.message);
+      setIsSaving(false);
     }
   };
-
 
   const guardarFood = async (food) => {
 
@@ -1009,23 +1011,20 @@ export default function App() {
 
 
       setEsCortesia(false);
+      setIsSaving(false);
 
       closeModalF();
       const responses = await AxiosInstance.get("/cabania-clientes");
 
-      // Ordena los datos de la respuesta de la petición GET, no del PUT
       const usuariosOrdenados = responses.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
-
-      // Actualiza el estado con los usuarios ordenados
       setUsers(usuariosOrdenados);
 
     } catch (error) {
       console.error('Error al guardar la bebida en el cliente:', error.message);
+      setIsSaving(false);
       throw error;
     }
   };
-
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -1236,10 +1235,8 @@ export default function App() {
     fetchData();
   }, []);
 
-
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-
 
   const { isOpen: isFirstModalOpen, onOpen: openFirstModal, onClose: closeFirstModal } = useDisclosure();
   const sizes = ['4xl'];
@@ -1271,14 +1268,15 @@ export default function App() {
   const { isOpen: isModalOpenM, onOpen: openModalM, onClose: closeModalM } = useDisclosure();
   const { isOpen: isModalOpenF, onOpen: openModalF, onClose: closeModalF } = useDisclosure();
 
-
   const [ancho, setAncho] = React.useState('md')
   const sizesm = ["2xl"];
 
-  const handleOpenm = async ( userId) => {
+  const handleOpenm = async (userId) => {
     setAncho(size);
     setSelectedClientId(userId);
     setOpenAb(true);
+    setIsSaving(false)
+
     setCantidadBebida(""); // o '' si quieres que el campo esté completamente vacío
     setBebidaSeleccionada('');
     setPrecioBebidaSeleccionada("");
@@ -1327,10 +1325,11 @@ export default function App() {
 
   };
 
-  const handleOpenmf = async ( userId) => {
+  const handleOpenmf = async (userId) => {
     setAncho(size);
     setSelectedClientId(userId);
     setOpenAf(true)
+    setIsSaving(false)
 
     // Sin números
     setCantidadFood("");
@@ -1381,10 +1380,7 @@ export default function App() {
 
   };
 
-
-
   const { isOpen: isModalOpenMc, onOpen: openModalMc, onClose: closeModalMc } = useDisclosure();
-
 
   const sizesmc = ["xs"];
 
@@ -1397,9 +1393,6 @@ export default function App() {
     // setSelectedClientId(cliente._id);
     setModalOpen(true);
   };
-
-
-
 
   const [formDatas, setFormDatas] = useState({
     pagoPendiente: '',
@@ -1479,7 +1472,6 @@ export default function App() {
     setCurrentPage(1);
   };
 
-
   async function actualizarFechaEnProductos() {
     const fechaActual = new Date();
     fechaActual.setHours(fechaActual.getHours() - 5);
@@ -1505,7 +1497,6 @@ export default function App() {
       console.error('Error al actualizar los datos:', error);
     }
   }
-
 
   const generarPDF = async () => {
     const pdf = new jsPDF();
@@ -1606,32 +1597,14 @@ export default function App() {
     pdf.save("factura.pdf");
   };
 
-
-
   const totalPages = Math.ceil(datosFiltrados.length / displayLimit + 1);
   const start = (currentPage - 1) * displayLimit;
   const end = start + displayLimit;
-
-
-
-
   let fecha2 = new Date();
-
   fecha2.setHours(fecha2.getHours());
-
   const hours = fecha2.toLocaleString();
 
-  const [filtro, setFiltro] = useState('');
-  const [filtro2, setFiltro2] = useState('');
-  const [filtro3, setFiltro3] = useState('');
-  const [filtro4, setFiltro4] = useState('');
-  const [filtro5, setFiltro5] = useState('');
 
-  const [foodFiltro, setFoodFiltro] = useState('');
-  const [foodFiltro2, setFoodFiltro2] = useState('');
-  const [foodFiltro3, setFoodFiltro3] = useState('');
-  const [foodFiltro4, setFoodFiltro4] = useState('');
-  const [foodFiltro5, setFoodFiltro5] = useState('');
 
   const bebidasFiltradas = drinks.filter(bebida =>
     bebida.Descripcion.toLowerCase().includes(filtro.toLowerCase())
@@ -1677,17 +1650,45 @@ export default function App() {
     e.stopPropagation();
   };
 
-  
-
   const limpiarItems = async () => {
+
     setItemSeleccionado("");
     setCantidadItem("");
     setPrecioItemSeleccionado("");
     setItemSeleccionadoId("");
     setSubItemSeleccionadoId("");
     setCantidadFoodDisponible("");
+
+    setItemSeleccionado1("");
+    setCantidadItem1("");
+    setPrecioItemSeleccionado1("");
+    setItemSeleccionadoId1("");
+    setSubItemSeleccionadoId1("");
+    setCantidadFood1Disponible("");
+
+    setItemSeleccionado2("");
+    setCantidadItem2("");
+    setPrecioItemSeleccionado2("");
+    setItemSeleccionadoId2("");
+    setSubItemSeleccionadoId2("");
+    setCantidadFood2Disponible("");
+
+    setItemSeleccionado3("");
+    setCantidadItem3("");
+    setPrecioItemSeleccionado3("");
+    setItemSeleccionadoId3("");
+    setSubItemSeleccionadoId3("");
+    setCantidadFood3Disponible("");
+
+    setItemSeleccionado4("");
+    setCantidadItem4("");
+    setPrecioItemSeleccionado4("");
+    setItemSeleccionadoId4("");
+    setSubItemSeleccionadoId4("");
+    setCantidadFood4Disponible("");
+
   }
-  
+
   const actualizarInventarioItem = async (foodId, subproductoId, cantidad) => {
     console.log("peticion actualizar inventario item: " + foodId, subproductoId, cantidad)
     try {
@@ -1729,13 +1730,14 @@ export default function App() {
   };
 
   const handleGuardarItem = async () => {
-    console.log("handleGuardarItem ", subItemSeleccionadoId, cantidadItem, subItemSeleccionadoId)
-    // if (isSaving) return;
 
-    // setIsSaving(true);
+    if (isSaving) return;
+    setIsSaving(true);
+
     console.log()
     if (!selectedClientId || (!subItemSeleccionadoId && !subItemSeleccionadoId1 && !subItemSeleccionadoId2 && !subItemSeleccionadoId3 && !subItemSeleccionadoId4)) {
       toast.error('No se ha seleccionado un cliente o una comida.');
+      setIsSaving(false);
       return;
     }
 
@@ -1835,6 +1837,7 @@ export default function App() {
 
     try {
       if (!selectedClientId || (!subItemSeleccionadoId && !subItemSeleccionadoId1 && !subItemSeleccionadoId2 && !subItemSeleccionadoId3 && !subItemSeleccionadoId4)) {
+        setIsSaving(false);
         throw new Error('No se ha seleccionado un cliente o una bebida.');
       }
 
@@ -2029,12 +2032,14 @@ export default function App() {
       }
 
       if (!isBebidaAdded) {
-        alert("No se ha agregado ninguna comida");
+        toast.promise("No se ha agregado ninguna comida");
+        setIsSaving(false);
       } else {
       }
 
     } catch (error) {
-      console.error('Error al guardar las bebidas en el cliente:', error.message);
+      toast.error('Error al guardar las comidas en el cliente:', error.message);
+      setIsSaving(false);
     }
 
   }
@@ -2059,11 +2064,11 @@ export default function App() {
 
       setUsers(usuariosOrdenados);
     } catch (error) {
+      setIsSaving(false);
       console.error('Error al guardar la comida en el cliente:', error.message);
       throw error;
     }
   };
-
 
   const style = {
     position: 'absolute',
@@ -2377,20 +2382,14 @@ export default function App() {
 
               >
 
-
-                {/* -------------------MODAL DE PRODUCTOS SELECCIONADOS*/}
-
-
-
-
                 <TableCell>
 
-                    <Button className="bg-white" onClick={() => handleOpenModal(cliente)}>
-                      <img className="w-4" src={chevron} alt="" />
-                    </Button>
+                  <Button className="bg-white" onClick={() => handleOpenModal(cliente)}>
+                    <img className="w-4" src={chevron} alt="" />
+                  </Button>
                   {selectedUser && (
                     <Modal open={openTd} onClose={handleCloseTd} className=""
-                      
+
                     >
                       <Box sx={styleAdd} style={{
                         maxHeight: "90vh",
@@ -2545,9 +2544,6 @@ export default function App() {
                   )}
                 </TableCell>
 
-                {/* --------------------FIN DEL MODAL */}
-
-
                 <TableCell className="w-2/12">
                   <Popover placement="top">
                     <PopoverTrigger>
@@ -2600,19 +2596,6 @@ export default function App() {
                   </Popover>
                 </TableCell>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
                 <TableCell>
 
                   <Popover placement="bottom" offset={20} showArrow>
@@ -2646,339 +2629,367 @@ export default function App() {
                   day: 'numeric',
                 })}</TableCell>
 
-
-
                 <TableCell key={cliente._id} >
 
                   <div className=" flex justify-center">
                     <div className="flex flex-wrap gap-3">
-                     
-                        <Button className="bg-white-100"  onClick={() => handleOpenm( cliente._id)}  >
-                          <img className="w-7 h-7" src={plus} alt="" />
-                        </Button>
-                      
+
+                      <Button className="bg-white-100" onClick={() => handleOpenm(cliente._id)}  >
+                        <img className="w-7 h-7" src={plus} alt="" />
+                      </Button>
+
                     </div>
 
-                    <Modal  open={openAb} onClose={handleCloseAb}>
+                    <Modal open={openAb} onClose={handleCloseAb}>
                       <Box sx={style} style={{
                         maxHeight: "90vh",
                         minHeight: "min-content",
                         overflowY: "auto"
                       }}>
-                          <>
-                            <Typography className="flex flex-col gap-1" component="div">BEBIDAS</Typography>
-                            <Typography component="div" >
-                              <Checkbox
-                                checked={esCortesia}
-                                onChange={handleCortesiaChange}
-                              >
-                                Cortesía cabañas
-                              </Checkbox>
-                              <div className="flex">
-                                <Input
-                                  className="mr-2"
-                                  name="bebidas"
-                                  label="Ingrese la cantidad"
-                                  type="number"
-                                  value={isNaN(cantidadBebida) ? '' : cantidadBebida}
-                                  onChange={(e) => {
-                                    const value = parseInt(e.target.value, 10);
-                                    setCantidadBebida(isNaN(value) ? "" : value);
-                                  }}
-                                />
-                                <Input
-                                  disabled
-                                  label=" Stock "
-                                  className="w-44 flex text-blue-500 border-2 border-blue-400 rounded-xl"
-                                  placeholder={` ${cantidadBebidaDisponible}`}
-                                />
-                                <Select
-                                  className="ml-2"
-                                  name="bebidas"
-                                  label="Seleccionar bebida"
-                                  value={bebidaSeleccionada}
-                                  onChange={(e) => {
-                                    const selectedBebida = e.target.value;
-                                    setBebidaSeleccionada(selectedBebida);
+                        <>
+                          <Typography className="flex flex-col gap-1" component="div">BEBIDAS</Typography>
+                          <Typography component="div" >
+                            <Checkbox
+                              checked={esCortesia}
+                              onChange={handleCortesiaChange}
+                            >
+                              Cortesía cabañas
+                            </Checkbox>
+                            <div className="flex">
+                              <Input
+                                className="mr-2"
+                                name="bebidas"
+                                label="Ingrese la cantidad"
+                                type="number"
+                                value={isNaN(cantidadBebida) ? '' : cantidadBebida}
+                                onChange={(e) => {
+                                  const value = parseInt(e.target.value, 10);
+                                  setCantidadBebida(isNaN(value) ? "" : value);
+                                }}
+                              />
+                              <Input
+                                disabled
+                                label=" Stock "
+                                className="w-44 flex text-blue-500 border-2 border-blue-400 rounded-xl"
+                                placeholder={` ${cantidadBebidaDisponible}`}
+                              />
+                              <Select
+                                className="ml-2"
+                                name="bebidas"
+                                label="Seleccionar bebida"
+                                value={bebidaSeleccionada}
+                                onChange={(e) => {
+                                  const selectedBebida = e.target.value;
+                                  setBebidaSeleccionada(selectedBebida);
 
+                                  if (selectedBebida) {
                                     const bebidaSeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida);
                                     if (bebidaSeleccionadaInfo) {
                                       setPrecioBebidaSeleccionada(bebidaSeleccionadaInfo.ValorUnitario);
                                       setBebidaSeleccionadaId(bebidaSeleccionadaInfo._id);
                                       setCantidadBebidaDisponible(bebidaSeleccionadaInfo.CantidadInicial);
                                     }
-                                  }}
-                                >
-                                  {bebidasFiltradas.map((bebida) => (
-                                    <SelectItem key={bebida.Descripcion}>
-                                      {bebida.Descripcion}
-                                    </SelectItem>
-                                  ))}
-                                </Select>
-                                <aside className="search-button">
-                                  <div className="container">
-                                    <span className="lupa">
-                                      <SearchIcon />
-                                    </span>
-                                    <input
-                                      type="search"
-                                      id="search"
-                                      placeholder="¿Qué quieres buscar?"
-                                      value={filtro}
-                                      onClick={handleItemClick}
-                                      onChange={(e) => {
-                                        e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
-                                        setFiltro(e.target.value);
-                                      }} />
-                                  </div>
-                                </aside>
-                              </div>
-                              <div className="flex">
-                                <Input
-                                  className="mr-2"
-                                  name="bebidas"
-                                  label="Ingrese la cantidad"
-                                  type="number"
-                                  value={isNaN(cantidadBebida1) ? '' : cantidadBebida1}
-                                  onChange={(e) => {
-                                    const value = parseInt(e.target.value, 10);
-                                    setCantidadBebida1(isNaN(value) ? "" : value);
-                                  }}
-                                />
-                                <Input
-                                  disabled
-                                  label=" Stock "
-                                  className="w-44 flex text-blue-500 border-2 border-blue-400 rounded-xl"
-                                  placeholder={` ${cantidadBebida1Disponible}`}
-                                />
-                                <Select
-                                  className="ml-2"
-                                  name="bebidas"
-                                  label="Seleccionar bebida"
-                                  value={bebida1Seleccionada}
-                                  onChange={(e) => {
-                                    const selectedBebida1 = e.target.value;
-                                    setBebida1Seleccionada(selectedBebida1);
+                                  } else {
+                                    setPrecioBebidaSeleccionada(0);
+                                    setCantidadBebidaDisponible(0);
+                                    setCantidadBebida("");
+                                  }
+                                }}
+                              >
+                                {bebidasFiltradas.map((bebida) => (
+                                  <SelectItem key={bebida.Descripcion}>
+                                    {bebida.Descripcion}
+                                  </SelectItem>
+                                ))}
+                              </Select>
+                              <aside className="search-button">
+                                <div className="container">
+                                  <span className="lupa">
+                                    <SearchIcon />
+                                  </span>
+                                  <input
+                                    type="search"
+                                    id="search"
+                                    placeholder="¿Qué quieres buscar?"
+                                    value={filtro}
+                                    onClick={handleItemClick}
+                                    onChange={(e) => {
+                                      e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
+                                      setFiltro(e.target.value);
+                                    }} />
+                                </div>
+                              </aside>
+                            </div>
+                            <div className="flex">
+                              <Input
+                                className="mr-2"
+                                name="bebidas"
+                                label="Ingrese la cantidad"
+                                type="number"
+                                value={isNaN(cantidadBebida1) ? '' : cantidadBebida1}
+                                onChange={(e) => {
+                                  const value = parseInt(e.target.value, 10);
+                                  setCantidadBebida1(isNaN(value) ? "" : value);
+                                }}
+                              />
+                              <Input
+                                disabled
+                                label=" Stock "
+                                className="w-44 flex text-blue-500 border-2 border-blue-400 rounded-xl"
+                                placeholder={` ${cantidadBebida1Disponible}`}
+                              />
+                              <Select
+                                className="ml-2"
+                                name="bebidas"
+                                label="Seleccionar bebida"
+                                value={bebida1Seleccionada}
+                                onChange={(e) => {
+                                  const selectedBebida1 = e.target.value;
+                                  setBebida1Seleccionada(selectedBebida1);
 
+                                  if (selectedBebida1) {
                                     const bebida1SeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida1);
                                     if (bebida1SeleccionadaInfo) {
                                       setPrecioBebida1Seleccionada(bebida1SeleccionadaInfo.ValorUnitario);
                                       setBebida1SeleccionadaId(bebida1SeleccionadaInfo._id);
                                       setCantidadBebida1Disponible(bebida1SeleccionadaInfo.CantidadInicial);
                                     }
-                                  }}
-                                >
-                                  {bebidasFiltradas2.map((bebida) => (
-                                    <SelectItem key={bebida.Descripcion}>
-                                      {bebida.Descripcion}
-                                    </SelectItem>
-                                  ))}
-                                </Select>
-                                <aside className="search-button">
-                                  <div className="container">
-                                    <span className="lupa">
-                                      <SearchIcon />
-                                    </span>
-                                    <input
-                                      type="search"
-                                      id="search"
-                                      placeholder="¿Qué quieres buscar?"
-                                      value={filtro2}
-                                      onClick={handleItemClick}
-                                      onChange={(e) => {
-                                        e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
-                                        setFiltro2(e.target.value);
-                                      }} />
-                                  </div>
-                                </aside>
-                              </div>
-                              <div className="flex">
-                                <Input
-                                  className="mr-2"
-                                  name="bebidas"
-                                  label="Ingrese la cantidad"
-                                  type="number"
-                                  value={isNaN(cantidadBebida2) ? '' : cantidadBebida2}
-                                  onChange={(e) => {
-                                    const value = parseInt(e.target.value, 10);
-                                    setCantidadBebida2(isNaN(value) ? "" : value);
-                                  }}
-                                />
-                                <Input
-                                  disabled
-                                  label=" Stock "
-                                  className="w-44 flex text-blue-500 border-2 border-blue-400 rounded-xl"
-                                  placeholder={` ${cantidadBebida2Disponible}`}
-                                />
-                                <Select
-                                  className="ml-2"
-                                  name="bebidas"
-                                  label="Seleccionar bebida"
-                                  value={bebida2Seleccionada}
-                                  onChange={(e) => {
-                                    const selectedBebida2 = e.target.value;
-                                    setBebida2Seleccionada(selectedBebida2);
+                                  } else {
+                                    setPrecioBebida1Seleccionada(0);
+                                    setCantidadBebida1Disponible(0);
+                                    setCantidadBebida1("");
+                                  }
+                                }}
+                              >
+                                {bebidasFiltradas2.map((bebida) => (
+                                  <SelectItem key={bebida.Descripcion}>
+                                    {bebida.Descripcion}
+                                  </SelectItem>
+                                ))}
+                              </Select>
+                              <aside className="search-button">
+                                <div className="container">
+                                  <span className="lupa">
+                                    <SearchIcon />
+                                  </span>
+                                  <input
+                                    type="search"
+                                    id="search"
+                                    placeholder="¿Qué quieres buscar?"
+                                    value={filtro2}
+                                    onClick={handleItemClick}
+                                    onChange={(e) => {
+                                      e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
+                                      setFiltro2(e.target.value);
+                                    }} />
+                                </div>
+                              </aside>
+                            </div>
+                            <div className="flex">
+                              <Input
+                                className="mr-2"
+                                name="bebidas"
+                                label="Ingrese la cantidad"
+                                type="number"
+                                value={isNaN(cantidadBebida2) ? '' : cantidadBebida2}
+                                onChange={(e) => {
+                                  const value = parseInt(e.target.value, 10);
+                                  setCantidadBebida2(isNaN(value) ? "" : value);
+                                }}
+                              />
+                              <Input
+                                disabled
+                                label=" Stock "
+                                className="w-44 flex text-blue-500 border-2 border-blue-400 rounded-xl"
+                                placeholder={` ${cantidadBebida2Disponible}`}
+                              />
+                              <Select
+                                className="ml-2"
+                                name="bebidas"
+                                label="Seleccionar bebida"
+                                value={bebida2Seleccionada}
+                                onChange={(e) => {
+                                  const selectedBebida2 = e.target.value;
+                                  setBebida2Seleccionada(selectedBebida2);
 
+                                  if (selectedBebida2) {
                                     const bebida2SeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida2);
                                     if (bebida2SeleccionadaInfo) {
                                       setPrecioBebida2Seleccionada(bebida2SeleccionadaInfo.ValorUnitario);
                                       setBebida2SeleccionadaId(bebida2SeleccionadaInfo._id);
                                       setCantidadBebida2Disponible(bebida2SeleccionadaInfo.CantidadInicial);
                                     }
-                                  }}
-                                >
-                                  {bebidasFiltradas3.map((bebida) => (
-                                    <SelectItem key={bebida.Descripcion}>
-                                      {bebida.Descripcion}
-                                    </SelectItem>
-                                  ))}
-                                </Select>
-                                <aside className="search-button">
-                                  <div className="container">
-                                    <span className="lupa">
-                                      <SearchIcon />
-                                    </span>
-                                    <input
-                                      type="search"
-                                      id="search"
-                                      placeholder="¿Qué quieres buscar?"
-                                      value={filtro3}
-                                      onClick={handleItemClick}
-                                      onChange={(e) => {
-                                        e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
-                                        setFiltro3(e.target.value);
-                                      }} />
-                                  </div>
-                                </aside>
-                              </div>
-                              <div className="flex">
-                                <Input
-                                  className="mr-2"
-                                  name="bebidas"
-                                  label="Ingrese la cantidad"
-                                  type="number"
-                                  value={isNaN(cantidadBebida3) ? '' : cantidadBebida3}
-                                  onChange={(e) => {
-                                    const value = parseInt(e.target.value, 10);
-                                    setCantidadBebida3(isNaN(value) ? "" : value);
-                                  }}
-                                />
-                                <Input
-                                  disabled
-                                  label=" Stock "
-                                  className="w-44 flex text-blue-500 border-2 border-blue-400 rounded-xl"
-                                  placeholder={` ${cantidadBebida3Disponible}`}
-                                />
-                                <Select
-                                  className="ml-2"
-                                  name="bebidas"
-                                  label="Seleccionar bebida"
-                                  value={bebida3Seleccionada}
-                                  onChange={(e) => {
-                                    const selectedBebida3 = e.target.value;
-                                    setBebida3Seleccionada(selectedBebida3);
+                                  } else {
+                                    setPrecioBebida2Seleccionada(0);
+                                    setCantidadBebida2Disponible(0);
+                                    setCantidadBebida2("");
+                                  }
+                                }}
+                              >
+                                {bebidasFiltradas3.map((bebida) => (
+                                  <SelectItem key={bebida.Descripcion}>
+                                    {bebida.Descripcion}
+                                  </SelectItem>
+                                ))}
+                              </Select>
+                              <aside className="search-button">
+                                <div className="container">
+                                  <span className="lupa">
+                                    <SearchIcon />
+                                  </span>
+                                  <input
+                                    type="search"
+                                    id="search"
+                                    placeholder="¿Qué quieres buscar?"
+                                    value={filtro3}
+                                    onClick={handleItemClick}
+                                    onChange={(e) => {
+                                      e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
+                                      setFiltro3(e.target.value);
+                                    }} />
+                                </div>
+                              </aside>
+                            </div>
+                            <div className="flex">
+                              <Input
+                                className="mr-2"
+                                name="bebidas"
+                                label="Ingrese la cantidad"
+                                type="number"
+                                value={isNaN(cantidadBebida3) ? '' : cantidadBebida3}
+                                onChange={(e) => {
+                                  const value = parseInt(e.target.value, 10);
+                                  setCantidadBebida3(isNaN(value) ? "" : value);
+                                }}
+                              />
+                              <Input
+                                disabled
+                                label=" Stock "
+                                className="w-44 flex text-blue-500 border-2 border-blue-400 rounded-xl"
+                                placeholder={` ${cantidadBebida3Disponible}`}
+                              />
+                              <Select
+                                className="ml-2"
+                                name="bebidas"
+                                label="Seleccionar bebida"
+                                value={bebida3Seleccionada}
+                                onChange={(e) => {
+                                  const selectedBebida3 = e.target.value;
+                                  setBebida3Seleccionada(selectedBebida3);
 
+                                  if (selectedBebida3) {
                                     const bebida3SeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida3);
                                     if (bebida3SeleccionadaInfo) {
                                       setPrecioBebida3Seleccionada(bebida3SeleccionadaInfo.ValorUnitario);
                                       setBebida3SeleccionadaId(bebida3SeleccionadaInfo._id);
                                       setCantidadBebida3Disponible(bebida3SeleccionadaInfo.CantidadInicial);
                                     }
-                                  }}
-                                >
-                                  {bebidasFiltradas4.map((bebida) => (
-                                    <SelectItem key={bebida.Descripcion}>
-                                      {bebida.Descripcion}
-                                    </SelectItem>
-                                  ))}
-                                </Select>
-                                <aside className="search-button">
-                                  <div className="container">
-                                    <span className="lupa">
-                                      <SearchIcon />
-                                    </span>
-                                    <input
-                                      type="search"
-                                      id="search"
-                                      placeholder="¿Qué quieres buscar?"
-                                      value={filtro4}
-                                      onClick={handleItemClick}
-                                      onChange={(e) => {
-                                        e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
-                                        setFiltro4(e.target.value);
-                                      }} />
-                                  </div>
-                                </aside>
-                              </div>
-                              <div className="flex">
-                                <Input
-                                  className="mr-2"
-                                  name="bebidas"
-                                  label="Ingrese la cantidad"
-                                  type="number"
-                                  value={isNaN(cantidadBebida4) ? '' : cantidadBebida4}
-                                  onChange={(e) => {
-                                    const value = parseInt(e.target.value, 10);
-                                    setCantidadBebida4(isNaN(value) ? "" : value);
-                                  }}
-                                />
-                                <Input
-                                  disabled
-                                  label=" Stock "
-                                  className="w-44 flex text-blue-500 border-2 border-blue-400 rounded-xl"
-                                  placeholder={` ${cantidadBebida4Disponible}`}
-                                />
-                                <Select
-                                  className="ml-2"
-                                  name="bebidas"
-                                  label="Seleccionar bebida"
-                                  value={bebida4Seleccionada}
-                                  onChange={(e) => {
-                                    const selectedBebida4 = e.target.value;
-                                    setBebida4Seleccionada(selectedBebida4);
+                                  } else {
+                                    setPrecioBebida3Seleccionada(0);
+                                    setCantidadBebida3Disponible(0);
+                                    setCantidadBebida3("");
+                                  }
+                                }}
+                              >
+                                {bebidasFiltradas4.map((bebida) => (
+                                  <SelectItem key={bebida.Descripcion}>
+                                    {bebida.Descripcion}
+                                  </SelectItem>
+                                ))}
+                              </Select>
+                              <aside className="search-button">
+                                <div className="container">
+                                  <span className="lupa">
+                                    <SearchIcon />
+                                  </span>
+                                  <input
+                                    type="search"
+                                    id="search"
+                                    placeholder="¿Qué quieres buscar?"
+                                    value={filtro4}
+                                    onClick={handleItemClick}
+                                    onChange={(e) => {
+                                      e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
+                                      setFiltro4(e.target.value);
+                                    }} />
+                                </div>
+                              </aside>
+                            </div>
+                            <div className="flex">
+                              <Input
+                                className="mr-2"
+                                name="bebidas"
+                                label="Ingrese la cantidad"
+                                type="number"
+                                value={isNaN(cantidadBebida4) ? '' : cantidadBebida4}
+                                onChange={(e) => {
+                                  const value = parseInt(e.target.value, 10);
+                                  setCantidadBebida4(isNaN(value) ? "" : value);
+                                }}
+                              />
+                              <Input
+                                disabled
+                                label=" Stock "
+                                className="w-44 flex text-blue-500 border-2 border-blue-400 rounded-xl"
+                                placeholder={` ${cantidadBebida4Disponible}`}
+                              />
+                              <Select
+                                className="ml-2"
+                                name="bebidas"
+                                label="Seleccionar bebida"
+                                value={bebida4Seleccionada}
+                                onChange={(e) => {
+                                  const selectedBebida4 = e.target.value;
+                                  setBebida4Seleccionada(selectedBebida4);
 
+                                  if (selectedBebida4) {
                                     const bebida4SeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida4);
                                     if (bebida4SeleccionadaInfo) {
                                       setPrecioBebida4Seleccionada(bebida4SeleccionadaInfo.ValorUnitario);
                                       setBebida4SeleccionadaId(bebida4SeleccionadaInfo._id);
                                       setCantidadBebida4Disponible(bebida4SeleccionadaInfo.CantidadInicial);
                                     }
-                                  }}
-                                >
-                                  {bebidasFiltradas5.map((bebida) => (
-                                    <SelectItem key={bebida.Descripcion}>
-                                      {bebida.Descripcion}
-                                    </SelectItem>
-                                  ))}
-                                </Select>
-                                <aside className="search-button">
-                                  <div className="container">
-                                    <span className="lupa">
-                                      <SearchIcon />
-                                    </span>
-                                    <input
-                                      type="search"
-                                      id="search"
-                                      placeholder="¿Qué quieres buscar?"
-                                      value={filtro5}
-                                      onClick={handleItemClick}
-                                      onChange={(e) => {
-                                        e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
-                                        setFiltro5(e.target.value);
-                                      }} />
-                                  </div>
-                                </aside>
-                              </div>
-                            </Typography>
-                            <Typography component="div">
-                              <Button color="danger" variant="light" onPress={handleCloseAb}>
-                                Close
-                              </Button>
-                              <Button color="primary" onClick={handleGuardarBebida}>
-                                Ahorrar
-                              </Button>
-                            </Typography>
-                          </>
+                                  } else {
+                                    setPrecioBebida4Seleccionada(0);
+                                    setCantidadBebida4Disponible(0);
+                                    setCantidadBebida4("");
+                                  }
+                                }}
+                              >
+                                {bebidasFiltradas5.map((bebida) => (
+                                  <SelectItem key={bebida.Descripcion}>
+                                    {bebida.Descripcion}
+                                  </SelectItem>
+                                ))}
+                              </Select>
+                              <aside className="search-button">
+                                <div className="container">
+                                  <span className="lupa">
+                                    <SearchIcon />
+                                  </span>
+                                  <input
+                                    type="search"
+                                    id="search"
+                                    placeholder="¿Qué quieres buscar?"
+                                    value={filtro5}
+                                    onClick={handleItemClick}
+                                    onChange={(e) => {
+                                      e.stopPropagation(); // También detiene la propagación aquí para mayor seguridad
+                                      setFiltro5(e.target.value);
+                                    }} />
+                                </div>
+                              </aside>
+                            </div>
+                          </Typography>
+                          <Typography component="div">
+                            <Button color="danger" variant="light" onPress={handleCloseAb}>
+                              Close
+                            </Button>
+                            <Button color="primary" onClick={handleGuardarBebida} disabled={isSaving}>
+                              Ahorrar
+                            </Button>
+                          </Typography>
+                        </>
                       </Box>
                     </Modal>
 
@@ -2986,8 +2997,6 @@ export default function App() {
                   </div>
 
                 </TableCell>
-
-
 
                 <TableCell key={cliente.id} className="">
                   <div className="flex justify-center">
@@ -3053,12 +3062,18 @@ export default function App() {
                                     setFoodSeleccionada(selectedFood);
 
 
-                                    const foodSeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood);
+                                    if (selectedFood) {
+                                      const foodSeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood);
 
-                                    if (foodSeleccionadaInfo) {
-                                      setPrecioFoodSeleccionada(foodSeleccionadaInfo.ValorUnitario);
-                                      setFoodSeleccionadaId(foodSeleccionadaInfo._id);
-                                      setCantidadFoodDisponible(foodSeleccionadaInfo.CantidadInicial);
+                                      if (foodSeleccionadaInfo) {
+                                        setPrecioFoodSeleccionada(foodSeleccionadaInfo.ValorUnitario);
+                                        setFoodSeleccionadaId(foodSeleccionadaInfo._id);
+                                        setCantidadFoodDisponible(foodSeleccionadaInfo.CantidadInicial);
+                                      }
+                                    } else {
+                                      setPrecioFoodSeleccionada(0);
+                                      setCantidadFoodDisponible(0);
+                                      setCantidadFood("");
                                     }
 
                                   }}
@@ -3104,13 +3119,19 @@ export default function App() {
                                     const selectedFood1 = e.target.value;
                                     setFood1Seleccionada(selectedFood1);
 
-                                    const food1SeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood1 || selectedFood1 === food._id);
+                                    if (selectedFood1) {
+                                      const food1SeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood1 || selectedFood1 === food._id);
 
 
-                                    if (food1SeleccionadaInfo) {
-                                      setPrecioFood1Seleccionada(food1SeleccionadaInfo.ValorUnitario);
-                                      setFood1SeleccionadaId(food1SeleccionadaInfo._id);
-                                      setCantidadFood1Disponible(food1SeleccionadaInfo.CantidadInicial);
+                                      if (food1SeleccionadaInfo) {
+                                        setPrecioFood1Seleccionada(food1SeleccionadaInfo.ValorUnitario);
+                                        setFood1SeleccionadaId(food1SeleccionadaInfo._id);
+                                        setCantidadFood1Disponible(food1SeleccionadaInfo.CantidadInicial);
+                                      }
+                                    } else {
+                                      setPrecioFood1Seleccionada(0);
+                                      setCantidadFood1Disponible(0);
+                                      setCantidadFood1("");
                                     }
                                   }}
                                   style={{ height: "40px", backgroundColor: "#f4f4f5" }}
@@ -3152,11 +3173,17 @@ export default function App() {
                                     const selectedFood2 = e.target.value;
                                     setFood2Seleccionada(selectedFood2);
 
-                                    const food2SeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood2);
-                                    if (food2SeleccionadaInfo) {
-                                      setPrecioFood2Seleccionada(food2SeleccionadaInfo.ValorUnitario);
-                                      setFood2SeleccionadaId(food2SeleccionadaInfo._id);
-                                      setCantidadFood2Disponible(food2SeleccionadaInfo.CantidadInicial);
+                                    if (selectedFood2) {
+                                      const food2SeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood2);
+                                      if (food2SeleccionadaInfo) {
+                                        setPrecioFood2Seleccionada(food2SeleccionadaInfo.ValorUnitario);
+                                        setFood2SeleccionadaId(food2SeleccionadaInfo._id);
+                                        setCantidadFood2Disponible(food2SeleccionadaInfo.CantidadInicial);
+                                      }
+                                    } else {
+                                      setPrecioFood2Seleccionada(0);
+                                      setCantidadFood2Disponible(0);
+                                      setCantidadFood2("");
                                     }
                                   }}
                                   style={{ height: "40px", backgroundColor: "#f4f4f5" }}
@@ -3198,11 +3225,17 @@ export default function App() {
                                     const selectedFood3 = e.target.value;
                                     setFood3Seleccionada(selectedFood3);
 
-                                    const food3SeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood3);
-                                    if (food3SeleccionadaInfo) {
-                                      setPrecioFood3Seleccionada(food3SeleccionadaInfo.ValorUnitario);
-                                      setFood3SeleccionadaId(food3SeleccionadaInfo._id);
-                                      setCantidadFood3Disponible(food3SeleccionadaInfo.CantidadInicial);
+                                    if (selectedFood3) {
+                                      const food3SeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood3);
+                                      if (food3SeleccionadaInfo) {
+                                        setPrecioFood3Seleccionada(food3SeleccionadaInfo.ValorUnitario);
+                                        setFood3SeleccionadaId(food3SeleccionadaInfo._id);
+                                        setCantidadFood3Disponible(food3SeleccionadaInfo.CantidadInicial);
+                                      }
+                                    } else {
+                                      setPrecioFood3Seleccionada(0);
+                                      setCantidadFood3Disponible(0);
+                                      setCantidadFood3("");
                                     }
                                   }}
                                   style={{ height: "40px", backgroundColor: "#f4f4f5" }}
@@ -3244,11 +3277,17 @@ export default function App() {
                                     const selectedFood4 = e.target.value;
                                     setFood4Seleccionada(selectedFood4);
 
-                                    const food4SeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood4);
-                                    if (food4SeleccionadaInfo) {
-                                      setPrecioFood4Seleccionada(food4SeleccionadaInfo.ValorUnitario);
-                                      setFood4SeleccionadaId(food4SeleccionadaInfo._id);
-                                      setCantidadFood4Disponible(food4SeleccionadaInfo.CantidadInicial);
+                                    if (selectedFood4) {
+                                      const food4SeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood4);
+                                      if (food4SeleccionadaInfo) {
+                                        setPrecioFood4Seleccionada(food4SeleccionadaInfo.ValorUnitario);
+                                        setFood4SeleccionadaId(food4SeleccionadaInfo._id);
+                                        setCantidadFood4Disponible(food4SeleccionadaInfo.CantidadInicial);
+                                      }
+                                    } else {
+                                      setPrecioFood4Seleccionada(0);
+                                      setCantidadFood4Disponible(0);
+                                      setCantidadFood4("");
                                     }
                                   }}
                                   style={{ height: "40px", backgroundColor: "#f4f4f5" }}
@@ -3259,29 +3298,13 @@ export default function App() {
                                     </SelectItem>
                                   ))}
                                 </Select>
-                                {/* <aside className="search-button">
-                                    <div className="container">
-                                      <span className="lupa">
-                                        <SearchIcon />
-                                      </span>
-                                      <input
-                                        type="search"
-                                        id="search"
-                                        placeholder="¿Qué quieres buscar?"
-                                        value={foodFiltro5}
-                                        onChange={(e) => {
-                                          setFoodFiltro5(e.target.value);
-                                        }} />
-                                    </div>
-                                  </aside> */}
                               </div>
                             </Typography>
                             <Typography component="div" >
                               <Button color="danger" variant="light" onPress={closeModalF}>
                                 Close
                               </Button>
-                              <Button color="primary" onClick={handleGuardarFood} >
-                                {/* disabled={isSaving} */}
+                              <Button color="primary" onClick={handleGuardarFood} disabled={isSaving}>
                                 Ahorrar
                               </Button>
                             </Typography>
@@ -3327,13 +3350,19 @@ export default function App() {
                                   const selectedItem = e.target.value;
                                   setItemSeleccionado(selectedItem);
 
-                                  const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
+                                  if (selectedItem) {
+                                    const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
 
-                                  if (itemSeleccionadaInfo) {
-                                    setPrecioItemSeleccionado(itemSeleccionadaInfo.ValorUnitario);
-                                    setItemSeleccionadoId(itemSeleccionadaInfo.idPadre);
-                                    setSubItemSeleccionadoId(itemSeleccionadaInfo._id)
-                                    setCantidadFoodDisponible(itemSeleccionadaInfo.cantidadPadre);
+                                    if (itemSeleccionadaInfo) {
+                                      setPrecioItemSeleccionado(itemSeleccionadaInfo.ValorUnitario);
+                                      setItemSeleccionadoId(itemSeleccionadaInfo.idPadre);
+                                      setSubItemSeleccionadoId(itemSeleccionadaInfo._id)
+                                      setCantidadFoodDisponible(itemSeleccionadaInfo.cantidadPadre);
+                                    }
+                                  } else {
+                                    setPrecioItemSeleccionado(0);
+                                    setCantidadFoodDisponible(0);
+                                    setCantidadItem("");
                                   }
                                 }}
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
@@ -3375,13 +3404,19 @@ export default function App() {
                                   const selectedItem = e.target.value;
                                   setItemSeleccionado1(selectedItem);
 
-                                  const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
+                                  if (selectedItem) {
+                                    const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
 
-                                  if (itemSeleccionadaInfo) {
-                                    setPrecioItemSeleccionado1(itemSeleccionadaInfo.ValorUnitario);
-                                    setItemSeleccionadoId1(itemSeleccionadaInfo.idPadre);
-                                    setSubItemSeleccionadoId1(itemSeleccionadaInfo._id);
-                                    setCantidadFood1Disponible(itemSeleccionadaInfo.cantidadPadre);
+                                    if (itemSeleccionadaInfo) {
+                                      setPrecioItemSeleccionado1(itemSeleccionadaInfo.ValorUnitario);
+                                      setItemSeleccionadoId1(itemSeleccionadaInfo.idPadre);
+                                      setSubItemSeleccionadoId1(itemSeleccionadaInfo._id);
+                                      setCantidadFood1Disponible(itemSeleccionadaInfo.cantidadPadre);
+                                    }
+                                  } else {
+                                    setPrecioItemSeleccionado1(0);
+                                    setCantidadFood1Disponible(0);
+                                    setCantidadItem1("");
                                   }
                                 }}
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
@@ -3423,13 +3458,19 @@ export default function App() {
                                   const selectedItem = e.target.value;
                                   setItemSeleccionado2(selectedItem);
 
-                                  const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
+                                  if (selectedItem) {
+                                    const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
 
-                                  if (itemSeleccionadaInfo) {
-                                    setPrecioItemSeleccionado2(itemSeleccionadaInfo.ValorUnitario);
-                                    setItemSeleccionadoId2(itemSeleccionadaInfo.idPadre);
-                                    setSubItemSeleccionadoId2(itemSeleccionadaInfo._id);
-                                    setCantidadFood2Disponible(itemSeleccionadaInfo.cantidadPadre);
+                                    if (itemSeleccionadaInfo) {
+                                      setPrecioItemSeleccionado2(itemSeleccionadaInfo.ValorUnitario);
+                                      setItemSeleccionadoId2(itemSeleccionadaInfo.idPadre);
+                                      setSubItemSeleccionadoId2(itemSeleccionadaInfo._id);
+                                      setCantidadFood2Disponible(itemSeleccionadaInfo.cantidadPadre);
+                                    }
+                                  } else {
+                                    setPrecioItemSeleccionado2(0);
+                                    setCantidadFood2Disponible(0);
+                                    setCantidadItem2("");
                                   }
                                 }}
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
@@ -3471,13 +3512,19 @@ export default function App() {
                                   const selectedItem = e.target.value;
                                   setItemSeleccionado3(selectedItem);
 
-                                  const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
+                                  if (selectedItem) {
+                                    const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
 
-                                  if (itemSeleccionadaInfo) {
-                                    setPrecioItemSeleccionado3(itemSeleccionadaInfo.ValorUnitario);
-                                    setItemSeleccionadoId3(itemSeleccionadaInfo.idPadre);
-                                    setSubItemSeleccionadoId3(itemSeleccionadaInfo._id);
-                                    setCantidadFood3Disponible(itemSeleccionadaInfo.cantidadPadre);
+                                    if (itemSeleccionadaInfo) {
+                                      setPrecioItemSeleccionado3(itemSeleccionadaInfo.ValorUnitario);
+                                      setItemSeleccionadoId3(itemSeleccionadaInfo.idPadre);
+                                      setSubItemSeleccionadoId3(itemSeleccionadaInfo._id);
+                                      setCantidadFood3Disponible(itemSeleccionadaInfo.cantidadPadre);
+                                    }
+                                  } else {
+                                    setPrecioItemSeleccionado3(0);
+                                    setCantidadFood3Disponible(0);
+                                    setCantidadItem3("");
                                   }
                                 }}
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
@@ -3519,13 +3566,20 @@ export default function App() {
                                   const selectedItem = e.target.value;
                                   setItemSeleccionado4(selectedItem);
 
-                                  const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
+                                  if (selectedItem) {
+                                    const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
 
-                                  if (itemSeleccionadaInfo) {
-                                    setPrecioItemSeleccionado4(itemSeleccionadaInfo.ValorUnitario);
-                                    setItemSeleccionadoId4(itemSeleccionadaInfo.idPadre);
-                                    setSubItemSeleccionadoId4(itemSeleccionadaInfo._id);
-                                    setCantidadFood4Disponible(itemSeleccionadaInfo.cantidadPadre);
+                                    if (itemSeleccionadaInfo) {
+                                      setPrecioItemSeleccionado4(itemSeleccionadaInfo.ValorUnitario);
+                                      setItemSeleccionadoId4(itemSeleccionadaInfo.idPadre);
+                                      setSubItemSeleccionadoId4(itemSeleccionadaInfo._id);
+                                      setCantidadFood4Disponible(itemSeleccionadaInfo.cantidadPadre);
+                                    }
+
+                                  } else {
+                                    setPrecioItemSeleccionado4(0);
+                                    setCantidadFood4Disponible(0);
+                                    setCantidadItem4("");
                                   }
                                 }}
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
@@ -3544,7 +3598,7 @@ export default function App() {
                               <Button color="danger" variant="light" onPress={closeModalF}>
                                 Close
                               </Button>
-                              <Button color="primary" onClick={handleGuardarItem} >
+                              <Button color="primary" onClick={handleGuardarItem} disabled={isSaving} >
                                 Ahorrar
                               </Button>
                             </Typography>

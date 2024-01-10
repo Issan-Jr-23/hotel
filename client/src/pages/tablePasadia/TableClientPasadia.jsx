@@ -750,13 +750,13 @@ export default function App() {
   };
 
   const handleGuardarFood = async () => {
-    console.log("vista *** ", foodSeleccionadaId, foodSeleccionada, selectedClientId)
-    if (isSaving) return;
 
+    if (isSaving) return;
     setIsSaving(true);
 
     if (!selectedClientId || (!foodSeleccionadaId && !food1SeleccionadaId && food2SeleccionadaId && food3SeleccionadaId && food4SeleccionadaId)) {
       toast.error('No se ha seleccionado un cliente o una comida.');
+      setIsSaving(false);
       return;
     }
 
@@ -850,6 +850,7 @@ export default function App() {
 
     try {
       if (!selectedClientId || (!foodSeleccionadaId && !food1SeleccionadaId && !food2SeleccionadaId && !food3SeleccionadaId && !food4SeleccionadaId)) {
+        setIsSaving(false);
         throw new Error('No se ha seleccionado un cliente o una bebida.');
       }
 
@@ -949,6 +950,7 @@ export default function App() {
 
       let isBebidaAdded = false;
 
+
       if (cantidadFood > 0 && foodSeleccionadaId) {
         const foodAdultos = {
           id: foodSeleccionadaId,
@@ -964,8 +966,6 @@ export default function App() {
           isBebidaAdded = true;
         }
       }
-
-
 
       //nueva nuera
       if (cantidadFood1 > 0 && food1SeleccionadaId) {
@@ -1038,12 +1038,14 @@ export default function App() {
 
 
       if (!isBebidaAdded) {
-        alert("No se ha agregado ninguna comida");
+        toast.error("No se ha agregado ninguna comida");
+        setIsSaving(false);
       } else {
         closeModalF();
       }
     } catch (error) {
-      console.error('Error al guardar las bebidas en el cliente:', error.message);
+      toast.error('No se ha seleccionado un cliente o una comida.');
+      setIsSaving(false);
     }
   };
 
@@ -1055,11 +1057,8 @@ export default function App() {
         food,
       });
       toast.success('Comida guardada exitosamente!');
-
       limpiarCampos1();
-
       setEsCortesia(false);
-
       closeModalF();
       setIsSaving(false);
       closeModalF();
@@ -1069,6 +1068,7 @@ export default function App() {
 
       setUsers(usuariosOrdenados);
     } catch (error) {
+      setIsSaving(false);
       console.error('Error al guardar la comida en el cliente:', error.message);
       throw error;
     }
@@ -1086,11 +1086,6 @@ export default function App() {
     };
     fetchData();
   }, []);
-
-
-
-
-
 
   //#endregion
 
@@ -1203,8 +1198,6 @@ export default function App() {
       alert("Error al editar usuario. Por favor, inténtalo de nuevo más tarde.");
     }
   };
-
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -1786,13 +1779,12 @@ export default function App() {
 
 
   const handleGuardarItem = async () => {
-    console.log("handleGuardarItem ", subItemSeleccionadoId, cantidadItem, subItemSeleccionadoId)
-    // if (isSaving) return;
+    if (isSaving) return;
+    setIsSaving(true);
 
-    // setIsSaving(true);
-    console.log()
     if (!selectedClientId || (!subItemSeleccionadoId && !subItemSeleccionadoId1 && !subItemSeleccionadoId2 && !subItemSeleccionadoId3 && !subItemSeleccionadoId4)) {
       toast.error('No se ha seleccionado un cliente o una comida.');
+      setIsSaving(false);
       return;
     }
 
@@ -1892,6 +1884,7 @@ export default function App() {
 
     try {
       if (!selectedClientId || (!subItemSeleccionadoId && !subItemSeleccionadoId1 && !subItemSeleccionadoId2 && !subItemSeleccionadoId3 && !subItemSeleccionadoId4)) {
+        setIsSaving(false);
         throw new Error('No se ha seleccionado un cliente o una bebida.');
       }
 
@@ -2086,12 +2079,13 @@ export default function App() {
       }
 
       if (!isBebidaAdded) {
-        alert("No se ha agregado ninguna comida");
+        toast.promise("No se ha agregado ninguna comida");
+        setIsSaving(false);
       } else {
       }
-
     } catch (error) {
-      console.error('Error al guardar las bebidas en el cliente:', error.message);
+      toast.error('Error al guardar las bebidas en el cliente:', error.message);
+      setIsSaving(false);
     }
 
   }
@@ -2105,18 +2099,16 @@ export default function App() {
       });
       toast.success('Comida guardada exitosamente!');
       setEsCortesia(false);
-
       limpiarItems();
       closeModalF()
-
       setIsSaving(false);
 
       const responses = await AxiosInstances.get("/pasadia-clientes");
-
       const usuariosOrdenados = responses.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
 
       setUsers(usuariosOrdenados);
     } catch (error) {
+      setIsSaving(false);
       console.error('Error al guardar la comida en el cliente:', error.message);
       throw error;
     }
@@ -2935,7 +2927,7 @@ export default function App() {
                   <div className=" flex justify-center">
                     <div className="flex flex-wrap gap-3">
 
-                      <Button className="bg-white-100" onClick={() => handleOpenm(cliente._id)}  disabled={cliente.estado !== "activo"} >
+                      <Button className="bg-white-100" onClick={() => handleOpenm(cliente._id)} disabled={cliente.estado !== "activo"} >
                         <img className="w-7 h-7" src={plus} alt="" />
                       </Button>
 
@@ -2995,11 +2987,18 @@ export default function App() {
                                   const selectedBebida = e.target.value;
                                   setBebidaSeleccionada(selectedBebida);
 
-                                  const bebidaSeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida);
-                                  if (bebidaSeleccionadaInfo) {
-                                    setPrecioBebidaSeleccionada(bebidaSeleccionadaInfo.ValorUnitario);
-                                    setBebidaSeleccionadaId(bebidaSeleccionadaInfo._id);
-                                    setCantidadBebidaDisponible(bebidaSeleccionadaInfo.CantidadInicial);
+                                  if (selectedBebida) {
+                                    const bebidaSeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida);
+                                    if (bebidaSeleccionadaInfo) {
+                                      setPrecioBebidaSeleccionada(bebidaSeleccionadaInfo.ValorUnitario);
+                                      setBebidaSeleccionadaId(bebidaSeleccionadaInfo._id);
+                                      setCantidadBebidaDisponible(bebidaSeleccionadaInfo.CantidadInicial);
+                                    }
+
+                                  } else {
+                                    setPrecioBebidaSeleccionada(0);
+                                    setCantidadBebidaDisponible(0);
+                                    setCantidadBebida("");
                                   }
                                 }}
                               >
@@ -3040,11 +3039,17 @@ export default function App() {
                                   const selectedBebida1 = e.target.value;
                                   setBebida1Seleccionada(selectedBebida1);
 
-                                  const bebida1SeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida1);
-                                  if (bebida1SeleccionadaInfo) {
-                                    setPrecioBebida1Seleccionada(bebida1SeleccionadaInfo.ValorUnitario);
-                                    setBebida1SeleccionadaId(bebida1SeleccionadaInfo._id);
-                                    setCantidadBebida1Disponible(bebida1SeleccionadaInfo.CantidadInicial);
+                                  if (selectedBebida1) {
+                                    const bebida1SeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida1);
+                                    if (bebida1SeleccionadaInfo) {
+                                      setPrecioBebida1Seleccionada(bebida1SeleccionadaInfo.ValorUnitario);
+                                      setBebida1SeleccionadaId(bebida1SeleccionadaInfo._id);
+                                      setCantidadBebida1Disponible(bebida1SeleccionadaInfo.CantidadInicial);
+                                    }
+                                  } else {
+                                    setPrecioBebida1Seleccionada(0);
+                                    setCantidadBebida1Disponible(0);
+                                    setCantidadBebida1("");
                                   }
                                 }}
                               >
@@ -3054,6 +3059,7 @@ export default function App() {
                                   </SelectItem>
                                 ))}
                               </Select>
+
 
                             </div>
                             <div className="flex">
@@ -3085,12 +3091,19 @@ export default function App() {
                                   const selectedBebida2 = e.target.value;
                                   setBebida2Seleccionada(selectedBebida2);
 
-                                  const bebida2SeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida2);
-                                  if (bebida2SeleccionadaInfo) {
-                                    setPrecioBebida2Seleccionada(bebida2SeleccionadaInfo.ValorUnitario);
-                                    setBebida2SeleccionadaId(bebida2SeleccionadaInfo._id);
-                                    setCantidadBebida2Disponible(bebida2SeleccionadaInfo.CantidadInicial);
+                                  if (selectedBebida2) {
+                                    const bebida2SeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida2);
+                                    if (bebida2SeleccionadaInfo) {
+                                      setPrecioBebida2Seleccionada(bebida2SeleccionadaInfo.ValorUnitario);
+                                      setBebida2SeleccionadaId(bebida2SeleccionadaInfo._id);
+                                      setCantidadBebida2Disponible(bebida2SeleccionadaInfo.CantidadInicial);
+                                    }
+                                  } else {
+                                    setPrecioBebida2Seleccionada(0);
+                                    setCantidadBebida2Disponible(0);
+                                    setCantidadBebida2("");
                                   }
+
                                 }}
                               >
                                 {bebidasFiltradas3.map((bebida) => (
@@ -3129,11 +3142,17 @@ export default function App() {
                                   const selectedBebida3 = e.target.value;
                                   setBebida3Seleccionada(selectedBebida3);
 
-                                  const bebida3SeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida3);
-                                  if (bebida3SeleccionadaInfo) {
-                                    setPrecioBebida3Seleccionada(bebida3SeleccionadaInfo.ValorUnitario);
-                                    setBebida3SeleccionadaId(bebida3SeleccionadaInfo._id);
-                                    setCantidadBebida3Disponible(bebida3SeleccionadaInfo.CantidadInicial);
+                                  if (selectedBebida3) {
+                                    const bebida3SeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida3);
+                                    if (bebida3SeleccionadaInfo) {
+                                      setPrecioBebida3Seleccionada(bebida3SeleccionadaInfo.ValorUnitario);
+                                      setBebida3SeleccionadaId(bebida3SeleccionadaInfo._id);
+                                      setCantidadBebida3Disponible(bebida3SeleccionadaInfo.CantidadInicial);
+                                    }
+                                  } else {
+                                    setPrecioBebida3Seleccionada(0);
+                                    setCantidadBebida3Disponible(0);
+                                    setCantidadBebida3("");
                                   }
                                 }}
                               >
@@ -3174,11 +3193,17 @@ export default function App() {
                                   const selectedBebida4 = e.target.value;
                                   setBebida4Seleccionada(selectedBebida4);
 
-                                  const bebida4SeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida4);
-                                  if (bebida4SeleccionadaInfo) {
-                                    setPrecioBebida4Seleccionada(bebida4SeleccionadaInfo.ValorUnitario);
-                                    setBebida4SeleccionadaId(bebida4SeleccionadaInfo._id);
-                                    setCantidadBebida4Disponible(bebida4SeleccionadaInfo.CantidadInicial);
+                                  if (selectedBebida4) {
+                                    const bebida4SeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida4);
+                                    if (bebida4SeleccionadaInfo) {
+                                      setPrecioBebida4Seleccionada(bebida4SeleccionadaInfo.ValorUnitario);
+                                      setBebida4SeleccionadaId(bebida4SeleccionadaInfo._id);
+                                      setCantidadBebida4Disponible(bebida4SeleccionadaInfo.CantidadInicial);
+                                    }
+                                  } else {
+                                    setPrecioBebida4Seleccionada(0);
+                                    setCantidadBebida4Disponible(0);
+                                    setCantidadBebida4("");
                                   }
                                 }}
                               >
@@ -3272,13 +3297,21 @@ export default function App() {
                                     setFoodSeleccionada(selectedFood);
 
 
-                                    const foodSeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood);
+                                    if (selectedFood) {
+                                      const foodSeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood);
 
-                                    if (foodSeleccionadaInfo) {
-                                      setPrecioFoodSeleccionada(foodSeleccionadaInfo.ValorUnitario);
-                                      setFoodSeleccionadaId(foodSeleccionadaInfo._id);
-                                      setCantidadFoodDisponible(foodSeleccionadaInfo.CantidadInicial);
+                                      if (foodSeleccionadaInfo) {
+                                        setPrecioFoodSeleccionada(foodSeleccionadaInfo.ValorUnitario);
+                                        setFoodSeleccionadaId(foodSeleccionadaInfo._id);
+                                        setCantidadFoodDisponible(foodSeleccionadaInfo.CantidadInicial);
+                                      }
+
+                                    } else {
+                                      setPrecioFoodSeleccionada(0);
+                                      setCantidadFoodDisponible(0);
+                                      setCantidadFood("");
                                     }
+
 
                                   }}
 
@@ -3323,13 +3356,19 @@ export default function App() {
                                     const selectedFood1 = e.target.value;
                                     setFood1Seleccionada(selectedFood1);
 
-                                    const food1SeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood1 || selectedFood1 === food._id);
 
-
-                                    if (food1SeleccionadaInfo) {
-                                      setPrecioFood1Seleccionada(food1SeleccionadaInfo.ValorUnitario);
-                                      setFood1SeleccionadaId(food1SeleccionadaInfo._id);
-                                      setCantidadFood1Disponible(food1SeleccionadaInfo.CantidadInicial);
+                                    if (selectedFood1) {
+                                      const food1SeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood1 || selectedFood1 === food._id);
+                                      if (food1SeleccionadaInfo) {
+                                        setPrecioFood1Seleccionada(food1SeleccionadaInfo.ValorUnitario);
+                                        setFood1SeleccionadaId(food1SeleccionadaInfo._id);
+                                        setCantidadFood1Disponible(food1SeleccionadaInfo.CantidadInicial);
+                                      }
+                                      
+                                    } else {
+                                      setPrecioFood1Seleccionada(0);
+                                      setCantidadFood1Disponible(0);
+                                      setCantidadFood1("");
                                     }
                                   }}
                                   style={{ height: "40px", backgroundColor: "#f4f4f5" }}
@@ -3371,12 +3410,19 @@ export default function App() {
                                     const selectedFood2 = e.target.value;
                                     setFood2Seleccionada(selectedFood2);
 
-                                    const food2SeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood2);
-                                    if (food2SeleccionadaInfo) {
-                                      setPrecioFood2Seleccionada(food2SeleccionadaInfo.ValorUnitario);
-                                      setFood2SeleccionadaId(food2SeleccionadaInfo._id);
-                                      setCantidadFood2Disponible(food2SeleccionadaInfo.CantidadInicial);
+                                    if (selectedFood2) {
+                                      const food2SeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood2);
+                                      if (food2SeleccionadaInfo) {
+                                        setPrecioFood2Seleccionada(food2SeleccionadaInfo.ValorUnitario);
+                                        setFood2SeleccionadaId(food2SeleccionadaInfo._id);
+                                        setCantidadFood2Disponible(food2SeleccionadaInfo.CantidadInicial);
+                                      }
+                                    } else {
+                                      setPrecioFood2Seleccionada(0);
+                                      setCantidadFood2Disponible(0);
+                                      setCantidadFood2("");
                                     }
+
                                   }}
                                   style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 >
@@ -3417,12 +3463,19 @@ export default function App() {
                                     const selectedFood3 = e.target.value;
                                     setFood3Seleccionada(selectedFood3);
 
-                                    const food3SeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood3);
-                                    if (food3SeleccionadaInfo) {
-                                      setPrecioFood3Seleccionada(food3SeleccionadaInfo.ValorUnitario);
-                                      setFood3SeleccionadaId(food3SeleccionadaInfo._id);
-                                      setCantidadFood3Disponible(food3SeleccionadaInfo.CantidadInicial);
+                                    if (selectedFood3) {
+                                      const food3SeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood3);
+                                      if (food3SeleccionadaInfo) {
+                                        setPrecioFood3Seleccionada(food3SeleccionadaInfo.ValorUnitario);
+                                        setFood3SeleccionadaId(food3SeleccionadaInfo._id);
+                                        setCantidadFood3Disponible(food3SeleccionadaInfo.CantidadInicial);
+                                      }
+                                    } else {
+                                      setPrecioFood3Seleccionada(0);
+                                      setCantidadFood3Disponible(0);
+                                      setCantidadFood3("");
                                     }
+
                                   }}
                                   style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 >
@@ -3463,12 +3516,19 @@ export default function App() {
                                     const selectedFood4 = e.target.value;
                                     setFood4Seleccionada(selectedFood4);
 
-                                    const food4SeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood4);
-                                    if (food4SeleccionadaInfo) {
-                                      setPrecioFood4Seleccionada(food4SeleccionadaInfo.ValorUnitario);
-                                      setFood4SeleccionadaId(food4SeleccionadaInfo._id);
-                                      setCantidadFood4Disponible(food4SeleccionadaInfo.CantidadInicial);
+                                    if (selectedFood4) {
+                                      const food4SeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood4);
+                                      if (food4SeleccionadaInfo) {
+                                        setPrecioFood4Seleccionada(food4SeleccionadaInfo.ValorUnitario);
+                                        setFood4SeleccionadaId(food4SeleccionadaInfo._id);
+                                        setCantidadFood4Disponible(food4SeleccionadaInfo.CantidadInicial);
+                                      }
+                                    } else {
+                                      setPrecioFood4Seleccionada(0);
+                                      setCantidadFood4Disponible(0);
+                                      setCantidadFood4("");
                                     }
+
                                   }}
                                   style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 >
@@ -3499,8 +3559,7 @@ export default function App() {
                               <Button color="danger" variant="light" onPress={closeModalF}>
                                 Close
                               </Button>
-                              <Button color="primary" onClick={handleGuardarFood} >
-                                {/* disabled={isSaving} */}
+                              <Button color="primary" onClick={handleGuardarFood} disabled={isSaving} >
                                 Ahorrar
                               </Button>
                             </Typography>
@@ -3546,14 +3605,21 @@ export default function App() {
                                   const selectedItem = e.target.value;
                                   setItemSeleccionado(selectedItem);
 
-                                  const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
-
-                                  if (itemSeleccionadaInfo) {
-                                    setPrecioItemSeleccionado(itemSeleccionadaInfo.ValorUnitario);
-                                    setItemSeleccionadoId(itemSeleccionadaInfo.idPadre);
-                                    setSubItemSeleccionadoId(itemSeleccionadaInfo._id)
-                                    setCantidadFoodDisponible(itemSeleccionadaInfo.cantidadPadre);
+                                  if (selectedItem) {
+                                    const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
+  
+                                    if (itemSeleccionadaInfo) {
+                                      setPrecioItemSeleccionado(itemSeleccionadaInfo.ValorUnitario);
+                                      setItemSeleccionadoId(itemSeleccionadaInfo.idPadre);
+                                      setSubItemSeleccionadoId(itemSeleccionadaInfo._id)
+                                      setCantidadFoodDisponible(itemSeleccionadaInfo.cantidadPadre);
+                                    }
+                                  } else {
+                                    setPrecioItemSeleccionado(0);
+                                    setCantidadFoodDisponible(0);
+                                    setCantidadItem("");
                                   }
+
                                 }}
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                               >
@@ -3594,13 +3660,18 @@ export default function App() {
                                   const selectedItem = e.target.value;
                                   setItemSeleccionado1(selectedItem);
 
-                                  const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
-
-                                  if (itemSeleccionadaInfo) {
-                                    setPrecioItemSeleccionado1(itemSeleccionadaInfo.ValorUnitario);
-                                    setItemSeleccionadoId1(itemSeleccionadaInfo.idPadre);
-                                    setSubItemSeleccionadoId1(itemSeleccionadaInfo._id);
-                                    setCantidadFood1Disponible(itemSeleccionadaInfo.cantidadPadre);
+                                  if (selectedItem) {
+                                    const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
+                                    if (itemSeleccionadaInfo) {
+                                      setPrecioItemSeleccionado1(itemSeleccionadaInfo.ValorUnitario);
+                                      setItemSeleccionadoId1(itemSeleccionadaInfo.idPadre);
+                                      setSubItemSeleccionadoId1(itemSeleccionadaInfo._id);
+                                      setCantidadFood1Disponible(itemSeleccionadaInfo.cantidadPadre);
+                                    }
+                                  } else {
+                                    setPrecioItemSeleccionado1(0);
+                                    setCantidadFood1Disponible(0);
+                                    setCantidadItem1("");
                                   }
                                 }}
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
@@ -3642,13 +3713,19 @@ export default function App() {
                                   const selectedItem = e.target.value;
                                   setItemSeleccionado2(selectedItem);
 
-                                  const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
-
-                                  if (itemSeleccionadaInfo) {
-                                    setPrecioItemSeleccionado2(itemSeleccionadaInfo.ValorUnitario);
-                                    setItemSeleccionadoId2(itemSeleccionadaInfo.idPadre);
-                                    setSubItemSeleccionadoId2(itemSeleccionadaInfo._id);
-                                    setCantidadFood2Disponible(itemSeleccionadaInfo.cantidadPadre);
+                                  if (selectedItem) {
+                                    const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
+  
+                                    if (itemSeleccionadaInfo) {
+                                      setPrecioItemSeleccionado2(itemSeleccionadaInfo.ValorUnitario);
+                                      setItemSeleccionadoId2(itemSeleccionadaInfo.idPadre);
+                                      setSubItemSeleccionadoId2(itemSeleccionadaInfo._id);
+                                      setCantidadFood2Disponible(itemSeleccionadaInfo.cantidadPadre);
+                                    }
+                                  } else {
+                                    setPrecioItemSeleccionado2(0);
+                                    setCantidadFood2Disponible(0);
+                                    setCantidadItem2("");
                                   }
                                 }}
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
@@ -3690,13 +3767,19 @@ export default function App() {
                                   const selectedItem = e.target.value;
                                   setItemSeleccionado3(selectedItem);
 
-                                  const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
-
-                                  if (itemSeleccionadaInfo) {
-                                    setPrecioItemSeleccionado3(itemSeleccionadaInfo.ValorUnitario);
-                                    setItemSeleccionadoId3(itemSeleccionadaInfo.idPadre);
-                                    setSubItemSeleccionadoId3(itemSeleccionadaInfo._id);
-                                    setCantidadFood3Disponible(itemSeleccionadaInfo.cantidadPadre);
+                                  if (selectedItem) {
+                                    const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
+  
+                                    if (itemSeleccionadaInfo) {
+                                      setPrecioItemSeleccionado3(itemSeleccionadaInfo.ValorUnitario);
+                                      setItemSeleccionadoId3(itemSeleccionadaInfo.idPadre);
+                                      setSubItemSeleccionadoId3(itemSeleccionadaInfo._id);
+                                      setCantidadFood3Disponible(itemSeleccionadaInfo.cantidadPadre);
+                                    }
+                                  } else {
+                                    setPrecioItemSeleccionado3(0);
+                                    setCantidadFood3Disponible(0);
+                                    setCantidadItem3("");
                                   }
                                 }}
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
@@ -3738,13 +3821,19 @@ export default function App() {
                                   const selectedItem = e.target.value;
                                   setItemSeleccionado4(selectedItem);
 
-                                  const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
-
-                                  if (itemSeleccionadaInfo) {
-                                    setPrecioItemSeleccionado4(itemSeleccionadaInfo.ValorUnitario);
-                                    setItemSeleccionadoId4(itemSeleccionadaInfo.idPadre);
-                                    setSubItemSeleccionadoId4(itemSeleccionadaInfo._id);
-                                    setCantidadFood4Disponible(itemSeleccionadaInfo.cantidadPadre);
+                                  if (selectedItem) {
+                                    const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
+  
+                                    if (itemSeleccionadaInfo) {
+                                      setPrecioItemSeleccionado4(itemSeleccionadaInfo.ValorUnitario);
+                                      setItemSeleccionadoId4(itemSeleccionadaInfo.idPadre);
+                                      setSubItemSeleccionadoId4(itemSeleccionadaInfo._id);
+                                      setCantidadFood4Disponible(itemSeleccionadaInfo.cantidadPadre);
+                                    }
+                                  } else {
+                                    setPrecioItemSeleccionado4(0);
+                                    setCantidadFood4Disponible(0);
+                                    setCantidadItem4("");
                                   }
                                 }}
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
@@ -3758,12 +3847,10 @@ export default function App() {
                             </div>
 
 
-
                             <Typography component="div" >
                               <Button color="danger" variant="light" onPress={closeModalF}>
-                                Close
-                              </Button>
-                              <Button color="primary" onClick={handleGuardarItem} >
+                                Close                              </Button>
+                              <Button color="primary" onClick={handleGuardarItem}>
                                 Ahorrar
                               </Button>
                             </Typography>
@@ -3844,6 +3931,19 @@ export default function App() {
                       <DropdownMenu aria-label="Static Actions">
                         <DropdownItem key="activo" color="success" onClick={() => handleStatus("activo", cliente._id)}>Activo</DropdownItem>
                         <DropdownItem key="cancelado" color="danger" onClick={() => handleStatus("cancelado", cliente._id)}>Cancelado</DropdownItem>
+                      </DropdownMenu>
+                    )}
+
+                    {cliente.estado === "finalizado" && (
+                      <DropdownMenu>
+                        <DropdownItem
+                          key="new"
+                          className="font-semibold"
+                          style={{ fontWeight: "700" }}
+                          onClick={() => adicional(cliente._id)}
+                        >
+                          Agregar algo mas
+                        </DropdownItem>
                       </DropdownMenu>
                     )}
                     {/* No se muestra ningún menú desplegable para los estados 'cancelado' y 'finalizado' */}

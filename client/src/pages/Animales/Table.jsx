@@ -5,7 +5,7 @@ import "./animal.css"
 const Table = () => {
   return (
     <div>
-        5
+        
     </div>
   )
 }

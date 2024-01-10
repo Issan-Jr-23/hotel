@@ -232,6 +232,7 @@ const Adicionales = () => {
                     cantidad: cantidadItem,
                     precio: precioItemSeleccionado,
                     mensaje: "recepcion",
+                    adicional: "adicional",
                     fecha: obtenerFechaConAjuste()
                 };
 
@@ -247,7 +248,8 @@ const Adicionales = () => {
                     nombre: itemSeleccionado1,
                     cantidad: cantidadItem1,
                     precio: precioItemSeleccionado1,
-                    fechaDeMarca: "",
+                    mensaje: "recepcion",
+                    adicional: "adicional",
                     fecha: obtenerFechaConAjuste()
                 };
 
@@ -263,7 +265,8 @@ const Adicionales = () => {
                     nombre: itemSeleccionado2,
                     cantidad: cantidadItem2,
                     precio: precioItemSeleccionado2,
-                    fechaDeMarca: "",
+                    mensaje: "recepcion",
+                    adicional: "adicional",
                     fecha: obtenerFechaConAjuste()
                 };
 
@@ -279,7 +282,8 @@ const Adicionales = () => {
                     nombre: itemSeleccionado3,
                     cantidad: cantidadItem3,
                     precio: precioItemSeleccionado3,
-                    fechaDeMarca: "",
+                    mensaje: "recepcion",
+                    adicional: "adicional",
                     fecha: obtenerFechaConAjuste()
                 };
 
@@ -295,7 +299,8 @@ const Adicionales = () => {
                     nombre: itemSeleccionado4,
                     cantidad: cantidadItem4,
                     precio: precioItemSeleccionado4,
-                    fechaDeMarca: "",
+                    mensaje: "recepcion",
+                    adicional: "adicional",
                     fecha: obtenerFechaConAjuste()
                 };
 
@@ -419,7 +424,6 @@ const Adicionales = () => {
                                 }}
                             />
                         </span>
-
 
                         <span className='flex w-12/12 mt-10 items-center'>
                             <span className='flex mr-3 w-4 h-4 rounded-full justify-center items-center bg-blue-400 text-white'></span>
