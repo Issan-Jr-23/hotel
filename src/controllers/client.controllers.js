@@ -597,8 +597,6 @@ export const fechaActivacion = async (req, res) => {
 };
 
 
-
-
 export const fechaFinalizacion = async (req, res) => {
   try {
     const clientes = await Cliente.find({});

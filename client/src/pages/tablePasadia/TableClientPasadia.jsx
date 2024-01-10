@@ -1,7 +1,7 @@
 //#region 
 import React, { useState, useEffect, useMemo } from "react";
 import {
-  Table, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, TableHeader, Tabs, TableColumn, TableBody, TableRow, TableCell, Input, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Select, SelectItem, Checkbox, Popover, PopoverTrigger, PopoverContent, Tab, DropdownSection
+  Table, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, TableHeader, Tabs, TableColumn, TableBody, TableRow, TableCell, Input, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Select, SelectItem, Checkbox, Popover, PopoverTrigger, PopoverContent, Tab, DropdownSection, Button
 } from "@nextui-org/react";
 
 import editar from "../../images/boligrafo.png";
@@ -31,8 +31,8 @@ import { useNavigate } from "react-router-dom";
 import stats from "../../images/stats.svg"
 
 
+// import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 
@@ -48,12 +48,11 @@ export default function App() {
   const [openMd, setOpenMd] = React.useState(false);
   const [openFz, setOpenFz] = React.useState(false);
   const [openTd, setOpenTd] = React.useState(false);
-  const [openAdd, setOpenAdd] = React.useState(false);
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
   const handleCloseMd = () => setOpenMd(false);
   const handleCloseFz = () => setOpenFz(false);
   const handleCloseTd = () => setOpenTd(false);
+  const handleClose = () => setOpen(false);
 
   //#region
 
@@ -2936,7 +2935,7 @@ export default function App() {
                   <div className=" flex justify-center">
                     <div className="flex flex-wrap gap-3">
 
-                      <Button className="bg-white-100" onClick={() => handleOpenm(cliente._id)}  >
+                      <Button className="bg-white-100" onClick={() => handleOpenm(cliente._id)}  disabled={cliente.estado !== "activo"} >
                         <img className="w-7 h-7" src={plus} alt="" />
                       </Button>
 
@@ -3213,9 +3212,10 @@ export default function App() {
                   <div className="flex justify-center">
                     <div className="flex flex-wrap gap-3">
 
-                      <Button className="bg-white-100" onClick={() => handleOpenmf(cliente._id)}>
+                      <Button className="bg-white-100" onClick={() => handleOpenmf(cliente._id)} disabled={cliente.estado !== "activo"}  >
                         <img className="w-7 h-7" src={plusb} alt="" />
                       </Button>
+
                     </div>
                   </div>
 

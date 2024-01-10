@@ -442,7 +442,7 @@ function Row(props) {
                                     <section>
 
                                         <div className='inventario-box-option-cont-input-01 '>
-                                            <label htmlFor="" className='inventario-box-option-input-01-label'>Name</label>
+                                            <label htmlFor="" className='inventario-box-option-input-01-label'>Item</label>
                                             <input
                                                 name='Descripcion'
                                                 type="text"
@@ -453,7 +453,7 @@ function Row(props) {
 
 
                                         <div className='inventario-box-option-cont-input-01 '>
-                                            <label htmlFor="" className='inventario-box-option-input-01-label'>Category</label>
+                                            <label htmlFor="" className='inventario-box-option-input-01-label'>Categoria</label>
                                             <input
                                                 type="text"
                                                 name='tipo'
@@ -463,7 +463,7 @@ function Row(props) {
                                         </div>
 
                                         <div className='inventario-box-option-cont-input-01 '>
-                                            <label htmlFor="" className='inventario-box-option-input-01-label'>Category</label>
+                                            <label htmlFor="" className='inventario-box-option-input-01-label'>Caducidad</label>
                                             <input
                                                 type="text"
                                                 name='Caducidad'
@@ -475,7 +475,7 @@ function Row(props) {
 
                                         <article className='inventario-box-option-cont-input-02-article'>
                                             <div className='inventario-box-option-cont-input-01 mr-2'>
-                                                <label htmlFor="" className='inventario-box-option-input-01-label'>Price</label>
+                                                <label htmlFor="" className='inventario-box-option-input-01-label'>Pricio</label>
                                                 <input
                                                     type="text"
                                                     name='ValorUnitario'
@@ -489,7 +489,7 @@ function Row(props) {
                                                     className=' inventario-box-option-input-01 outline-none pl-2 mb-2' />
                                             </div>
                                             <div className='inventario-box-option-cont-input-01 ml-2'>
-                                                <label htmlFor="" className='inventario-box-option-input-01-label'>Quantity</label>
+                                                <label htmlFor="" className='inventario-box-option-input-01-label'>Cantidad</label>
                                                 <input
                                                     type="text"
                                                     name='CantidadInicial'
@@ -626,7 +626,7 @@ function Row(props) {
                                                                             </figure>
                                                                             <section>
                                                                                 <span className='inventario-box-option-cont-input-01 '>
-                                                                                    <label htmlFor="" className='inventario-box-option-input-01-label'>Name</label>
+                                                                                    <label htmlFor="" className='inventario-box-option-input-01-label'>Item</label>
                                                                                     <input
                                                                                         name='Descripcion'
                                                                                         type="text"
@@ -646,7 +646,7 @@ function Row(props) {
 
                                                                                 <article className='inventario-box-option-cont-input-02-article'>
                                                                                     <span className='inventario-box-option-cont-input-01 mr-2'>
-                                                                                        <label htmlFor="" className='inventario-box-option-input-01-label'>Price</label>
+                                                                                        <label htmlFor="" className='inventario-box-option-input-01-label'>Precio</label>
                                                                                         <input
                                                                                             name='ValorUnitario'
                                                                                             type="text"
@@ -655,7 +655,7 @@ function Row(props) {
                                                                                             className=' inventario-box-option-input-01 outline-none pl-2 mb-2' />
                                                                                     </span>
                                                                                     <span className='inventario-box-option-cont-input-01 ml-2'>
-                                                                                        <label htmlFor="" className='inventario-box-option-input-01-label'>Quantit  y</label>
+                                                                                        <label htmlFor="" className='inventario-box-option-input-01-label'>Cantidad</label>
                                                                                         <input
                                                                                             name='ProductosVendidos'
                                                                                             type="text"
