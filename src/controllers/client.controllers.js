@@ -530,9 +530,6 @@ export const obtenerProductosCop = async (req, res) => {
 };
 
 
-
-
-
 export const updateUserStatus = async (req, res) => {
   const { userId, estado } = req.body;
 
@@ -565,11 +562,6 @@ export const updateUserStatus = async (req, res) => {
     res.status(500).json({ error: "Error al actualizar el estado" });
   }
 };
-
-
-
-
-
 
 
 export const fechaActivacion = async (req, res) => {
@@ -715,6 +707,44 @@ export const addBebidaAdicional = async (req, res) => {
         }
         bebida.fechaDeMarca = ""; 
         cliente.bebidas.push(bebida);
+      }
+
+      cliente.markModified("bebidas");
+      await cliente.save();
+      res.status(200).json(cliente);
+    } else {
+      res.status(404).json({ message: "Cliente no encontrado" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al agregar la bebida al cliente" });
+  }
+};
+
+export const agregarItemRecepcion = async (req, res) => {
+  const {id} = req.params;
+  const { recepcion } = req.body;
+
+  try {
+    const cliente = await Cliente.findById(id);
+
+    if (cliente) {
+      let index = -1;
+      index = cliente.bebidas.findIndex(
+        (b) =>
+          b.itemId === recepcion.itemId &&
+          b.mensaje === recepcion.mensaje && 
+          (b.fechaDeMarca === "" || !b.fechaDeMarca) 
+      );
+
+      if (index > -1) {
+        cliente.bebidas[index].cantidad += recepcion.cantidad;
+      } else {
+        if (recepcion.mensaje === "Cortesía") {
+          recepcion.precio = 0;
+        }
+        recepcion.fechaDeMarca = ""; 
+        cliente.bebidas.push(recepcion);
       }
 
       cliente.markModified("bebidas");

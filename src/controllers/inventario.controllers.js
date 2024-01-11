@@ -398,18 +398,15 @@ export const updateCSTOCKB = async (req, res) => {
       return res.status(404).send({ message: "Bebida no encontrada." });
     }
 
-    // Calcular la nueva cantidad inicial
     const nuevaCantidadInicial = bebida.CantidadInicial - cantidad;
     console.log("nueva cantidad: " + nuevaCantidadInicial);
 
-    // Verificar que la nueva cantidad no sea negativa
     if (nuevaCantidadInicial < 0) {
       return res
         .status(400)
         .send({ message: "La cantidad a restar excede el stock inicial." });
     }
 
-    // Actualizar el stock inicial en la base de datos
     const bebidaActualizada = await Bebida.findByIdAndUpdate(
       bebidaId,
       { $set: { CantidadInicial: nuevaCantidadInicial } },
