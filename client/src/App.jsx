@@ -25,8 +25,11 @@ import HistorialCompras from "./pages/HistorialCompras.jsx";
 import HistorialUsuario from "./pages/Historial.jsx";
 import NotFoundPage from "./pages/Page404.jsx"
 import DashboardPasadia from "./pages/dashboard/dashboardPasadia.jsx";
-import Adicionales from "./pages/tablePasadia/Adicionales.jsx";
+import Adicionales from "./pages/adicionales/Adicionales.jsx";
+import AdicionalesHabitaciones from "./pages/adicionales/Adicionales.habitaciones.jsx";
+import AdicionalesCabanias from "./pages/adicionales/Adicionales.cabania.jsx";
 import CabaniasStock from "./pages/stock/CabaniasStock.jsx";
+
 
 function App() {
   return (
@@ -37,7 +40,7 @@ function App() {
             <AppWithAuth/>
             <Routes>
               <Route path="/" element={<LoginPage />} />
-              <Route path="/meqo-soft" element={<LoginPage />} />
+              <Route path="/meqo-soft" element={<LoginPage />}/>
               <Route path="/login" element={<LoginPage />} />
               <Route element={<ProtectedRoute />}>
                 {/* <Route path="/home" element={<Home/>} /> */}
@@ -48,6 +51,7 @@ function App() {
                 <Route path="/habitaciones" element={<Habitaciones />} />
                 <Route path="/historial/:id" element={<HistorialUsuario />} />
                 <Route path="/adicional/:id" element={<Adicionales />} />
+                <Route path="/cabania-adicional/:id" element={<AdicionalesCabanias />} />
               </Route>
               <Route element={<ProtectedRoute allowedRoles={["superUser"]}/>}>
                 <Route path="/hotel-graphs" element={<Hotel_graphs />}/>

@@ -3863,6 +3863,7 @@ export default function App() {
                     </Box>
                   </Modal>
                 </TableCell>
+                
                 <TableCell> {cliente.nuevoTotal}</TableCell>
 
                 <TableCell className="flex justify-center align-center">

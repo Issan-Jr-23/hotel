@@ -240,8 +240,6 @@ export const updateClientCts = async (req, res) => {
   }
 };
 
-
-
 export const actualizarFacturacion = async (req, res) => {
   try {
     const { bebidas, restaurante, clienteId } = req.body;
@@ -730,24 +728,24 @@ export const agregarItemRecepcion = async (req, res) => {
 
     if (cliente) {
       let index = -1;
-      index = cliente.bebidas.findIndex(
+      index = cliente.recepcion.findIndex(
         (b) =>
-          b.itemId === recepcion.itemId &&
+          b.itemIdRec === recepcion.itemIdRec &&
           b.mensaje === recepcion.mensaje && 
           (b.fechaDeMarca === "" || !b.fechaDeMarca) 
       );
 
       if (index > -1) {
-        cliente.bebidas[index].cantidad += recepcion.cantidad;
+        cliente.recepcion[index].cantidad += recepcion.cantidad;
       } else {
         if (recepcion.mensaje === "Cortesía") {
           recepcion.precio = 0;
         }
         recepcion.fechaDeMarca = ""; 
-        cliente.bebidas.push(recepcion);
+        cliente.recepcion.push(recepcion);
       }
 
-      cliente.markModified("bebidas");
+      cliente.markModified("recepcion");
       await cliente.save();
       res.status(200).json(cliente);
     } else {

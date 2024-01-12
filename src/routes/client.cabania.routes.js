@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {addFood, getClienteByIdentificacion, obtenerCPI, obtenerClientes, updateClientCts, updatePP} from "../controllers/client.cabania.controllers.js";
+import {addBebidaAdicional, addFood, addItemRecepcion, getClienteByIdentificacion, obtenerCPI, obtenerClienteId, obtenerClientes, updateClientCts, updatePP, updateUserStatus} from "../controllers/client.cabania.controllers.js";
 import {crearCliente} from "../controllers/client.cabania.controllers.js";
 import {deleteClient} from "../controllers/client.cabania.controllers.js";
 import {updateClient} from "../controllers/client.cabania.controllers.js";
@@ -20,5 +20,9 @@ router.put('/cabania-clientes/:id/actualizar',auth, updatePP);
 router.put("/cabania-clientes/:id/cortesias",auth, updateClientCts);
 router.put("/cabania-facturacion",auth, actualizarFacturacion);
 router.get('/cabania-clientes-identificacion/:identificacion', auth, getClienteByIdentificacion);
+router.put("/cabania-actualizar-estado", updateUserStatus)
+router.get('/cabania-cliente-info/:id', obtenerClienteId)
+router.post("/cabania-agregar-bebida/:id",auth, addBebidaAdicional);
+router.post("/cabania-agregar-item-recepcion/:id",auth, addItemRecepcion);
 
 export default router;

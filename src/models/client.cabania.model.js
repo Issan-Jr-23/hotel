@@ -69,11 +69,31 @@ const clienteSchema = new mongoose.Schema({
     required: false,
     default: [],
   },
+  recepcion: {
+    type: Array,
+    required: false,
+    default: [],
+  },
   nuevoTotal: {
     type: Number,
     default: 0
   },
-  servicio:{type:String, default:"cabania"}
+  servicio:{type:String, default:"cabania"},
+  estado:{
+    type:String, 
+    default:"pendiente"},
+    fechaActivacion: {
+      type: Date, 
+      default: null  
+  },
+  // estadoFinalizacion:{
+  //   type:String,
+  //   default:"esperando respuesta",
+  //   fechaFinalizacion:{
+  //     type: Date,
+  //     default:null
+  //   }
+  // }
 });
 
 

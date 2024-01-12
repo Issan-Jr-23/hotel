@@ -44,6 +44,17 @@ export const obtenerDrinks = (req, res) => {
     });
 };
 
+export const obtenerProductosRecepcion = (req, res) => {
+  Bebida.find({ tipo: "recepcion" })
+    .then((mekatos) => {
+      res.json(mekatos);
+      console.log(mekatos);
+    })
+    .catch((error) => {
+      res.status(500).json({ error: "Error al obtener los mekatos" });
+    });
+};
+
 export const obtenerFood = (req, res) => {
   Bebida.find({ tipo: "comida" })
     .then((mekatos) => {

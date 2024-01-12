@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import {
-  Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button, Input, useDisclosure, Select, SelectItem, Checkbox, Popover, PopoverTrigger, PopoverContent, Tabs, Tab
+  Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button, Input, useDisclosure, Select, SelectItem, Checkbox, Popover, PopoverTrigger, PopoverContent, Tabs, Tab, Dropdown, DropdownItem, DropdownTrigger, DropdownMenu
 } from "@nextui-org/react";
 import editar from "../../images/boligrafo.png";
 import borrar from "../../images/borrar.png";
@@ -10,6 +10,8 @@ import plus from "../../images/plus.png";
 import plusb from "../../images/plus_blue.png";
 import { SearchIcon } from "../tablePasadia/SearchIcon";
 import { PlusIcon } from "../finca/PlusIcon.jsx";
+import { VerticalDotsIcon } from "../iconos/VerticalDotsIcon.jsx";
+import Brightness1Icon from '@mui/icons-material/Brightness1';
 import toast, { Toaster } from 'react-hot-toast';
 import jsPDF from "jspdf";
 import Swal from 'sweetalert2';
@@ -22,6 +24,8 @@ import AxiosInstance from "../../api/axios.js";
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
+import { useNavigate } from "react-router-dom";
+import { green, purple, blue, red } from '@mui/material/colors';
 
 
 export default function App() {
@@ -202,6 +206,17 @@ export default function App() {
     xhr.responseType = 'blob';
     xhr.send();
   });
+
+
+  const navigate = useNavigate();
+
+  const adicionalCabania = (id) => {
+    console.log(" id de cabañas: ",id)
+    navigate(`/cabania-adicional/${id}`);
+    console.log("id del usuario para ver el historial del usuario: " + id)
+  };
+
+
   //#region 
   const handleCortesiaChange = (event) => {
     setEsCortesia(event.target.checked);
@@ -2100,6 +2115,44 @@ export default function App() {
     outline: "none"
   };
 
+  
+  const handleStatus = async (nuevoEstado, userId) => {
+    console.log(userId, nuevoEstado)
+    try {
+      const response = await AxiosInstance.put('/cabania-actualizar-estado', {
+        userId: userId,
+        estado: nuevoEstado
+      });
+      const responses = await AxiosInstance.get("/cabania-clientes");
+      const usuariosOrdenados = responses.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
+      setUsers(usuariosOrdenados);
+      console.log('Estado actualizado con éxito:', response.data);
+    } catch (error) {
+      console.error('Hubo un problema con la petición Axios:', error);
+    }
+  }
+
+  const EstadoIcono = ({ estado }) => {
+    let color;
+
+    switch (estado) {
+      case 'activo':
+        color = green[500];
+        break;
+      case 'pendiente':
+        color = blue[500];
+        break;
+      case 'cancelado':
+        color = red[600];
+        break;
+      case 'finalizado':
+        color = purple[500];
+        break;
+    }
+
+    return <Brightness1Icon style={{ color, width: "14px" }} />;
+  };
+
 
   return (
     <div className="max-w-full w-98 mx-auto">
@@ -2371,6 +2424,8 @@ export default function App() {
             <TableColumn className="text-center">agregar bebida</TableColumn>
             <TableColumn className="text-center">agregar comida</TableColumn>
             <TableColumn className="text-center">Pago pendiente</TableColumn>
+            <TableColumn></TableColumn>
+            <TableColumn></TableColumn>
           </TableHeader>
 
           <TableBody emptyContent="No hay elementos por mostrar" className="">
@@ -3643,6 +3698,58 @@ export default function App() {
                     onClick={() => handleDeleteUser(cliente._id)}
                   />
                 </TableCell> */}
+                <TableCell className="text-center" style={{ width: "150px" }}>
+                  <div className="flex items-center text-center ">
+                    <span className=" mr-2">
+                      <EstadoIcono estado={cliente.estado} />
+                    </span>
+                    {cliente.estado}
+                  </div>
+                </TableCell>
+
+                <TableCell>
+                  <Dropdown>
+                    <DropdownTrigger>
+                      <Button className="bg-inherent">
+                        <VerticalDotsIcon />
+                      </Button>
+                    </DropdownTrigger>
+                    {cliente.estado === 'activo' && (
+                      <DropdownMenu aria-label="Static Actions">
+                        <DropdownItem key="finalizado" color="primary" onClick={() => handleStatus("finalizado", cliente._id)}>Finalizado</DropdownItem>
+                        <DropdownItem
+                          key="new"
+                          className="font-semibold"
+                          style={{ fontWeight: "700" }}
+                          onClick={() => adicionalCabania(cliente._id)}
+                        >
+                          Agregar algo mas
+                        </DropdownItem>
+
+                      </DropdownMenu>
+                    )}
+                    {cliente.estado === 'pendiente' && (
+                      <DropdownMenu aria-label="Static Actions">
+                        <DropdownItem key="activo" color="success" onClick={() => handleStatus("activo", cliente._id)}>Activo</DropdownItem>
+                        <DropdownItem key="cancelado" color="danger" onClick={() => handleStatus("cancelado", cliente._id)}>Cancelado</DropdownItem>
+                      </DropdownMenu>
+                    )}
+
+                    {cliente.estado === "finalizado" && (
+                      <DropdownMenu>
+                        <DropdownItem
+                          key="new"
+                          className="font-semibold"
+                          style={{ fontWeight: "700" }}
+                          onClick={() => adicionalCabania(cliente._id)}
+                        >
+                          Agregar algo mas
+                        </DropdownItem>
+                      </DropdownMenu>
+                    )}
+                    {/* No se muestra ningún menú desplegable para los estados 'cancelado' y 'finalizado' */}
+                  </Dropdown>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

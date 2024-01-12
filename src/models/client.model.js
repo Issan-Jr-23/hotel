@@ -70,7 +70,7 @@ const clienteSchema = new mongoose.Schema({
       type: Date,
       default: getCurrentDateMinus5Hours
   }
-  },
+  }, 
   restaurante: {
     type: Array,
     required: false,

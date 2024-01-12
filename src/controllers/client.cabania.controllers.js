@@ -1,5 +1,6 @@
 import Cabania from "../models/client.cabania.model.js";
-
+import moment from 'moment';
+import { mongoose } from "mongoose";
 export const obtenerClientes = async (req, res) => {
   try {
     const clientesObtenidos = await Cabania.find();
@@ -39,8 +40,6 @@ export const deleteClient = async (req, res) => {
 } 
 
 
-
-
 // export const deleteProducto = async (req, res) => {
 //   const identificacion = req.params.id; 
 //   console.log("delete registro: "+identificacion)
@@ -57,8 +56,6 @@ export const deleteClient = async (req, res) => {
 //     res.status(500).json({ message: 'Error interno del servidor.' });
 //   }
 // }
-
-
 
 
 export const updateClient = async (req, res) => {
@@ -84,11 +81,6 @@ export const updateClient = async (req, res) => {
 };
 
 
-
-
-
-
-
 export const addBebida = async (req, res) => {
   const { id, bebida } = req.body;
 
@@ -97,22 +89,19 @@ export const addBebida = async (req, res) => {
 
     if (cliente) {
       let index = -1;
-      // Buscar si la bebida ya existe en el registro del cliente y coincide en tipo (cortesía o no)
       index = cliente.bebidas.findIndex(b => 
         b.id === bebida.id && 
-        b.mensaje === bebida.mensaje && // Asegurarse de que el tipo (cortesía o no) sea el mismo
-        (b.fechaDeMarca === "" || !b.fechaDeMarca) // Busca bebidas con fechaDeMarca como espacio en blanco o sin definir
+        b.mensaje === bebida.mensaje && 
+        (b.fechaDeMarca === "" || !b.fechaDeMarca)
       );
 
       if (index > -1) {
-        // Si se encuentra una bebida existente del mismo tipo, actualiza la cantidad
         cliente.bebidas[index].cantidad += bebida.cantidad;
       } else {
-        // Si no se encuentra o es de un tipo diferente, agrega la bebida nueva
         if (bebida.mensaje === "Cortesía") {
           bebida.precio = 0;
         }
-        bebida.fechaDeMarca = ""; // Establecer la fechaDeMarca como espacio en blanco para todas las bebidas
+        bebida.fechaDeMarca = ""; 
         cliente.bebidas.push(bebida);
       }
 
@@ -136,22 +125,19 @@ export const addFood = async (req, res) => {
 
     if (cliente) {
       let index = -1;
-      // Buscar si la comida ya existe en el registro del cliente y coincide en tipo (cortesía o no)
       index = cliente.restaurante.findIndex(f => 
         f.id === food.id && 
-        f.mensaje === food.mensaje && // Asegurarse de que el tipo (cortesía o no) sea el mismo
+        f.mensaje === food.mensaje &&
         (f.fechaDeMarca === "" || !f.fechaDeMarca)
       );
 
       if (index > -1) {
-        // Si se encuentra una comida existente del mismo tipo, actualiza la cantidad
         cliente.restaurante[index].cantidad += food.cantidad;
       } else {
-        // Si no se encuentra o es de un tipo diferente, agrega la comida nueva
         if (food.mensaje === "Cortesía") {
           food.precio = 0;
         }
-        food.fechaDeMarca = ""; // Establecer la fechaDeMarca como espacio en blanco para todas las comidas
+        food.fechaDeMarca = "";
         cliente.restaurante.push(food);
       }
 
@@ -166,13 +152,6 @@ export const addFood = async (req, res) => {
     res.status(500).json({ message: 'Error al agregar la comida al cliente' });
   }
 };
-
-
-
-
-
-
-
 
 
 export const obtenerCPI = async (req, res) => { 
@@ -233,7 +212,6 @@ export const updatePP = async (req, res) => {
 };
 
 
-
 export const updateClientCts = async (req, res) => {
   const identificacion = req.params.id;
   const { cantidadDeCortesias, cantidadDeCortesiasF} = req.body;
@@ -292,6 +270,144 @@ export const getClienteByIdentificacion = async (req, res) => {
   } catch (error) {
     console.error('Error al obtener el cliente:', error);
     res.status(500).send('Error interno del servidor');
+  }
+};
+
+export const updateUserStatus = async (req, res) => {
+  const { userId, estado } = req.body;
+
+  if (!userId) {
+    return res.status(400).json({ error: "Falta el userId" });
+  }
+
+  if (!estado) {
+    return res.status(400).json({ error: "Falta el estado" });
+  }
+
+  try {
+    let update = { estado };
+
+    if (estado === 'activo') {
+      const fechaConResta = moment().subtract(5, 'hours').toDate();
+      update.fechaActivacion = fechaConResta;
+    }else if(estado === "finalizado"){
+      const fechaConResta = moment().subtract(5, 'hours').toDate();
+      update.fechaActivacion = fechaConResta;
+    }
+
+    const clienteActualizado = await Cabania.findByIdAndUpdate(userId, update, { new: true });
+
+    if (!clienteActualizado) {
+      return res.status(404).json({ error: "Cliente no encontrado" });
+    }
+
+    res.status(200).json({ message: "Estado actualizado con éxito", cliente: clienteActualizado });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al actualizar el estado" });
+  }
+};
+
+export const obtenerClienteId = async (req, res) => {
+  try {
+    const clientId = req.params.id;
+    console.log("id de usuario :", clientId);
+
+    if (!mongoose.Types.ObjectId.isValid(clientId)) {
+      return res.status(400).send("ID de cliente inválido");
+    }
+    const objectId = new mongoose.Types.ObjectId(clientId);
+
+    const cliente = await Cabania.findById(objectId);
+    console.log("datos del usuario: ", cliente);
+
+    if (!cliente) {
+      return res.status(404).send("Cliente no encontrado");
+    }
+
+    res.json({
+      nombre: cliente.nombre,
+      identificacion: cliente.identificacion 
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Error al obtener los datos del cliente: " + error.message);
+  }
+};
+
+export const addBebidaAdicional = async (req, res) => {
+  const {id} = req.params;
+  const { bebida } = req.body;
+
+  try {
+    const cliente = await Cabania.findById(id);
+
+    if (cliente) {
+      let index = -1;
+      index = cliente.bebidas.findIndex(
+        (b) =>
+          b.itemId === bebida.itemId &&
+          b.mensaje === bebida.mensaje && 
+          (b.fechaDeMarca === "" || !b.fechaDeMarca) 
+      );
+
+      if (index > -1) {
+        cliente.bebidas[index].cantidad += bebida.cantidad;
+      } else {
+        if (bebida.mensaje === "Cortesía") {
+          bebida.precio = 0;
+        }
+        bebida.fechaDeMarca = ""; 
+        cliente.bebidas.push(bebida);
+      }
+
+      cliente.markModified("bebidas");
+      await cliente.save();
+      res.status(200).json(cliente);
+    } else {
+      res.status(404).json({ message: "Cliente no encontrado" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al agregar la bebida al cliente" });
+  }
+};
+
+export const addItemRecepcion = async (req, res) => {
+  const {id} = req.params;
+  const { bebida } = req.body;
+
+  try {
+    const cliente = await Cabania.findById(id);
+
+    if (cliente) {
+      let index = -1;
+      index = cliente.recepcion.findIndex(
+        (b) =>
+          b.itemIdRec === bebida.itemIdRec &&
+          b.mensaje === bebida.mensaje && 
+          (b.fechaDeMarca === "" || !b.fechaDeMarca) 
+      );
+
+      if (index > -1) {
+        cliente.recepcion[index].cantidad += bebida.cantidad;
+      } else {
+        if (bebida.mensaje === "Cortesía") {
+          bebida.precio = 0;
+        }
+        bebida.fechaDeMarca = ""; 
+        cliente.recepcion.push(bebida);
+      }
+
+      cliente.markModified("recepcion");
+      await cliente.save();
+      res.status(200).json(cliente);
+    } else {
+      res.status(404).json({ message: "Cliente no encontrado" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al agregar la bebida al cliente" });
   }
 };
 

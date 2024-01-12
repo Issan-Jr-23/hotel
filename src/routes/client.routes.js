@@ -9,7 +9,7 @@ import { auth } from "../middlewares/auth.middleware.js";
 const router = Router();
 
 router.get("/pasadia-clientes",auth, obtenerClientes);
-router.post("/pasadia-registrar-cliente",auth, crearCliente);  
+router.post("/pasadia-registrar-cliente",auth, crearCliente);
 router.delete("/pasadia/:id",auth, deleteClient); 
 router.put("/pasadia/edit/:id",auth, updateClient);
 router.post("/pasadia-agregar-bebida",auth, addBebida);

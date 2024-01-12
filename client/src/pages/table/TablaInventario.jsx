@@ -368,6 +368,7 @@ export default function App() {
                           <option value="">Seleccione un tipo</option>
                           <option value="bebida">Bebidas</option>
                           <option value="comida">Comidas</option>
+                          <option value="recepcion">Recepción</option>
                           <option value="utensilios">Utensilios</option>
                           <option value="despensa">Despensa</option>
                         </select>
@@ -443,6 +444,7 @@ export default function App() {
                           <option value="">Seleccione un tipo</option>
                           <option value="bebida">Bebidas</option>
                           <option value="comida">Comidas</option>
+                          <option value="recepcion">Recepción</option>
                           <option value="utensilios">Utensilios</option>
                           <option value="despensa">Despensa</option>
                         </select>

@@ -26,7 +26,7 @@ const inventarioSchema = new mongoose.Schema({
   },
   tipo: {
     type: String,
-    enum: ["bebida", "comida", "utensilios", "despensa"],
+    enum: ["bebida", "comida", "utensilios", "despensa", "recepcion"],
     required: true
   },
   Caducidad: {
