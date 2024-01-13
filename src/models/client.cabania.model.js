@@ -74,6 +74,11 @@ const clienteSchema = new mongoose.Schema({
     required: false,
     default: [],
   },
+  descorche: {
+    type: Array,
+    required: false,
+    default: [],
+  },
   nuevoTotal: {
     type: Number,
     default: 0

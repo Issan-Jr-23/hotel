@@ -39,7 +39,6 @@ export const deleteClient = async (req, res) => {
   }
 } 
 
-
 // export const deleteProducto = async (req, res) => {
 //   const identificacion = req.params.id; 
 //   console.log("delete registro: "+identificacion)
@@ -400,6 +399,28 @@ export const addItemRecepcion = async (req, res) => {
       }
 
       cliente.markModified("recepcion");
+      await cliente.save();
+      res.status(200).json(cliente);
+    } else {
+      res.status(404).json({ message: "Cliente no encontrado" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al agregar la bebida al cliente" });
+  }
+};
+
+export const addDescorche = async (req, res) => {
+  const {id} = req.params;
+  const { descorche } = req.body;
+
+  try {
+    const cliente = await Cabania.findById(id);
+
+    if (cliente) {
+
+        cliente.descorche.push(descorche);
+
       await cliente.save();
       res.status(200).json(cliente);
     } else {

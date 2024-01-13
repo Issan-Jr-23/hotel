@@ -70,6 +70,12 @@ const Adicionales = () => {
     const [itemSeleccionadoId4Rec, setItemSeleccionadoId4Rec] = useState(null);
     const [cantidadItemDisponible4Rec, setCantidadItemDisponible4Rec] = useState(0);
 
+    const [descripcionDescorche, setDescripcionDescorche] = useState("")
+    const [valorDescorche, setValorDescorche] = useState("")
+
+    const [descripcionDescorche1, setDescripcionDescorche1] = useState("")
+    const [valorDescorche1, setValorDescorche1] = useState("")
+
 
     const [resetKey, setResetKey] = useState(0);
 
@@ -85,6 +91,15 @@ const Adicionales = () => {
         setItemSeleccionado2("");
         setItemSeleccionado3("");
         setItemSeleccionado4("");
+        setResetKey(prevKey => prevKey + 1);
+    };
+
+    const resetSelectItem = () => {
+        setItemSeleccionadoRec("");
+        setItemSeleccionado1Rec("");
+        setItemSeleccionado2Rec("");
+        setItemSeleccionado3Rec("");
+        setItemSeleccionado4Rec("");
         setResetKey(prevKey => prevKey + 1);
     };
 
@@ -115,6 +130,31 @@ const Adicionales = () => {
         setPrecioItemSeleccionado4("");
         setItemSeleccionadoId4("");
         setCantidadItemDisponible4("0");
+
+        setCantidadItemRec("");
+        setPrecioItemSeleccionadoRec("");
+        setItemSeleccionadoIdRec("");
+        setCantidadItemDisponibleRec("0");
+
+        setCantidadItem1Rec("");
+        setPrecioItemSeleccionado1Rec("");
+        setItemSeleccionadoId1Rec("");
+        setCantidadItemDisponible1Rec("0");
+
+        setCantidadItem2Rec("");
+        setPrecioItemSeleccionado2Rec("");
+        setItemSeleccionadoId2Rec("");
+        setCantidadItemDisponible2Rec("0");
+
+        setCantidadItem3Rec("");
+        setPrecioItemSeleccionado3Rec("");
+        setItemSeleccionadoId3Rec("");
+        setCantidadItemDisponible3Rec("0");
+
+        setCantidadItem4Rec("")
+        setPrecioItemSeleccionado4Rec("");
+        setItemSeleccionadoId4Rec("");
+        setCantidadItemDisponible4Rec("0");
     }
 
     const { id } = useParams();
@@ -124,7 +164,7 @@ const Adicionales = () => {
             try {
                 const response = await AxiosInstances.get(`/cabania-cliente-info/${id}`);
                 console.log("Respuesta del servidor: ", response);
-                setUser(response.data); 
+                setUser(response.data);
             } catch (error) {
                 console.error("Error al obtener datos del servidor:", error);
             }
@@ -155,7 +195,6 @@ const Adicionales = () => {
             try {
                 const response = await AxiosInstances.get("/recepcion");
                 setRecepcion(response.data);
-                // setCantidadDeBebidas(response.data)
             } catch (error) {
                 console.error("Error al obtener datos del servidor:", error);
             }
@@ -171,7 +210,7 @@ const Adicionales = () => {
         const drink = drinks.find(d => d._id === value);
         setSelectedDrink({ ...setSelectedDrink, [index]: drink });
     };
-    
+
 
     const actualizarInventarioBebida = async (bebidaId, cantidad) => {
         try {
@@ -202,7 +241,7 @@ const Adicionales = () => {
     };
 
     const handleGuardarBebida = async () => {
-        console.log("items verificaion: ", itemSeleccionadoId,id)
+        console.log("items verificaion: ", itemSeleccionadoId, id)
         console.log("entra a la funcion")
         if (!itemSeleccionadoId && !itemSeleccionadoId1 && !itemSeleccionadoId2 && !itemSeleccionadoId3 && !itemSeleccionadoId4) {
             console.log("entra a la validacion")
@@ -567,14 +606,67 @@ const Adicionales = () => {
             });
             toast.success('Item de recepcion guardado exitosamente!');
             limpiarCampos();
-            resetSelect();
-
+            resetSelectItem();
+            const responses = await AxiosInstances.get("/recepcion");
+            setRecepcion(responses.data);
 
         } catch (error) {
             console.error('Error al guardar el item en el cliente:', error.message);
             throw error;
         }
     };
+
+    //****************************************** */
+
+    const limpiarDescorches = () => {
+        setDescripcionDescorche("");
+        setDescripcionDescorche1("");
+        setValorDescorche("");
+        setValorDescorche1("");
+    }
+
+    const handleGuardarDescorche = async () => {
+        if ((descripcionDescorche === "" && valorDescorche === "") || (descripcionDescorche1 === "" && valorDescorche1 === "")) {
+            console.log("Successfully");
+        } else {
+            toast.error("Por favor, completa tanto la descripción como el valor antes de guardar.");
+            return;
+        }
+        try {
+
+            if (valorDescorche > 0 && descripcionDescorche !== "") {
+                const descorche1 = {
+                    valor: valorDescorche,
+                    descripcion: descripcionDescorche
+                }
+                await handleCrearDescorche(descorche1)
+                toast.success("datos guaraddos exitosamente")
+            }
+            
+            
+            if (valorDescorche1 > 0 && descripcionDescorche1 !== "") {
+                const descorche1 = {
+                    valor: valorDescorche1,
+                    descripcion: descripcionDescorche1
+                }
+                await handleCrearDescorche(descorche1)
+            }
+
+
+        } catch (error) {
+
+        }
+    }
+
+    const handleCrearDescorche = async (descorche) => {
+        try {
+            await AxiosInstances.post(`/cabania-agregar-descorche/${id}`, { descorche })
+            limpiarDescorches();
+            toast.success("Descorche agregado con exito")
+        } catch (error) {
+            console.log("false: ", error)
+        }
+    }
 
 
     return (
@@ -911,6 +1003,7 @@ const Adicionales = () => {
                                     <span className='rounded-full  bg-green-400' style={{ width: "15px", height: "15px" }}></span>
                                 </p>
                                 <Select
+                                    key={resetKey}
                                     placeholder='seleccione un item'
                                     value={itemSeleccionadoRec}
                                     className='w-6/12 h-10 mr-2 '
@@ -919,12 +1012,17 @@ const Adicionales = () => {
                                         const itemSelected = e.target.value;
                                         setItemSeleccionadoRec(itemSelected);
 
-                                        const itemSeleccionadoInfo = recepcion.find(recepcion => recepcion.Descripcion === itemSelected);
-                                        console.log(itemSeleccionadoInfo)
-                                        if (itemSeleccionadoInfo) {
-                                            setPrecioItemSeleccionadoRec(itemSeleccionadoInfo.ValorUnitario);
-                                            setItemSeleccionadoIdRec(itemSeleccionadoInfo._id);
-                                            setCantidadItemDisponibleRec(itemSeleccionadoInfo.CantidadInicial);
+                                        if (itemSelected) {
+                                            const itemSeleccionadoInfo = recepcion.find(recepcion => recepcion.Descripcion === itemSelected);
+                                            console.log(itemSeleccionadoInfo)
+                                            if (itemSeleccionadoInfo) {
+                                                setPrecioItemSeleccionadoRec(itemSeleccionadoInfo.ValorUnitario);
+                                                setItemSeleccionadoIdRec(itemSeleccionadoInfo._id);
+                                                setCantidadItemDisponibleRec(itemSeleccionadoInfo.CantidadInicial);
+                                            }
+                                        } else {
+                                            setCantidadItemRec("");
+                                            setCantidadItemDisponibleRec(0);
                                         }
                                     }}>
                                     {recepcion.map((items) => (
@@ -950,6 +1048,7 @@ const Adicionales = () => {
                                         const value = parseInt(e.target.value);
                                         setCantidadItemRec(isNaN(value) ? "" : value);
                                     }}
+                                    placeholder='Ingrese la cantidad'
                                 />
                             </span>
                             <span className='flex w-12/12 mt-8 items-center'>
@@ -957,6 +1056,7 @@ const Adicionales = () => {
                                     <span className='rounded-full  bg-green-400' style={{ width: "15px", height: "15px" }}></span>
                                 </p>
                                 <Select
+                                    key={resetKey}
                                     placeholder='seleccione un item'
                                     value={itemSeleccionado1Rec}
                                     className='w-6/12 h-10 mr-2 '
@@ -965,15 +1065,21 @@ const Adicionales = () => {
                                         const itemSelected = e.target.value;
                                         setItemSeleccionado1Rec(itemSelected);
 
-                                        const itemSeleccionadoInfo = drinks.find(recepcion => recepcion.Descripcion === itemSelected);
-                                        console.log(itemSeleccionadoInfo)
-                                        if (itemSeleccionadoInfo) {
-                                            setPrecioItemSeleccionado1Rec(itemSeleccionadoInfo.ValorUnitario);
-                                            setItemSeleccionadoId1Rec(itemSeleccionadoInfo._id);
-                                            setCantidadItemDisponible1Rec(itemSeleccionadoInfo.CantidadInicial);
+                                        if (itemSelected) {
+                                            const itemSeleccionadoInfo = recepcion.find(recepcion => recepcion.Descripcion === itemSelected);
+                                            console.log(itemSeleccionadoInfo)
+                                            if (itemSeleccionadoInfo) {
+                                                setPrecioItemSeleccionado1Rec(itemSeleccionadoInfo.ValorUnitario);
+                                                setItemSeleccionadoId1Rec(itemSeleccionadoInfo._id);
+                                                setCantidadItemDisponible1Rec(itemSeleccionadoInfo.CantidadInicial);
+                                            }
+                                        } else {
+                                            setCantidadItem1Rec("");
+                                            setCantidadItemDisponible1Rec(0);
                                         }
+
                                     }}>
-                                    {drinks.map((items) => (
+                                    {recepcion.map((items) => (
                                         <SelectItem key={items.Descripcion}>
                                             {items.Descripcion}
                                         </SelectItem>
@@ -984,7 +1090,7 @@ const Adicionales = () => {
                                         disabled
                                         type="text"
                                         className='w-12/12 mr-2 outline-red-300 h-10 w-32 border-b-2 border-gray-300 pl-2 pr-2 bg-white text-center'
-                                        placeholder={`${cantidadItemDisponible}`}
+                                        placeholder={`${cantidadItemDisponible1Rec}`}
 
                                     />
                                 </span>
@@ -996,6 +1102,7 @@ const Adicionales = () => {
                                         const value = parseInt(e.target.value);
                                         setCantidadItem1Rec(isNaN(value) ? "" : value);
                                     }}
+                                    placeholder='Ingrese la cantidad'
                                 />
                             </span>
                             <span className='flex w-12/12 mt-8 items-center'>
@@ -1003,6 +1110,7 @@ const Adicionales = () => {
                                     <span className='rounded-full  bg-green-400' style={{ width: "15px", height: "15px" }}></span>
                                 </p>
                                 <Select
+                                    key={resetKey}
                                     placeholder='seleccione un item'
                                     value={itemSeleccionado2Rec}
                                     className='w-6/12 h-10 mr-2'
@@ -1011,15 +1119,20 @@ const Adicionales = () => {
                                         const itemSelected = e.target.value;
                                         setItemSeleccionado2Rec(itemSelected);
 
-                                        const itemSeleccionadoInfo = drinks.find(recepcion => recepcion.Descripcion === itemSelected);
-                                        console.log(itemSeleccionadoInfo)
-                                        if (itemSeleccionadoInfo) {
-                                            setPrecioItemSeleccionado2Rec(itemSeleccionadoInfo.ValorUnitario);
-                                            setItemSeleccionadoId2Rec(itemSeleccionadoInfo._id);
-                                            setCantidadItemDisponible2Rec(itemSeleccionadoInfo.CantidadInicial);
+                                        if (itemSelected) {
+                                            const itemSeleccionadoInfo = recepcion.find(recepcion => recepcion.Descripcion === itemSelected);
+                                            console.log(itemSeleccionadoInfo)
+                                            if (itemSeleccionadoInfo) {
+                                                setPrecioItemSeleccionado2Rec(itemSeleccionadoInfo.ValorUnitario);
+                                                setItemSeleccionadoId2Rec(itemSeleccionadoInfo._id);
+                                                setCantidadItemDisponible2Rec(itemSeleccionadoInfo.CantidadInicial);
+                                            }
+                                        } else {
+                                            setCantidadItem2Rec("");
+                                            setCantidadItemDisponible2Rec(0);
                                         }
                                     }}>
-                                    {drinks.map((items) => (
+                                    {recepcion.map((items) => (
                                         <SelectItem key={items.Descripcion}>
                                             {items.Descripcion}
                                         </SelectItem>
@@ -1042,6 +1155,7 @@ const Adicionales = () => {
                                         const value = parseInt(e.target.value);
                                         setCantidadItem2Rec(isNaN(value) ? "" : value);
                                     }}
+                                    placeholder='Ingrese la cantidad'
                                 />
                             </span>
                             <span className='flex w-12/12 mt-8 items-center'>
@@ -1049,6 +1163,7 @@ const Adicionales = () => {
                                     <span className='rounded-full  bg-green-400' style={{ width: "15px", height: "15px" }}></span>
                                 </p>
                                 <Select
+                                    key={resetKey}
                                     placeholder='seleccione un item'
                                     value={itemSeleccionado3Rec}
                                     className='w-6/12 h-10 mr-2 '
@@ -1057,15 +1172,20 @@ const Adicionales = () => {
                                         const itemSelected = e.target.value;
                                         setItemSeleccionado3Rec(itemSelected);
 
-                                        const itemSeleccionadoInfo = drinks.find(recepcion => recepcion.Descripcion === itemSelected);
-                                        console.log(itemSeleccionadoInfo)
-                                        if (itemSeleccionadoInfo) {
-                                            setPrecioItemSeleccionado3Rec(itemSeleccionadoInfo.ValorUnitario);
-                                            setItemSeleccionadoId3Rec(itemSeleccionadoInfo._id);
-                                            setCantidadItemDisponible3Rec(itemSeleccionadoInfo.CantidadInicial);
+                                        if (itemSelected) {
+                                            const itemSeleccionadoInfo = recepcion.find(recepcion => recepcion.Descripcion === itemSelected);
+                                            console.log(itemSeleccionadoInfo)
+                                            if (itemSeleccionadoInfo) {
+                                                setPrecioItemSeleccionado3Rec(itemSeleccionadoInfo.ValorUnitario);
+                                                setItemSeleccionadoId3Rec(itemSeleccionadoInfo._id);
+                                                setCantidadItemDisponible3Rec(itemSeleccionadoInfo.CantidadInicial);
+                                            }
+                                        } else {
+                                            setCantidadItem3Rec("");
+                                            setCantidadItemDisponible3Rec(0);
                                         }
                                     }}>
-                                    {drinks.map((items) => (
+                                    {recepcion.map((items) => (
                                         <SelectItem key={items.Descripcion}>
                                             {items.Descripcion}
                                         </SelectItem>
@@ -1087,6 +1207,7 @@ const Adicionales = () => {
                                         const value = parseInt(e.target.value);
                                         setCantidadItem3Rec(isNaN(value) ? "" : value);
                                     }}
+                                    placeholder='Ingrese la cantidad'
                                 />
                             </span>
                             <span className='flex w-12/12 mt-8 items-center'>
@@ -1094,6 +1215,7 @@ const Adicionales = () => {
                                     <span className='rounded-full  bg-green-400' style={{ width: "15px", height: "15px" }}></span>
                                 </p>
                                 <Select
+                                    key={resetKey}
                                     placeholder='seleccione un item'
                                     value={itemSeleccionado4Rec}
                                     className='w-6/12 h-10 mr-2 '
@@ -1102,15 +1224,20 @@ const Adicionales = () => {
                                         const itemSelected = e.target.value;
                                         setItemSeleccionado4Rec(itemSelected);
 
-                                        const itemSeleccionadoInfo = drinks.find(recepcion => recepcion.Descripcion === itemSelected);
-                                        console.log(itemSeleccionadoInfo)
-                                        if (itemSeleccionadoInfo) {
-                                            setPrecioItemSeleccionado4Rec(itemSeleccionadoInfo.ValorUnitario);
-                                            setItemSeleccionadoId4Rec(itemSeleccionadoInfo._id);
-                                            setCantidadItemDisponible4Rec(itemSeleccionadoInfo.CantidadInicial);
+                                        if (itemSelected) {
+                                            const itemSeleccionadoInfo = recepcion.find(recepcion => recepcion.Descripcion === itemSelected);
+                                            console.log(itemSeleccionadoInfo)
+                                            if (itemSeleccionadoInfo) {
+                                                setPrecioItemSeleccionado4Rec(itemSeleccionadoInfo.ValorUnitario);
+                                                setItemSeleccionadoId4Rec(itemSeleccionadoInfo._id);
+                                                setCantidadItemDisponible4Rec(itemSeleccionadoInfo.CantidadInicial);
+                                            }
+                                        } else {
+                                            setCantidadItem4Rec("");
+                                            setCantidadItemDisponible4Rec(0);
                                         }
                                     }}>
-                                    {drinks.map((items) => (
+                                    {recepcion.map((items) => (
                                         <SelectItem key={items.Descripcion}>
                                             {items.Descripcion}
                                         </SelectItem>
@@ -1133,6 +1260,7 @@ const Adicionales = () => {
                                         const value = parseInt(e.target.value);
                                         setCantidadItem4Rec(isNaN(value) ? "" : value);
                                     }}
+                                    placeholder='Ingrese la cantidad'
                                 />
                             </span>
                             <span className='flex justify-end pr-2 mt-5'>
@@ -1158,8 +1286,20 @@ const Adicionales = () => {
                                     <p className='flex rounded-full    justify-center  text-white mr-2  pt-4' >
                                         <span className='rounded-full  bg-red-500' style={{ width: "15px", height: "15px" }}></span>
                                     </p>
-                                    <input type="number" placeholder='Valor del descorche' className='mb-5 w-6/12 h-14 mr-2 pl-2 outline-none border-b-2 border-gray-300' />
-                                    <textarea name="" id="" cols="30" rows="10" className='w-6/12 h-14 outline-none p-2 ml 2 border-b-2 border-gray-300' placeholder='Ingrese la descripción'></textarea>
+                                    <input
+                                        value={valorDescorche}
+                                        onChange={(e) => setValorDescorche(e.target.value)}
+                                        type="number"
+                                        placeholder='Valor del descorche'
+                                        className='mb-5 w-6/12 h-14 mr-2 pl-2 outline-none border-b-2 border-gray-300' />
+                                    <textarea
+                                        value={descripcionDescorche}
+                                        onChange={(e) => setDescripcionDescorche(e.target.value)}
+                                        name=""
+                                        id=""
+                                        cols="30"
+                                        rows="10"
+                                        className='w-6/12 h-14 outline-none p-2 ml 2 border-b-2 border-gray-300' placeholder='Ingrese la descripción'></textarea>
                                 </span>
                             </div>
 
@@ -1168,16 +1308,22 @@ const Adicionales = () => {
                                     <p className='flex rounded-full    justify-center  text-white mr-2  pt-4' >
                                         <span className='rounded-full  bg-red-500' style={{ width: "15px", height: "15px" }}></span>
                                     </p>
-                                    <input type="number" placeholder='Valor del descorche' className='mb-2 w-6/12 h-14 mr-2 pl-2 outline-none border-b-2 border-gray-300' />
-                                    <textarea name="" id="" cols="30" rows="10" className='w-6/12 h-14 outline-none p-2 ml 2 border-b-2 border-gray-300' placeholder='Ingrese la descripción'></textarea>
+                                    <input
+                                        value={valorDescorche1}
+                                        onChange={(e) => setValorDescorche1(e.target.value)}
+                                        type="number"
+                                        placeholder='Valor del descorche' className='mb-2 w-6/12 h-14 mr-2 pl-2 outline-none border-b-2 border-gray-300' />
+                                    <textarea
+                                        value={descripcionDescorche1}
+                                        onChange={(e) => setDescripcionDescorche1(e.target.value)}
+                                        name="" id="" cols="30" rows="10" className='w-6/12 h-14 outline-none p-2 ml 2 border-b-2 border-gray-300' placeholder='Ingrese la descripción'></textarea>
                                 </span>
                                 <span className='flex justify-end'>
-                                    <Button color='danger' className='mt-5'>
+                                    <Button color='danger' className='mt-5' onClick={handleGuardarDescorche}>
                                         Crear descorche
                                     </Button>
                                 </span>
                             </div>
-
                         </article>
                     </article>
                 </section>
