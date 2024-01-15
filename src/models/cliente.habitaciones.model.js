@@ -69,6 +69,16 @@ const clienteSchema = new mongoose.Schema({
     required: false,
     default: [],
   },
+  recepcion: {
+    type: Array,
+    required: false,
+    default: [],
+  },
+  descorche: {
+    type: Array,
+    required: false,
+    default: [],
+  },
   consumoTotal: {
     type: Number,
     default: 0

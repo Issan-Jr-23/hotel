@@ -18,25 +18,25 @@ const Adicionales = () => {
     const [precioItemSeleccionado, setPrecioItemSeleccionado] = useState("");
     const [itemSeleccionadoId, setItemSeleccionadoId] = useState("");
     const [subItemSeleccionadoId, setSubItemSeleccionadoId] = useState("");
-  
+
     const [cantidadItem1, setCantidadItem1] = useState("");
     const [itemSeleccionado1, setItemSeleccionado1] = useState("");
     const [precioItemSeleccionado1, setPrecioItemSeleccionado1] = useState("");
     const [itemSeleccionadoId1, setItemSeleccionadoId1] = useState("");
     const [subItemSeleccionadoId1, setSubItemSeleccionadoId1] = useState("");
-  
+
     const [cantidadItem2, setCantidadItem2] = useState("");
     const [itemSeleccionado2, setItemSeleccionado2] = useState("");
     const [precioItemSeleccionado2, setPrecioItemSeleccionado2] = useState("");
     const [itemSeleccionadoId2, setItemSeleccionadoId2] = useState("");
     const [subItemSeleccionadoId2, setSubItemSeleccionadoId2] = useState("");
-  
+
     const [cantidadItem3, setCantidadItem3] = useState("");
     const [itemSeleccionado3, setItemSeleccionado3] = useState("");
     const [precioItemSeleccionado3, setPrecioItemSeleccionado3] = useState("");
     const [itemSeleccionadoId3, setItemSeleccionadoId3] = useState("");
     const [subItemSeleccionadoId3, setSubItemSeleccionadoId3] = useState("");
-  
+
     const [cantidadItem4, setCantidadItem4] = useState("");
     const [itemSeleccionado4, setItemSeleccionado4] = useState("");
     const [precioItemSeleccionado4, setPrecioItemSeleccionado4] = useState("");
@@ -122,22 +122,22 @@ const Adicionales = () => {
     const [bebidaSeleccionada, setBebidaSeleccionada] = useState('');
     const [precioBebidaSeleccionada, setPrecioBebidaSeleccionada] = useState(0);
     const [bebidaSeleccionadaId, setBebidaSeleccionadaId] = useState(null);
-  
+
     const [cantidadBebida1, setCantidadBebida1] = useState("");
     const [bebida1Seleccionada, setBebida1Seleccionada] = useState('');
     const [precioBebida1Seleccionada, setPrecioBebida1Seleccionada] = useState(0);
     const [bebida1SeleccionadaId, setBebida1SeleccionadaId] = useState(null);
-  
+
     const [cantidadBebida2, setCantidadBebida2] = useState("");
     const [bebida2Seleccionada, setBebida2Seleccionada] = useState('');
     const [precioBebida2Seleccionada, setPrecioBebida2Seleccionada] = useState(0);
     const [bebida2SeleccionadaId, setBebida2SeleccionadaId] = useState(null);
-  
+
     const [cantidadBebida3, setCantidadBebida3] = useState("");
     const [bebida3Seleccionada, setBebida3Seleccionada] = useState('');
     const [precioBebida3Seleccionada, setPrecioBebida3Seleccionada] = useState(0);
     const [bebida3SeleccionadaId, setBebida3SeleccionadaId] = useState(null);
-  
+
     const [cantidadBebida4, setCantidadBebida4] = useState("");
     const [bebida4Seleccionada, setBebida4Seleccionada] = useState('');
     const [precioBebida4Seleccionada, setPrecioBebida4Seleccionada] = useState(0);
@@ -146,12 +146,20 @@ const Adicionales = () => {
 
 
     //#region
-  
+
     const [cantidadBebidaDisponible, setCantidadBebidaDisponible] = useState(0);
     const [cantidadBebida1Disponible, setCantidadBebida1Disponible] = useState(0);
     const [cantidadBebida2Disponible, setCantidadBebida2Disponible] = useState(0);
     const [cantidadBebida3Disponible, setCantidadBebida3Disponible] = useState(0);
     const [cantidadBebida4Disponible, setCantidadBebida4Disponible] = useState(0);
+
+
+    const [cantidadItemDisponible, setCantidadItemDisponible] = useState(0);
+    const [cantidadItemDisponible1, setCantidadItemDisponible1] = useState(0);
+    const [cantidadItemDisponible2, setCantidadItemDisponible2] = useState(0);
+    const [cantidadItemDisponible3, setCantidadItemDisponible3] = useState(0);
+    const [cantidadItemDisponible4, setCantidadItemDisponible4] = useState(0);
+
 
     //#endregion
 
@@ -260,7 +268,7 @@ const Adicionales = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await AxiosInstances.get(`/pasadia-cliente-info/${id}`); 
+                const response = await AxiosInstances.get(`/habitaciones-cliente-info/${id}`);
                 console.log("Respuesta del servidor: ", response);
                 setUser(response.data);
             } catch (error) {
@@ -279,7 +287,6 @@ const Adicionales = () => {
         const fetchData = async () => {
             try {
                 const response = await AxiosInstances.get("/drinks");
-                // Filtrar las bebidas con cantidad mayor a 0
                 const filteredDrinks = response.data.filter(drink => drink.CantidadInicial > 0);
                 setDrinks(filteredDrinks);
             } catch (error) {
@@ -313,334 +320,265 @@ const Adicionales = () => {
     };
 
 
+    const resetInput = async () => {
+        setCantidadBebida("");
+        setBebidaSeleccionada('');
+        setPrecioBebidaSeleccionada("");
+        setBebidaSeleccionadaId('');
+        setCantidadBebidaDisponible("0")
+
+        setCantidadBebida1("");
+        setBebida1Seleccionada('');
+        setPrecioBebida1Seleccionada("");
+        setBebida1SeleccionadaId('');
+        setCantidadBebida1Disponible("0")
+
+        setCantidadBebida2("");
+        setBebida2Seleccionada('');
+        setPrecioBebida2Seleccionada("");
+        setBebida2SeleccionadaId('');
+        setCantidadBebida2Disponible("0")
+
+        setCantidadBebida3("");
+        setBebida3Seleccionada('');
+        setPrecioBebida3Seleccionada("");
+        setBebida3SeleccionadaId('');
+        setCantidadBebida3Disponible("0")
+
+        setCantidadBebida4("");
+        setBebida4Seleccionada('');
+        setPrecioBebida4Seleccionada("");
+        setBebida4SeleccionadaId('');
+        setCantidadBebida4Disponible("0")
+
+        const response = await AxiosInstances.get("/drinks");
+        const filteredDrinks = response.data.filter(drink => drink.CantidadInicial > 0);
+        setDrinks(filteredDrinks);
+
+        setResetKey(prevKey => prevKey + 1);
+    }
+
     const actualizarInventarioBebida = async (bebidaId, cantidad) => {
         try {
-          const response = await AxiosInstance.post('/actualizar-inventario-bebida', {
-            id: bebidaId,
-            cantidad,
-          });
-    
-          if (response.status < 200 || response.status >= 300) {
-            throw new Error(`Error al actualizar el inventario. Estado de la respuesta: ${response.status}`);
-          }
+            const response = await AxiosInstances.post('/actualizar-inventario-bebida', {
+                id: bebidaId,
+                cantidad,
+            });
+
+            if (response.status < 200 || response.status >= 300) {
+                throw new Error(`Error al actualizar el inventario. Estado de la respuesta: ${response.status}`);
+            }
         } catch (error) {
-          console.error('Error al actualizar el inventario de bebidas:', error.message);
-          throw error;
+            console.error('Error al actualizar el inventario de bebidas:', error.message);
+            throw error;
         }
-      };
-      const actualizarStockInicialBebida = async (bebidaId, cantidad) => {
+    };
+    const actualizarStockInicialBebida = async (bebidaId, cantidad) => {
         try {
-          const response = await AxiosInstance.post(`/actualizar-stock-inicial/${bebidaId}`, { cantidad });
-          if (response.status < 200 || response.status >= 300) {
-            throw new Error(`Error al actualizar el stock inicial. Estado de la respuesta: ${response.status}`);
-          }
+            const response = await AxiosInstances.post(`/actualizar-stock-inicial/${bebidaId}`, { cantidad });
+            if (response.status < 200 || response.status >= 300) {
+                throw new Error(`Error al actualizar el stock inicial. Estado de la respuesta: ${response.status}`);
+            }
         } catch (error) {
-          console.error('Error al actualizar el stock inicial:', error.message);
-          throw error;
+            console.error('Error al actualizar el stock inicial:', error.message);
+            throw error;
         }
-      };
-    
-      const handleGuardarBebida = async () => {
-    
+    };
+
+    const handleGuardarBebida = async () => {
+
         if (isSaving) return;
         setIsSaving(true);
-    
-        if (!selectedClientId || (!bebidaSeleccionadaId && !bebida1SeleccionadaId && !bebida2SeleccionadaId && !bebida3SeleccionadaId && !bebida4SeleccionadaId)) {
-          toast.error('No se ha seleccionado un cliente o una Bebida.');
-          setIsSaving(false);
-          return;
-        }
-    
-        const checkStockAndUpdateInventory = async (bebidaId, cantidad) => {
-          const response = await AxiosInstance.get(`/verificar-disponibilidad/${bebidaId}`);
-    
-          let fecha = new Date();
-    
-          fecha.setHours(fecha.getHours() - 5);
-    
-          const fechaAjustada = fecha.toLocaleString();
-    
-          const disponibleInventario = response.data.cantidadRestante;
-    
-          const clienteResponse = await AxiosInstance.get(`/cabania-clientes/${selectedClientId}`);
-          const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
-          const numeroDebebidas = clienteResponse.data.cantidadDeBebidas.filter(bebida => bebida.mensaje === "Cortesía" && bebida.fechaDeMarca === "");
-          const cantidadTotalCortesia = numeroDebebidas.reduce((total, bebida) => total + bebida.cantidad, 0);
-          console.log("numero de cortesias: " + cantidadTotalCortesia)
-          console.log("cantidad de bebidas del usuario" + JSON.stringify(numeroDebebidas, null, 2))
-          const totalPersonas = ninios + adultos;
-    
-          if (esCortesia) {
-    
-            const nuevaCantidadTotalCortesia = cantidadTotalCortesia;
-            const cantidadRestante = totalPersonas - cantidadTotalCortesia;
-            console.log("cantidad restante: " + cantidadRestante)
-            console.log("supuesta nueva cantidad: " + nuevaCantidadTotalCortesia)
-    
-            if (cantidad > disponibleInventario) {
-              alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
-              return false;
-            }
-    
-            if (cantidad > cantidadRestante) {
-              alert(`el usuario tiene ${cantidadRestante} cortesias disponibles`)
-              return;
-            }
-    
-            if (nuevaCantidadTotalCortesia > totalPersonas) {
-              alert(`La cantidad de cortesías (${nuevaCantidadTotalCortesia}) no puede exceder la cantidad de personas (${totalPersonas}).`);
-              return false;
-            }
-    
-            if (cantidad > cantidadRestante) {
-              alert(`Solo puedes agregar hasta ${cantidadRestante} cortesías adicionales.`);
-              return false;
-            }
-          } else {
-            if (cantidad > disponibleInventario) {
-              alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
-              return false;
-            }
-          }
-          if (cantidad > disponibleInventario) {
-            alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
-            return false;
-          }
-    
-          await actualizarInventarioBebida(bebidaId, cantidad);
-          await actualizarStockInicialBebida(bebidaId, cantidad);
-          return true;
-        };
-    
-        try {
-          if (!selectedClientId || (!bebidaSeleccionadaId && !bebida1SeleccionadaId && !bebida2SeleccionadaId && !bebida3SeleccionadaId && !bebida4SeleccionadaId)) {
+
+        if (!bebidaSeleccionadaId && !bebida1SeleccionadaId && !bebida2SeleccionadaId && !bebida3SeleccionadaId && !bebida4SeleccionadaId) {
+            toast.error('No se ha seleccionado un cliente o una Bebida.');
             setIsSaving(false);
-            throw new Error('No se ha seleccionado un cliente o una bebida.');
-          }
-    
-          if (esCortesia) {
-            let atLeastOneCortesiaSaved = false;
-    
-            if (cantidadBebida > 0 && bebidaSeleccionadaId) {
-              if (await checkStockAndUpdateInventory(bebidaSeleccionadaId, cantidadBebida)) {
-                const bebidaCortesia = {
-                  id: bebidaSeleccionadaId,
-                  nombre: bebidaSeleccionada,
-                  cantidad: cantidadBebida,
-                  precio: 0,
-                  mensaje: "Cortesía",
-                  fechaDeMarca: "",
-                  fecha: obtenerFechaConAjuste()
-                };
-                await guardarBebida(bebidaCortesia);
-                atLeastOneCortesiaSaved = true;
-              }
-            }
-    
-            if (cantidadBebida1 > 0 && bebida1SeleccionadaId) {
-              if (await checkStockAndUpdateInventory(bebida1SeleccionadaId, cantidadBebida1)) {
-                const bebidaCortesia1 = {
-                  id: bebida1SeleccionadaId,
-                  nombre: bebida1Seleccionada,
-                  cantidad: cantidadBebida1,
-                  precio: 0,
-                  mensaje: "Cortesía",
-                  fechaDeMarca: "",
-                  fecha: obtenerFechaConAjuste()
-                };
-                await guardarBebida(bebidaCortesia1);
-                atLeastOneCortesiaSaved = true;
-              }
-            }
-    
-            if (cantidadBebida2 > 0 && bebida2SeleccionadaId) {
-              if (await checkStockAndUpdateInventory(bebida2SeleccionadaId, cantidadBebida2)) {
-                const bebidaCortesia2 = {
-                  id: bebida2SeleccionadaId,
-                  nombre: bebida2Seleccionada,
-                  cantidad: cantidadBebida2,
-                  precio: 0,
-                  mensaje: "Cortesía",
-                  fechaDeMarca: "",
-                  fecha: obtenerFechaConAjuste()
-                };
-                await guardarBebida(bebidaCortesia2);
-                atLeastOneCortesiaSaved = true;
-              }
-            }
-    
-            if (cantidadBebida3 > 0 && bebida3SeleccionadaId) {
-              if (await checkStockAndUpdateInventory(bebida3SeleccionadaId, cantidadBebida3)) {
-                const bebidaCortesia3 = {
-                  id: bebida3SeleccionadaId,
-                  nombre: bebida3Seleccionada,
-                  cantidad: cantidadBebida3,
-                  precio: 0,
-                  mensaje: "Cortesía",
-                  fechaDeMarca: "",
-                  fecha: obtenerFechaConAjuste()
-                };
-                await guardarBebida(bebidaCortesia3);
-                atLeastOneCortesiaSaved = true;
-              }
-            }
-    
-            if (cantidadBebida4 > 0 && bebida4SeleccionadaId) {
-              if (await checkStockAndUpdateInventory(bebida4SeleccionadaId, cantidadBebida4)) {
-                const bebidaCortesia4 = {
-                  id: bebida4SeleccionadaId,
-                  nombre: bebida4Seleccionada,
-                  cantidad: cantidadBebida4,
-                  precio: 0,
-                  mensaje: "Cortesía",
-                  fechaDeMarca: "",
-                  fecha: obtenerFechaConAjuste()
-                };
-                await guardarBebida(bebidaCortesia4);
-                atLeastOneCortesiaSaved = true;
-              }
-            }
-    
-            if (atLeastOneCortesiaSaved) {
-              onClose();
-            }
             return;
-          }
-    
-          let isBebidaAdded = false;
-    
-          if (cantidadBebida > 0 && bebidaSeleccionadaId) {
-            const bebidaAdultos = {
-              id: bebidaSeleccionadaId,
-              nombre: bebidaSeleccionada,
-              cantidad: cantidadBebida,
-              precio: precioBebidaSeleccionada,
-              fechaDeMarca: "",
-              fecha: obtenerFechaConAjuste()
-            };
-    
-            if (await checkStockAndUpdateInventory(bebidaSeleccionadaId, cantidadBebida)) {
-              await guardarBebida(bebidaAdultos);
-              isBebidaAdded = true;
-            }
-          }
-    
-          if (cantidadBebida1 > 0 && bebida1SeleccionadaId) {
-            const bebidaAdultos1 = {
-              id: bebida1SeleccionadaId,
-              nombre: bebida1Seleccionada,
-              cantidad: cantidadBebida1,
-              precio: precioBebida1Seleccionada,
-              fechaDeMarca: "",
-              fecha: obtenerFechaConAjuste()
-            };
-    
-            if (await checkStockAndUpdateInventory(bebida1SeleccionadaId, cantidadBebida1)) {
-              await guardarBebida(bebidaAdultos1);
-              isBebidaAdded = true;
-            }
-          }
-    
-          if (cantidadBebida2 > 0 && bebida2SeleccionadaId) {
-            const bebidaAdultos2 = {
-              id: bebida2SeleccionadaId,
-              nombre: bebida2Seleccionada,
-              cantidad: cantidadBebida2,
-              precio: precioBebida2Seleccionada,
-              fechaDeMarca: "",
-              fecha: obtenerFechaConAjuste()
-            };
-    
-            if (await checkStockAndUpdateInventory(bebida2SeleccionadaId, cantidadBebida2)) {
-              await guardarBebida(bebidaAdultos2);
-              isBebidaAdded = true;
-            }
-          }
-    
-          if (cantidadBebida3 > 0 && bebida3SeleccionadaId) {
-            const bebidaAdultos3 = {
-              id: bebida3SeleccionadaId,
-              nombre: bebida3Seleccionada,
-              cantidad: cantidadBebida3,
-              precio: precioBebida3Seleccionada,
-              fechaDeMarca: "",
-              fecha: obtenerFechaConAjuste()
-            };
-    
-            if (await checkStockAndUpdateInventory(bebida3SeleccionadaId, cantidadBebida3)) {
-              await guardarBebida(bebidaAdultos3);
-              isBebidaAdded = true;
-            }
-          }
-    
-          if (cantidadBebida4 > 0 && bebida4SeleccionadaId) {
-            const bebidaAdultos4 = {
-              id: bebida4SeleccionadaId,
-              nombre: bebida4Seleccionada,
-              cantidad: cantidadBebida4,
-              precio: precioBebida4Seleccionada,
-              fechaDeMarca: "",
-              fecha: obtenerFechaConAjuste()
-            };
-    
-            if (await checkStockAndUpdateInventory(bebida4SeleccionadaId, cantidadBebida4)) {
-              await guardarBebida(bebidaAdultos4);
-              isBebidaAdded = true;
-            }
-          }
-    
-          if (!isBebidaAdded) {
-            toast.error("No se ha agregado ninguna bebida");
-            setIsSaving(false)
-          } else {
-            onClose();
-          }
-        } catch (error) {
-          toast.error('Error al guardar las bebidas en el cliente:', error.message);
-          setIsSaving(false)
         }
-      };
-    
-      const guardarBebida = async (bebida) => {
+
+        const checkStockAndUpdateInventory = async (bebidaId, cantidad) => {
+            const response = await AxiosInstances.get(`/verificar-disponibilidad/${bebidaId}`);
+            let fecha = new Date();
+            fecha.setHours(fecha.getHours() - 5);
+            const disponibleInventario = response.data.cantidadRestante;
+            {
+                if (cantidad > disponibleInventario) {
+                    alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
+                    return false;
+                }
+            }
+            if (cantidad > disponibleInventario) {
+                alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
+                return false;
+            }
+
+            await actualizarInventarioBebida(bebidaId, cantidad);
+            await actualizarStockInicialBebida(bebidaId, cantidad);
+            return true;
+        };
+
         try {
-          const response = await AxiosInstance.post('/cabania-agregar-bebida', {
-            id: selectedClientId,
-            bebida,
-          });
-          toast.success('Bebida guardada exitosamente!');
-          setCantidadBebida("");
-          setBebidaSeleccionada('');
-          setPrecioBebidaSeleccionada("");
-          setBebidaSeleccionadaId('');
-    
-          setCantidadBebida1("");
-          setBebida1Seleccionada('');
-          setPrecioBebida1Seleccionada("");
-          setBebida1SeleccionadaId('');
-    
-          setEsCortesia(false);
-    
-          closeModalM();
-          setIsSaving(false);
-    
-          const responses = await AxiosInstance.get("/cabania-clientes");
-    
-          // Ordena los datos de la respuesta de la petición GET, no del PUT
-          const usuariosOrdenados = responses.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
-    
-          // Actualiza el estado con los usuarios ordenados
-          setUsers(usuariosOrdenados);
+            if (!bebidaSeleccionadaId && !bebida1SeleccionadaId && !bebida2SeleccionadaId && !bebida3SeleccionadaId && !bebida4SeleccionadaId) {
+                setIsSaving(false);
+                throw new Error('No se ha seleccionado un cliente o una bebida.');
+            }
+
+
+            let isBebidaAdded = false;
+
+            if (cantidadBebida > 0 && bebidaSeleccionadaId) {
+                const bebidaAdultos = {
+                    itemId: bebidaSeleccionadaId,
+                    nombre: bebidaSeleccionada,
+                    cantidad: cantidadBebida,
+                    precio: precioBebidaSeleccionada,
+                    adicional: "adicional",
+                    fecha: obtenerFechaConAjuste()
+                };
+
+                if (await checkStockAndUpdateInventory(bebidaSeleccionadaId, cantidadBebida)) {
+                    await guardarBebida(bebidaAdultos);
+                    isBebidaAdded = true;
+                }
+            }
+
+            if (cantidadBebida1 > 0 && bebida1SeleccionadaId) {
+                const bebidaAdultos1 = {
+                    itemId: bebida1SeleccionadaId,
+                    nombre: bebida1Seleccionada,
+                    cantidad: cantidadBebida1,
+                    precio: precioBebida1Seleccionada,
+                    adicional: "adicional",
+                    fecha: obtenerFechaConAjuste()
+                };
+
+                if (await checkStockAndUpdateInventory(bebida1SeleccionadaId, cantidadBebida1)) {
+                    await guardarBebida(bebidaAdultos1);
+                    isBebidaAdded = true;
+                }
+            }
+
+            if (cantidadBebida2 > 0 && bebida2SeleccionadaId) {
+                const bebidaAdultos2 = {
+                    itemId: bebida2SeleccionadaId,
+                    nombre: bebida2Seleccionada,
+                    cantidad: cantidadBebida2,
+                    precio: precioBebida2Seleccionada,
+                    adicional: "adicional",
+                    fecha: obtenerFechaConAjuste()
+                };
+
+                if (await checkStockAndUpdateInventory(bebida2SeleccionadaId, cantidadBebida2)) {
+                    await guardarBebida(bebidaAdultos2);
+                    isBebidaAdded = true;
+                }
+            }
+
+            if (cantidadBebida3 > 0 && bebida3SeleccionadaId) {
+                const bebidaAdultos3 = {
+                    itemId: bebida3SeleccionadaId,
+                    nombre: bebida3Seleccionada,
+                    cantidad: cantidadBebida3,
+                    precio: precioBebida3Seleccionada,
+                    adicional: "adicional",
+                    fecha: obtenerFechaConAjuste()
+                };
+
+                if (await checkStockAndUpdateInventory(bebida3SeleccionadaId, cantidadBebida3)) {
+                    await guardarBebida(bebidaAdultos3);
+                    isBebidaAdded = true;
+                }
+            }
+
+            if (cantidadBebida4 > 0 && bebida4SeleccionadaId) {
+                const bebidaAdultos4 = {
+                    itemId: bebida4SeleccionadaId,
+                    nombre: bebida4Seleccionada,
+                    cantidad: cantidadBebida4,
+                    precio: precioBebida4Seleccionada,
+                    adicional: "adicional",
+                    fecha: obtenerFechaConAjuste()
+                };
+
+                if (await checkStockAndUpdateInventory(bebida4SeleccionadaId, cantidadBebida4)) {
+                    await guardarBebida(bebidaAdultos4);
+                    isBebidaAdded = true;
+                }
+            }
+
+            if (!isBebidaAdded) {
+                toast.error("No se ha agregado ninguna bebida");
+                setIsSaving(false)
+            } else {
+            }
         } catch (error) {
-          setIsSaving(false);
-          console.error('Error al guardar la bebida en el cliente:', error.message);
-          throw error;
+            toast.error('Error al guardar las bebidas en el cliente:', error.message);
+            setIsSaving(false)
         }
-      };
+    };
+
+    const guardarBebida = async (bebida) => {
+        try {
+            await AxiosInstances.post(`/habitaciones-agregar-bebida/${id}`, {
+                bebida,
+            });
+            toast.success('Bebida guardada exitosamente!');
+            resetInput(); // Limpia los campos solo si la bebida se guarda con éxito
+            setIsSaving(false);
+        } catch (error) {
+            setIsSaving(false);
+            console.error('Error al guardar la bebida en el cliente:', error.message);
+            // No llamar a resetInput aquí, para mantener los campos con sus valores actuales
+            throw error;
+        }
+    };
+
 
     //**************************** */
 
 
     //#region
+
+    const resetItemRecepcion = async () => {
+        setCantidadItemRec("");
+        setItemSeleccionadoRec("");
+        setPrecioItemSeleccionadoRec("");
+        setItemSeleccionadoIdRec("");
+
+        setCantidadItemDisponibleRec("");
+        setCantidadItem1Rec("");
+        setItemSeleccionado1Rec("");
+        setPrecioItemSeleccionado1Rec("");
+
+        setItemSeleccionadoId1Rec("");
+        setCantidadItemDisponible1Rec("");
+        setCantidadItem2Rec("");
+        setItemSeleccionado2Rec("");
+
+        setPrecioItemSeleccionado2Rec("");
+        setItemSeleccionadoId2Rec("");
+        setCantidadItemDisponible2Rec("");
+        setCantidadItem3Rec("");
+
+        setItemSeleccionado3Rec("");
+        setPrecioItemSeleccionado3Rec("");
+        setItemSeleccionadoId3Rec("");
+        setCantidadItemDisponible3Rec("");
+
+        setCantidadItem4Rec("");
+        setItemSeleccionado4Rec("");
+        setPrecioItemSeleccionado4Rec("");
+        setItemSeleccionadoId4Rec("");
+
+
+        setCantidadItemDisponibleRec("0")
+        setCantidadItemDisponible1Rec("0")
+        setCantidadItemDisponible2Rec("0")
+        setCantidadItemDisponible3Rec("0")
+        setCantidadItemDisponible4Rec("0")
+
+        setResetKey(prevKey => prevKey + 1);
+    }
 
     const actualizarInventarioItem = async (itemRecId, cantidad) => {
         try {
@@ -829,7 +767,7 @@ const Adicionales = () => {
                 bebida,
             });
             toast.success('Item de recepcion guardado exitosamente!');
-            limpiarCampos();
+            resetItemRecepcion(); 
             resetSelectItem();
             const responses = await AxiosInstances.get("/recepcion");
             setRecepcion(responses.data);
@@ -860,9 +798,10 @@ const Adicionales = () => {
 
             if (valorDescorche > 0 && descripcionDescorche !== "") {
                 const descorche1 = {
-                    valor: valorDescorche,
-                    descripcion: descripcionDescorche,
-                    mensaje: "descorche"
+                    precio: valorDescorche,
+                    nombre: descripcionDescorche,
+                    adicional: "descorche",
+                    cantidad: 1
                 }
                 await handleCrearDescorche(descorche1)
                 toast.success("datos guaraddos exitosamente")
@@ -871,9 +810,10 @@ const Adicionales = () => {
 
             if (valorDescorche1 > 0 && descripcionDescorche1 !== "") {
                 const descorche1 = {
-                    valor: valorDescorche1,
-                    descripcion: descripcionDescorche1,
-                    mensaje: "descorche"
+                    precio: valorDescorche1,
+                    nombre: descripcionDescorche1,
+                    adicional: "descorche",
+                    cantidad: 1
                 }
                 await handleCrearDescorche(descorche1)
             }
@@ -897,6 +837,46 @@ const Adicionales = () => {
     //#endregion
 
     // new
+
+    const resetInputSubproductos = async () => {
+        setCantidadItem("")
+        setItemSeleccionado("")
+        setPrecioItemSeleccionado("")
+        setItemSeleccionadoId("")
+        setSubItemSeleccionadoId("")
+
+        setCantidadItem1("")
+        setItemSeleccionado1("")
+        setPrecioItemSeleccionado1("")
+        setItemSeleccionadoId1("")
+        setSubItemSeleccionadoId1("")
+
+        setCantidadItem2("")
+        setItemSeleccionado2("")
+        setPrecioItemSeleccionado2("")
+        setItemSeleccionadoId2("")
+        setSubItemSeleccionadoId2("")
+
+        setCantidadItem3("")
+        setItemSeleccionado3("")
+        setPrecioItemSeleccionado3("")
+        setItemSeleccionadoId3("")
+        setSubItemSeleccionadoId3("")
+
+        setCantidadItem4("")
+        setItemSeleccionado4("")
+        setPrecioItemSeleccionado4("")
+        setItemSeleccionadoId4("")
+        setSubItemSeleccionadoId4("")
+
+        setCantidadFoodDisponible("0")
+        setCantidadFood1Disponible("0")
+        setCantidadFood2Disponible("0")
+        setCantidadFood3Disponible("0")
+        setCantidadFood4Disponible("0")
+
+        setResetKey(prevKey => prevKey + 1);
+    }
 
     useEffect(() => {
         const fetchData = async () => {
@@ -949,7 +929,7 @@ const Adicionales = () => {
         setIsSaving(true);
 
         console.log()
-        if (!selectedClientId || (!subItemSeleccionadoId && !subItemSeleccionadoId1 && !subItemSeleccionadoId2 && !subItemSeleccionadoId3 && !subItemSeleccionadoId4)) {
+        if (!subItemSeleccionadoId && !subItemSeleccionadoId1 && !subItemSeleccionadoId2 && !subItemSeleccionadoId3 && !subItemSeleccionadoId4) {
             toast.error('No se ha seleccionado un cliente o una comida.');
             setIsSaving(false);
             return;
@@ -958,24 +938,10 @@ const Adicionales = () => {
 
         const checkStockAndUpdateInventory = async (foodId, subProductoId, cantidad) => {
             console.log("quiero ver quien pasa ese id y cantidad: ", foodId, cantidad)
-            const response = await AxiosInstance.get(`/verificar-disponibilidad/${foodId}`);
-
+            const response = await AxiosInstances.get(`/verificar-disponibilidad/${foodId}`);
             let fecha = new Date();
-
             fecha.setHours(fecha.getHours() - 5);
-
-            const fechaAjustada = fecha.toLocaleString();
-
             const disponibleInventario = response.data.cantidadRestante;
-
-            const clienteResponse = await AxiosInstance.get(`/cabania-clientes/${selectedClientId}`);
-            const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
-            const numeroDeFood = clienteResponse.data.cantidadDeFood.filter(food => food.mensaje === "Cortesía" && food.fechaDeMarca === "");
-            const cantidadTotalCortesia = numeroDeFood.reduce((total, food) => total + food.cantidad, 0);
-            console.log("numero de cortesias: " + cantidadTotalCortesia)
-            console.log("cantidad de bebidas del usuario" + JSON.stringify(numeroDeFood, null, 2))
-            const totalPersonas = ninios + adultos;
-            console.log("cantidad de personas en cortesias: ", totalPersonas)
 
             if (foodSeleccionada && disponibleInventario === 0) {
                 toast.error('Algun producto esta agotado',
@@ -989,42 +955,6 @@ const Adicionales = () => {
                 );
                 return false;
             }
-
-
-            if (esCortesia) {
-
-                const nuevaCantidadTotalCortesia = cantidadTotalCortesia;
-                const cantidadRestante = totalPersonas - cantidadTotalCortesia;
-                console.log("cantidad restante: " + cantidadRestante)
-                console.log("supuesta nueva cantidad: " + nuevaCantidadTotalCortesia)
-
-                if (cantidad > totalPersonas) {
-                    alert(`La cantidad de cortesias ${cantidad} no debe superar a la cantidad de personas ${totalPersonas} `)
-                    return;
-                }
-
-                if (cantidad > disponibleInventario) {
-                    alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
-                    return false;
-                }
-
-
-                if (cantidad > cantidadRestante) {
-                    alert(`el usuario tiene ${cantidadRestante} cortesias disponibles`)
-                    return;
-                }
-
-                if (nuevaCantidadTotalCortesia > totalPersonas) {
-                    alert(`La cantidad de cortesías (${nuevaCantidadTotalCortesia}) no puede exceder la cantidad de personas (${totalPersonas}).`);
-                    return false;
-                }
-
-                if (cantidad > cantidadRestante) {
-                    alert(`Solo puedes agregar hasta ${cantidadRestante} cortesías adicionales.`);
-                    return false;
-                }
-            }
-
 
 
             if (cantidad > disponibleInventario) {
@@ -1050,127 +980,22 @@ const Adicionales = () => {
 
 
         try {
-            if (!selectedClientId || (!subItemSeleccionadoId && !subItemSeleccionadoId1 && !subItemSeleccionadoId2 && !subItemSeleccionadoId3 && !subItemSeleccionadoId4)) {
+            if (!subItemSeleccionadoId && !subItemSeleccionadoId1 && !subItemSeleccionadoId2 && !subItemSeleccionadoId3 && !subItemSeleccionadoId4) {
                 setIsSaving(false);
                 throw new Error('No se ha seleccionado un cliente o una bebida.');
             }
 
-
-            if (esCortesia) {
-                let atLeastOneCortesiaSaved = false;
-
-                if (cantidadItem > 0 && itemSeleccionadoId) {
-                    let subproductoId = subItemSeleccionadoId;
-                    if (await checkStockAndUpdateInventory(itemSeleccionadoId, subproductoId, cantidadItem)) {
-                        const itemCortesia = {
-                            id: subItemSeleccionadoId,
-                            nombre: itemSeleccionado,
-                            cantidad: cantidadItem,
-                            precio: 0,
-                            mensaje: "Cortesía",
-                            fechaDeMarca: "",
-                            fecha: obtenerFechaConAjuste()
-                        };
-                        let subproductoId = subItemSeleccionadoId;
-                        await guardarItem(itemCortesia);
-                        await guardarCortesiaItemInventory(itemSeleccionadoId, subproductoId, cantidadItem)
-                        atLeastOneCortesiaSaved = true;
-                    }
-                }
-
-                if (cantidadItem1 > 0 && itemSeleccionadoId1) {
-                    let subproductoId = subItemSeleccionadoId1;
-                    if (await checkStockAndUpdateInventory(itemSeleccionadoId1, subproductoId, cantidadItem1)) {
-                        const itemCortesia1 = {
-                            id: subItemSeleccionadoId1,
-                            nombre: itemSeleccionado1,
-                            cantidad: cantidadItem1,
-                            precio: 0,
-                            mensaje: "Cortesía",
-                            fechaDeMarca: "",
-                            fecha: obtenerFechaConAjuste()
-                        };
-                        let subproductoId = subItemSeleccionadoId1;
-                        await guardarItem(itemCortesia1);
-                        await guardarCortesiaItemInventory(itemSeleccionadoId1, subproductoId, cantidadItem1)
-                        atLeastOneCortesiaSaved = true;
-                    }
-                }
-
-                if (cantidadItem2 > 0 && itemSeleccionadoId2) {
-                    let subproductoId = subItemSeleccionadoId2;
-                    if (await checkStockAndUpdateInventory(itemSeleccionadoId2, subproductoId, cantidadItem2)) {
-                        const itemCortesia2 = {
-                            id: subItemSeleccionadoId2,
-                            nombre: itemSeleccionado2,
-                            cantidad: cantidadItem2,
-                            precio: 0,
-                            mensaje: "Cortesía",
-                            fechaDeMarca: "",
-                            fecha: obtenerFechaConAjuste()
-                        };
-                        let subproductoId = subItemSeleccionadoId2;
-                        await guardarItem(itemCortesia2);
-                        await guardarCortesiaItemInventory(itemSeleccionadoId2, subproductoId, cantidadItem2)
-                        atLeastOneCortesiaSaved = true;
-                    }
-                }
-
-                if (cantidadItem3 > 0 && itemSeleccionadoId3) {
-                    let subproductoId = subItemSeleccionadoId3;
-                    if (await checkStockAndUpdateInventory(itemSeleccionadoId3, subproductoId, cantidadItem3)) {
-                        const itemCortesia3 = {
-                            id: subItemSeleccionadoId3,
-                            nombre: itemSeleccionado3,
-                            cantidad: cantidadItem3,
-                            precio: 0,
-                            mensaje: "Cortesía",
-                            fechaDeMarca: "",
-                            fecha: obtenerFechaConAjuste()
-                        };
-                        let subproductoId = subItemSeleccionadoId3;
-                        await guardarItem(itemCortesia3);
-                        await guardarCortesiaItemInventory(itemSeleccionadoId3, subproductoId, cantidadItem3)
-                        atLeastOneCortesiaSaved = true;
-                    }
-                }
-
-                if (cantidadItem4 > 0 && itemSeleccionadoId4) {
-                    let subproductoId = subItemSeleccionadoId4;
-                    if (await checkStockAndUpdateInventory(itemSeleccionadoId4, subproductoId, cantidadItem4)) {
-                        const itemCortesia4 = {
-                            id: subItemSeleccionadoId4,
-                            nombre: itemSeleccionado4,
-                            cantidad: cantidadItem4,
-                            precio: 0,
-                            mensaje: "Cortesía",
-                            fechaDeMarca: "",
-                            fecha: obtenerFechaConAjuste()
-                        };
-                        let subproductoId = subItemSeleccionadoId4;
-                        await guardarItem(itemCortesia4);
-                        await guardarCortesiaItemInventory(itemSeleccionadoId4, subproductoId, cantidadItem4)
-                        atLeastOneCortesiaSaved = true;
-                    }
-                }
-
-
-                if (atLeastOneCortesiaSaved) {
-                    onClose();
-                }
-                return;
-            }
 
 
             let isBebidaAdded = false;
 
             if (cantidadItem > 0 && itemSeleccionadoId) {
                 const item = {
-                    id: subItemSeleccionadoId,
+                    subproductoId: subItemSeleccionadoId,
                     nombre: itemSeleccionado,
                     cantidad: cantidadItem,
                     precio: precioItemSeleccionado,
-                    fechaDeMarca: "",
+                    adicional: "adicional",
                     fecha: obtenerFechaConAjuste()
                 };
                 let subproductoId = subItemSeleccionadoId;
@@ -1183,11 +1008,11 @@ const Adicionales = () => {
 
             if (cantidadItem1 > 0 && itemSeleccionadoId1) {
                 const item1 = {
-                    id: subItemSeleccionadoId1,
+                    itemId: subItemSeleccionadoId1,
                     nombre: itemSeleccionado1,
                     cantidad: cantidadItem1,
                     precio: precioItemSeleccionado1,
-                    fechaDeMarca: "",
+                    adicional: "adicional",
                     fecha: obtenerFechaConAjuste()
                 };
                 let subproductoId = subItemSeleccionadoId1;
@@ -1199,11 +1024,11 @@ const Adicionales = () => {
 
             if (cantidadItem2 > 0 && itemSeleccionadoId2) {
                 const item2 = {
-                    id: subItemSeleccionadoId2,
+                    itemId: subItemSeleccionadoId2,
                     nombre: itemSeleccionado2,
                     cantidad: cantidadItem2,
                     precio: precioItemSeleccionado2,
-                    fechaDeMarca: "",
+                    adicional: "adicional",
                     fecha: obtenerFechaConAjuste()
                 };
                 let subproductoId = subItemSeleccionadoId2;
@@ -1215,11 +1040,11 @@ const Adicionales = () => {
 
             if (cantidadItem3 > 0 && itemSeleccionadoId3) {
                 const item3 = {
-                    id: subItemSeleccionadoId3,
+                    itemId: subItemSeleccionadoId3,
                     nombre: itemSeleccionado3,
                     cantidad: cantidadItem3,
                     precio: precioItemSeleccionado3,
-                    fechaDeMarca: "",
+                    adicional: "adicional",
                     fecha: obtenerFechaConAjuste()
                 };
                 let subproductoId = subItemSeleccionadoId3;
@@ -1231,11 +1056,11 @@ const Adicionales = () => {
 
             if (cantidadItem4 > 0 && itemSeleccionadoId4) {
                 const item4 = {
-                    id: subItemSeleccionadoId4,
+                    itemId: subItemSeleccionadoId4,
                     nombre: itemSeleccionado4,
                     cantidad: cantidadItem4,
                     precio: precioItemSeleccionado4,
-                    fechaDeMarca: "",
+                    adicional: "adicional",
                     fecha: obtenerFechaConAjuste()
                 };
                 let subproductoId = subItemSeleccionadoId4;
@@ -1248,9 +1073,7 @@ const Adicionales = () => {
             if (!isBebidaAdded) {
                 toast.promise("No se ha agregado ninguna comida");
                 setIsSaving(false);
-            } else {
             }
-
         } catch (error) {
             toast.error('Error al guardar las comidas en el cliente:', error.message);
             setIsSaving(false);
@@ -1260,22 +1083,27 @@ const Adicionales = () => {
 
     const guardarItem = async (food) => {
         try {
-            const response = await AxiosInstance.post('/cabania-agregar-food', {
+            await AxiosInstances.post(`/habitaciones-agregar-food-subproducto/${id}`, {
                 food,
             });
             toast.success('Comida guardada exitosamente!');
-            setEsCortesia(false);
-
-            limpiarItems();
-            closeModalF()
-
+            resetInputSubproductos();
             setIsSaving(false);
+            const response = await AxiosInstances.get("/food");
+            const allProducts = response.data;
 
-            const responses = await AxiosInstance.get("/cabania-clientes");
+            let subProducts = [];
+            allProducts.forEach(product => {
+                if (product.subproductos) {
+                    const subProductosConCantidadPadre = product.subproductos.map(sub => {
+                        return { ...sub, cantidadPadre: product.CantidadInicial, idPadre: product._id };
+                    });
+                    subProducts = subProducts.concat(subProductosConCantidadPadre);
+                }
+            });
 
-            const usuariosOrdenados = responses.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
+            setComidas(subProducts);
 
-            setUsers(usuariosOrdenados);
         } catch (error) {
             setIsSaving(false);
             console.error('Error al guardar la comida en el cliente:', error.message);
@@ -1327,16 +1155,18 @@ const Adicionales = () => {
         setPrecioFood4Seleccionada("");
         setFood4SeleccionadaId('');
 
-        setCantidadFoodDisponible("")
-        setCantidadFood1Disponible("")
-        setCantidadFood2Disponible("")
-        setCantidadFood3Disponible("")
-        setCantidadFood4Disponible("")
+        setCantidadFoodDisponible("0")
+        setCantidadFood1Disponible("0")
+        setCantidadFood2Disponible("0")
+        setCantidadFood3Disponible("0")
+        setCantidadFood4Disponible("0")
+
+        setResetKey(prevKey => prevKey + 1);
     }
 
     const actualizarInventarioFood = async (foodId, cantidad) => {
         try {
-            const response = await AxiosInstance.post('/actualizar-inventario-food', {
+            const response = await AxiosInstances.post('/actualizar-inventario-food', {
                 id: foodId,
                 cantidad,
             });
@@ -1352,7 +1182,7 @@ const Adicionales = () => {
 
     const actualizarStockInicialFood = async (foodId, cantidad) => {
         try {
-            const response = await AxiosInstance.post(`/actualizar-stock-inicial-food/${foodId}`, { cantidad });
+            const response = await AxiosInstances.post(`/actualizar-stock-inicial-food/${foodId}`, { cantidad });
             if (response.status < 200 || response.status >= 300) {
                 throw new Error(`Error al actualizar el stock inicial. Estado de la respuesta: ${response.status}`);
             }
@@ -1367,30 +1197,21 @@ const Adicionales = () => {
         if (isSaving) return;
         setIsSaving(true);
 
-        if (!selectedClientId || (!foodSeleccionadaId && !food1SeleccionadaId && food2SeleccionadaId && food3SeleccionadaId && food4SeleccionadaId)) {
+        if (!foodSeleccionadaId && !food1SeleccionadaId && food2SeleccionadaId && food3SeleccionadaId && food4SeleccionadaId) {
             toast.error('No se ha seleccionado un cliente o una comida.');
             setIsSaving(false);
             return;
         }
 
         const checkStockAndUpdateInventory = async (foodId, cantidad) => {
-            const response = await AxiosInstance.get(`/verificar-disponibilidad/${foodId}`);
+            const response = await AxiosInstances.get(`/verificar-disponibilidad/${foodId}`);
 
             let fecha = new Date();
 
             fecha.setHours(fecha.getHours() - 5);
 
-            const fechaAjustada = fecha.toLocaleString();
-
             const disponibleInventario = response.data.cantidadRestante;
 
-            const clienteResponse = await AxiosInstance.get(`/cabania-clientes/${selectedClientId}`);
-            const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
-            const numeroDeFood = clienteResponse.data.cantidadDeFood.filter(food => food.mensaje === "Cortesía" && food.fechaDeMarca === "");
-            const cantidadTotalCortesia = numeroDeFood.reduce((total, food) => total + food.cantidad, 0);
-            console.log("numero de cortesias: " + cantidadTotalCortesia)
-            console.log("cantidad de bebidas del usuario" + JSON.stringify(numeroDeFood, null, 2))
-            const totalPersonas = ninios + adultos;
 
 
             if (foodSeleccionada && disponibleInventario === 0) {
@@ -1407,44 +1228,12 @@ const Adicionales = () => {
             }
 
 
-            if (esCortesia) {
 
-                const nuevaCantidadTotalCortesia = cantidadTotalCortesia;
-                const cantidadRestante = totalPersonas - cantidadTotalCortesia;
-                console.log("cantidad restante: " + cantidadRestante)
-                console.log("supuesta nueva cantidad: " + nuevaCantidadTotalCortesia)
-
-                if (cantidad > totalPersonas) {
-                    alert(`La cantidad de cortesias ${cantidad} no debe superar a la cantidad de personas ${totalPersonas} `)
-                    return;
-                }
-
-                if (cantidad > disponibleInventario) {
-                    alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
-                    return false;
-                }
-
-
-                if (cantidad > cantidadRestante) {
-                    alert(`el usuario tiene ${cantidadRestante} cortesias disponibles`)
-                    return;
-                }
-
-                if (nuevaCantidadTotalCortesia > totalPersonas) {
-                    alert(`La cantidad de cortesías (${nuevaCantidadTotalCortesia}) no puede exceder la cantidad de personas (${totalPersonas}).`);
-                    return false;
-                }
-
-                if (cantidad > cantidadRestante) {
-                    alert(`Solo puedes agregar hasta ${cantidadRestante} cortesías adicionales.`);
-                    return false;
-                }
-            } else {
-                if (cantidad > disponibleInventario) {
-                    alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
-                    return false;
-                }
+            if (cantidad > disponibleInventario) {
+                alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
+                return false;
             }
+
             if (cantidad > disponibleInventario) {
                 alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
                 return false;
@@ -1455,108 +1244,20 @@ const Adicionales = () => {
             return true;
         };
         try {
-            if (!selectedClientId || (!foodSeleccionadaId && !food1SeleccionadaId && !food2SeleccionadaId && !food3SeleccionadaId && !food4SeleccionadaId)) {
+            if (!foodSeleccionadaId && !food1SeleccionadaId && !food2SeleccionadaId && !food3SeleccionadaId && !food4SeleccionadaId) {
                 setIsSaving(false);
                 throw new Error('No se ha seleccionado un cliente o una bebida.');
-            }
-
-            if (esCortesia) {
-                let atLeastOneCortesiaSaved = false;
-
-                if (cantidadFood > 0 && foodSeleccionadaId) {
-                    if (await checkStockAndUpdateInventory(foodSeleccionadaId, cantidadFood)) {
-                        const foodCortesia = {
-                            id: foodSeleccionadaId,
-                            nombre: foodSeleccionada,
-                            cantidad: cantidadFood,
-                            precio: 0,
-                            mensaje: "Cortesía",
-                            fechaDeMarca: ""
-                        };
-                        await guardarFood(foodCortesia);
-                        atLeastOneCortesiaSaved = true;
-                    }
-                }
-
-                if (cantidadFood1 > 0 && food1SeleccionadaId) {
-                    if (await checkStockAndUpdateInventory(food1SeleccionadaId, cantidadFood1)) {
-                        const foodCortesia1 = {
-                            id: food1SeleccionadaId,
-                            nombre: food1Seleccionada,
-                            cantidad: cantidadFood1,
-                            precio: 0,
-                            mensaje: "Cortesía",
-                            fechaDeMarca: "",
-                            fecha: obtenerFechaConAjuste()
-                        };
-                        await guardarFood(foodCortesia1);
-                        atLeastOneCortesiaSaved = true;
-                    }
-                }
-
-                if (cantidadFood2 > 0 && food2SeleccionadaId) {
-                    if (await checkStockAndUpdateInventory(food2SeleccionadaId, cantidadFood2)) {
-                        const foodCortesia2 = {
-                            id: food2SeleccionadaId,
-                            nombre: food2Seleccionada,
-                            cantidad: cantidadFood2,
-                            precio: 0,
-                            mensaje: "Cortesía",
-                            fechaDeMarca: "",
-                            fecha: obtenerFechaConAjuste()
-                        };
-                        await guardarFood(foodCortesia2);
-                        atLeastOneCortesiaSaved = true;
-                    }
-                }
-
-                if (cantidadFood3 > 0 && food3SeleccionadaId) {
-                    if (await checkStockAndUpdateInventory(food3SeleccionadaId, cantidadFood3)) {
-                        const foodCortesia3 = {
-                            id: food3SeleccionadaId,
-                            nombre: food3Seleccionada,
-                            cantidad: cantidadFood3,
-                            precio: 0,
-                            mensaje: "Cortesía",
-                            fechaDeMarca: "",
-                            fecha: obtenerFechaConAjuste()
-                        };
-                        await guardarFood(foodCortesia3);
-                        atLeastOneCortesiaSaved = true;
-                    }
-                }
-
-                if (cantidadFood4 > 0 && food4SeleccionadaId) {
-                    if (await checkStockAndUpdateInventory(food4SeleccionadaId, cantidadFood4)) {
-                        const foodCortesia4 = {
-                            id: food4SeleccionadaId,
-                            nombre: food4Seleccionada,
-                            cantidad: cantidadFood4,
-                            precio: 0,
-                            mensaje: "Cortesía",
-                            fechaDeMarca: "",
-                            fecha: obtenerFechaConAjuste()
-                        };
-                        await guardarFood(foodCortesia4);
-                        atLeastOneCortesiaSaved = true;
-                    }
-                }
-
-                if (atLeastOneCortesiaSaved) {
-                    onClose();
-                }
-                return;
             }
 
             let isBebidaAdded = false;
 
             if (cantidadFood > 0 && foodSeleccionadaId) {
                 const foodAdultos = {
-                    id: foodSeleccionadaId,
+                    itemId: foodSeleccionadaId,
                     nombre: foodSeleccionada,
                     cantidad: cantidadFood,
                     precio: precioFoodSeleccionada,
-                    fechaDeMarca: "",
+                    adicional: "adicional",
                     fecha: obtenerFechaConAjuste()
                 };
 
@@ -1568,11 +1269,11 @@ const Adicionales = () => {
 
             if (cantidadFood1 > 0 && food1SeleccionadaId) {
                 const foodAdultos1 = {
-                    id: food1SeleccionadaId,
+                    itemId: food1SeleccionadaId,
                     nombre: food1Seleccionada,
                     cantidad: cantidadFood1,
                     precio: precioFood1Seleccionada,
-                    fechaDeMarca: "",
+                    adicional: "adicional",
                     fecha: obtenerFechaConAjuste()
                 };
 
@@ -1584,11 +1285,11 @@ const Adicionales = () => {
 
             if (cantidadFood2 > 0 && food2SeleccionadaId) {
                 const foodAdultos2 = {
-                    id: food2SeleccionadaId,
+                    itemId: food2SeleccionadaId,
                     nombre: food2Seleccionada,
                     cantidad: cantidadFood2,
                     precio: precioFood2Seleccionada,
-                    fechaDeMarca: "",
+                    adicional: "adicional",
                     fecha: obtenerFechaConAjuste()
                 };
 
@@ -1600,11 +1301,11 @@ const Adicionales = () => {
 
             if (cantidadFood3 > 0 && food3SeleccionadaId) {
                 const foodAdultos3 = {
-                    id: food3SeleccionadaId,
+                    itemId: food3SeleccionadaId,
                     nombre: food3Seleccionada,
                     cantidad: cantidadFood3,
                     precio: precioFood3Seleccionada,
-                    fechaDeMarca: "",
+                    adicional: "adicional",
                     fecha: obtenerFechaConAjuste()
                 };
 
@@ -1616,11 +1317,11 @@ const Adicionales = () => {
 
             if (cantidadFood4 > 0 && food4SeleccionadaId) {
                 const foodAdultos4 = {
-                    id: food4SeleccionadaId,
+                    itemId: food4SeleccionadaId,
                     nombre: food4Seleccionada,
                     cantidad: cantidadFood4,
                     precio: precioFood4Seleccionada,
-                    fechaDeMarca: "",
+                    adicional: "adicional",
                     fecha: obtenerFechaConAjuste()
                 };
 
@@ -1634,7 +1335,6 @@ const Adicionales = () => {
                 toast.promise("No se ha agregado ninguna comida");
                 setIsSaving(false);
             } else {
-                closeModalF();
             }
         } catch (error) {
             toast.error('Error al guardar las bebidas en el cliente:', error.message);
@@ -1645,31 +1345,13 @@ const Adicionales = () => {
     const guardarFood = async (food) => {
 
         try {
-            const response = await AxiosInstance.post('/cabania-agregar-food', {
-                id: selectedClientId,
+            const response = await AxiosInstances.post(`/habitaciones-agregar-food/${id}`, {
                 food,
             });
             toast.success('Comida guardada exitosamente!');
-            setCantidadFood("");
-            setFoodSeleccionada('');
-            setPrecioFoodSeleccionada("");
-            setFoodSeleccionadaId('');
+            limpiarCampos1();
 
-
-            setCantidadFood1("");
-            setFood1Seleccionada('');
-            setPrecioFood1Seleccionada("");
-            setFood1SeleccionadaId('');
-
-
-            setEsCortesia(false);
             setIsSaving(false);
-
-            closeModalF();
-            const responses = await AxiosInstance.get("/cabania-clientes");
-
-            const usuariosOrdenados = responses.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
-            setUsers(usuariosOrdenados);
 
         } catch (error) {
             console.error('Error al guardar la bebida en el cliente:', error.message);
@@ -1698,7 +1380,7 @@ const Adicionales = () => {
                                     disabled
                                     type="text"
                                     name="nombre"
-                                    className='w-12/12 mr-2 uppercase outline-red-300 border-b-2 border-gray-300 h-10 pl-2 pr-2 bg-inherent'
+                                    className='w-12/12 mr-2 outline-red-300 h-10 border-b-2 uppercase border-gray-300 pl-2 pr-2 bg-white'
                                     value={user.nombre || ''}
                                     onChange={handleInputChange}
                                 />
@@ -1719,250 +1401,261 @@ const Adicionales = () => {
                         </span>
                     </article>
 
-                    <article className='mt-6 p-5 rounded-xl' style={{ boxShadow: "0px 2px 8px 2px #D6D6D6" }} >
+                    <div className='flex flex-wrap justify-between' >
+                    <article className='mt-6 p-5 rounded-xl mr-2'   style={{ boxShadow: "0px 2px 8px 2px #D6D6D6", width:"49%"  }} >
                         <p style={{ fontSize: "18px", fontWeight: "100" }} className='text-blue-300'>
                             <span className='text-red-500' style={{ fontSize: "18px" }}>2.</span> Bar
                         </p>
                         <div className="flex">
-                              <Input
-                                className="mr-2"
+                            <input
+                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
                                 name="bebidas"
-                                label="Ingrese la cantidad"
+                                placeholder="Ingrese la cantidad"
                                 type="number"
                                 value={isNaN(cantidadBebida) ? '' : cantidadBebida}
                                 onChange={(e) => {
-                                  const value = parseInt(e.target.value, 10);
-                                  setCantidadBebida(isNaN(value) ? "" : value);
+                                    const value = parseInt(e.target.value, 10);
+                                    setCantidadBebida(isNaN(value) ? "" : value);
                                 }}
-                              />
-                              <Input
+                            />
+                            <input
                                 disabled
                                 label=" Stock "
-                                className="w-44 flex text-blue-500 border-2 border-blue-400 rounded-xl"
+                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 w-24"
                                 placeholder={` ${cantidadBebidaDisponible}`}
-                              />
-                              <Select
-                                className="ml-2"
+                            />
+                            <Select
+                                key={resetKey}
+                                className="ml-2 mt-1"
                                 name="bebidas"
                                 label="Seleccionar bebida"
                                 value={bebidaSeleccionada}
                                 onChange={(e) => {
-                                  const selectedBebida = e.target.value;
-                                  setBebidaSeleccionada(selectedBebida);
+                                    const selectedBebida = e.target.value;
+                                    setBebidaSeleccionada(selectedBebida);
 
-                                  if (selectedBebida) {
-                                    const bebidaSeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida);
-                                    if (bebidaSeleccionadaInfo) {
-                                      setPrecioBebidaSeleccionada(bebidaSeleccionadaInfo.ValorUnitario);
-                                      setBebidaSeleccionadaId(bebidaSeleccionadaInfo._id);
-                                      setCantidadBebidaDisponible(bebidaSeleccionadaInfo.CantidadInicial);
+                                    if (selectedBebida) {
+                                        const bebidaSeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida);
+                                        if (bebidaSeleccionadaInfo) {
+                                            setPrecioBebidaSeleccionada(bebidaSeleccionadaInfo.ValorUnitario);
+                                            setBebidaSeleccionadaId(bebidaSeleccionadaInfo._id);
+                                            setCantidadBebidaDisponible(bebidaSeleccionadaInfo.CantidadInicial);
+                                        }
+                                    } else {
+                                        setPrecioBebidaSeleccionada(0);
+                                        setCantidadBebidaDisponible(0);
+                                        setCantidadBebida("");
                                     }
-                                  } else {
-                                    setPrecioBebidaSeleccionada(0);
-                                    setCantidadBebidaDisponible(0);
-                                    setCantidadBebida("");
-                                  }
                                 }}
-                              >
+                                style={{ height: "40px" }}
+                            >
                                 {drinks.map((bebida) => (
-                                  <SelectItem key={bebida.Descripcion}>
-                                    {bebida.Descripcion}
-                                  </SelectItem>
+                                    <SelectItem key={bebida.Descripcion}>
+                                        {bebida.Descripcion}
+                                    </SelectItem>
                                 ))}
-                              </Select>
-                            </div>
-                            <div className="flex">
-                              <Input
-                                className="mr-2"
+                            </Select>
+                        </div>
+                        <div className="flex">
+                            <input
+                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
                                 name="bebidas"
-                                label="Ingrese la cantidad"
+                                placeholder="Ingrese la cantidad"
                                 type="number"
                                 value={isNaN(cantidadBebida1) ? '' : cantidadBebida1}
                                 onChange={(e) => {
-                                  const value = parseInt(e.target.value, 10);
-                                  setCantidadBebida1(isNaN(value) ? "" : value);
+                                    const value = parseInt(e.target.value, 10);
+                                    setCantidadBebida1(isNaN(value) ? "" : value);
                                 }}
-                              />
-                              <Input
+                            />
+                            <input
                                 disabled
                                 label=" Stock "
-                                className="w-44 flex text-blue-500 border-2 border-blue-400 rounded-xl"
+                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 w-24"
                                 placeholder={` ${cantidadBebida1Disponible}`}
-                              />
-                              <Select
-                                className="ml-2"
+                            />
+                            <Select
+                                key={resetKey}
+                                className="ml-2 mt-1"
                                 name="bebidas"
                                 label="Seleccionar bebida"
                                 value={bebida1Seleccionada}
                                 onChange={(e) => {
-                                  const selectedBebida1 = e.target.value;
-                                  setBebida1Seleccionada(selectedBebida1);
+                                    const selectedBebida1 = e.target.value;
+                                    setBebida1Seleccionada(selectedBebida1);
 
-                                  if (selectedBebida1) {
-                                    const bebida1SeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida1);
-                                    if (bebida1SeleccionadaInfo) {
-                                      setPrecioBebida1Seleccionada(bebida1SeleccionadaInfo.ValorUnitario);
-                                      setBebida1SeleccionadaId(bebida1SeleccionadaInfo._id);
-                                      setCantidadBebida1Disponible(bebida1SeleccionadaInfo.CantidadInicial);
+                                    if (selectedBebida1) {
+                                        const bebida1SeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida1);
+                                        if (bebida1SeleccionadaInfo) {
+                                            setPrecioBebida1Seleccionada(bebida1SeleccionadaInfo.ValorUnitario);
+                                            setBebida1SeleccionadaId(bebida1SeleccionadaInfo._id);
+                                            setCantidadBebida1Disponible(bebida1SeleccionadaInfo.CantidadInicial);
+                                        }
+                                    } else {
+                                        setPrecioBebida1Seleccionada(0);
+                                        setCantidadBebida1Disponible(0);
+                                        setCantidadBebida1("");
                                     }
-                                  } else {
-                                    setPrecioBebida1Seleccionada(0);
-                                    setCantidadBebida1Disponible(0);
-                                    setCantidadBebida1("");
-                                  }
                                 }}
-                              >
+                                style={{ height: "40px" }}
+                            >
                                 {drinks.map((bebida) => (
-                                  <SelectItem key={bebida.Descripcion}>
-                                    {bebida.Descripcion}
-                                  </SelectItem>
+                                    <SelectItem key={bebida.Descripcion}>
+                                        {bebida.Descripcion}
+                                    </SelectItem>
                                 ))}
-                              </Select>
-                            </div>
-                            <div className="flex">
-                              <Input
-                                className="mr-2"
+                            </Select>
+                        </div>
+                        <div className="flex">
+                            <input
+                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
                                 name="bebidas"
-                                label="Ingrese la cantidad"
+                                placeholder="Ingrese la cantidad"
                                 type="number"
                                 value={isNaN(cantidadBebida2) ? '' : cantidadBebida2}
                                 onChange={(e) => {
-                                  const value = parseInt(e.target.value, 10);
-                                  setCantidadBebida2(isNaN(value) ? "" : value);
+                                    const value = parseInt(e.target.value, 10);
+                                    setCantidadBebida2(isNaN(value) ? "" : value);
                                 }}
-                              />
-                              <Input
+                            />
+                            <input
                                 disabled
                                 label=" Stock "
-                                className="w-44 flex text-blue-500 border-2 border-blue-400 rounded-xl"
+                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 w-24"
                                 placeholder={` ${cantidadBebida2Disponible}`}
-                              />
-                              <Select
-                                className="ml-2"
+                            />
+                            <Select
+                                key={resetKey}
+                                className="ml-2 mt-1"
                                 name="bebidas"
                                 label="Seleccionar bebida"
                                 value={bebida2Seleccionada}
                                 onChange={(e) => {
-                                  const selectedBebida2 = e.target.value;
-                                  setBebida2Seleccionada(selectedBebida2);
+                                    const selectedBebida2 = e.target.value;
+                                    setBebida2Seleccionada(selectedBebida2);
 
-                                  if (selectedBebida2) {
-                                    const bebida2SeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida2);
-                                    if (bebida2SeleccionadaInfo) {
-                                      setPrecioBebida2Seleccionada(bebida2SeleccionadaInfo.ValorUnitario);
-                                      setBebida2SeleccionadaId(bebida2SeleccionadaInfo._id);
-                                      setCantidadBebida2Disponible(bebida2SeleccionadaInfo.CantidadInicial);
+                                    if (selectedBebida2) {
+                                        const bebida2SeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida2);
+                                        if (bebida2SeleccionadaInfo) {
+                                            setPrecioBebida2Seleccionada(bebida2SeleccionadaInfo.ValorUnitario);
+                                            setBebida2SeleccionadaId(bebida2SeleccionadaInfo._id);
+                                            setCantidadBebida2Disponible(bebida2SeleccionadaInfo.CantidadInicial);
+                                        }
+                                    } else {
+                                        setPrecioBebida2Seleccionada(0);
+                                        setCantidadBebida2Disponible(0);
+                                        setCantidadBebida2("");
                                     }
-                                  } else {
-                                    setPrecioBebida2Seleccionada(0);
-                                    setCantidadBebida2Disponible(0);
-                                    setCantidadBebida2("");
-                                  }
                                 }}
-                              >
+                                style={{ height: "40px" }}
+                            >
                                 {drinks.map((bebida) => (
-                                  <SelectItem key={bebida.Descripcion}>
-                                    {bebida.Descripcion}
-                                  </SelectItem>
+                                    <SelectItem key={bebida.Descripcion}>
+                                        {bebida.Descripcion}
+                                    </SelectItem>
                                 ))}
-                              </Select>
-                            </div>
-                            <div className="flex">
-                              <Input
-                                className="mr-2"
+                            </Select>
+                        </div>
+                        <div className="flex">
+                            <input
+                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
                                 name="bebidas"
-                                label="Ingrese la cantidad"
+                                placeholder="Ingrese la cantidad"
                                 type="number"
                                 value={isNaN(cantidadBebida3) ? '' : cantidadBebida3}
                                 onChange={(e) => {
-                                  const value = parseInt(e.target.value, 10);
-                                  setCantidadBebida3(isNaN(value) ? "" : value);
+                                    const value = parseInt(e.target.value, 10);
+                                    setCantidadBebida3(isNaN(value) ? "" : value);
                                 }}
-                              />
-                              <Input
+                            />
+                            <input
                                 disabled
                                 label=" Stock "
-                                className="w-44 flex text-blue-500 border-2 border-blue-400 rounded-xl"
+                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 w-24"
                                 placeholder={` ${cantidadBebida3Disponible}`}
-                              />
-                              <Select
-                                className="ml-2"
+                            />
+                            <Select
+                                key={resetKey}
+                                className="ml-2 mt-1"
                                 name="bebidas"
                                 label="Seleccionar bebida"
                                 value={bebida3Seleccionada}
                                 onChange={(e) => {
-                                  const selectedBebida3 = e.target.value;
-                                  setBebida3Seleccionada(selectedBebida3);
+                                    const selectedBebida3 = e.target.value;
+                                    setBebida3Seleccionada(selectedBebida3);
 
-                                  if (selectedBebida3) {
-                                    const bebida3SeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida3);
-                                    if (bebida3SeleccionadaInfo) {
-                                      setPrecioBebida3Seleccionada(bebida3SeleccionadaInfo.ValorUnitario);
-                                      setBebida3SeleccionadaId(bebida3SeleccionadaInfo._id);
-                                      setCantidadBebida3Disponible(bebida3SeleccionadaInfo.CantidadInicial);
+                                    if (selectedBebida3) {
+                                        const bebida3SeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida3);
+                                        if (bebida3SeleccionadaInfo) {
+                                            setPrecioBebida3Seleccionada(bebida3SeleccionadaInfo.ValorUnitario);
+                                            setBebida3SeleccionadaId(bebida3SeleccionadaInfo._id);
+                                            setCantidadBebida3Disponible(bebida3SeleccionadaInfo.CantidadInicial);
+                                        }
+                                    } else {
+                                        setPrecioBebida3Seleccionada(0);
+                                        setCantidadBebida3Disponible(0);
+                                        setCantidadBebida3("");
                                     }
-                                  } else {
-                                    setPrecioBebida3Seleccionada(0);
-                                    setCantidadBebida3Disponible(0);
-                                    setCantidadBebida3("");
-                                  }
                                 }}
-                              >
+                                style={{ height: "40px" }}
+                            >
                                 {drinks.map((bebida) => (
-                                  <SelectItem key={bebida.Descripcion}>
-                                    {bebida.Descripcion}
-                                  </SelectItem>
+                                    <SelectItem key={bebida.Descripcion}>
+                                        {bebida.Descripcion}
+                                    </SelectItem>
                                 ))}
-                              </Select>
-                            </div>
-                            <div className="flex">
-                              <Input
-                                className="mr-2"
+                            </Select>
+                        </div>
+                        <div className="flex">
+                            <input
+                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
                                 name="bebidas"
-                                label="Ingrese la cantidad"
+                                placeholder="Ingrese la cantidad"
                                 type="number"
                                 value={isNaN(cantidadBebida4) ? '' : cantidadBebida4}
                                 onChange={(e) => {
-                                  const value = parseInt(e.target.value, 10);
-                                  setCantidadBebida4(isNaN(value) ? "" : value);
+                                    const value = parseInt(e.target.value, 10);
+                                    setCantidadBebida4(isNaN(value) ? "" : value);
                                 }}
-                              />
-                              <Input
+                            />
+                            <input
                                 disabled
                                 label=" Stock "
-                                className="w-44 flex text-blue-500 border-2 border-blue-400 rounded-xl"
+                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 w-24"
                                 placeholder={` ${cantidadBebida4Disponible}`}
-                              />
-                              <Select
-                                className="ml-2"
+                            />
+                            <Select
+                                key={resetKey}
+                                className="ml-2 mt-1"
                                 name="bebidas"
                                 label="Seleccionar bebida"
                                 value={bebida4Seleccionada}
                                 onChange={(e) => {
-                                  const selectedBebida4 = e.target.value;
-                                  setBebida4Seleccionada(selectedBebida4);
+                                    const selectedBebida4 = e.target.value;
+                                    setBebida4Seleccionada(selectedBebida4);
 
-                                  if (selectedBebida4) {
-                                    const bebida4SeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida4);
-                                    if (bebida4SeleccionadaInfo) {
-                                      setPrecioBebida4Seleccionada(bebida4SeleccionadaInfo.ValorUnitario);
-                                      setBebida4SeleccionadaId(bebida4SeleccionadaInfo._id);
-                                      setCantidadBebida4Disponible(bebida4SeleccionadaInfo.CantidadInicial);
+                                    if (selectedBebida4) {
+                                        const bebida4SeleccionadaInfo = drinks.find(bebida => bebida.Descripcion === selectedBebida4);
+                                        if (bebida4SeleccionadaInfo) {
+                                            setPrecioBebida4Seleccionada(bebida4SeleccionadaInfo.ValorUnitario);
+                                            setBebida4SeleccionadaId(bebida4SeleccionadaInfo._id);
+                                            setCantidadBebida4Disponible(bebida4SeleccionadaInfo.CantidadInicial);
+                                        }
+                                    } else {
+                                        setPrecioBebida4Seleccionada(0);
+                                        setCantidadBebida4Disponible(0);
+                                        setCantidadBebida4("");
                                     }
-                                  } else {
-                                    setPrecioBebida4Seleccionada(0);
-                                    setCantidadBebida4Disponible(0);
-                                    setCantidadBebida4("");
-                                  }
                                 }}
-                              >
+                                style={{ height: "40px" }}
+                            >
                                 {drinks.map((bebida) => (
-                                  <SelectItem key={bebida.Descripcion}>
-                                    {bebida.Descripcion}
-                                  </SelectItem>
+                                    <SelectItem key={bebida.Descripcion}>
+                                        {bebida.Descripcion}
+                                    </SelectItem>
                                 ))}
-                              </Select>
-                            </div>
+                            </Select>
+                        </div>
                         <span className='flex justify-end pr-2 mt-5'>
 
                             <Button className='w-32' color='primary' onClick={handleGuardarBebida}>
@@ -1973,7 +1666,7 @@ const Adicionales = () => {
 
                     {/******************** handleGuardarFood ***************/}
 
-                    <article className='mt-6 p-5 rounded-xl' style={{ boxShadow: "0px 2px 8px 2px #D6D6D6" }} >
+                    <article className='mt-6 p-5 rounded-xl w-5/12 ml-2' style={{ boxShadow: "0px 2px 8px 2px #D6D6D6", width:"49%" }} >
                         <p style={{ fontSize: "18px", fontWeight: "100" }} className='text-blue-300'>
                             <span className='text-red-500' style={{ fontSize: "18px" }}>3.</span> Restaurante
                         </p>
@@ -2000,6 +1693,7 @@ const Adicionales = () => {
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                             />
                             <Select
+                            key={resetKey}
                                 className="ml-2 mt-1 "
                                 name="restaurante"
                                 label="Seleccionar comida"
@@ -2057,6 +1751,7 @@ const Adicionales = () => {
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                             />
                             <Select
+                            key={resetKey}
                                 className="ml-2 mt-1"
                                 name="restaurante"
                                 label="Seleccionar comida"
@@ -2111,6 +1806,7 @@ const Adicionales = () => {
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                             />
                             <Select
+                            key={resetKey}
                                 className="ml-2 mt-1"
                                 name="restaurante"
                                 label="Seleccionar comida"
@@ -2163,6 +1859,7 @@ const Adicionales = () => {
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                             />
                             <Select
+                            key={resetKey}
                                 className="ml-2 mt-1"
                                 name="restaurante"
                                 label="Seleccionar comida"
@@ -2215,6 +1912,7 @@ const Adicionales = () => {
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                             />
                             <Select
+                            key={resetKey}
                                 className="ml-2 mt-1"
                                 name="restaurante"
                                 label="Seleccionar comida"
@@ -2255,284 +1953,289 @@ const Adicionales = () => {
                             </Button>
                         </span>
                     </article>
+                    </div>
 
-                    {/******************** handleGuardarItem ***************/}
-
-                    <article className='w-full p-5 mt-5 rounded-xl' style={{ boxShadow: "0px 2px 8px 2px #D6D6D6" }}>
+                    <div className='flex flex-wrap justify-between' >
+                    <article className='w-full p-5 mt-5 rounded-xl mr-2' style={{ boxShadow: "0px 2px 8px 2px #D6D6D6", width:"49%" }}>
                         <article className='' >
                             <p style={{ fontSize: "18px", fontWeight: "100" }} className='text-blue-300'>
-                                <span className='text-red-500' style={{ fontSize: "18px" }}>3.</span> Restaurante
+                                <span className='text-red-500' style={{ fontSize: "18px" }}>4.</span> Restaurante subproductos
                             </p>
 
                             <div className="flex mb-1">
-                              <input
-                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
-                                name="restaurante"
-                                placeholder="Ingrese la cantidad"
-                                type="number"
-                                value={isNaN(cantidadItem) ? '' : cantidadItem}
-                                onChange={(e) => {
-                                  const value = parseInt(e.target.value);
-                                  setCantidadItem(isNaN(value) ? '' : value);
-                                }}
-                                style={{ height: "40px", backgroundColor: "#f4f4f5" }}
-                              />
-                              <input
-                                disabled
-                                label="Stock"
-                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 w-24"
-                                placeholder={` ${cantidadFoodDisponible}`}
-                                style={{ height: "40px", backgroundColor: "#f4f4f5" }}
-                              />
-                              <Select
-                                className="ml-2 mt-1"
-                                name="restaurante"
-                                label="Seleccionar comida"
-                                value={itemSeleccionado}
-                                onChange={(e) => {
-                                  const selectedItem = e.target.value;
-                                  setItemSeleccionado(selectedItem);
+                                <input
+                                    className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                    name="restaurante"
+                                    placeholder="Ingrese la cantidad"
+                                    type="number"
+                                    value={isNaN(cantidadItem) ? '' : cantidadItem}
+                                    onChange={(e) => {
+                                        const value = parseInt(e.target.value);
+                                        setCantidadItem(isNaN(value) ? '' : value);
+                                    }}
+                                    style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                                />
+                                <input
+                                    disabled
+                                    label="Stock"
+                                    className="inventario-box-option-input-01 outline-none pl-2 mb-2 w-24"
+                                    placeholder={` ${cantidadFoodDisponible}`}
+                                    style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                                />
+                                <Select
+                                    key={resetKey}
+                                    className="ml-2 mt-1"
+                                    name="restaurante"
+                                    label="Seleccionar comida"
+                                    value={itemSeleccionado}
+                                    onChange={(e) => {
+                                        const selectedItem = e.target.value;
+                                        setItemSeleccionado(selectedItem);
 
-                                  if (selectedItem) {
-                                    const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
+                                        if (selectedItem) {
+                                            const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
 
-                                    if (itemSeleccionadaInfo) {
-                                      setPrecioItemSeleccionado(itemSeleccionadaInfo.ValorUnitario);
-                                      setItemSeleccionadoId(itemSeleccionadaInfo.idPadre);
-                                      setSubItemSeleccionadoId(itemSeleccionadaInfo._id)
-                                      setCantidadFoodDisponible(itemSeleccionadaInfo.cantidadPadre);
-                                    }
-                                  } else {
-                                    setPrecioItemSeleccionado(0);
-                                    setCantidadFoodDisponible(0);
-                                    setCantidadItem("");
-                                  }
-                                }}
-                                style={{ height: "40px", backgroundColor: "#f4f4f5" }}
-                              >
-                                {comidas.map((food) => (
-                                  <SelectItem key={food.Descripcion}>
-                                    {food.Descripcion}
-                                  </SelectItem>
-                                ))}
-                              </Select>
+                                            if (itemSeleccionadaInfo) {
+                                                setPrecioItemSeleccionado(itemSeleccionadaInfo.ValorUnitario);
+                                                setItemSeleccionadoId(itemSeleccionadaInfo.idPadre);
+                                                setSubItemSeleccionadoId(itemSeleccionadaInfo._id)
+                                                setCantidadFoodDisponible(itemSeleccionadaInfo.cantidadPadre);
+                                            }
+                                        } else {
+                                            setPrecioItemSeleccionado(0);
+                                            setCantidadFoodDisponible(0);
+                                            setCantidadItem("");
+                                        }
+                                    }}
+                                    style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                                >
+                                    {comidas.map((food) => (
+                                        <SelectItem key={food.Descripcion}>
+                                            {food.Descripcion}
+                                        </SelectItem>
+                                    ))}
+                                </Select>
                             </div>
 
                             <div className="flex mb-1">
-                              <input
-                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
-                                name="restaurante"
-                                placeholder="Ingrese la cantidad"
-                                type="number"
-                                value={isNaN(cantidadItem1) ? '' : cantidadItem1}
-                                onChange={(e) => {
-                                  const value = parseInt(e.target.value);
-                                  setCantidadItem1(isNaN(value) ? '' : value);
-                                }}
-                                style={{ height: "40px", backgroundColor: "#f4f4f5" }}
-                              />
-                              <input
-                                disabled
-                                label="Stock"
-                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 w-24"
-                                placeholder={` ${cantidadFood1Disponible}`}
-                                style={{ height: "40px", backgroundColor: "#f4f4f5" }}
-                              />
-                              <Select
-                                className="ml-2 mt-1"
-                                name="restaurante"
-                                label="Seleccionar comida"
-                                value={itemSeleccionado1}
-                                onChange={(e) => {
-                                  const selectedItem = e.target.value;
-                                  setItemSeleccionado1(selectedItem);
+                                <input
+                                    className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                    name="restaurante"
+                                    placeholder="Ingrese la cantidad"
+                                    type="number"
+                                    value={isNaN(cantidadItem1) ? '' : cantidadItem1}
+                                    onChange={(e) => {
+                                        const value = parseInt(e.target.value);
+                                        setCantidadItem1(isNaN(value) ? '' : value);
+                                    }}
+                                    style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                                />
+                                <input
+                                    disabled
+                                    label="Stock"
+                                    className="inventario-box-option-input-01 outline-none pl-2 mb-2 w-24"
+                                    placeholder={` ${cantidadFood1Disponible}`}
+                                    style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                                />
+                                <Select
+                                    key={resetKey}
+                                    className="ml-2 mt-1"
+                                    name="restaurante"
+                                    label="Seleccionar comida"
+                                    value={itemSeleccionado1}
+                                    onChange={(e) => {
+                                        const selectedItem = e.target.value;
+                                        setItemSeleccionado1(selectedItem);
 
-                                  if (selectedItem) {
-                                    const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
+                                        if (selectedItem) {
+                                            const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
 
-                                    if (itemSeleccionadaInfo) {
-                                      setPrecioItemSeleccionado1(itemSeleccionadaInfo.ValorUnitario);
-                                      setItemSeleccionadoId1(itemSeleccionadaInfo.idPadre);
-                                      setSubItemSeleccionadoId1(itemSeleccionadaInfo._id);
-                                      setCantidadFood1Disponible(itemSeleccionadaInfo.cantidadPadre);
-                                    }
-                                  } else {
-                                    setPrecioItemSeleccionado1(0);
-                                    setCantidadFood1Disponible(0);
-                                    setCantidadItem1("");
-                                  }
-                                }}
-                                style={{ height: "40px", backgroundColor: "#f4f4f5" }}
-                              >
-                                {comidas.map((food) => (
-                                  <SelectItem key={food.Descripcion}>
-                                    {food.Descripcion}
-                                  </SelectItem>
-                                ))}
-                              </Select>
+                                            if (itemSeleccionadaInfo) {
+                                                setPrecioItemSeleccionado1(itemSeleccionadaInfo.ValorUnitario);
+                                                setItemSeleccionadoId1(itemSeleccionadaInfo.idPadre);
+                                                setSubItemSeleccionadoId1(itemSeleccionadaInfo._id);
+                                                setCantidadFood1Disponible(itemSeleccionadaInfo.cantidadPadre);
+                                            }
+                                        } else {
+                                            setPrecioItemSeleccionado1(0);
+                                            setCantidadFood1Disponible(0);
+                                            setCantidadItem1("");
+                                        }
+                                    }}
+                                    style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                                >
+                                    {comidas.map((food) => (
+                                        <SelectItem key={food.Descripcion}>
+                                            {food.Descripcion}
+                                        </SelectItem>
+                                    ))}
+                                </Select>
                             </div>
 
                             <div className="flex mb-1">
-                              <input
-                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
-                                name="restaurante"
-                                placeholder="Ingrese la cantidad"
-                                type="number"
-                                value={isNaN(cantidadItem2) ? '' : cantidadItem2}
-                                onChange={(e) => {
-                                  const value = parseInt(e.target.value);
-                                  setCantidadItem2(isNaN(value) ? '' : value);
-                                }}
-                                style={{ height: "40px", backgroundColor: "#f4f4f5" }}
-                              />
-                              <input
-                                disabled
-                                label="Stock"
-                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 w-24"
-                                placeholder={` ${cantidadFood2Disponible}`}
-                                style={{ height: "40px", backgroundColor: "#f4f4f5" }}
-                              />
-                              <Select
-                                className="ml-2 mt-1"
-                                name="restaurante"
-                                label="Seleccionar comida"
-                                value={itemSeleccionado2}
-                                onChange={(e) => {
-                                  const selectedItem = e.target.value;
-                                  setItemSeleccionado2(selectedItem);
+                                <input
+                                    className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                    name="restaurante"
+                                    placeholder="Ingrese la cantidad"
+                                    type="number"
+                                    value={isNaN(cantidadItem2) ? '' : cantidadItem2}
+                                    onChange={(e) => {
+                                        const value = parseInt(e.target.value);
+                                        setCantidadItem2(isNaN(value) ? '' : value);
+                                    }}
+                                    style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                                />
+                                <input
+                                    disabled
+                                    label="Stock"
+                                    className="inventario-box-option-input-01 outline-none pl-2 mb-2 w-24"
+                                    placeholder={` ${cantidadFood2Disponible}`}
+                                    style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                                />
+                                <Select
+                                    key={resetKey}
+                                    className="ml-2 mt-1"
+                                    name="restaurante"
+                                    label="Seleccionar comida"
+                                    value={itemSeleccionado2}
+                                    onChange={(e) => {
+                                        const selectedItem = e.target.value;
+                                        setItemSeleccionado2(selectedItem);
 
-                                  if (selectedItem) {
-                                    const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
+                                        if (selectedItem) {
+                                            const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
 
-                                    if (itemSeleccionadaInfo) {
-                                      setPrecioItemSeleccionado2(itemSeleccionadaInfo.ValorUnitario);
-                                      setItemSeleccionadoId2(itemSeleccionadaInfo.idPadre);
-                                      setSubItemSeleccionadoId2(itemSeleccionadaInfo._id);
-                                      setCantidadFood2Disponible(itemSeleccionadaInfo.cantidadPadre);
-                                    }
-                                  } else {
-                                    setPrecioItemSeleccionado2(0);
-                                    setCantidadFood2Disponible(0);
-                                    setCantidadItem2("");
-                                  }
-                                }}
-                                style={{ height: "40px", backgroundColor: "#f4f4f5" }}
-                              >
-                                {comidas.map((food) => (
-                                  <SelectItem key={food.Descripcion}>
-                                    {food.Descripcion}
-                                  </SelectItem>
-                                ))}
-                              </Select>
+                                            if (itemSeleccionadaInfo) {
+                                                setPrecioItemSeleccionado2(itemSeleccionadaInfo.ValorUnitario);
+                                                setItemSeleccionadoId2(itemSeleccionadaInfo.idPadre);
+                                                setSubItemSeleccionadoId2(itemSeleccionadaInfo._id);
+                                                setCantidadFood2Disponible(itemSeleccionadaInfo.cantidadPadre);
+                                            }
+                                        } else {
+                                            setPrecioItemSeleccionado2(0);
+                                            setCantidadFood2Disponible(0);
+                                            setCantidadItem2("");
+                                        }
+                                    }}
+                                    style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                                >
+                                    {comidas.map((food) => (
+                                        <SelectItem key={food.Descripcion}>
+                                            {food.Descripcion}
+                                        </SelectItem>
+                                    ))}
+                                </Select>
                             </div>
 
                             <div className="flex mb-1">
-                              <input
-                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
-                                name="restaurante"
-                                placeholder="Ingrese la cantidad"
-                                type="number"
-                                value={isNaN(cantidadItem3) ? '' : cantidadItem3}
-                                onChange={(e) => {
-                                  const value = parseInt(e.target.value);
-                                  setCantidadItem3(isNaN(value) ? '' : value);
-                                }}
-                                style={{ height: "40px", backgroundColor: "#f4f4f5" }}
-                              />
-                              <input
-                                disabled
-                                label="Stock"
-                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 w-24"
-                                placeholder={` ${cantidadFood3Disponible}`}
-                                style={{ height: "40px", backgroundColor: "#f4f4f5" }}
-                              />
-                              <Select
-                                className="ml-2 mt-1"
-                                name="restaurante"
-                                label="Seleccionar comida"
-                                value={itemSeleccionado3}
-                                onChange={(e) => {
-                                  const selectedItem = e.target.value;
-                                  setItemSeleccionado3(selectedItem);
+                                <input
+                                    className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                    name="restaurante"
+                                    placeholder="Ingrese la cantidad"
+                                    type="number"
+                                    value={isNaN(cantidadItem3) ? '' : cantidadItem3}
+                                    onChange={(e) => {
+                                        const value = parseInt(e.target.value);
+                                        setCantidadItem3(isNaN(value) ? '' : value);
+                                    }}
+                                    style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                                />
+                                <input
+                                    disabled
+                                    label="Stock"
+                                    className="inventario-box-option-input-01 outline-none pl-2 mb-2 w-24"
+                                    placeholder={` ${cantidadFood3Disponible}`}
+                                    style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                                />
+                                <Select
+                                    key={resetKey}
+                                    className="ml-2 mt-1"
+                                    name="restaurante"
+                                    label="Seleccionar comida"
+                                    value={itemSeleccionado3}
+                                    onChange={(e) => {
+                                        const selectedItem = e.target.value;
+                                        setItemSeleccionado3(selectedItem);
 
-                                  if (selectedItem) {
-                                    const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
+                                        if (selectedItem) {
+                                            const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
 
-                                    if (itemSeleccionadaInfo) {
-                                      setPrecioItemSeleccionado3(itemSeleccionadaInfo.ValorUnitario);
-                                      setItemSeleccionadoId3(itemSeleccionadaInfo.idPadre);
-                                      setSubItemSeleccionadoId3(itemSeleccionadaInfo._id);
-                                      setCantidadFood3Disponible(itemSeleccionadaInfo.cantidadPadre);
-                                    }
-                                  } else {
-                                    setPrecioItemSeleccionado3(0);
-                                    setCantidadFood3Disponible(0);
-                                    setCantidadItem3("");
-                                  }
-                                }}
-                                style={{ height: "40px", backgroundColor: "#f4f4f5" }}
-                              >
-                                {comidas.map((food) => (
-                                  <SelectItem key={food.Descripcion}>
-                                    {food.Descripcion}
-                                  </SelectItem>
-                                ))}
-                              </Select>
+                                            if (itemSeleccionadaInfo) {
+                                                setPrecioItemSeleccionado3(itemSeleccionadaInfo.ValorUnitario);
+                                                setItemSeleccionadoId3(itemSeleccionadaInfo.idPadre);
+                                                setSubItemSeleccionadoId3(itemSeleccionadaInfo._id);
+                                                setCantidadFood3Disponible(itemSeleccionadaInfo.cantidadPadre);
+                                            }
+                                        } else {
+                                            setPrecioItemSeleccionado3(0);
+                                            setCantidadFood3Disponible(0);
+                                            setCantidadItem3("");
+                                        }
+                                    }}
+                                    style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                                >
+                                    {comidas.map((food) => (
+                                        <SelectItem key={food.Descripcion}>
+                                            {food.Descripcion}
+                                        </SelectItem>
+                                    ))}
+                                </Select>
                             </div>
 
                             <div className="flex mb-1">
-                              <input
-                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
-                                name="restaurante"
-                                placeholder="Ingrese la cantidad"
-                                type="number"
-                                value={isNaN(cantidadItem4) ? '' : cantidadItem4}
-                                onChange={(e) => {
-                                  const value = parseInt(e.target.value);
-                                  setCantidadItem4(isNaN(value) ? '' : value);
-                                }}
-                                style={{ height: "40px", backgroundColor: "#f4f4f5" }}
-                              />
-                              <input
-                                disabled
-                                label="Stock"
-                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 w-24"
-                                placeholder={` ${cantidadFood4Disponible}`}
-                                style={{ height: "40px", backgroundColor: "#f4f4f5" }}
-                              />
-                              <Select
-                                className="ml-2 mt-1"
-                                name="restaurante"
-                                label="Seleccionar comida"
-                                value={itemSeleccionado4}
-                                onChange={(e) => {
-                                  const selectedItem = e.target.value;
-                                  setItemSeleccionado4(selectedItem);
+                                <input
+                                    className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                    name="restaurante"
+                                    placeholder="Ingrese la cantidad"
+                                    type="number"
+                                    value={isNaN(cantidadItem4) ? '' : cantidadItem4}
+                                    onChange={(e) => {
+                                        const value = parseInt(e.target.value);
+                                        setCantidadItem4(isNaN(value) ? '' : value);
+                                    }}
+                                    style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                                />
+                                <input
+                                    disabled
+                                    label="Stock"
+                                    className="inventario-box-option-input-01 outline-none pl-2 mb-2 w-24"
+                                    placeholder={` ${cantidadFood4Disponible}`}
+                                    style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                                />
+                                <Select
+                                    key={resetKey}
+                                    className="ml-2 mt-1"
+                                    name="restaurante"
+                                    label="Seleccionar comida"
+                                    value={itemSeleccionado4}
+                                    onChange={(e) => {
+                                        const selectedItem = e.target.value;
+                                        setItemSeleccionado4(selectedItem);
 
-                                  if (selectedItem) {
-                                    const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
+                                        if (selectedItem) {
+                                            const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
 
-                                    if (itemSeleccionadaInfo) {
-                                      setPrecioItemSeleccionado4(itemSeleccionadaInfo.ValorUnitario);
-                                      setItemSeleccionadoId4(itemSeleccionadaInfo.idPadre);
-                                      setSubItemSeleccionadoId4(itemSeleccionadaInfo._id);
-                                      setCantidadFood4Disponible(itemSeleccionadaInfo.cantidadPadre);
-                                    }
+                                            if (itemSeleccionadaInfo) {
+                                                setPrecioItemSeleccionado4(itemSeleccionadaInfo.ValorUnitario);
+                                                setItemSeleccionadoId4(itemSeleccionadaInfo.idPadre);
+                                                setSubItemSeleccionadoId4(itemSeleccionadaInfo._id);
+                                                setCantidadFood4Disponible(itemSeleccionadaInfo.cantidadPadre);
+                                            }
 
-                                  } else {
-                                    setPrecioItemSeleccionado4(0);
-                                    setCantidadFood4Disponible(0);
-                                    setCantidadItem4("");
-                                  }
-                                }}
-                                style={{ height: "40px", backgroundColor: "#f4f4f5" }}
-                              >
-                                {comidas.map((food) => (
-                                  <SelectItem key={food.Descripcion}>
-                                    {food.Descripcion}
-                                  </SelectItem>
-                                ))}
-                              </Select>
+                                        } else {
+                                            setPrecioItemSeleccionado4(0);
+                                            setCantidadFood4Disponible(0);
+                                            setCantidadItem4("");
+                                        }
+                                    }}
+                                    style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                                >
+                                    {comidas.map((food) => (
+                                        <SelectItem key={food.Descripcion}>
+                                            {food.Descripcion}
+                                        </SelectItem>
+                                    ))}
+                                </Select>
                             </div>
 
                             <span className='flex justify-end pr-2 mt-5'>
@@ -2546,21 +2249,39 @@ const Adicionales = () => {
                         </article>
                     </article>
 
-                    {/*  **************************  */}
-                    <article className='w-full p-5 mt-5 rounded-xl' style={{ boxShadow: "0px 2px 8px 2px #D6D6D6" }}>
+                    <article className='w-full p-5 mt-5 rounded-xl ml-2' style={{ boxShadow: "0px 2px 8px 2px #D6D6D6", width:"49%" }}>
                         <article className='' >
                             <p style={{ fontSize: "18px", fontWeight: "100" }} className='text-blue-300'>
-                                <span className='text-red-500' style={{ fontSize: "18px" }}>3.</span> Recepcion
+                                <span className='text-red-500' style={{ fontSize: "18px" }}>5.</span> Recepción
                             </p>
                             <span className='flex w-12/12 mt-2 items-center'>
-                                <p className='flex rounded-full   justify-center  text-white mr-2' style={{ width: "20px", height: "20px" }}>
-                                    <span className='rounded-full  bg-green-400' style={{ width: "15px", height: "15px" }}></span>
-                                </p>
+
+
+
+                                <input
+                                    type="Number"
+                                    className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                    value={isNaN(cantidadItemRec) ? '' : cantidadItemRec}
+                                    onChange={(e) => {
+                                        const value = parseInt(e.target.value);
+                                        setCantidadItemRec(isNaN(value) ? "" : value);
+                                    }}
+                                    placeholder='Ingrese la cantidad'
+                                />
+                                <span>
+                                    <input
+                                        disabled
+                                        type="text"
+                                        className="inventario-box-option-input-01 outline-none pl-2 mb-2 w-24"
+                                        placeholder={`${cantidadItemDisponibleRec}`}
+
+                                    />
+                                </span>
                                 <Select
                                     key={resetKey}
                                     placeholder='seleccione un item'
                                     value={itemSeleccionadoRec}
-                                    className='w-6/12 h-10 mr-2 '
+                                    className='ml-2 '
                                     style={{ height: "40px" }}
                                     onChange={(e) => {
                                         const itemSelected = e.target.value;
@@ -2578,42 +2299,21 @@ const Adicionales = () => {
                                             setCantidadItemRec("");
                                             setCantidadItemDisponibleRec(0);
                                         }
-                                    }}>
+                                    }}  >
                                     {recepcion.map((items) => (
                                         <SelectItem key={items.Descripcion}>
                                             {items.Descripcion}
                                         </SelectItem>
                                     ))}
                                 </Select>
-                                <span>
-                                    <input
-                                        disabled
-                                        type="text"
-                                        className='w-12/12 mr-2 outline-red-300 h-10 w-32 border-b-2 border-gray-300 pl-2 pr-2 bg-white text-center'
-                                        placeholder={`${cantidadItemDisponibleRec}`}
-
-                                    />
-                                </span>
-                                <input
-                                    type="Number"
-                                    className='w-6/12 mr-2 border-b-2 border-gray-300 outline-none  h-10  pl-2 pr-2'
-                                    value={isNaN(cantidadItemRec) ? '' : cantidadItemRec}
-                                    onChange={(e) => {
-                                        const value = parseInt(e.target.value);
-                                        setCantidadItemRec(isNaN(value) ? "" : value);
-                                    }}
-                                    placeholder='Ingrese la cantidad'
-                                />
                             </span>
-                            <span className='flex w-12/12 mt-8 items-center'>
-                                <p className='flex rounded-full   justify-center  text-white mr-2' style={{ width: "20px", height: "20px" }}>
-                                    <span className='rounded-full  bg-green-400' style={{ width: "15px", height: "15px" }}></span>
-                                </p>
+                            <span className='flex w-12/12 mt-2 items-center flex-row-reverse'>
+
                                 <Select
                                     key={resetKey}
                                     placeholder='seleccione un item'
                                     value={itemSeleccionado1Rec}
-                                    className='w-6/12 h-10 mr-2 '
+                                    className=' h-10 ml-2 '
                                     style={{ height: "40px" }}
                                     onChange={(e) => {
                                         const itemSelected = e.target.value;
@@ -2643,14 +2343,14 @@ const Adicionales = () => {
                                     <input
                                         disabled
                                         type="text"
-                                        className='w-12/12 mr-2 outline-red-300 h-10 w-32 border-b-2 border-gray-300 pl-2 pr-2 bg-white text-center'
+                                        className="inventario-box-option-input-01 outline-none pl-2 mb-2 w-24"
                                         placeholder={`${cantidadItemDisponible1Rec}`}
 
                                     />
                                 </span>
                                 <input
                                     type="Number"
-                                    className='w-6/12 mr-2 border-b-2 border-gray-300 outline-none  h-10  pl-2 pr-2'
+                                    className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
                                     value={isNaN(cantidadItem1Rec) ? '' : cantidadItem1Rec}
                                     onChange={(e) => {
                                         const value = parseInt(e.target.value);
@@ -2659,15 +2359,13 @@ const Adicionales = () => {
                                     placeholder='Ingrese la cantidad'
                                 />
                             </span>
-                            <span className='flex w-12/12 mt-8 items-center'>
-                                <p className='flex rounded-full   justify-center  text-white mr-2' style={{ width: "20px", height: "20px" }}>
-                                    <span className='rounded-full  bg-green-400' style={{ width: "15px", height: "15px" }}></span>
-                                </p>
+                            <span className='flex w-12/12 mt-2 items-center flex-row-reverse'>
+
                                 <Select
                                     key={resetKey}
                                     placeholder='seleccione un item'
                                     value={itemSeleccionado2Rec}
-                                    className='w-6/12 h-10 mr-2'
+                                    className=' ml-2'
                                     style={{ height: "40px" }}
                                     onChange={(e) => {
                                         const itemSelected = e.target.value;
@@ -2696,14 +2394,14 @@ const Adicionales = () => {
                                     <input
                                         disabled
                                         type="text"
-                                        className='w-12/12 mr-2 outline-red-300 h-10 w-32 border-b-2 border-gray-300 pl-2 pr-2 bg-white text-center'
+                                        className="inventario-box-option-input-01 outline-none pl-2 mb-2 w-24"
                                         placeholder={`${cantidadItemDisponible2Rec}`}
 
                                     />
                                 </span>
                                 <input
                                     type="Number"
-                                    className='w-6/12 mr-2 border-b-2 border-gray-300 outline-none  h-10  pl-2 pr-2'
+                                    className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
                                     value={isNaN(cantidadItem2Rec) ? '' : cantidadItem2Rec}
                                     onChange={(e) => {
                                         const value = parseInt(e.target.value);
@@ -2712,15 +2410,13 @@ const Adicionales = () => {
                                     placeholder='Ingrese la cantidad'
                                 />
                             </span>
-                            <span className='flex w-12/12 mt-8 items-center'>
-                                <p className='flex rounded-full   justify-center  text-white mr-2' style={{ width: "20px", height: "20px" }}>
-                                    <span className='rounded-full  bg-green-400' style={{ width: "15px", height: "15px" }}></span>
-                                </p>
+                            <span className='flex w-12/12 mt-2 items-center flex-row-reverse'>
+
                                 <Select
                                     key={resetKey}
                                     placeholder='seleccione un item'
                                     value={itemSeleccionado3Rec}
-                                    className='w-6/12 h-10 mr-2 '
+                                    className='  ml-2 '
                                     style={{ height: "40px" }}
                                     onChange={(e) => {
                                         const itemSelected = e.target.value;
@@ -2749,13 +2445,13 @@ const Adicionales = () => {
                                     <input
                                         disabled
                                         type="text"
-                                        className='w-12/12 mr-2 outline-red-300 h-10 w-32 border-b-2 border-gray-300 pl-2 pr-2 bg-white text-center'
+                                        className="inventario-box-option-input-01 outline-none pl-2 mb-2 w-24"
                                         placeholder={`${cantidadItemDisponible3Rec}`}
                                     />
                                 </span>
                                 <input
                                     type="Number"
-                                    className='w-6/12 mr-2 border-b-2 border-gray-300 outline-none  h-10  pl-2 pr-2'
+                                    className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
                                     value={isNaN(cantidadItem3Rec) ? '' : cantidadItem3Rec}
                                     onChange={(e) => {
                                         const value = parseInt(e.target.value);
@@ -2764,15 +2460,13 @@ const Adicionales = () => {
                                     placeholder='Ingrese la cantidad'
                                 />
                             </span>
-                            <span className='flex w-12/12 mt-8 items-center'>
-                                <p className='flex rounded-full   justify-center  text-white mr-2' style={{ width: "20px", height: "20px" }}>
-                                    <span className='rounded-full  bg-green-400' style={{ width: "15px", height: "15px" }}></span>
-                                </p>
+                            <span className='flex w-12/12 mt-2 items-center flex-row-reverse'>
+
                                 <Select
                                     key={resetKey}
                                     placeholder='seleccione un item'
                                     value={itemSeleccionado4Rec}
-                                    className='w-6/12 h-10 mr-2 '
+                                    className='ml-2 '
                                     style={{ height: "40px" }}
                                     onChange={(e) => {
                                         const itemSelected = e.target.value;
@@ -2801,14 +2495,14 @@ const Adicionales = () => {
                                     <input
                                         disabled
                                         type="text"
-                                        className='w-12/12 mr-2 outline-red-300 h-10 w-32 border-b-2 border-gray-300 pl-2 pr-2 bg-white text-center'
+                                        className="inventario-box-option-input-01 outline-none pl-2 mb-2 w-24"
                                         placeholder={`${cantidadItemDisponible4Rec}`}
 
                                     />
                                 </span>
                                 <input
                                     type="Number"
-                                    className='w-6/12 mr-2 border-b-2 border-gray-300 outline-none  h-10  pl-2 pr-2'
+                                    className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
                                     value={isNaN(cantidadItem4Rec) ? '' : cantidadItem4Rec}
                                     onChange={(e) => {
                                         const value = parseInt(e.target.value);
@@ -2818,7 +2512,6 @@ const Adicionales = () => {
                                 />
                             </span>
                             <span className='flex justify-end pr-2 mt-5'>
-
                                 <Button className='w-32' color='success' onClick={handleGuardarItemRecepcion}>
                                     Guardar
                                 </Button>
@@ -2827,6 +2520,12 @@ const Adicionales = () => {
 
                         </article>
                     </article>
+
+                    </div>
+
+
+                    {/******************** handleGuardarItem ***************/}
+
 
                     <article className='mt-5 p-5 rounded-xl' style={{ boxShadow: "0px 2px 8px 2px #D6D6D6" }}>
                         <p style={{ fontSize: "18px", fontWeight: "100" }} className='text-blue-300'>
@@ -2880,9 +2579,10 @@ const Adicionales = () => {
                             </div>
                         </article>
                     </article>
+                    {/*  **************************  */}
                 </section>
 
-                <section className='w-full min-h-screen pt-20 pr-5 pl-5'>
+                {/* <section className='w-full min-h-screen pt-20 pr-5 pl-5'>
                     <Table className='mt-5' aria-label="Example static collection table">
                         <TableHeader>
                             <TableColumn>ITEM</TableColumn>
@@ -2901,7 +2601,7 @@ const Adicionales = () => {
                         </TableBody>
                     </Table>
 
-                </section>
+                </section> */}
 
 
 

@@ -2397,35 +2397,38 @@ export default function App() {
 
                                 {/* Combina ambos arrays (bebidas y comidas) y verifica si tiene elementos */}
                                 {selectedUser.bebidas && selectedUser.restaurante &&
-                                  Array.isArray(selectedUser.bebidas) && Array.isArray(selectedUser.restaurante) &&
-                                  [...selectedUser.bebidas, ...selectedUser.restaurante].length > 0 ? (
+                                  Array.isArray(selectedUser.bebidas) && Array.isArray(selectedUser.restaurante) && Array.isArray(selectedUser.descorche) && Array.isArray(selectedUser.recepcion) &&
+                                  [...selectedUser.bebidas, ...selectedUser.restaurante, ...selectedUser.descorche, ...selectedUser.recepcion].length > 0 ? (
                                   <table className="w-full text-center">
                                     <thead>
                                       <tr>
-                                        <th>Nombre</th>
-                                        <th>Cantidad</th>
+                                        <th className=" text-left">Nombre</th>
+                                        <th style={{width:"100px"}}>Cantidad</th>
+                                        <th>mensaje</th>
                                         <th>Precio Unitario</th>
                                         <th>Total</th>
                                       </tr>
                                     </thead>
                                     <tbody>
                                       {/* Muestra los productos (bebidas y comidas) */}
-                                      {[...selectedUser.bebidas, ...selectedUser.restaurante].map((producto, index) => (
+                                      {[...selectedUser.bebidas, ...selectedUser.restaurante, ...selectedUser.descorche, ...selectedUser.recepcion].map((producto, index) => (
                                         <tr key={index}>
-                                          <td>{producto.nombre}</td>
+                                          <td className="text-left" style={{width:"280px"}}>{producto.nombre}</td>
                                           <td>{producto.cantidad}</td>
-                                          <td>{producto.precio}</td>
+                                          <td>{producto.adicional}</td>
+                                          <td  style={{width:"280px"}} >{producto.precio}</td>
                                           <td>{producto.cantidad * producto.precio}</td>
                                         </tr>
                                       ))}
                                     </tbody>
                                     <tfoot className="border-t-3 border-green-500 pt-2">
                                       <tr>
-                                        <td className="w-6/12 text-left"></td>
+                                        <td className="text-left"></td>
+                                        <td></td>
                                         <td></td>
                                         <td></td>
                                         <td style={{ height: "60px", paddingRight: "20px", width: "150px" }} className="text-right">Total: {
-                                          [...selectedUser.bebidas, ...selectedUser.restaurante].reduce((acc, producto) =>
+                                          [...selectedUser.bebidas, ...selectedUser.restaurante, ...selectedUser.recepcion, ...selectedUser.descorche].reduce((acc, producto) =>
                                             acc + (producto.cantidad * producto.precio), 0
                                           )
                                         }</td>

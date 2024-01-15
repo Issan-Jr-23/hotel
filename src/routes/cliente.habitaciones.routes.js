@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {actualizarFacturacion, addBebidaAdicional, addDescorche, addFood, addFoodAdicional, addItemRecepcion, obtenerCPI, obtenerClienteId, obtenerClientes, updateClientCts, updatePP, updateUserStatus} from "../controllers/cliente.habitaciones.controlles.js";
+import {actualizarFacturacion, addBebidaAdicional, addDescorche, addFood, addFoodAdicional, addFoodAdicionalSubproducto, addItemRecepcion, obtenerCPI, obtenerClienteId, obtenerClientes, updateClientCts, updatePP, updateUserStatus} from "../controllers/cliente.habitaciones.controlles.js";
 import {crearCliente} from "../controllers/cliente.habitaciones.controlles.js";
 import {deleteClient} from "../controllers/cliente.habitaciones.controlles.js";
 import {updateClient} from "../controllers/cliente.habitaciones.controlles.js";
@@ -24,6 +24,7 @@ router.post("/habitaciones-agregar-bebida/:id",auth, addBebidaAdicional);
 router.post("/habitaciones-agregar-item-recepcion/:id",auth, addItemRecepcion);
 router.post("/habitaciones-agregar-descorche/:id",auth, addDescorche);
 router.post("/habitaciones-agregar-food/:id",auth, addFoodAdicional);
+router.post("/habitaciones-agregar-food-subproducto/:id",auth, addFoodAdicionalSubproducto);
 router.put("/habitaciones-actualizar-estado", updateUserStatus)
 
 export default router;
