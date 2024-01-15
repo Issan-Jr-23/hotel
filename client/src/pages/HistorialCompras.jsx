@@ -1,20 +1,21 @@
-import React, { useState, useEffect, useMemo} from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { Dropdown, DropdownTrigger, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Tabs, Tab, Input, Card, CardBody, CardHeader, DropdownMenu, DropdownSection, DropdownItem, Button, cn } from "@nextui-org/react";
 import { Link, useNavigate } from "react-router-dom";
 import { AddNoteIcon } from "./iconos/AddNoteIcon.jsx";
 import { VerticalDotsIcon } from './iconos/VerticalDotsIcon.jsx';
+import check from "./iconos/check.png"
 import AxiosInstance from '../api/axios.js';
 
 const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
 
 const TransferirData = () => {
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    const verHistorial = (id) => {
-      navigate(`/historial/${id}`);
-      console.log("id del usuario para ver el historial del usuario: "+id)
-    };
+  const verHistorial = (id) => {
+    navigate(`/historial/${id}`);
+    console.log("id del usuario para ver el historial del usuario: " + id)
+  };
 
 
   const [busqueda, setBusqueda] = useState('');
@@ -66,77 +67,81 @@ const TransferirData = () => {
     <div className='pt-20 flex flex-col'>
 
       <h1 className='mhdu-h1' >HISTORIAL DE USUARIO</h1>
-        <div className=' hdu flex '>
-          <div className=" flex flex-col ml-5 mr-5">
-            <form className=" mhdu " style={{ zIndex: "1" }}>
-              <Input value={busqueda}
-                onChange={handleSearchChange} label="Identificación" placeholder="Enter your email" type="text" className='mb-2' />
+      <div className=' hdu flex '>
+        <div className=" flex flex-col ml-5 mr-5">
+          <form className=" mhdu " style={{ zIndex: "1" }}>
+            <Input value={busqueda}
+              onChange={handleSearchChange} label="Identificación" placeholder="Enter your email" type="text" className='mb-2' />
 
-              <Input
-                label="Nombre"
-                placeholder="Enter your name"
-                type="password"
+            <Input
+              label="Nombre"
+              placeholder="Enter your name"
+              type="password"
 
-              />
-              <Input
-                label="Apellidos"
-                placeholder="Enter your last name"
-                type="password"
+            />
+            <Input
+              label="Apellidos"
+              placeholder="Enter your last name"
+              type="password"
 
-              />
-              <p className="text-center text-small">
-                busqueda de usuarios {" "}
-                <Link to="/home" size="sm" className='font-medium text-blue-500'>
-                  Inicio
-                </Link>
-              </p>
-            </form>
-          </div>
-          <Table aria-label="Example static collection table" className='pt-3 pl-5 pr-5' >
-            <TableHeader className='text-center' >
-              <TableColumn className='text-center' >IDENTIFICACIÓN</TableColumn>
-              <TableColumn className='text-center' >HISTORIAL</TableColumn>
-              {/* <TableColumn className='text-center' >STATUS</TableColumn> */}
-            </TableHeader>
-            <TableBody emptyContent="No hay elementos por mostrar">
-              {users.map((data) => (
-                <TableRow key={data._id} >
-                  <TableCell className='text-center'>{data.identificacion}</TableCell>
-                  <TableCell key={data._id} className='text-center'  >
-                    <Dropdown >
-                      <DropdownTrigger>
-                        <Button
-                          className="bg-inherit "
-                        >
-                          <VerticalDotsIcon />
-                        </Button>
-                      </DropdownTrigger>
-                      <DropdownMenu variant="faded" aria-label="Dropdown menu with description">
-                        <DropdownSection title="Actions" showDivider>
-                          <DropdownItem
-                            key="new"
-                            shortcut="⌘N"
-                            description="View user history."
-                            startContent={<AddNoteIcon className={iconClasses} />}
-                            className="font-semibold"
-                            style={{ fontWeight: "700" }}
-                            onClick={() => verHistorial(data.identificacion)}
-                          >
-                            Ver historial
-                          </DropdownItem>
-
-                          
-                        </DropdownSection>
-                      </DropdownMenu>
-                    </Dropdown>
-                  </TableCell>
-                </TableRow>
-
-
-              ))}
-            </TableBody>
-          </Table>
+            />
+            <p className="text-center text-small">
+              busqueda de usuarios {" "}
+              <Link to="/home" size="sm" className='font-medium text-blue-500'>
+                Inicio
+              </Link>
+            </p>
+          </form>
         </div>
+        <Table aria-label="Example static collection table" className='pt-3 pl-5 pr-5' >
+          <TableHeader className='text-center' >
+            <TableColumn className='' >IDENTIFICACIÓN</TableColumn>
+            <TableColumn className='text-center' >NOMBRE</TableColumn>
+            <TableColumn className='text-center' >HISTORIAL</TableColumn>
+            {/* <TableColumn className='text-center' >STATUS</TableColumn> */}
+          </TableHeader>
+          <TableBody emptyContent="No hay elementos por mostrar">
+            {users.map((data) => (
+              <TableRow key={data._id}>
+                <TableCell className='flex items-center'><img className='check-historial w-3 h-3 mr-1' src={check} alt="" />{data.identificacion}</TableCell>
+                <TableCell className='text-center uppercase'>
+                  {data.historial.length > 0 && data.historial[0].nombre}
+                </TableCell>
+                <TableCell key={data._id} className='text-center'  >
+                  <Dropdown >
+                    <DropdownTrigger>
+                      <Button
+                        className="bg-inherit "
+                      >
+                        <VerticalDotsIcon />
+                      </Button>
+                    </DropdownTrigger>
+                    <DropdownMenu variant="faded" aria-label="Dropdown menu with description">
+                      <DropdownSection title="Actions" showDivider>
+                        <DropdownItem
+                          key="new"
+                          shortcut="⌘N"
+                          description="View user history."
+                          startContent={<AddNoteIcon className={iconClasses} />}
+                          className="font-semibold"
+                          style={{ fontWeight: "700" }}
+                          onClick={() => verHistorial(data.identificacion)}
+                        >
+                          Ver historial
+                        </DropdownItem>
+
+
+                      </DropdownSection>
+                    </DropdownMenu>
+                  </Dropdown>
+                </TableCell>
+              </TableRow>
+
+
+            ))}
+          </TableBody>
+        </Table>
+      </div>
 
     </div>
   )

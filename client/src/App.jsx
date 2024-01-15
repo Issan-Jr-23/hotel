@@ -52,6 +52,7 @@ function App() {
                 <Route path="/historial/:id" element={<HistorialUsuario />} />
                 <Route path="/adicional/:id" element={<Adicionales />} />
                 <Route path="/cabania-adicional/:id" element={<AdicionalesCabanias />} />
+                <Route path="/habitaciones-adicional/:id" element={<AdicionalesHabitaciones />} />
               </Route>
               <Route element={<ProtectedRoute allowedRoles={["superUser"]}/>}>
                 <Route path="/hotel-graphs" element={<Hotel_graphs />}/>

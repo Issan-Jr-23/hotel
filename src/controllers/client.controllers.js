@@ -434,7 +434,6 @@ export const obtenerResumenCompras = async (req, res) => {
   }
 };
 
-
 // export const obtenerProductosCop = async (req, res) => {
 //   try {
 //     // Obtener datos de las colecciones de clientes y usuarios
@@ -483,7 +482,6 @@ export const obtenerResumenCompras = async (req, res) => {
 //   }
 // };
 
-
 export const obtenerProductosCop = async (req, res) => {
   try {
     const clientes = await Cliente.find({ servicio: 'pasadia' }).select("bebidas restaurante");
@@ -527,7 +525,6 @@ export const obtenerProductosCop = async (req, res) => {
   }
 };
 
-
 export const updateUserStatus = async (req, res) => {
   const { userId, estado } = req.body;
 
@@ -561,7 +558,6 @@ export const updateUserStatus = async (req, res) => {
   }
 };
 
-
 export const fechaActivacion = async (req, res) => {
   try {
     const clientes = await Cliente.find({});
@@ -586,7 +582,6 @@ export const fechaActivacion = async (req, res) => {
   }
 };
 
-
 export const fechaFinalizacion = async (req, res) => {
   try {
     const clientes = await Cliente.find({});
@@ -610,7 +605,6 @@ export const fechaFinalizacion = async (req, res) => {
     res.status(500).send(error.message);
   }
 };
-
 
 export const obtenerFechasCompras = async (req, res) => {
   try {
@@ -719,9 +713,9 @@ export const addBebidaAdicional = async (req, res) => {
   }
 };
 
-export const agregarItemRecepcion = async (req, res) => {
+export const addItemRecepcion = async (req, res) => {3
   const {id} = req.params;
-  const { recepcion } = req.body;
+  const { bebida } = req.body;
 
   try {
     const cliente = await Cliente.findById(id);
@@ -730,19 +724,19 @@ export const agregarItemRecepcion = async (req, res) => {
       let index = -1;
       index = cliente.recepcion.findIndex(
         (b) =>
-          b.itemIdRec === recepcion.itemIdRec &&
-          b.mensaje === recepcion.mensaje && 
+          b.itemIdRec === bebida.itemIdRec &&
+          b.mensaje === bebida.mensaje && 
           (b.fechaDeMarca === "" || !b.fechaDeMarca) 
       );
 
       if (index > -1) {
-        cliente.recepcion[index].cantidad += recepcion.cantidad;
+        cliente.recepcion[index].cantidad += bebida.cantidad;
       } else {
-        if (recepcion.mensaje === "Cortesía") {
-          recepcion.precio = 0;
+        if (bebida.mensaje === "Cortesía") {
+          bebida.precio = 0;
         }
-        recepcion.fechaDeMarca = ""; 
-        cliente.recepcion.push(recepcion);
+        bebida.fechaDeMarca = ""; 
+        cliente.recepcion.push(bebida);
       }
 
       cliente.markModified("recepcion");
@@ -757,7 +751,68 @@ export const agregarItemRecepcion = async (req, res) => {
   }
 };
 
+export const addDescorche = async (req, res) => {
+  const {id} = req.params;
+  const { descorche } = req.body;
 
+  try {
+    const cliente = await Cliente.findById(id);
+
+    if (cliente) {
+
+        cliente.descorche.push(descorche);
+
+      await cliente.save();
+      res.status(200).json(cliente);
+    } else {
+      res.status(404).json({ message: "Cliente no encontrado" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al agregar la bebida al cliente" });
+  }
+};
+
+export const addFoodAdicional = async (req, res) => {
+  const {id} = req.params;
+  const { food } = req.body;
+
+  try {
+    const cliente = await Cliente.findById(id);
+
+    if (cliente) {
+      let index = -1;
+      // Buscar si la comida ya existe en el registro del cliente y coincide en tipo (cortesía o no)
+      index = cliente.restaurante.findIndex(
+        (f) =>
+          f.id === food.id &&
+          f.mensaje === food.mensaje && // Asegurarse de que el tipo (cortesía o no) sea el mismo
+          (f.fechaDeMarca === "" || !f.fechaDeMarca)
+      );
+
+      if (index > -1) {
+        // Si se encuentra una comida existente del mismo tipo, actualiza la cantidad
+        cliente.restaurante[index].cantidad += food.cantidad;
+      } else {
+        // Si no se encuentra o es de un tipo diferente, agrega la comida nueva
+        if (food.mensaje === "Cortesía") {
+          food.precio = 0;
+        }
+        food.fechaDeMarca = ""; // Establecer la fechaDeMarca como espacio en blanco para todas las comidas
+        cliente.restaurante.push(food);
+      }
+
+      cliente.markModified("restaurante");
+      await cliente.save();
+      res.status(200).json(cliente);
+    } else {
+      res.status(404).json({ message: "Cliente no encontrado" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al agregar la comida al cliente" });
+  }
+};
 
 
 

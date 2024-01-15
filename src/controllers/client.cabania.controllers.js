@@ -1,6 +1,7 @@
 import Cabania from "../models/client.cabania.model.js";
 import moment from 'moment';
 import { mongoose } from "mongoose";
+
 export const obtenerClientes = async (req, res) => {
   try {
     const clientesObtenidos = await Cabania.find();
@@ -432,5 +433,45 @@ export const addDescorche = async (req, res) => {
   }
 };
 
+export const addFoodAdicional = async (req, res) => {
+  const {id} = req.params;
+  const { food } = req.body;
+
+  try {
+    const cliente = await Cabania.findById(id);
+
+    if (cliente) {
+      let index = -1;
+      // Buscar si la comida ya existe en el registro del cliente y coincide en tipo (cortesía o no)
+      index = cliente.restaurante.findIndex(
+        (f) =>
+          f.id === food.id &&
+          f.mensaje === food.mensaje && // Asegurarse de que el tipo (cortesía o no) sea el mismo
+          (f.fechaDeMarca === "" || !f.fechaDeMarca)
+      );
+
+      if (index > -1) {
+        // Si se encuentra una comida existente del mismo tipo, actualiza la cantidad
+        cliente.restaurante[index].cantidad += food.cantidad;
+      } else {
+        // Si no se encuentra o es de un tipo diferente, agrega la comida nueva
+        if (food.mensaje === "Cortesía") {
+          food.precio = 0;
+        }
+        food.fechaDeMarca = ""; // Establecer la fechaDeMarca como espacio en blanco para todas las comidas
+        cliente.restaurante.push(food);
+      }
+
+      cliente.markModified("restaurante");
+      await cliente.save();
+      res.status(200).json(cliente);
+    } else {
+      res.status(404).json({ message: "Cliente no encontrado" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al agregar la comida al cliente" });
+  }
+};
 
  

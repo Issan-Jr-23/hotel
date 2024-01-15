@@ -40,9 +40,17 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 
+import { useNavigate } from "react-router-dom";
+
 
 export default function App() {
 
+  const navigate = useNavigate();
+
+  const adicional = (id) => {
+    navigate(`/habitaciones-adicional/${id}`);
+    console.log("id del usuario para ver el historial del usuario: " + id)
+  };
 
 
   const toBase64 = (url) => new Promise((resolve, reject) => {

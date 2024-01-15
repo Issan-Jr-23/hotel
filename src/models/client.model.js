@@ -80,6 +80,16 @@ const clienteSchema = new mongoose.Schema({
       default: getCurrentDateMinus5Hours
   }
   },
+  recepcion: {
+    type: Array,
+    required: false,
+    default: [],
+  },
+  descorche: {
+    type: Array,
+    required: false,
+    default: [],
+  },
   nuevoTotal: {
     type: Number,
     default: 0
