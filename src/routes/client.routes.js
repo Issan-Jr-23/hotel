@@ -27,6 +27,7 @@ router.put("/pasadia-actualizar-estado", updateUserStatus)
 router.get("/pasadia-fecha-activacion", fechaActivacion)
 router.get("/pasadia-fecha-finalizacion", fechaFinalizacion)
 router.get("/pasadia-fecha-compra", obtenerFechasCompras)
+
 router.get('/pasadia-cliente-info/:id', obtenerClienteId)
 router.post("/pasadia-agregar-bebida/:id",auth, addBebidaAdicional);
 router.post("/pasadia-agregar-item-recepcion/:id",auth, addItemRecepcion);

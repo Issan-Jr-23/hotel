@@ -3712,7 +3712,7 @@ export default function App() {
                     <DropdownTrigger>
                       <Button className="bg-inherent">
                         <VerticalDotsIcon />
-                      </Button>
+                      </Button> 
                     </DropdownTrigger>
                     {cliente.estado === 'activo' && (
                       <DropdownMenu aria-label="Static Actions">

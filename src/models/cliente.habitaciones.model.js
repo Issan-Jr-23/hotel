@@ -81,7 +81,14 @@ const clienteSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
-  servicio:{type:String, default:"habitaciones"}
+  servicio:{type:String, default:"habitaciones"},
+    estado:{
+    type:String, 
+    default:"pendiente"},
+    fechaActivacion: {
+      type: Date, 
+      default: null  
+  }
 });
 
 

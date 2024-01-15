@@ -381,7 +381,7 @@ export const addFoodAdicional = async (req, res) => {
   const { food } = req.body;
 
   try {
-    const cliente = await habitaciones.findById(id);
+    const cliente = await Habitaciones.findById(id);
 
     if (cliente) {
       let index = -1;
@@ -417,4 +417,39 @@ export const addFoodAdicional = async (req, res) => {
   }
 };
 
+
+export const updateUserStatus = async (req, res) => {
+  const { userId, estado } = req.body;
+
+  if (!userId) {
+    return res.status(400).json({ error: "Falta el userId" });
+  }
+
+  if (!estado) {
+    return res.status(400).json({ error: "Falta el estado" });
+  }
+
+  try {
+    let update = { estado };
+
+    if (estado === 'activo') {
+      const fechaConResta = moment().subtract(5, 'hours').toDate();
+      update.fechaActivacion = fechaConResta;
+    }else if(estado === "finalizado"){
+      const fechaConResta = moment().subtract(5, 'hours').toDate();
+      update.fechaActivacion = fechaConResta;
+    }
+
+    const clienteActualizado = await Habitaciones.findByIdAndUpdate(userId, update, { new: true });
+
+    if (!clienteActualizado) {
+      return res.status(404).json({ error: "Cliente no encontrado" });
+    }
+
+    res.status(200).json({ message: "Estado actualizado con éxito", cliente: clienteActualizado });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al actualizar el estado" });
+  }
+};
 
