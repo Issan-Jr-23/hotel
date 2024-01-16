@@ -814,6 +814,37 @@ export const addFoodAdicional = async (req, res) => {
   }
 };
 
+export const addFoodAdicionalSubproducto = async (req, res) => {
+  const {id} = req.params;
+  const { food } = req.body;
+  console.log("datos a guardar :", food)
+
+  try {
+    const cliente = await Cliente.findById(id);
+
+    if (cliente) {
+      let index = -1;
+      index = cliente.restaurante.findIndex(
+        (f) =>
+          f.itemIdSubproducto === food.itemIdSubproducto 
+      );
+      if (index > -1) {
+        cliente.restaurante[index].cantidad += food.cantidad;
+        cliente.restaurante.push(food);
+      }
+
+      cliente.markModified("restaurante");
+      await cliente.save();
+      res.status(200).json(cliente);
+    } else {
+      res.status(404).json({ message: "Cliente no encontrado" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al agregar la comida al cliente" });
+  }
+};
+
 
 
 

@@ -199,6 +199,8 @@ export default function App() {
 
 
   const [isSaving, setIsSaving] = useState(false);
+  const [resetKey, setResetKey] = useState(0);
+
 
 
   const [open, setOpen] = React.useState(false);
@@ -321,6 +323,41 @@ export default function App() {
       reserva: selectedSize,
     });
   };
+
+  const resetInputBebida = () => {
+    setCantidadBebida("");
+    setBebidaSeleccionada('');
+    setPrecioBebidaSeleccionada("");
+    setBebidaSeleccionadaId('');
+
+    setCantidadBebida1("");
+    setBebida1Seleccionada('');
+    setPrecioBebida1Seleccionada("");
+    setBebida1SeleccionadaId('');
+
+    setCantidadBebida2("");
+    setBebida2Seleccionada('');
+    setPrecioBebida2Seleccionada("");
+    setBebida2SeleccionadaId('');
+
+    setCantidadBebida3("");
+    setBebida3Seleccionada('');
+    setPrecioBebida3Seleccionada("");
+    setBebida3SeleccionadaId('');
+
+    setCantidadBebida4("");
+    setBebida4Seleccionada('');
+    setPrecioBebida4Seleccionada("");
+    setBebida4SeleccionadaId('');
+
+    setCantidadBebidaDisponible(0)
+    setCantidadBebida1Disponible(0)
+    setCantidadBebida2Disponible(0)
+    setCantidadBebida3Disponible(0)
+    setCantidadBebida4Disponible(0)
+
+    setResetKey(prevKey => prevKey + 1);
+  }
 
   const actualizarInventarioBebida = async (bebidaId, cantidad) => {
     try {
@@ -618,26 +655,13 @@ export default function App() {
         bebida,
       });
       toast.success('Bebida guardada exitosamente!');
-      setCantidadBebida("");
-      setBebidaSeleccionada('');
-      setPrecioBebidaSeleccionada("");
-      setBebidaSeleccionadaId('');
-
-      setCantidadBebida1("");
-      setBebida1Seleccionada('');
-      setPrecioBebida1Seleccionada("");
-      setBebida1SeleccionadaId('');
-
       setEsCortesia(false);
-
       closeModalM();
+      resetInputBebida();
       setIsSaving(false);
+
       const responses = await AxiosInstance.get("/habitaciones-clientes");
-
-      // Ordena los datos de la respuesta de la petición GET, no del PUT
       const usuariosOrdenados = responses.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
-
-      // Actualiza el estado con los usuarios ordenados
       setUsers(usuariosOrdenados);
     } catch (error) {
       console.error('Error al guardar la bebida en el cliente:', error.message);
@@ -956,28 +980,52 @@ export default function App() {
     }
   };
 
-  const guardarFood = async (food) => {
+  const resetInpurGuardarFood = () => {
+    setCantidadFood("");
+    setFoodSeleccionada('');
+    setPrecioFoodSeleccionada("");
+    setFoodSeleccionadaId('');
 
+    setCantidadFood1("");
+    setFood1Seleccionada('');
+    setPrecioFood1Seleccionada("");
+    setFood1SeleccionadaId('');
+
+    setCantidadFood2("");
+    setFood2Seleccionada('')
+    setPrecioFood2Seleccionada("");
+    setFood2SeleccionadaId('');
+
+    setCantidadFood3("");
+    setFood3Seleccionada('');
+    setPrecioFood3Seleccionada("");
+    setFood3SeleccionadaId('');
+
+    setCantidadFood4("");
+    setFood4Seleccionada('');
+    setPrecioFood4Seleccionada("");
+    setFood4SeleccionadaId('');
+
+    setCantidadFoodDisponible("")
+    setCantidadFood1Disponible("")
+    setCantidadFood2Disponible("")
+    setCantidadFood3Disponible("")
+    setCantidadFood4Disponible("")
+
+    setResetKey(prevKey => prevKey + 1);
+
+  }
+
+  const guardarFood = async (food) => {
     try {
       const response = await AxiosInstance.post('/habitaciones-agregar-food', {
         id: selectedClientId,
         food,
       });
       toast.success('Comida guardada exitosamente!');
-      setCantidadFood("");
-      setFoodSeleccionada('');
-      setPrecioFoodSeleccionada("");
-      setFoodSeleccionadaId('');
-
-
-      setCantidadFood1("");
-      setFood1Seleccionada('');
-      setPrecioFood1Seleccionada("");
-      setFood1SeleccionadaId('');
-
       setEsCortesia(false);
       closeModalF();
-      closeModalF();
+      resetInpurGuardarFood();
       setIsSaving(false);
       const responses = await AxiosInstance.get("/habitaciones-clientes");
 
@@ -1354,20 +1402,6 @@ export default function App() {
   };
 
 
-  const { isOpen: isModalOpenMc, onOpen: openModalMc, onClose: closeModalMc } = useDisclosure();
-
-
-  const sizesmc = ["xs"];
-
-  const handleOpenmc = (size) => {
-    setSize(size)
-    openModalMc();
-  }
-
-  const handleOpenModalBca = (cliente) => {
-    // setSelectedClientId(cliente._id);
-    setModalOpen(true);
-  };
 
   const [selectedClienteId, setSelectedClienteId] = useState(null);
 
@@ -1635,7 +1669,40 @@ export default function App() {
     setPrecioItemSeleccionado("");
     setItemSeleccionadoId("");
     setSubItemSeleccionadoId("");
-    setCantidadFoodDisponible("");
+
+    setCantidadItem1("")
+    setItemSeleccionado1("")
+    setPrecioItemSeleccionado1("")
+    setItemSeleccionadoId1("")
+    setSubItemSeleccionadoId1("")
+
+    setCantidadItem2("")
+    setItemSeleccionado2("")
+    setPrecioItemSeleccionado2("")
+    setItemSeleccionadoId2("")
+    setSubItemSeleccionadoId2("")
+
+    setCantidadItem3("")
+    setItemSeleccionado3("")
+    setPrecioItemSeleccionado3("")
+    setItemSeleccionadoId3("")
+    setSubItemSeleccionadoId3("")
+
+    setCantidadItem4("")
+    setItemSeleccionado4("")
+    setPrecioItemSeleccionado4("")
+    setItemSeleccionadoId4("")
+    setSubItemSeleccionadoId4("")
+
+    setCantidadFoodDisponible("0")
+    setCantidadFood1Disponible("0")
+    setCantidadFood2Disponible("0")
+    setCantidadFood3Disponible("0")
+    setCantidadFood4Disponible("0")
+
+
+    setResetKey(prevKey => prevKey + 1);
+
   }
 
   const actualizarInventarioItem = async (foodId, subproductoId, cantidad) => {
@@ -1981,7 +2048,6 @@ export default function App() {
       if (!isBebidaAdded) {
         setIsSaving(false);
         toast.error("No se ha agregado ninguna comida");
-      } else {
       }
 
     } catch (error) {
@@ -2403,7 +2469,7 @@ export default function App() {
                                     <thead>
                                       <tr>
                                         <th className=" text-left">Nombre</th>
-                                        <th style={{width:"100px"}}>Cantidad</th>
+                                        <th style={{ width: "100px" }}>Cantidad</th>
                                         <th>mensaje</th>
                                         <th>Precio Unitario</th>
                                         <th>Total</th>
@@ -2413,10 +2479,10 @@ export default function App() {
                                       {/* Muestra los productos (bebidas y comidas) */}
                                       {[...selectedUser.bebidas, ...selectedUser.restaurante, ...selectedUser.descorche, ...selectedUser.recepcion].map((producto, index) => (
                                         <tr key={index}>
-                                          <td className="text-left" style={{width:"280px"}}>{producto.nombre}</td>
+                                          <td className="text-left" style={{ width: "280px" }}>{producto.nombre}</td>
                                           <td>{producto.cantidad}</td>
                                           <td>{producto.adicional}</td>
-                                          <td  style={{width:"280px"}} >{producto.precio}</td>
+                                          <td style={{ width: "280px" }} >{producto.precio}</td>
                                           <td>{producto.cantidad * producto.precio}</td>
                                         </tr>
                                       ))}
@@ -2612,6 +2678,7 @@ export default function App() {
                                 placeholder={` ${cantidadBebidaDisponible}`}
                               />
                               <Select
+                                key={resetKey}
                                 className="ml-2"
                                 name="bebidas"
                                 label="Seleccionar bebida"
@@ -2677,6 +2744,7 @@ export default function App() {
                                 placeholder={` ${cantidadBebida1Disponible}`}
                               />
                               <Select
+                              key={resetKey}
                                 className="ml-2"
                                 name="bebidas"
                                 label="Seleccionar bebida"
@@ -2742,6 +2810,7 @@ export default function App() {
                                 placeholder={` ${cantidadBebida2Disponible}`}
                               />
                               <Select
+                              key={resetKey}
                                 className="ml-2"
                                 name="bebidas"
                                 label="Seleccionar bebida"
@@ -2807,6 +2876,7 @@ export default function App() {
                                 placeholder={` ${cantidadBebida3Disponible}`}
                               />
                               <Select
+                              key={resetKey}
                                 className="ml-2"
                                 name="bebidas"
                                 label="Seleccionar bebida"
@@ -2872,6 +2942,7 @@ export default function App() {
                                 placeholder={` ${cantidadBebida4Disponible}`}
                               />
                               <Select
+                              key={resetKey}
                                 className="ml-2"
                                 name="bebidas"
                                 label="Seleccionar bebida"
@@ -2992,6 +3063,7 @@ export default function App() {
                                   style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 />
                                 <Select
+                                  key={resetKey}
                                   className="ml-2 mt-1 "
                                   name="restaurante"
                                   label="Seleccionar comida"
@@ -3050,6 +3122,7 @@ export default function App() {
                                   style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 />
                                 <Select
+                                  key={resetKey}
                                   className="ml-2 mt-1"
                                   name="restaurante"
                                   label="Seleccionar comida"
@@ -3103,6 +3176,7 @@ export default function App() {
                                   style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 />
                                 <Select
+                                  key={resetKey}
                                   className="ml-2 mt-1"
                                   name="restaurante"
                                   label="Seleccionar comida"
@@ -3155,6 +3229,7 @@ export default function App() {
                                   style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 />
                                 <Select
+                                  key={resetKey}
                                   className="ml-2 mt-1"
                                   name="restaurante"
                                   label="Seleccionar comida"
@@ -3207,6 +3282,7 @@ export default function App() {
                                   style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 />
                                 <Select
+                                  key={resetKey}
                                   className="ml-2 mt-1"
                                   name="restaurante"
                                   label="Seleccionar comida"
@@ -3296,6 +3372,7 @@ export default function App() {
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                               />
                               <Select
+                                key={resetKey}
                                 className="ml-2 mt-1"
                                 name="restaurante"
                                 label="Seleccionar comida"
@@ -3349,6 +3426,7 @@ export default function App() {
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                               />
                               <Select
+                                key={resetKey}
                                 className="ml-2 mt-1"
                                 name="restaurante"
                                 label="Seleccionar comida"
@@ -3403,6 +3481,7 @@ export default function App() {
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                               />
                               <Select
+                                key={resetKey}
                                 className="ml-2 mt-1"
                                 name="restaurante"
                                 label="Seleccionar comida"
@@ -3457,6 +3536,7 @@ export default function App() {
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                               />
                               <Select
+                                key={resetKey}
                                 className="ml-2 mt-1"
                                 name="restaurante"
                                 label="Seleccionar comida"
@@ -3511,6 +3591,7 @@ export default function App() {
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                               />
                               <Select
+                                key={resetKey}
                                 className="ml-2 mt-1"
                                 name="restaurante"
                                 label="Seleccionar comida"

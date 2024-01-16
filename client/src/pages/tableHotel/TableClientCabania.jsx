@@ -161,6 +161,7 @@ export default function App() {
 
   const [busqueda, setBusqueda] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [resetKey, setResetKey] = useState(0);
 
   const [filtro, setFiltro] = useState('');
   const [filtro2, setFiltro2] = useState('');
@@ -191,6 +192,8 @@ export default function App() {
     nuevoTotal: ""
   });
 
+
+
   const options = ["Si", "No"];
 
   const toBase64 = (url) => new Promise((resolve, reject) => {
@@ -211,7 +214,7 @@ export default function App() {
   const navigate = useNavigate();
 
   const adicionalCabania = (id) => {
-    console.log(" id de cabañas: ",id)
+    console.log(" id de cabañas: ", id)
     navigate(`/cabania-adicional/${id}`);
     console.log("id del usuario para ver el historial del usuario: " + id)
   };
@@ -372,6 +375,41 @@ export default function App() {
       reserva: selectedSize,
     });
   };
+
+  const resetInputBebida = () => {
+    setCantidadBebida("");
+    setBebidaSeleccionada('');
+    setPrecioBebidaSeleccionada("");
+    setBebidaSeleccionadaId('');
+
+    setCantidadBebida1("");
+    setBebida1Seleccionada('');
+    setPrecioBebida1Seleccionada("");
+    setBebida1SeleccionadaId('');
+
+    setCantidadBebida2("");
+    setBebida2Seleccionada('');
+    setPrecioBebida2Seleccionada("");
+    setBebida2SeleccionadaId('');
+
+    setCantidadBebida3("");
+    setBebida3Seleccionada('');
+    setPrecioBebida3Seleccionada("");
+    setBebida3SeleccionadaId('');
+
+    setCantidadBebida4("");
+    setBebida4Seleccionada('');
+    setPrecioBebida4Seleccionada("");
+    setBebida4SeleccionadaId('');
+
+    setCantidadBebidaDisponible(0)
+    setCantidadBebida1Disponible(0)
+    setCantidadBebida2Disponible(0)
+    setCantidadBebida3Disponible(0)
+    setCantidadBebida4Disponible(0)
+
+    setResetKey(prevKey => prevKey + 1);
+  }
 
   const actualizarInventarioBebida = async (bebidaId, cantidad) => {
     try {
@@ -668,15 +706,7 @@ export default function App() {
         bebida,
       });
       toast.success('Bebida guardada exitosamente!');
-      setCantidadBebida("");
-      setBebidaSeleccionada('');
-      setPrecioBebidaSeleccionada("");
-      setBebidaSeleccionadaId('');
-
-      setCantidadBebida1("");
-      setBebida1Seleccionada('');
-      setPrecioBebida1Seleccionada("");
-      setBebida1SeleccionadaId('');
+      resetInputBebida();
 
       setEsCortesia(false);
 
@@ -696,6 +726,42 @@ export default function App() {
       throw error;
     }
   };
+
+  const resetInpurGuardarFood = () => {
+    setCantidadFood("");
+    setFoodSeleccionada('');
+    setPrecioFoodSeleccionada("");
+    setFoodSeleccionadaId('');
+
+    setCantidadFood1("");
+    setFood1Seleccionada('');
+    setPrecioFood1Seleccionada("");
+    setFood1SeleccionadaId('');
+
+    setCantidadFood2("");
+    setFood2Seleccionada('')
+    setPrecioFood2Seleccionada("");
+    setFood2SeleccionadaId('');
+
+    setCantidadFood3("");
+    setFood3Seleccionada('');
+    setPrecioFood3Seleccionada("");
+    setFood3SeleccionadaId('');
+
+    setCantidadFood4("");
+    setFood4Seleccionada('');
+    setPrecioFood4Seleccionada("");
+    setFood4SeleccionadaId('');
+
+    setCantidadFoodDisponible("")
+    setCantidadFood1Disponible("")
+    setCantidadFood2Disponible("")
+    setCantidadFood3Disponible("")
+    setCantidadFood4Disponible("")
+
+    setResetKey(prevKey => prevKey + 1);
+
+  }
 
   const actualizarInventarioFood = async (foodId, cantidad) => {
     try {
@@ -1013,21 +1079,9 @@ export default function App() {
         food,
       });
       toast.success('Comida guardada exitosamente!');
-      setCantidadFood("");
-      setFoodSeleccionada('');
-      setPrecioFoodSeleccionada("");
-      setFoodSeleccionadaId('');
-
-
-      setCantidadFood1("");
-      setFood1Seleccionada('');
-      setPrecioFood1Seleccionada("");
-      setFood1SeleccionadaId('');
-
-
+      resetInpurGuardarFood();
       setEsCortesia(false);
       setIsSaving(false);
-
       closeModalF();
       const responses = await AxiosInstance.get("/cabania-clientes");
 
@@ -2115,7 +2169,7 @@ export default function App() {
     outline: "none"
   };
 
-  
+
   const handleStatus = async (nuevoEstado, userId) => {
     console.log(userId, nuevoEstado)
     try {
@@ -2460,96 +2514,45 @@ export default function App() {
                             <section className="flex justify-between w-full flex-wrap">
 
                               <div className="mx-5 my-1  w-full">
-
+                                <h4 className="text-green-600">Productos (Bebidas y Comidas)</h4>
 
                                 {/* Combina ambos arrays (bebidas y comidas) y verifica si tiene elementos */}
                                 {selectedUser.bebidas && selectedUser.restaurante &&
-                                  Array.isArray(selectedUser.bebidas) && Array.isArray(selectedUser.restaurante) &&
-                                  [...selectedUser.bebidas, ...selectedUser.restaurante].length > 0 ? (
+                                  Array.isArray(selectedUser.bebidas) && Array.isArray(selectedUser.restaurante) && Array.isArray(selectedUser.descorche) && Array.isArray(selectedUser.recepcion) &&
+                                  [...selectedUser.bebidas, ...selectedUser.restaurante, ...selectedUser.descorche, ...selectedUser.recepcion].length > 0 ? (
                                   <table className="w-full text-center">
                                     <thead>
                                       <tr>
-                                        <th>Nombre</th>
-                                        <th>Cantidad</th>
+                                        <th className=" text-left">Nombre</th>
+                                        <th style={{ width: "100px" }}>Cantidad</th>
+                                        <th>mensaje</th>
                                         <th>Precio Unitario</th>
                                         <th>Total</th>
                                       </tr>
                                     </thead>
                                     <tbody>
                                       {/* Muestra los productos (bebidas y comidas) */}
-                                      {[...selectedUser.bebidas, ...selectedUser.restaurante].map((producto, index) => (
+                                      {[...selectedUser.bebidas, ...selectedUser.restaurante, ...selectedUser.descorche, ...selectedUser.recepcion].map((producto, index) => (
                                         <tr key={index}>
-                                          <td>
-                                            {
-                                              (() => {
-                                                const cincoHorasEnMilisegundos = 3 * 60 * 60 * 1000; // 5 horas en milisegundos
-                                                const ahora = new Date();
-                                                const fechaDeMarca = new Date(producto.fechaDeMarca);
-                                                const diferenciaEnHoras = (ahora - fechaDeMarca) / cincoHorasEnMilisegundos;
-
-                                                return (producto.fechaDeMarca === "" || diferenciaEnHoras <= 3) ? producto.nombre : null;
-                                              })()
-                                            }
-                                          </td>
-                                          <td>
-                                            {
-                                              (() => {
-                                                const cincoHorasEnMilisegundos = 3 * 60 * 60 * 1000; // 5 horas en milisegundos
-                                                const ahora = new Date();
-                                                const fechaDeMarca = new Date(producto.fechaDeMarca);
-                                                const diferenciaEnHoras = (ahora - fechaDeMarca) / cincoHorasEnMilisegundos;
-
-                                                return (producto.fechaDeMarca === "" || diferenciaEnHoras <= 3) ? producto.cantidad : null;
-                                              })()
-                                            }
-                                          </td>
-                                          <td>
-                                            {
-                                              (() => {
-                                                const cincoHorasEnMilisegundos = 3 * 60 * 60 * 1000; // 5 horas en milisegundos
-                                                const ahora = new Date();
-                                                const fechaDeMarca = new Date(producto.fechaDeMarca);
-                                                const diferenciaEnHoras = (ahora - fechaDeMarca) / cincoHorasEnMilisegundos;
-
-                                                return (producto.fechaDeMarca === "" || diferenciaEnHoras <= 3) ? producto.precio : null;
-                                              })()
-                                            }
-                                          </td>
-                                          <td>
-                                            {
-                                              (() => {
-                                                const cincoHorasEnMilisegundos = 3 * 60 * 60 * 1000; // 5 horas en milisegundos
-                                                const ahora = new Date();
-                                                const fechaDeMarca = new Date(producto.fechaDeMarca);
-                                                const diferenciaEnHoras = (ahora - fechaDeMarca) / cincoHorasEnMilisegundos;
-
-                                                return (producto.fechaDeMarca === "" || diferenciaEnHoras <= 3) ? producto.cantidad * producto.precio : null;
-                                              })()
-                                            }
-                                          </td>
+                                          <td className="text-left" style={{ width: "280px" }}>{producto.nombre}</td>
+                                          <td>{producto.cantidad}</td>
+                                          <td>{producto.adicional}</td>
+                                          <td style={{ width: "280px" }} >{producto.precio}</td>
+                                          <td>{producto.cantidad * producto.precio}</td>
                                         </tr>
                                       ))}
                                     </tbody>
                                     <tfoot className="border-t-3 border-green-500 pt-2">
                                       <tr>
-                                        <td className="w-6/12 text-left"></td>
+                                        <td className="text-left"></td>
                                         <td></td>
                                         <td></td>
-                                        <td style={{ height: "60px", paddingRight: "20px", width: "150px" }} className="text-right">
-                                          Total: {
-                                            [...selectedUser.bebidas, ...selectedUser.restaurante]
-                                              .filter(producto => {
-                                                const cincoHorasEnMilisegundos = 3 * 60 * 60 * 1000; // 3 horas en milisegundos
-                                                const ahora = new Date();
-                                                const fechaDeMarca = new Date(producto.fechaDeMarca);
-                                                const diferenciaEnHoras = (ahora - fechaDeMarca) / cincoHorasEnMilisegundos;
-
-                                                return producto.fechaDeMarca === "" || diferenciaEnHoras <= 3;
-                                              })
-                                              .reduce((acc, producto) => acc + (producto.cantidad * producto.precio), 0)
-                                          }
-                                        </td>
-
+                                        <td></td>
+                                        <td style={{ height: "60px", paddingRight: "20px", width: "150px" }} className="text-right">Total: {
+                                          [...selectedUser.bebidas, ...selectedUser.restaurante, ...selectedUser.recepcion, ...selectedUser.descorche].reduce((acc, producto) =>
+                                            acc + (producto.cantidad * producto.precio), 0
+                                          )
+                                        }</td>
                                       </tr>
                                     </tfoot>
                                   </table>
@@ -2729,6 +2732,7 @@ export default function App() {
                                 placeholder={` ${cantidadBebidaDisponible}`}
                               />
                               <Select
+                                key={resetKey}
                                 className="ml-2"
                                 name="bebidas"
                                 label="Seleccionar bebida"
@@ -2794,6 +2798,7 @@ export default function App() {
                                 placeholder={` ${cantidadBebida1Disponible}`}
                               />
                               <Select
+                                key={resetKey}
                                 className="ml-2"
                                 name="bebidas"
                                 label="Seleccionar bebida"
@@ -2859,6 +2864,7 @@ export default function App() {
                                 placeholder={` ${cantidadBebida2Disponible}`}
                               />
                               <Select
+                                key={resetKey}
                                 className="ml-2"
                                 name="bebidas"
                                 label="Seleccionar bebida"
@@ -2924,6 +2930,7 @@ export default function App() {
                                 placeholder={` ${cantidadBebida3Disponible}`}
                               />
                               <Select
+                                key={resetKey}
                                 className="ml-2"
                                 name="bebidas"
                                 label="Seleccionar bebida"
@@ -2989,6 +2996,7 @@ export default function App() {
                                 placeholder={` ${cantidadBebida4Disponible}`}
                               />
                               <Select
+                                key={resetKey}
                                 className="ml-2"
                                 name="bebidas"
                                 label="Seleccionar bebida"
@@ -3108,6 +3116,7 @@ export default function App() {
                                   style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 />
                                 <Select
+                                  key={resetKey}
                                   className="ml-2 mt-1 "
                                   name="restaurante"
                                   label="Seleccionar comida"
@@ -3143,7 +3152,6 @@ export default function App() {
                                   ))}
                                 </Select>
                               </div>
-
                               <div className="flex">
 
                                 <input
@@ -3166,6 +3174,7 @@ export default function App() {
                                   style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 />
                                 <Select
+                                  key={resetKey}
                                   className="ml-2 mt-1"
                                   name="restaurante"
                                   label="Seleccionar comida"
@@ -3220,6 +3229,7 @@ export default function App() {
                                   style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 />
                                 <Select
+                                  key={resetKey}
                                   className="ml-2 mt-1"
                                   name="restaurante"
                                   label="Seleccionar comida"
@@ -3272,6 +3282,7 @@ export default function App() {
                                   style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 />
                                 <Select
+                                  key={resetKey}
                                   className="ml-2 mt-1"
                                   name="restaurante"
                                   label="Seleccionar comida"
@@ -3324,6 +3335,7 @@ export default function App() {
                                   style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 />
                                 <Select
+                                  key={resetKey}
                                   className="ml-2 mt-1"
                                   name="restaurante"
                                   label="Seleccionar comida"
@@ -3397,6 +3409,7 @@ export default function App() {
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                               />
                               <Select
+                              key={resetKey}
                                 className="ml-2 mt-1"
                                 name="restaurante"
                                 label="Seleccionar comida"
@@ -3451,6 +3464,7 @@ export default function App() {
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                               />
                               <Select
+                              key={resetKey}
                                 className="ml-2 mt-1"
                                 name="restaurante"
                                 label="Seleccionar comida"
@@ -3505,6 +3519,7 @@ export default function App() {
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                               />
                               <Select
+                              key={resetKey}
                                 className="ml-2 mt-1"
                                 name="restaurante"
                                 label="Seleccionar comida"
@@ -3559,6 +3574,7 @@ export default function App() {
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                               />
                               <Select
+                              key={resetKey}
                                 className="ml-2 mt-1"
                                 name="restaurante"
                                 label="Seleccionar comida"
@@ -3613,6 +3629,7 @@ export default function App() {
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                               />
                               <Select
+                              key={resetKey}
                                 className="ml-2 mt-1"
                                 name="restaurante"
                                 label="Seleccionar comida"
@@ -3712,7 +3729,7 @@ export default function App() {
                     <DropdownTrigger>
                       <Button className="bg-inherent">
                         <VerticalDotsIcon />
-                      </Button> 
+                      </Button>
                     </DropdownTrigger>
                     {cliente.estado === 'activo' && (
                       <DropdownMenu aria-label="Static Actions">

@@ -1,0 +1,37 @@
+
+
+.finca-article-registro{
+    width: 450px;
+    background-color: white;
+  
+}
+
+.finca-article-registro-title-form{
+    font-size: 20px;
+    font-weight: 600;
+    color: rgb(0, 144, 228);
+    
+    text-align: center;
+}
+
+.finca-figure-registro img{
+    height: 200px;
+    width: 100%;
+}
+
+.finca-registro-form{
+    display: flex;
+    flex-direction: column;
+    width: 450px;
+    background-color: white;
+    
+}
+
+.finca-registro-form-input{
+    height: 40px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    background-color: rgb(240, 240, 240);
+    outline: none;
+   
+}

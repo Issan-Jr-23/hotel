@@ -370,6 +370,41 @@ export default function App() {
     });
   };
 
+  const resetInputBebida = () => {
+    setCantidadBebida("");
+    setBebidaSeleccionada('');
+    setPrecioBebidaSeleccionada("");
+    setBebidaSeleccionadaId('');
+
+    setCantidadBebida1("");
+    setBebida1Seleccionada('');
+    setPrecioBebida1Seleccionada("");
+    setBebida1SeleccionadaId('');
+
+    setCantidadBebida2("");
+    setBebida2Seleccionada('');
+    setPrecioBebida2Seleccionada("");
+    setBebida2SeleccionadaId('');
+
+    setCantidadBebida3("");
+    setBebida3Seleccionada('');
+    setPrecioBebida3Seleccionada("");
+    setBebida3SeleccionadaId('');
+
+    setCantidadBebida4("");
+    setBebida4Seleccionada('');
+    setPrecioBebida4Seleccionada("");
+    setBebida4SeleccionadaId('');
+
+    setCantidadBebidaDisponible(0)
+    setCantidadBebida1Disponible(0)
+    setCantidadBebida2Disponible(0)
+    setCantidadBebida3Disponible(0)
+    setCantidadBebida4Disponible(0)
+
+    setResetKey(prevKey => prevKey + 1);
+  }
+
   const actualizarInventarioBebida = async (bebidaId, cantidad) => {
     try {
       const response = await AxiosInstances.post('/actualizar-inventario-bebida', {
@@ -399,10 +434,14 @@ export default function App() {
   };
 
   const handleGuardarBebida = async () => {
+
+    if (isSaving) return;
+    setIsSaving(true);
+
     if (!selectedClientId || (!bebidaSeleccionadaId && !bebida1SeleccionadaId && !bebida2SeleccionadaId && !bebida3SeleccionadaId && !bebida4SeleccionadaId)) {
       toast.error('No se ha seleccionado un cliente o una Bebida.');
-      toast.
-        return;
+      setIsSaving(false);
+      return;
     }
 
     const checkStockAndUpdateInventory = async (bebidaId, cantidad) => {
@@ -487,6 +526,7 @@ export default function App() {
 
     try {
       if (!selectedClientId || (!bebidaSeleccionadaId && !bebida1SeleccionadaId && !bebida2SeleccionadaId && !bebida3SeleccionadaId && !bebida4SeleccionadaId)) {
+        setIsSaving(false);
         throw new Error('No se ha seleccionado un cliente o una bebida.');
       }
 
@@ -670,22 +710,22 @@ export default function App() {
 
       if (!isBebidaAdded) {
         alert("No se ha agregado ninguna bebida");
-      } else {
-        onClose(); // Close the modal after adding drinks
       }
     } catch (error) {
+      setIsSaving(false);
       console.error('Error al guardar las bebidas en el cliente:', error.message);
     }
   };
 
   const guardarBebida = async (bebida) => {
     try {
-      const response = await AxiosInstances.post('/pasadia-agregar-bebida', {
+      await AxiosInstances.post('/pasadia-agregar-bebida', {
         id: selectedClientId,
         bebida,
       });
       toast.success('Bebida guardada exitosamente!');
-      limpiarCampos();
+      resetInputBebida();
+      setIsSaving(false);
 
       setEsCortesia(false);
       const responses = await AxiosInstances.get("/pasadia-clientes");
@@ -695,11 +735,48 @@ export default function App() {
       setUsers(usuariosOrdenados);
       closeModalM();
     } catch (error) {
+      setIsSaving(false);
       console.error('Error al guardar la bebida en el cliente:', error.message);
       throw error;
     }
   };
   //#endregion 
+
+  const resetInpurGuardarFood = () => {
+    setCantidadFood("");
+    setFoodSeleccionada('');
+    setPrecioFoodSeleccionada("");
+    setFoodSeleccionadaId('');
+
+    setCantidadFood1("");
+    setFood1Seleccionada('');
+    setPrecioFood1Seleccionada("");
+    setFood1SeleccionadaId('');
+
+    setCantidadFood2("");
+    setFood2Seleccionada('')
+    setPrecioFood2Seleccionada("");
+    setFood2SeleccionadaId('');
+
+    setCantidadFood3("");
+    setFood3Seleccionada('');
+    setPrecioFood3Seleccionada("");
+    setFood3SeleccionadaId('');
+
+    setCantidadFood4("");
+    setFood4Seleccionada('');
+    setPrecioFood4Seleccionada("");
+    setFood4SeleccionadaId('');
+
+    setCantidadFoodDisponible("")
+    setCantidadFood1Disponible("")
+    setCantidadFood2Disponible("")
+    setCantidadFood3Disponible("")
+    setCantidadFood4Disponible("")
+
+    setResetKey(prevKey => prevKey + 1);
+
+  }
 
   const guardarCortesiaFoodInventory = async (foodId, cantidad) => {
     console.log("datos de las cortesias que se guardaran: ", foodId, cantidad)
@@ -1057,7 +1134,7 @@ export default function App() {
         food,
       });
       toast.success('Comida guardada exitosamente!');
-      limpiarCampos1();
+      resetInpurGuardarFood();
       setEsCortesia(false);
       closeModalF();
       setIsSaving(false);
@@ -1694,29 +1771,7 @@ export default function App() {
   //#endregion
 
 
-  const limpiarItems = async () => {
-    setItemSeleccionado("");
-    setCantidadItem("");
-    setPrecioItemSeleccionado("");
-    setItemSeleccionadoId("");
-    setSubItemSeleccionadoId("");
-    setCantidadFoodDisponible("");
 
-    const response = await AxiosInstances.get("/food");
-    const allProducts = response.data;
-
-    let subProducts = [];
-    allProducts.forEach(product => {
-      if (product.subproductos) {
-        const subProductosConCantidadPadre = product.subproductos.map(sub => {
-          return { ...sub, cantidadPadre: product.CantidadInicial, idPadre: product._id };
-        });
-        subProducts = subProducts.concat(subProductosConCantidadPadre);
-      }
-    });
-
-    setComidas(subProducts);
-  }
 
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm(
@@ -1736,6 +1791,59 @@ export default function App() {
     }
   };
 
+  const limpiarItems = async () => {
+
+    setItemSeleccionado("");
+    setCantidadItem("");
+    setPrecioItemSeleccionado("");
+    setItemSeleccionadoId("");
+    setSubItemSeleccionadoId("");
+    setCantidadFoodDisponible("");
+
+    setItemSeleccionado1("");
+    setCantidadItem1("");
+    setPrecioItemSeleccionado1("");
+    setItemSeleccionadoId1("");
+    setSubItemSeleccionadoId1("");
+    setCantidadFood1Disponible("");
+
+    setItemSeleccionado2("");
+    setCantidadItem2("");
+    setPrecioItemSeleccionado2("");
+    setItemSeleccionadoId2("");
+    setSubItemSeleccionadoId2("");
+    setCantidadFood2Disponible("");
+
+    setItemSeleccionado3("");
+    setCantidadItem3("");
+    setPrecioItemSeleccionado3("");
+    setItemSeleccionadoId3("");
+    setSubItemSeleccionadoId3("");
+    setCantidadFood3Disponible("");
+
+    setItemSeleccionado4("");
+    setCantidadItem4("");
+    setPrecioItemSeleccionado4("");
+    setItemSeleccionadoId4("");
+    setSubItemSeleccionadoId4("");
+    setCantidadFood4Disponible("");
+
+    const response = await AxiosInstances.get("/food");
+    const allProducts = response.data;
+
+    let subProducts = [];
+    allProducts.forEach(product => {
+      if (product.subproductos) {
+        const subProductosConCantidadPadre = product.subproductos.map(sub => {
+          return { ...sub, cantidadPadre: product.CantidadInicial, idPadre: product._id };
+        });
+        subProducts = subProducts.concat(subProductosConCantidadPadre);
+      }
+    });
+
+    setComidas(subProducts);
+
+  }
 
   const actualizarInventarioItem = async (foodId, subproductoId, cantidad) => {
     console.log("peticion actualizar inventario item: " + foodId, subproductoId, cantidad)
@@ -1776,7 +1884,6 @@ export default function App() {
       console.error('Error al enviar la petición:', error.message);
     }
   };
-
 
   const handleGuardarItem = async () => {
     if (isSaving) return;
@@ -2090,10 +2197,9 @@ export default function App() {
 
   }
 
-
   const guardarItem = async (food) => {
     try {
-      const response = await AxiosInstances.post('/pasadia-agregar-food', {
+      await AxiosInstances.post('/pasadia-agregar-food', {
         id: selectedClientId,
         food,
       });
@@ -2156,7 +2262,6 @@ export default function App() {
   };
 
   //#endregion
-
 
   const style = {
     position: 'absolute',
@@ -2503,94 +2608,45 @@ export default function App() {
 
                               {/* Sección de Productos (Bebidas + Comidas) */}
                               <div className="mx-5 my-1  w-full">
+                                <h4 className="text-green-600">Productos (Bebidas y Comidas)</h4>
+
                                 {/* Combina ambos arrays (bebidas y comidas) y verifica si tiene elementos */}
                                 {selectedUser.bebidas && selectedUser.restaurante &&
-                                  Array.isArray(selectedUser.bebidas) && Array.isArray(selectedUser.restaurante) &&
-                                  [...selectedUser.bebidas, ...selectedUser.restaurante].length > 0 ? (
+                                  Array.isArray(selectedUser.bebidas) && Array.isArray(selectedUser.restaurante) && Array.isArray(selectedUser.descorche) && Array.isArray(selectedUser.recepcion) &&
+                                  [...selectedUser.bebidas, ...selectedUser.restaurante, ...selectedUser.descorche, ...selectedUser.recepcion].length > 0 ? (
                                   <table className="w-full text-center">
                                     <thead>
                                       <tr>
-                                        <th className="table-padding">Nombre</th>
-                                        <th className="table-padding">Cantidad</th>
-                                        <th className="table-padding">Precio Unitario</th>
-                                        <th className="table-padding">Total</th>
+                                        <th className=" text-left">Nombre</th>
+                                        <th style={{width:"100px"}}>Cantidad</th>
+                                        <th>mensaje</th>
+                                        <th>Precio Unitario</th>
+                                        <th>Total</th>
                                       </tr>
                                     </thead>
                                     <tbody>
                                       {/* Muestra los productos (bebidas y comidas) */}
-                                      {[...selectedUser.bebidas, ...selectedUser.restaurante].map((producto, index) => (
+                                      {[...selectedUser.bebidas, ...selectedUser.restaurante, ...selectedUser.descorche, ...selectedUser.recepcion].map((producto, index) => (
                                         <tr key={index}>
-                                          <td>
-                                            {
-                                              (() => {
-                                                const cincoHorasEnMilisegundos = 3 * 60 * 60 * 1000; // 5 horas en milisegundos
-                                                const ahora = new Date();
-                                                const fechaDeMarca = new Date(producto.fechaDeMarca);
-                                                const diferenciaEnHoras = (ahora - fechaDeMarca) / cincoHorasEnMilisegundos;
-
-                                                return (producto.fechaDeMarca === "" || diferenciaEnHoras <= 3) ? producto.nombre : null;
-                                              })()
-                                            }
-                                          </td>
-                                          <td>
-                                            {
-                                              (() => {
-                                                const cincoHorasEnMilisegundos = 3 * 60 * 60 * 1000; // 5 horas en milisegundos
-                                                const ahora = new Date();
-                                                const fechaDeMarca = new Date(producto.fechaDeMarca);
-                                                const diferenciaEnHoras = (ahora - fechaDeMarca) / cincoHorasEnMilisegundos;
-
-                                                return (producto.fechaDeMarca === "" || diferenciaEnHoras <= 3) ? producto.cantidad : null;
-                                              })()
-                                            }
-                                          </td>
-                                          <td>
-                                            {
-                                              (() => {
-                                                const cincoHorasEnMilisegundos = 3 * 60 * 60 * 1000; // 5 horas en milisegundos
-                                                const ahora = new Date();
-                                                const fechaDeMarca = new Date(producto.fechaDeMarca);
-                                                const diferenciaEnHoras = (ahora - fechaDeMarca) / cincoHorasEnMilisegundos;
-
-                                                return (producto.fechaDeMarca === "" || diferenciaEnHoras <= 3) ? producto.precio : null;
-                                              })()
-                                            }
-                                          </td>
-                                          <td>
-                                            {
-                                              (() => {
-                                                const cincoHorasEnMilisegundos = 3 * 60 * 60 * 1000; // 5 horas en milisegundos
-                                                const ahora = new Date();
-                                                const fechaDeMarca = new Date(producto.fechaDeMarca);
-                                                const diferenciaEnHoras = (ahora - fechaDeMarca) / cincoHorasEnMilisegundos;
-
-                                                return (producto.fechaDeMarca === "" || diferenciaEnHoras <= 3) ? producto.cantidad * producto.precio : null;
-                                              })()
-                                            }
-                                          </td>
+                                          <td className="text-left" style={{width:"280px"}}>{producto.nombre}</td>
+                                          <td>{producto.cantidad}</td>
+                                          <td>{producto.adicional}</td>
+                                          <td  style={{width:"280px"}} >{producto.precio}</td>
+                                          <td>{producto.cantidad * producto.precio}</td>
                                         </tr>
                                       ))}
                                     </tbody>
                                     <tfoot className="border-t-3 border-green-500 pt-2">
                                       <tr>
-                                        <td className="w-6/12 text-left"></td>
+                                        <td className="text-left"></td>
                                         <td></td>
                                         <td></td>
-                                        <td style={{ height: "60px", paddingRight: "20px", width: "150px" }} className="text-right">
-                                          Total: {
-                                            [...selectedUser.bebidas, ...selectedUser.restaurante]
-                                              .filter(producto => {
-                                                const cincoHorasEnMilisegundos = 3 * 60 * 60 * 1000; // 3 horas en milisegundos
-                                                const ahora = new Date();
-                                                const fechaDeMarca = new Date(producto.fechaDeMarca);
-                                                const diferenciaEnHoras = (ahora - fechaDeMarca) / cincoHorasEnMilisegundos;
-
-                                                return producto.fechaDeMarca === "" || diferenciaEnHoras <= 3;
-                                              })
-                                              .reduce((acc, producto) => acc + (producto.cantidad * producto.precio), 0)
-                                          }
-                                        </td>
-
+                                        <td></td>
+                                        <td style={{ height: "60px", paddingRight: "20px", width: "150px" }} className="text-right">Total: {
+                                          [...selectedUser.bebidas, ...selectedUser.restaurante, ...selectedUser.recepcion, ...selectedUser.descorche].reduce((acc, producto) =>
+                                            acc + (producto.cantidad * producto.precio), 0
+                                          )
+                                        }</td>
                                       </tr>
                                     </tfoot>
                                   </table>
@@ -2885,42 +2941,6 @@ export default function App() {
                     </Box>
                   </Modal> */}
                 </TableCell>
-
-                {/* <TableCell>
-                  {cliente._id === editedUserId ? (
-                    <Input
-                      className="w-52"
-                      value={editedReserva}
-                      onChange={(e) => setEditedReserva(e.target.value)}
-                    />
-                  ) : (
-                    cliente.reserva
-
-                  )}
-               
-               
-                </TableCell>
-                <TableCell>
-                  {cliente._id === editedUserId ? (
-                    <div>
-                      <Input
-                        className="w-52"
-                        value={editedDate}
-                        onChange={(e) => setEditedDate(e.target.value)}
-                      />
-                    </div>
-                  ) : (
-                    new Date(cliente.fechaPasadia).toLocaleDateString('es-ES', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                    })
-
-                  )}
-                </TableCell> */}
-
-
-
 
                 <TableCell key={cliente._id} className="">
 
@@ -3219,7 +3239,7 @@ export default function App() {
                             <Button color="danger" variant="light" onPress={handleCloseMd}>
                               Close
                             </Button>
-                            <Button color="primary" onClick={handleGuardarBebida}>
+                            <Button color="primary" onClick={handleGuardarBebida} disabled={isSaving} >
                               Ahorrar
                             </Button>
                           </Typography>
@@ -3850,7 +3870,7 @@ export default function App() {
                             <Typography component="div" >
                               <Button color="danger" variant="light" onPress={closeModalF}>
                                 Close                              </Button>
-                              <Button color="primary" onClick={handleGuardarItem}>
+                              <Button color="primary" onClick={handleGuardarItem} disabled={isSaving}>
                                 Ahorrar
                               </Button>
                             </Typography>

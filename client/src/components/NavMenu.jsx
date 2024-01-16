@@ -160,13 +160,13 @@ const NavMenu = () => {
                     <AccordionItem className='flex flex-col' key="1" aria-label="Accordion 1" title={
                         <div className='flex'>
                             <img src={StockFinca} style={{ width: "23px", marginBottom: "5px" }} className='ml-1 mr-3' />
-                            <span className='ml-2 text-white'>Finca stock</span>
+                            <span className='ml-2 text-white'>Finca</span>
                         </div>
 
                     }
                         style={{ height: "auto", display: "flex", flexDirection: "column", overflow: "hidden" }}>
                         <div className=' flex flex-col pl-9' style={{ overflow: "hidden" }} >
-                            <Link className='mb-1 pt-2 pb-2' >List</Link>
+                            <Link to="/crear-registro" className='mb-1 pt-2 pb-2' >Crear</Link>
                             <Link className='mb-1 pt-2 pb-2' >Create</Link>
                         </div>
                     </AccordionItem>
