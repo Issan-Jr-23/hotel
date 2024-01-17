@@ -778,9 +778,7 @@ const Adicionales = () => {
     }
 
     const handleGuardarDescorche = async () => {
-        if ((descripcionDescorche === "" && valorDescorche === "") || (descripcionDescorche1 === "" && valorDescorche1 === "")) {
-            console.log("Successfully");
-        } else {
+        if ((descripcionDescorche !== "" && valorDescorche === "") || (descripcionDescorche1 !== "" && valorDescorche1 === "")) {
             toast.error("Por favor, completa tanto la descripción como el valor antes de guardar.");
             return;
         }

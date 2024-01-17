@@ -281,6 +281,8 @@ const TransferirData = () => {
                                       data.pagoPendiente,
                                       data.bebidas,
                                       data.restaurante,
+                                      data.recepcion,
+                                      data.descorche,
                                       data.servicio
                                     );
                                     Swal.fire({

@@ -1,6 +1,8 @@
 // usuarioController.js
 import Usuario from "../models/transferencia.model.js";
 import Cliente from "../models/client.model.js";
+// import Cabania from "../model/cabania.model.js"
+// import Habitaciones from "../model/habiataciones.model.js"
 
 export const agregarOActualizarUsuario = async (req, res) => {
   const { identificacion, datosHistorial } = req.body;
@@ -112,8 +114,6 @@ export const obtenerHistorialReservasSi = async (req, res) => {
   }
 };
 
-
-
 export const obtenerTotalesNiniosYAdultosEnPasadia = async (req, res) => {
   try {
     const usuarios = await Usuario.find();
@@ -145,7 +145,7 @@ export const obtenerTotalesNiniosYAdultosEnPasadia = async (req, res) => {
   }
 };
 
-export const totalgenerado = async (req, res) => {
+export const totalgeneradoPas = async (req, res) => {
   try {
     const usuarios = await Usuario.find();
     const clientes = await Cliente.find();
@@ -241,3 +241,143 @@ export const totalPructosCortesias = async (req, res) => {
     res.status(500).send("Error al procesar la solicitud");
   }
 };
+
+export const totalGeneradoBar = async(req, res) => {
+  try {
+    const pasadia = await Cliente.find() 
+    const historial = await Usuario.find()
+
+    let total = 0;
+    let totalRestaurante = 0;
+    let totalRecepcion = 0;
+    let totalDescorche = 0;
+
+    let totalHbebidas = 0;
+    let totalHrestaurante = 0;
+    let totalHrecepcion = 0;
+    let totalHdescorche = 0;
+    // vista
+
+    pasadia.forEach((b) => {
+      b.bebidas.forEach((data) => {
+        total += data.cantidad * data.precio;
+      })
+    })
+    
+    historial.forEach((hb) => {
+      hb.historial.forEach((data) =>{
+        data.bebidas.forEach((response) =>{
+          totalHbebidas += response.cantidad * response.precio 
+        })
+      }) 
+    })
+
+    //
+
+    pasadia.forEach((r) => {
+      r.restaurante.forEach((data) => {
+        totalRestaurante += data.cantidad * data.precio
+      })
+    })
+    historial.forEach((hr) => {
+      hr.historial.forEach((data) => {
+        if (data.servicio === "pasadia") {
+          data.restaurante.forEach((response) => {
+            if (response.precio !== 0 ) {
+              totalHrestaurante += response.cantidad * response.precio;
+            }
+          });
+        }
+      });
+    });
+
+    //
+
+    pasadia.forEach((rec) => {
+      rec.recepcion.forEach((data) => {
+        totalRecepcion += data.cantidad * data.precio; 
+      })
+    })
+    historial.forEach((hrec) => {
+      hrec.historial.forEach((data) => {
+        if (data.servicio === "pasadia") {
+          data.recepcion.forEach((response) => {
+            if (response.precio !== 0 ) {
+              totalHrecepcion += response.cantidad * response.precio;
+            }
+          });
+        }
+      });
+    });
+
+
+    //
+    pasadia.forEach((desc) => {
+      desc.descorche.forEach((data) =>{
+        totalDescorche += data.cantidad * data.precio; 
+      })
+    })
+    historial.forEach((hDesc) =>{
+      hDesc.descorche.forEach((data) => {
+        if (data.servicio === "pasadia") {
+          totalHdescorche += data.cantidad * data.precio; 
+        }
+      })
+    })
+
+    // fin de vista
+
+    // inicio de vista historial
+
+
+
+
+
+
+    historial.forEach((hrec) => {
+      hrec.historial.forEach((data) => {
+        if (data.servicio === "cabania") {
+          data.recepcion.forEach((response) => {
+            if (response.precio !== 0 ) {
+              totalHrecepcion += response.cantidad * response.precio;
+            }
+          });
+        }
+      });
+    });
+
+    historial.forEach((hrec) => {
+      hrec.historial.forEach((data) => {
+        if (data.servicio === "habitaciones") {
+          data.recepcion.forEach((response) => {
+            if (response.precio !== 0 ) {
+              totalHrecepcion += response.cantidad * response.precio;
+            }
+          });
+        }
+      });
+    });
+
+    // const totalidad = total + totalRestaurante + totalRecepcion + totalDescorche ;
+    // bebidas: total,
+    // restaurante: totalRestaurante,
+    // recepcion: totalRecepcion
+
+    const totalidadBar = total + totalHbebidas;
+    const totalidadRestaurante = totalRestaurante + totalHrestaurante;
+    const totalidadRecepcion = totalRecepcion + totalHrecepcion;
+    const totalidadDescorche = totalDescorche + totalHdescorche;
+
+
+    res.status(200).json({
+      bar: totalidadBar,
+      restaurante: totalidadRestaurante,
+      recepcion: totalidadRecepcion,
+      descorche: totalidadDescorche
+    })
+
+  }catch(error){
+    console.log(error)
+  }
+
+}

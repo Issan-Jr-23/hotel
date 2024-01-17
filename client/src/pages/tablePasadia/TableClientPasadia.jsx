@@ -53,6 +53,11 @@ export default function App() {
   const handleCloseFz = () => setOpenFz(false);
   const handleCloseTd = () => setOpenTd(false);
   const handleClose = () => setOpen(false);
+  const [resetKey, setResetKey] = useState(0);
+  const [resetKey1, setResetKey1] = useState(0);
+  const [resetKey2, setResetKey2] = useState(0);
+  const [resetKey3, setResetKey3] = useState(0);
+  const [resetKey4, setResetKey4] = useState(0);
 
   //#region
 
@@ -370,41 +375,6 @@ export default function App() {
     });
   };
 
-  const resetInputBebida = () => {
-    setCantidadBebida("");
-    setBebidaSeleccionada('');
-    setPrecioBebidaSeleccionada("");
-    setBebidaSeleccionadaId('');
-
-    setCantidadBebida1("");
-    setBebida1Seleccionada('');
-    setPrecioBebida1Seleccionada("");
-    setBebida1SeleccionadaId('');
-
-    setCantidadBebida2("");
-    setBebida2Seleccionada('');
-    setPrecioBebida2Seleccionada("");
-    setBebida2SeleccionadaId('');
-
-    setCantidadBebida3("");
-    setBebida3Seleccionada('');
-    setPrecioBebida3Seleccionada("");
-    setBebida3SeleccionadaId('');
-
-    setCantidadBebida4("");
-    setBebida4Seleccionada('');
-    setPrecioBebida4Seleccionada("");
-    setBebida4SeleccionadaId('');
-
-    setCantidadBebidaDisponible(0)
-    setCantidadBebida1Disponible(0)
-    setCantidadBebida2Disponible(0)
-    setCantidadBebida3Disponible(0)
-    setCantidadBebida4Disponible(0)
-
-    setResetKey(prevKey => prevKey + 1);
-  }
-
   const actualizarInventarioBebida = async (bebidaId, cantidad) => {
     try {
       const response = await AxiosInstances.post('/actualizar-inventario-bebida', {
@@ -545,6 +515,11 @@ export default function App() {
               fecha: obtenerFechaConAjuste()
             };
             await guardarBebida(bebidaCortesia);
+            setCantidadBebida("");
+            setBebidaSeleccionada('');
+            setPrecioBebidaSeleccionada("");
+            setBebidaSeleccionadaId('');
+            setCantidadBebidaDisponible(0)
             atLeastOneCortesiaSaved = true;
           }
         }
@@ -637,6 +612,12 @@ export default function App() {
 
         if (await checkStockAndUpdateInventory(bebidaSeleccionadaId, cantidadBebida)) {
           await guardarBebida(bebidaAdultos);
+          setCantidadBebida("");
+          setBebidaSeleccionada('');
+          setPrecioBebidaSeleccionada("");
+          setBebidaSeleccionadaId('');
+          setCantidadBebidaDisponible(0)
+          setResetKey(prevKey => prevKey + 1);
           isBebidaAdded = true;
         }
       }
@@ -653,6 +634,12 @@ export default function App() {
 
         if (await checkStockAndUpdateInventory(bebida1SeleccionadaId, cantidadBebida1)) {
           await guardarBebida(bebidaAdultos1);
+          setCantidadBebida1("");
+          setBebida1Seleccionada('');
+          setPrecioBebida1Seleccionada("");
+          setBebida1SeleccionadaId('');
+          setCantidadBebida1Disponible(0)
+          setResetKey1(prevKey => prevKey + 1);
           isBebidaAdded = true;
         }
       }
@@ -670,6 +657,12 @@ export default function App() {
 
         if (await checkStockAndUpdateInventory(bebida2SeleccionadaId, cantidadBebida2)) {
           await guardarBebida(bebidaAdultos2);
+          setCantidadBebida2("");
+          setBebida2Seleccionada('');
+          setPrecioBebida2Seleccionada("");
+          setBebida2SeleccionadaId('');
+          setCantidadBebida2Disponible(0)
+          setResetKey2(prevKey => prevKey + 1);
           isBebidaAdded = true;
         }
       }
@@ -687,6 +680,12 @@ export default function App() {
 
         if (await checkStockAndUpdateInventory(bebida3SeleccionadaId, cantidadBebida3)) {
           await guardarBebida(bebidaAdultos3);
+          setCantidadBebida3("");
+          setBebida3Seleccionada('');
+          setPrecioBebida3Seleccionada("");
+          setBebida3SeleccionadaId('');
+          setCantidadBebida3Disponible(0)
+          setResetKey3(prevKey => prevKey + 1);
           isBebidaAdded = true;
         }
       }
@@ -704,12 +703,19 @@ export default function App() {
 
         if (await checkStockAndUpdateInventory(bebida4SeleccionadaId, cantidadBebida4)) {
           await guardarBebida(bebidaAdultos4);
+          setCantidadBebida4("");
+          setBebida4Seleccionada('');
+          setPrecioBebida4Seleccionada("");
+          setBebida4SeleccionadaId('');
+          setCantidadBebida4Disponible(0)
+          setResetKey4(prevKey => prevKey + 1);
           isBebidaAdded = true;
         }
       }
 
       if (!isBebidaAdded) {
         alert("No se ha agregado ninguna bebida");
+        setIsSaving(false);
       }
     } catch (error) {
       setIsSaving(false);
@@ -724,7 +730,7 @@ export default function App() {
         bebida,
       });
       toast.success('Bebida guardada exitosamente!');
-      resetInputBebida();
+
       setIsSaving(false);
 
       setEsCortesia(false);
@@ -2618,7 +2624,7 @@ export default function App() {
                                     <thead>
                                       <tr>
                                         <th className=" text-left">Nombre</th>
-                                        <th style={{width:"100px"}}>Cantidad</th>
+                                        <th style={{ width: "100px" }}>Cantidad</th>
                                         <th>mensaje</th>
                                         <th>Precio Unitario</th>
                                         <th>Total</th>
@@ -2628,10 +2634,10 @@ export default function App() {
                                       {/* Muestra los productos (bebidas y comidas) */}
                                       {[...selectedUser.bebidas, ...selectedUser.restaurante, ...selectedUser.descorche, ...selectedUser.recepcion].map((producto, index) => (
                                         <tr key={index}>
-                                          <td className="text-left" style={{width:"280px"}}>{producto.nombre}</td>
+                                          <td className="text-left" style={{ width: "280px" }}>{producto.nombre}</td>
                                           <td>{producto.cantidad}</td>
                                           <td>{producto.adicional}</td>
-                                          <td  style={{width:"280px"}} >{producto.precio}</td>
+                                          <td style={{ width: "280px" }} >{producto.precio}</td>
                                           <td>{producto.cantidad * producto.precio}</td>
                                         </tr>
                                       ))}
@@ -2999,6 +3005,7 @@ export default function App() {
                               />
 
                               <Select
+                                key={resetKey}
                                 className="ml-2 mt-1 h-32"
                                 name="bebidas"
                                 label="Seleccionar bebida"
@@ -3051,6 +3058,7 @@ export default function App() {
                                 style={{ height: "54px" }}
                               />
                               <Select
+                                key={resetKey1}
                                 className="ml-2 mt-1"
                                 name="bebidas"
                                 label="Seleccionar bebida"
@@ -3103,6 +3111,7 @@ export default function App() {
                                 style={{ height: "54px" }}
                               />
                               <Select
+                                key={resetKey2}
                                 className="ml-2 mt-1"
                                 name="bebidas"
                                 label="Seleccionar bebida"
@@ -3154,6 +3163,7 @@ export default function App() {
                                 style={{ height: "54px" }}
                               />
                               <Select
+                                key={resetKey3}
                                 className="ml-2 mt-1"
                                 name="bebidas"
                                 label="Seleccionar bebida"
@@ -3205,6 +3215,7 @@ export default function App() {
                               />
 
                               <Select
+                                key={resetKey4}
                                 className="ml-2 mt-1"
                                 name="bebidas"
                                 label="Seleccionar bebida"
@@ -3384,7 +3395,7 @@ export default function App() {
                                         setFood1SeleccionadaId(food1SeleccionadaInfo._id);
                                         setCantidadFood1Disponible(food1SeleccionadaInfo.CantidadInicial);
                                       }
-                                      
+
                                     } else {
                                       setPrecioFood1Seleccionada(0);
                                       setCantidadFood1Disponible(0);
@@ -3627,7 +3638,7 @@ export default function App() {
 
                                   if (selectedItem) {
                                     const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
-  
+
                                     if (itemSeleccionadaInfo) {
                                       setPrecioItemSeleccionado(itemSeleccionadaInfo.ValorUnitario);
                                       setItemSeleccionadoId(itemSeleccionadaInfo.idPadre);
@@ -3735,7 +3746,7 @@ export default function App() {
 
                                   if (selectedItem) {
                                     const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
-  
+
                                     if (itemSeleccionadaInfo) {
                                       setPrecioItemSeleccionado2(itemSeleccionadaInfo.ValorUnitario);
                                       setItemSeleccionadoId2(itemSeleccionadaInfo.idPadre);
@@ -3789,7 +3800,7 @@ export default function App() {
 
                                   if (selectedItem) {
                                     const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
-  
+
                                     if (itemSeleccionadaInfo) {
                                       setPrecioItemSeleccionado3(itemSeleccionadaInfo.ValorUnitario);
                                       setItemSeleccionadoId3(itemSeleccionadaInfo.idPadre);
@@ -3843,7 +3854,7 @@ export default function App() {
 
                                   if (selectedItem) {
                                     const itemSeleccionadaInfo = comidas.find(food => food.Descripcion === selectedItem);
-  
+
                                     if (itemSeleccionadaInfo) {
                                       setPrecioItemSeleccionado4(itemSeleccionadaInfo.ValorUnitario);
                                       setItemSeleccionadoId4(itemSeleccionadaInfo.idPadre);
@@ -3883,7 +3894,7 @@ export default function App() {
                     </Box>
                   </Modal>
                 </TableCell>
-                
+
                 <TableCell> {cliente.nuevoTotal}</TableCell>
 
                 <TableCell className="flex justify-center align-center">

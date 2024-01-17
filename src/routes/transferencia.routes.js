@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { agregarOActualizarUsuario, obtenerHistorial, obtenerHistorialDeUsuario, obtenerHistorialReservasNo, obtenerHistorialReservasSi, obtenerTotalesNiniosYAdultosEnPasadia, totalPructosCortesias, totalPructosVendidos, totalgenerado } from "../controllers/transferencia.controllers.js";
+import { agregarOActualizarUsuario, obtenerHistorial, obtenerHistorialDeUsuario, obtenerHistorialReservasNo, obtenerHistorialReservasSi, obtenerTotalesNiniosYAdultosEnPasadia, totalPructosCortesias, totalPructosVendidos} from "../controllers/transferencia.controllers.js";
 
 
 const router = Router()
@@ -11,7 +11,7 @@ router.get("/obtener-historial/:id",obtenerHistorialDeUsuario);
 router.get('/obtener-historial-reservas-si',obtenerHistorialReservasSi);
 router.get('/obtener-historial-reservas-no',obtenerHistorialReservasNo);
 router.get('/obtener-cantidad-usuarios',obtenerTotalesNiniosYAdultosEnPasadia);
-router.get('/total-generado-pasadia',totalgenerado);
+
 router.get('/productos-vendidos-pasadia',totalPructosVendidos);
 router.get('/productos-cortesias-pasadia',totalPructosCortesias);
  
