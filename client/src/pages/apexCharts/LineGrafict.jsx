@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import AxiosInstance from "../../api/axios.js"
 
 const MyComponent = () => {
+  
   const [totalVentaPasadia, setTotalVentaPasadia] = useState(0);
   const [totalVentaCabania, setTotalVentaCabania] = useState(0);
   const [totalVentaHabitaciones, setTotalVentaHabitaciones] = useState(0);
@@ -85,10 +86,10 @@ const MyComponent = () => {
         type: 'column'
       },
       title: {
-        text: 'Ventas de Pasadía por Subcategoría'
+        text: ''
       },
       xAxis: {
-        categories: ['Pasadía']
+        categories: ["data"] 
       },
       yAxis: {
         min: 0,
@@ -110,58 +111,99 @@ const MyComponent = () => {
       plotOptions: {
         column: {
           stacking: 'normal',
-          minPointLength: 5,
-          events: {
-            legendItemClick: function () {
-              if (this.name === 'Total Pasadía') {
-                var series = this.chart.series;
-                series.forEach(function (s) {
-                  if (s.name !== 'Total Pasadía') {
-                    s.setVisible(!s.visible, false);
-                  }
-                });
-                this.chart.redraw();
-                return false;
-              }
-            }
-          }
+          minPointLength: 7,
+          
         }
       },
       series: [
         {
           name: 'Total Pasadía',
           data: [{ y: totalVentaPasadia }],
+        },
+        {
+          name: 'Bar pasadía',
+          data: [{ y: bar }],
+          showInLegend: true
+        },
+        {
+          name: 'Restaurante pasadía',
+          data: [{ y: restaurante }],
+          showInLegend: true
+        },
+        {
+          name: 'Recepcion pasadía',
+          data: [{ y: recepcion }],
+          showInLegend: true
+        },
+        {
+          name: 'Descorche pasadía',
+          data: [{ y: descorche }],
+          showInLegend: true
+        },
+
+        {
+          name: 'Total Cabaña', 
+          data: [{ y: totalVentaCabania }],
+          stack: 'Cabaña', 
+        },
+        {
+          name: 'Bar Cabaña', 
+          data: [{ y: bar }],
+          stack: 'Cabaña', 
+          showInLegend: true
+        },
+        {
+          name: 'Restaurante Cabaña', 
+          data: [{ y: restaurante }],
+          stack: 'Cabaña', 
+          showInLegend: true
+        },
+        {
+          name: 'Recepción Cabaña',
+          data: [{y: recepcion}],
+          stack: 'Cabaña',
+          showInLegend: true
 
         },
         {
-          name: 'Bar',
-          data: [{ y: bar, }],
-          showInLegend: false
+          name: 'Descorche Cabaña',
+          data: [{y: descorche}],
+          stack: 'Cabaña',
+          showInLegend: true
         },
         {
-          name: 'Restaurante',
-          data: [{ y: restaurante }],
-          showInLegend: false
+          name: 'Total Habitaciones',
+          data: [{y: totalVentaHabitaciones}],
+          stack: 'Habitaciones'
         },
         {
-          name: 'Recepcion',
-          data: [{ y: recepcion }],
-          showInLegend: false
+          name: 'Bar habitaciones',
+          data: [{y: bar}],
+          stack: 'Habitaciones',
+          showInLegend: true
         },
         {
-          name: 'Descorche',
-          data: [{ y: descorche }],
-          showInLegend: false
+          name: 'Restaurante Habitaciones',
+          data: [{y:restaurante}],
+          stack: 'Habitaciones',
+          showInLegend: true
+        },
+        {
+          name: 'Recepcion Habitaciones',
+          data: [{y: recepcion}],
+          stack: 'Habitaciones',
+          showInLegend: true
+        },
+        {
+          name: 'Descorche Habitaciones',
+          data: [{y: descorche}],
+          stack:'Habitaciones',
+          showInLegend: true
         }
+
       ]
     });
-  }, [totalVentaPasadia, bar, restaurante, recepcion, descorche]);
-
-
-
-
-
-
+  }, [totalVentaPasadia, bar, restaurante, recepcion, descorche, totalVentaCabania]); 
 
 
 

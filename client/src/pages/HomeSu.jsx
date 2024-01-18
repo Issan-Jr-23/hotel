@@ -8,7 +8,7 @@ import cabana from "../images/beach-cabana-st.png";
 import PieYes from "../graphs/PeopleReservations.jsx";
 import PieNo from "../graphs/DoughnutAndPie.jsx";
 import LineGrafict from "../pages/apexCharts/LineGrafict.jsx"
-import { useAuth } from "../context/authContext.jsx"; 
+import { useAuth } from "../context/authContext.jsx";
 import AxiosInstance from '../api/axios.js'
 import "./css/homeSu.css"
 
@@ -63,14 +63,14 @@ const HomeSu = () => {
 
     cargarDatos();
   }, []);
-  
+
   const combinarYProcesarDatos = (datosMayorCompra, datosTotal) => {
     const mapaUsuarios = new Map();
-  
+
     datosMayorCompra.forEach(usuario => {
       mapaUsuarios.set(usuario.identificacion, usuario);
     });
-  
+
     datosTotal.forEach(usuario => {
       if (mapaUsuarios.has(usuario.identificacion)) {
         const usuarioExistente = mapaUsuarios.get(usuario.identificacion);
@@ -80,10 +80,10 @@ const HomeSu = () => {
         mapaUsuarios.set(usuario.identificacion, usuario);
       }
     });
-  
+
     return Array.from(mapaUsuarios.values());
   };
-  
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -258,37 +258,37 @@ const HomeSu = () => {
         </section>
 
         <section className='section-cont-pieyes flex'>
-          <div className= ' div-cont-pieyes'>
+          <div className=' div-cont-pieyes'>
             <h3 className='flex justify-center items-center text-xl mb-2'>PROMEDIO DE RESERVAS</h3>
             <article className=' bg-white cont-pieYes2' >
               <PieYes />
             </article>
             <h3 className='flex justify-center items-center text-xl mt-4'>COMPRAS DE USUARIOS</h3>
             <article className='article-alto'>
-                <Table aria-label="Example static collection table" className='overflow-y-auto'>
-                  <TableHeader>
-                    <TableColumn>NAME</TableColumn>
-                    <TableColumn>CANTIDAD</TableColumn>
-                    <TableColumn>VALOR TOTAL</TableColumn>
-                  </TableHeader>
-                  <TableBody>
-                    {productos.slice(0, 10).map((producto, index) => (
-                      <TableRow key={index} className='h-10'>
-                        <TableCell>{producto.nombre}</TableCell>
-                        <TableCell>{producto.cantidad}</TableCell>
-                        <TableCell>{producto.valorTotal}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </article>
+              <Table aria-label="Example static collection table" className='overflow-y-auto'>
+                <TableHeader>
+                  <TableColumn>NAME</TableColumn>
+                  <TableColumn>CANTIDAD</TableColumn>
+                  <TableColumn>VALOR TOTAL</TableColumn>
+                </TableHeader>
+                <TableBody>
+                  {productos.slice(0, 10).map((producto, index) => (
+                    <TableRow key={index} className='h-10'>
+                      <TableCell>{producto.nombre}</TableCell>
+                      <TableCell>{producto.cantidad}</TableCell>
+                      <TableCell>{producto.valorTotal}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </article>
           </div>
           <div className='div-graf'>
             <div className=''>
               <h3 className='flex justify-center items-center text-xl uppercase mb-2'  >Clientes con mas compras</h3>
               <article className='article-alto'>
-                
-                <LineGrafict/>
+
+                <LineGrafict />
               </article>
 
             </div>
