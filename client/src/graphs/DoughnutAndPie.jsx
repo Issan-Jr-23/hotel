@@ -50,7 +50,7 @@ const DoughnutChart = () => {
     }, []);
 
     const options = {
-      chart: { type: 'pie', backgroundColor: "transparent" },
+      chart: { type: 'column', backgroundColor: "transparent" },
       accessibility: { enabled: false },
       title: { 
         text: 'ESTADO DE RESERVAS', 
@@ -79,8 +79,7 @@ const DoughnutChart = () => {
         useHTML: true,
         align: 'center',
         verticalAlign: 'middle',
-        y: 50, // Ajuste la posición según sea necesario
-        text: `<div style=" text-align: center; color:black;" > Total <br/>  ${totalReservas}</div>`
+        
       }
     });
   }, [data]);

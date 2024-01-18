@@ -1,8 +1,8 @@
 // usuarioController.js
 import Usuario from "../models/transferencia.model.js";
 import Cliente from "../models/client.model.js";
-// import Cabania from "../model/cabania.model.js"
-// import Habitaciones from "../model/habiataciones.model.js"
+import Cabania from "../models/client.cabania.model.js"
+import Habitaciones from "../models/cliente.habitaciones.model.js"
 
 export const agregarOActualizarUsuario = async (req, res) => {
   const { identificacion, datosHistorial } = req.body;
@@ -101,7 +101,7 @@ export const obtenerHistorialReservasSi = async (req, res) => {
       reservasSi: usuario.historial.filter((item) => item.reserva === "Si"),
     }));
 
-    // Filter the entire 'clientes' array
+
     const reservasSiClientes = clientes.filter((cliente) => cliente.reserva === "Si").map((cliente) => ({
       identificacion: cliente.identificacion,
       reserva: cliente.reserva,
@@ -263,11 +263,10 @@ export const totalGeneradoBar = async(req, res) => {
         total += data.cantidad * data.precio;
       })
     })
-    
     historial.forEach((hb) => {
       hb.historial.forEach((data) =>{
         data.bebidas.forEach((response) =>{
-          totalHbebidas += response.cantidad * response.precio 
+          total += response.cantidad * response.precio 
         })
       }) 
     })
@@ -284,7 +283,7 @@ export const totalGeneradoBar = async(req, res) => {
         if (data.servicio === "pasadia") {
           data.restaurante.forEach((response) => {
             if (response.precio !== 0 ) {
-              totalHrestaurante += response.cantidad * response.precio;
+              totalRestaurante += response.cantidad * response.precio;
             }
           });
         }
@@ -303,7 +302,7 @@ export const totalGeneradoBar = async(req, res) => {
         if (data.servicio === "pasadia") {
           data.recepcion.forEach((response) => {
             if (response.precio !== 0 ) {
-              totalHrecepcion += response.cantidad * response.precio;
+              totalRecepcion += response.cantidad * response.precio;
             }
           });
         }
@@ -320,7 +319,7 @@ export const totalGeneradoBar = async(req, res) => {
     historial.forEach((hDesc) =>{
       hDesc.descorche.forEach((data) => {
         if (data.servicio === "pasadia") {
-          totalHdescorche += data.cantidad * data.precio; 
+          totalDescorche += data.cantidad * data.precio; 
         }
       })
     })
@@ -334,50 +333,180 @@ export const totalGeneradoBar = async(req, res) => {
 
 
 
-    historial.forEach((hrec) => {
-      hrec.historial.forEach((data) => {
-        if (data.servicio === "cabania") {
-          data.recepcion.forEach((response) => {
-            if (response.precio !== 0 ) {
-              totalHrecepcion += response.cantidad * response.precio;
-            }
-          });
-        }
-      });
-    });
+    // historial.forEach((hrec) => {
+    //   hrec.historial.forEach((data) => {
+    //     if (data.servicio === "cabania") {
+    //       data.recepcion.forEach((response) => {
+    //         if (response.precio !== 0 ) {
+    //           totalRecepcion += response.cantidad * response.precio;
+    //         }
+    //       });
+    //     }
+    //   });
+    // });
 
-    historial.forEach((hrec) => {
-      hrec.historial.forEach((data) => {
-        if (data.servicio === "habitaciones") {
-          data.recepcion.forEach((response) => {
-            if (response.precio !== 0 ) {
-              totalHrecepcion += response.cantidad * response.precio;
-            }
-          });
-        }
-      });
-    });
+    // historial.forEach((hrec) => {
+    //   hrec.historial.forEach((data) => {
+    //     if (data.servicio === "habitaciones") {
+    //       data.recepcion.forEach((response) => {
+    //         if (response.precio !== 0 ) {
+    //           totalHrecepcion += response.cantidad * response.precio;
+    //         }
+    //       });
+    //     }
+    //   });
+    // });
 
     // const totalidad = total + totalRestaurante + totalRecepcion + totalDescorche ;
     // bebidas: total,
     // restaurante: totalRestaurante,
     // recepcion: totalRecepcion
 
-    const totalidadBar = total + totalHbebidas;
-    const totalidadRestaurante = totalRestaurante + totalHrestaurante;
-    const totalidadRecepcion = totalRecepcion + totalHrecepcion;
-    const totalidadDescorche = totalDescorche + totalHdescorche;
+    // const totalidadBar = total + totalHbebidas;
+    // const totalidadRestaurante = totalRestaurante + totalHrestaurante;
+    // const totalidadRecepcion = totalRecepcion + totalHrecepcion;
+    // const totalidadDescorche = totalDescorche + totalHdescorche;
 
 
     res.status(200).json({
-      bar: totalidadBar,
-      restaurante: totalidadRestaurante,
-      recepcion: totalidadRecepcion,
-      descorche: totalidadDescorche
+      bar: total,
+      restaurante: totalRestaurante,
+      recepcion: totalRecepcion,
+      descorche: totalDescorche
     })
 
   }catch(error){
     console.log(error)
   }
 
+}
+
+export const totalGeneradoCabaniaBard = async(req, res) => {
+  try {
+    const cabania = await Cabania.find();
+
+  
+    let totalBar = 0;
+    let totalRes = 0;
+    let totalRec = 0;
+    let totalDes = 0;
+
+    cabania.forEach((b) =>{
+      b.bebidas.forEach((data)=>{
+        if (data.precio !== 0) {
+          totalBar += data.cantidad * data.precio;
+        }
+      })
+    })
+
+    cabania.forEach((r) => {
+      r.restaurante.forEach((data) => {
+        if (data.precio !== 0){
+          totalRes += data.cantidad * data.precio;
+        }
+      })
+    })
+
+    cabania.forEach((rec) => {
+      rec.recepcion.forEach((data) => {
+        if (data.precio !== 0) {
+          totalRec += data.cantidad * data.precio
+        }
+      })
+    })
+
+    cabania.forEach((des) => {
+      des.descorche.forEach((data) => {
+        if (data.precio !== 0) {
+          totalDes += data.cantidad * data.precio;
+        }
+      })
+    })
+
+    res.status(200).json({
+      bar: totalBar || 0,
+      restaurante: totalRes || 0,
+      recepcion: totalRec || 0,
+      descorche: totalDes || 0
+    })
+
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const totalGeneradoHabitacionesBard = async(req, res) => {
+  try {
+    const habitaciones = await Habitaciones.find();
+    const historial = await Usuario.find();
+    
+    let totalBar = 0;
+    let totalRes = 0;
+    let totalRec = 0;
+    let totalDes = 0;
+
+    habitaciones.forEach((bar ) => {
+      bar.bebidas.forEach((data) => {
+        totalBar += data.cantidad * data.precio;
+      })
+    })
+    habitaciones.forEach((res) => {
+      res.restaurante.forEach((data) => {
+        totalRes += data.cantidad * data.precio;
+      })
+    })
+    habitaciones.forEach((rec) => {
+      rec.recepcion.forEach((data) => {
+        totalRec += data.cantidad * data.precio; 
+      })
+    })
+    habitaciones.forEach((des) => {
+      des.descorche.forEach((data) => {
+        totalDes += data.cantidad * data.precio;
+      })
+    })
+
+
+    historial.forEach((bar) => {
+      bar.historial.forEach((data) => {
+        data.bebidas.forEach((bbr) => {
+          totalBar += bbr.cantidad * bbr.precio;
+        })
+      })
+    })
+
+    historial.forEach((res) =>{
+      res.historial.forEach((data) => {
+        data.restaurante.forEach((bbr) => {
+          totalRes += bbr.cantidad * data.precio; 
+        })
+      })
+    })
+
+    historial.forEach((rec) => {
+      rec.historial.forEach((data) => {
+        data.recepcion.forEach((data) => {
+          totalRec += bbr.cantidad * data.precio;
+        })
+      })
+    })
+
+    historial.forEach((des) => {
+      des.historial.forEach((data) => {
+        data.descorche.forEach((bbr) => {
+          totalDes += bbr.cantidad * bbr.precio; 
+        })
+      })
+    })
+
+    res.status(200).json({
+      bar: totalBar || 0,
+      restaurante: totalRes || 0 ,
+      recepcion: totalRec || 0,
+      descorche: totalDes || 0
+    })
+    
+  } catch (error) {
+    console.log(error)
+  }
 }

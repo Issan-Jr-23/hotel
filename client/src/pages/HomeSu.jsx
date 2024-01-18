@@ -7,7 +7,9 @@ import users from "../images/usuario.png"
 import cabana from "../images/beach-cabana-st.png";
 import PieYes from "../graphs/PeopleReservations.jsx";
 import PieNo from "../graphs/DoughnutAndPie.jsx";
-import LineGrafict from "../pages/apexCharts/LineGrafict.jsx"
+import LineGrafict from "../pages/apexCharts/LineGrafict.jsx";
+import Pmc from "../pages/apexCharts/productoMasComprado.jsx";
+import Umc from "../pages/apexCharts/UsuarioConMasCompras.jsx";
 import { useAuth } from "../context/authContext.jsx";
 import AxiosInstance from '../api/axios.js'
 import "./css/homeSu.css"
@@ -24,22 +26,7 @@ const HomeSu = () => {
   const [productos, setProductos] = useState([]);
   const [datos, setDatos] = useState([]);
 
-  useEffect(() => {
-    const obtenerProductos = async () => {
-      try {
-        const respuesta = await AxiosInstance.get('/productos-mas-comprados'); // Reemplaza con la ruta correcta de tu API
-        const datos = respuesta.data;
 
-        let productosCombinados = [...datos.bebidas, ...datos.restaurante];
-        productosCombinados.sort((a, b) => a.valorTotal - b.valorTotal);
-
-        setProductos(productosCombinados.slice(0, 10));
-      } catch (error) {
-        console.error('Hubo un error al obtener los productos:', error);
-      }
-    };
-    obtenerProductos();
-  }, []);
 
   useEffect(() => {
     const cargarDatos = async () => {
@@ -265,7 +252,7 @@ const HomeSu = () => {
             </article>
             <h3 className='flex justify-center items-center text-xl mt-4'>COMPRAS DE USUARIOS</h3>
             <article className='article-alto'>
-              <Table aria-label="Example static collection table" className='overflow-y-auto'>
+              {/* <Table aria-label="Example static collection table" className='overflow-y-auto'>
                 <TableHeader>
                   <TableColumn>NAME</TableColumn>
                   <TableColumn>CANTIDAD</TableColumn>
@@ -280,7 +267,8 @@ const HomeSu = () => {
                     </TableRow>
                   ))}
                 </TableBody>
-              </Table>
+              </Table> */}
+              <Umc/>
             </article>
           </div>
           <div className='div-graf'>
@@ -296,7 +284,7 @@ const HomeSu = () => {
               <h3 className='flex justify-center items-center text-xl'>COMPRAS DE USUARIOS</h3>
               <article className='article-alto cont-pieYes bg-white'>
                 {/* <PieNo/> */}
-                <Table aria-label="Example dynamic collection table" className='overflow-y-auto '>
+                {/* <Table aria-label="Example dynamic collection table" className='overflow-y-auto '>
                   <TableHeader >
                     <TableColumn>ID</TableColumn>
                     <TableColumn>Nombre</TableColumn>
@@ -311,7 +299,8 @@ const HomeSu = () => {
                       </TableRow>
                     ))}
                   </TableBody>
-                </Table>
+                </Table> */}
+                <Pmc/>
               </article>
 
             </div>

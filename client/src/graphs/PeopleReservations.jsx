@@ -12,18 +12,16 @@ const DoughnutChart = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Obtener reservas de "sí"
         const responseSi = await AxiosInstance.get('/obtener-historial-reservas-si');
         let totalReservasSi = responseSi.data.historialReservasSi ? responseSi.data.historialReservasSi.reduce((total, usuario) => total + usuario.reservasSi.length, 0) : 0;
         totalReservasSi += responseSi.data.reservasSiClientes ? responseSi.data.reservasSiClientes.length : 0;
   
-        // Obtener reservas de "no"
+        
         const responseNo = await AxiosInstance.get('/obtener-historial-reservas-no');
         console.log("***************** respuesta de la api", responseNo)
         let totalReservasNo = responseNo.data.historialReservasSi ? responseNo.data.historialReservasSi.reduce((total, usuario) => total + usuario.reservasSi.length, 0) : 0;
         totalReservasNo += responseNo.data.reservasSiClientes ? responseNo.data.reservasSiClientes.length : 0;
-  
-        // Configurar datos para el gráfico
+        
         const dataForChart = [
           { name: "Reserva Si", y: totalReservasSi },
           { name: "Reserva No", y: totalReservasNo }

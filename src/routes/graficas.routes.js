@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { obtenerTotal, obtenerTotalesNiniosYAdultosEnHabitaciones, obtenerTotalesNiniosYAdultosEnPasadia, productosMasComprados, totalgenerado, totalgeneradoHabitaciones, usuariosQueMasCompraron } from "../controllers/graficas.controller.js";
-import { totalGeneradoBar, totalgeneradoPas } from "../controllers/transferencia.controllers.js";
+import { comprasUsers, obtenerTotal, obtenerTotalesNiniosYAdultosEnHabitaciones, obtenerTotalesNiniosYAdultosEnPasadia, productosMasComprados, totalgenerado, totalgeneradoHabitaciones, usuariosQueMasCompraron } from "../controllers/graficas.controller.js";
+import { totalGeneradoBar, totalGeneradoCabaniaBard, totalGeneradoHabitacionesBard, totalgeneradoPas } from "../controllers/transferencia.controllers.js";
 
 const router = Router();
 
@@ -13,5 +13,8 @@ router.get('/mayor-compra',usuariosQueMasCompraron);
 router.get('/obtener-historial-usuarios', obtenerTotal);
 router.get('/productos-mas-comprados', productosMasComprados);
 router.get("/total-generado-ventas-brad", totalGeneradoBar)
+router.get("/total-generado-ventas-cabania-brad", totalGeneradoCabaniaBard)
+router.get("/total-generado-ventas-habitaciones-brad", totalGeneradoHabitacionesBard)
+router.get("/grafic-usuarios-mas-compras", comprasUsers)
 
 export default router;

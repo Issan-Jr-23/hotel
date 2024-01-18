@@ -11,6 +11,10 @@ const MyComponent = () => {
   const [restaurante, setRestaurante] = useState(0);
   const [recepcion, setRecepcion] = useState(0);
   const [descorche, setDescorche] = useState(0);
+  const [barC, setBarC] = useState(0);
+  const [restauranteC, setRestauranteC] = useState(0);
+  const [recepcionC, setRecepcionC] = useState(0);
+  const [descorcheC, setDescorcheC] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -78,6 +82,23 @@ const MyComponent = () => {
     fetchData();
   }, [])
 
+  useEffect(() => {
+    const fetchData = async() => {
+      try {
+        const response = await AxiosInstance.get('/total-generado-ventas-cabania-brad')
+        const {bar, restaurante, recepcion, descorche} = response.data
+        console.log(bar, restaurante, recepcion, descorche)
+        setBarC(bar)
+        setRestauranteC(restaurante)
+        setRecepcionC(recepcion)
+        setDescorcheC(descorche)
+      } catch (error) {
+        console.log(error)
+      }
+    };
+    fetchData();
+  }, [])
+
 
 
   useEffect(() => {
@@ -89,7 +110,7 @@ const MyComponent = () => {
         text: ''
       },
       xAxis: {
-        categories: ["data"] 
+        categories: [""] 
       },
       yAxis: {
         min: 0,
@@ -111,7 +132,7 @@ const MyComponent = () => {
       plotOptions: {
         column: {
           stacking: 'normal',
-          minPointLength: 7,
+          // minPointLength: 7,
           
         }
       },
@@ -148,26 +169,26 @@ const MyComponent = () => {
         },
         {
           name: 'Bar Cabaña', 
-          data: [{ y: bar }],
+          data: [{ y: barC }],
           stack: 'Cabaña', 
           showInLegend: true
         },
         {
           name: 'Restaurante Cabaña', 
-          data: [{ y: restaurante }],
+          data: [{ y: restauranteC }],
           stack: 'Cabaña', 
           showInLegend: true
         },
         {
           name: 'Recepción Cabaña',
-          data: [{y: recepcion}],
+          data: [{y: recepcionC}],
           stack: 'Cabaña',
           showInLegend: true
 
         },
         {
           name: 'Descorche Cabaña',
-          data: [{y: descorche}],
+          data: [{y: descorcheC}],
           stack: 'Cabaña',
           showInLegend: true
         },
@@ -203,7 +224,7 @@ const MyComponent = () => {
 
       ]
     });
-  }, [totalVentaPasadia, bar, restaurante, recepcion, descorche, totalVentaCabania]); 
+  }, [totalVentaPasadia, bar, restaurante, recepcion, descorche, totalVentaCabania, barC, restauranteC, recepcionC, descorcheC]); 
 
 
 

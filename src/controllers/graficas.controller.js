@@ -275,3 +275,33 @@ export const productosMasComprados = async (req, res) => {
     res.status(500).send('Error en el servidor');
 }
 };
+
+export const comprasUsers = async(req, res) => {
+  try {
+    const Pasadia = await Cliente.find();
+
+   
+    const response = Pasadia.map(Cliente => {
+      const totalBebidas = Cliente.bebidas.reduce((total, data) => {
+        return total + (data.cantidad * data.precio);
+      }, 0);
+
+      const totalRestaurante = Cliente.restaurante.reduce((totalR, data) => {
+        return totalR + (data.cantidad * data.precio);
+      }, 0); 
+
+      const totalCompra = totalBebidas + totalRestaurante;
+
+      return {
+        identificacion: Cliente.identificacion,
+        nombre: Cliente.nombre,
+        totalCompra
+      };
+    });
+
+    res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
+  }
+};
