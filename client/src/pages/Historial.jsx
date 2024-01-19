@@ -54,6 +54,8 @@ const Historial = () => {
         return usuario ? usuario.historial : [];
     };
 
+    let total = 0;
+
 
     return (
         <div className='pt-20 pb-20' >
@@ -62,10 +64,10 @@ const Historial = () => {
                 {historial && historial.length > 0 ? (
                     historial.map((item, index) => (
                         <div key={index} className=''>
-                            <div className='border-1 mr-5 ml-5 mb-10 rounded-xl p-5 uppercase'>
+                            <div className='border-1 mr-5 ml-5 mb-10 rounded-xl p-5 uppercase bg-white'>
                                 <h3 className='text-3xl mb-5'>Historial {index + 1}</h3>
-                                <p className='ml-1' style={{fontWeight:"600"}}>ID Historial: {item.idHistorial}</p>
-                                <p className='uppercase mb-2 ml-1' style={{fontWeight:"600"}}>Nombre: {item.nombre}</p>
+                                <p className='ml-1' style={{fontWeight:"600"}}> <span className='text-green-500'>ID Historial:</span> {item.idHistorial}</p>
+                                <p className='uppercase mb-2 ml-1' style={{fontWeight:"600"}}> <span className='text-green-500'>Nombre:</span> {item.nombre}</p>
                                 <div className={`informacion-adicional ml-1  ${historialExpandido === index ? 'expandido' : 'contraido'}`} style={{fontWeight:"600"}} >
                                     <p>Reserva: {item.reserva}</p>
                                     <p>Niños: {item.ninios}</p>
@@ -77,12 +79,38 @@ const Historial = () => {
                                     <p>pagoPendiente: {item.metodoPagoPendiente}</p>
                                     {item.bebidas && item.bebidas.length > 0 ? (
                                         <div style={{fontWeight:"600"}} >
+
                                             <p style={{fontWeight:"600"}}>Bebidas:</p>
-                                            {item.bebidas.map((bebidas, idx) => (
-                                                <div key={idx} className='h-10 flex items-center' style={{}} >
-                                                     <p> {idx + 1} - {bebidas.nombre} ... cantidad: {bebidas.cantidad} ... precio: {bebidas.precio}</p>
-                                                </div>
-                                            ))}
+                                            
+                                               
+                                                    <table className=' mt-5 mb-5'>
+                                                        <tr>
+                                                            <th className='w-32 p-2 '></th>
+                                                            <th className='w-52 p-2  text-left'></th>
+                                                            <th className='w-32 p-2 '></th>
+                                                            <th className='w-32 p-2 '></th>
+                                                            <th className='w-32 p-2 '></th>
+                                                        </tr>
+                                                        {item.bebidas.map((bebidas, idx) => (
+
+                                                            
+                                                        <tr>
+                                                            <td className=' p-2 '>{idx + 1}</td>
+                                                            <td className=' p-2 '>{bebidas.nombre}</td>
+                                                            <td className=' p-2 text-center'>{bebidas.cantidad}</td>
+                                                            <td className=' p-2 text-center'>{bebidas.precio}</td>
+                                                            <td className='text-center'>{bebidas.cantidad * bebidas.precio}</td>
+                                                        </tr>
+                                                        ))}
+                                                    </table>
+
+                                                    {item.bebidas.map((x) =>{
+                                                        const totalres = x.cantidad * x.precio;
+                                                        <p>Total: {totalres}</p>
+                                                    })}
+                                             
+                                                
+                                            
                                         </div>
                                     ) : (
                                         <p>No hay compras en bebidas registradas.</p>
