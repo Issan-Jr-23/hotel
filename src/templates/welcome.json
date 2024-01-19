@@ -2,6 +2,7 @@
     "title": "Welcome back",
     "userName": "User",
     "greetingIcon": "wave",
+    "img": "./image/ruta.png",
     "message": "This is a customizable welcome message for the user.",
     "button": {
       "text": "Go Now"

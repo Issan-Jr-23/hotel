@@ -6,7 +6,7 @@ const MyComponent = () => {
   
   const [totalVentaPasadia, setTotalVentaPasadia] = useState(0);
   const [totalVentaCabania, setTotalVentaCabania] = useState(0);
-  const [totalVentaHabitaciones, setTotalVentaHabitaciones] = useState(0);
+  const [totalVentaHabitaciones, setTotalVentaHabitaciones] = useState(0); 
   const [bar, setBar] = useState(0);
   const [restaurante, setRestaurante] = useState(0);
   const [recepcion, setRecepcion] = useState(0);
@@ -71,6 +71,7 @@ const MyComponent = () => {
       try {
         const response = await AxiosInstance.get(`/total-generado-ventas-brad`)
         const { bar, restaurante, recepcion, descorche } = response.data
+        console.log("muestra: ",recepcion)
         setBar(bar)
         setRestaurante(restaurante)
         setRecepcion(recepcion)
@@ -102,6 +103,11 @@ const MyComponent = () => {
 
 
   useEffect(() => {
+    // Función para filtrar los datos
+    function filterData(data) {
+      return data.filter(point => point.y !== 0);
+    }
+  
     Highcharts.chart('myChart', {
       chart: {
         type: 'column'
@@ -110,7 +116,7 @@ const MyComponent = () => {
         text: ''
       },
       xAxis: {
-        categories: [""] 
+        categories: [""]
       },
       yAxis: {
         min: 0,
@@ -132,100 +138,99 @@ const MyComponent = () => {
       plotOptions: {
         column: {
           stacking: 'normal',
-          // minPointLength: 7,
-          
+          minPointLength: 7,
+          pointPadding: 0.1, // Ajusta el ancho de las barras
+          groupPadding: 0.15 // Ajusta el espacio entre grupos de barras
         }
       },
       series: [
         {
           name: 'Total Pasadía',
-          data: [{ y: totalVentaPasadia }],
+          data: filterData([{ y: totalVentaPasadia }])
         },
         {
           name: 'Bar pasadía',
-          data: [{ y: bar }],
+          data: filterData([{ y: bar }]),
           showInLegend: true
         },
         {
           name: 'Restaurante pasadía',
-          data: [{ y: restaurante }],
+          data: filterData([{ y: restaurante }]),
           showInLegend: true
         },
         {
           name: 'Recepcion pasadía',
-          data: [{ y: recepcion }],
+          data: filterData([{ y: recepcion }]),
           showInLegend: true
         },
         {
           name: 'Descorche pasadía',
-          data: [{ y: descorche }],
+          data: filterData([{ y: descorche }]),
           showInLegend: true
         },
-
         {
           name: 'Total Cabaña', 
-          data: [{ y: totalVentaCabania }],
-          stack: 'Cabaña', 
+          data: filterData([{ y: totalVentaCabania }]),
+          stack: 'Cabaña'
         },
         {
           name: 'Bar Cabaña', 
-          data: [{ y: barC }],
+          data: filterData([{ y: barC }]),
           stack: 'Cabaña', 
           showInLegend: true
         },
         {
           name: 'Restaurante Cabaña', 
-          data: [{ y: restauranteC }],
+          data: filterData([{ y: restauranteC }]),
           stack: 'Cabaña', 
           showInLegend: true
         },
         {
           name: 'Recepción Cabaña',
-          data: [{y: recepcionC}],
+          data: filterData([{y: recepcionC}]),
           stack: 'Cabaña',
           showInLegend: true
 
         },
         {
           name: 'Descorche Cabaña',
-          data: [{y: descorcheC}],
+          data: filterData([{y: descorcheC}]),
           stack: 'Cabaña',
           showInLegend: true
         },
         {
           name: 'Total Habitaciones',
-          data: [{y: totalVentaHabitaciones}],
+          data: filterData([{y: totalVentaHabitaciones}]),
           stack: 'Habitaciones'
         },
         {
           name: 'Bar habitaciones',
-          data: [{y: bar}],
+          data: filterData([{y: bar}]),
           stack: 'Habitaciones',
           showInLegend: true
         },
         {
           name: 'Restaurante Habitaciones',
-          data: [{y:restaurante}],
+          data: filterData([{y:restaurante}]),
           stack: 'Habitaciones',
           showInLegend: true
         },
         {
           name: 'Recepcion Habitaciones',
-          data: [{y: recepcion}],
+          data: filterData([{y: recepcion}]),
           stack: 'Habitaciones',
           showInLegend: true
         },
         {
           name: 'Descorche Habitaciones',
-          data: [{y: descorche}],
+          data: filterData([{y: descorche}]),
           stack:'Habitaciones',
           showInLegend: true
         }
-
       ]
     });
-  }, [totalVentaPasadia, bar, restaurante, recepcion, descorche, totalVentaCabania, barC, restauranteC, recepcionC, descorcheC]); 
-
+  }, [totalVentaPasadia, bar, restaurante, recepcion, descorche, totalVentaCabania, barC, restauranteC, recepcionC, descorcheC]);
+  
 
 
   return (

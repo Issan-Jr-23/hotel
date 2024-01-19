@@ -155,7 +155,7 @@ export const totalgeneradoPas = async (req, res) => {
 
     usuarios.forEach((usuario) => {
       usuario.historial.forEach((reserva) => {
-        if (reserva.servicio === "pasadia") {
+        if (reserva.servicio === "cabania") {
           totalPago += reserva.pago || 0;
           totalPagoPendiente += reserva.pagoPendiente || 0;
         }
@@ -163,7 +163,7 @@ export const totalgeneradoPas = async (req, res) => {
     });
 
     clientes.forEach((x) => {
-      if (x.servicio === "pasadia") {
+      if (x.servicio === "cabania") {
         totalPago += x.pagoAnticipado || 0;
         totalPagoPendiente += x.pagoPendiente || 0;
       }
@@ -244,142 +244,86 @@ export const totalPructosCortesias = async (req, res) => {
 
 export const totalGeneradoBar = async(req, res) => {
   try {
-    const pasadia = await Cliente.find() 
-    const historial = await Usuario.find()
+    const pasadia = await Cliente.find(); 
+    const historial = await Usuario.find();
 
     let total = 0;
     let totalRestaurante = 0;
     let totalRecepcion = 0;
     let totalDescorche = 0;
 
-    let totalHbebidas = 0;
-    let totalHrestaurante = 0;
-    let totalHrecepcion = 0;
-    let totalHdescorche = 0;
-    // vista
-
-    pasadia.forEach((b) => {
-      b.bebidas.forEach((data) => {
-        total += data.cantidad * data.precio;
-      })
-    })
-    historial.forEach((hb) => {
-      hb.historial.forEach((data) =>{
-        data.bebidas.forEach((response) =>{
-          total += response.cantidad * response.precio 
-        })
-      }) 
-    })
-
-    //
-
-    pasadia.forEach((r) => {
-      r.restaurante.forEach((data) => {
-        totalRestaurante += data.cantidad * data.precio
-      })
-    })
-    historial.forEach((hr) => {
-      hr.historial.forEach((data) => {
-        if (data.servicio === "pasadia") {
-          data.restaurante.forEach((response) => {
-            if (response.precio !== 0 ) {
-              totalRestaurante += response.cantidad * response.precio;
-            }
-          });
-        }
+    // Process pasadia
+    if (pasadia) {
+      pasadia.forEach((b) => {
+        b.bebidas?.forEach((data) => {
+          total += data.cantidad * data.precio;
+        });
       });
-    });
 
-    //
-
-    pasadia.forEach((rec) => {
-      rec.recepcion.forEach((data) => {
-        totalRecepcion += data.cantidad * data.precio; 
-      })
-    })
-    historial.forEach((hrec) => {
-      hrec.historial.forEach((data) => {
-        if (data.servicio === "pasadia") {
-          data.recepcion.forEach((response) => {
-            if (response.precio !== 0 ) {
-              totalRecepcion += response.cantidad * response.precio;
-            }
-          });
-        }
+      pasadia.forEach((r) => {
+        r.restaurante?.forEach((data) => {
+          totalRestaurante += data.cantidad * data.precio;
+        });
       });
-    });
 
+      pasadia.forEach((rec) => {
+        rec.recepcion?.forEach((data) => {
+          totalRecepcion += data.cantidad * data.precio; 
+        });
+      });
 
-    //
-    pasadia.forEach((desc) => {
-      desc.descorche.forEach((data) =>{
-        totalDescorche += data.cantidad * data.precio; 
-      })
-    })
-    historial.forEach((hDesc) =>{
-      hDesc.descorche.forEach((data) => {
-        if (data.servicio === "pasadia") {
+      pasadia.forEach((desc) => {
+        desc.descorche?.forEach((data) =>{
           totalDescorche += data.cantidad * data.precio; 
-        }
-      })
-    })
+        });
+      });
+    }
 
-    // fin de vista
+    // Process historial
+    if (historial) {
+      historial.forEach((hb) => {
+        hb.historial?.forEach((data) => {
+          data.bebidas?.forEach((response) => {
+            total += response.cantidad * response.precio;
+          });
 
-    // inicio de vista historial
+          if (data.servicio === "pasadia") {
+            data.restaurante?.forEach((response) => {
+              if (response.precio !== 0 ) {
+                totalRestaurante += response.cantidad * response.precio;
+              }
+            });
 
+            data.recepcion?.forEach((response) => {
+              if (response.precio !== 0 ) {
+                totalRecepcion += response.cantidad * response.precio;
+              }
+            });
+          }
+        });
 
+        hb.descorche?.forEach((data) => {
+          if (data.servicio === "pasadia") {
+            totalDescorche += data.cantidad * data.precio; 
+          }
+        });
+      });
+    }
 
-
-
-
-    // historial.forEach((hrec) => {
-    //   hrec.historial.forEach((data) => {
-    //     if (data.servicio === "cabania") {
-    //       data.recepcion.forEach((response) => {
-    //         if (response.precio !== 0 ) {
-    //           totalRecepcion += response.cantidad * response.precio;
-    //         }
-    //       });
-    //     }
-    //   });
-    // });
-
-    // historial.forEach((hrec) => {
-    //   hrec.historial.forEach((data) => {
-    //     if (data.servicio === "habitaciones") {
-    //       data.recepcion.forEach((response) => {
-    //         if (response.precio !== 0 ) {
-    //           totalHrecepcion += response.cantidad * response.precio;
-    //         }
-    //       });
-    //     }
-    //   });
-    // });
-
-    // const totalidad = total + totalRestaurante + totalRecepcion + totalDescorche ;
-    // bebidas: total,
-    // restaurante: totalRestaurante,
-    // recepcion: totalRecepcion
-
-    // const totalidadBar = total + totalHbebidas;
-    // const totalidadRestaurante = totalRestaurante + totalHrestaurante;
-    // const totalidadRecepcion = totalRecepcion + totalHrecepcion;
-    // const totalidadDescorche = totalDescorche + totalHdescorche;
-
-
+    // Send response
     res.status(200).json({
-      bar: total,
-      restaurante: totalRestaurante,
-      recepcion: totalRecepcion,
-      descorche: totalDescorche
-    })
+      bar: total || 0,
+      restaurante: totalRestaurante || 0,
+      recepcion: totalRecepcion || 0,
+      descorche: totalDescorche || 0
+    });
 
-  }catch(error){
-    console.log(error)
+  } catch(error) {
+    console.log(error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
+};
 
-}
 
 export const totalGeneradoCabaniaBard = async(req, res) => {
   try {

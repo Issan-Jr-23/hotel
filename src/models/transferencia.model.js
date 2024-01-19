@@ -6,11 +6,13 @@ const historialSchema = new mongoose.Schema({
   reserva: { type: String },
   ninios:{type:Number},
   adultos:{type:Number},
-  servicio:{type:String},
   metodoPago: { type: String },
   pago: { type: Number },
-  metodoPagoPendiente: { type: String },
+  metodoPagoPendiente: { type: String }, 
   pagoPendiente: { type: Number },
+  servicio:{type:String},
+  estado:{type:String},
+  fechaActivacion: {type: String},
   bebidas: {
     type: Array,
     required: false,
@@ -21,6 +23,17 @@ const historialSchema = new mongoose.Schema({
     required: false,
     default: [],
   },
+  recepcion: {
+    type: Array,
+    required: false,
+    default: [],
+  },
+  descorche: {
+    type: Array,
+    required: false,
+    default: [],
+  },
+
 });
 
 const transferenciaSchema = new mongoose.Schema({

@@ -82,11 +82,13 @@ const TransferirData = () => {
     pago,
     metodoPagoPendiente,
     pagoPendiente,
+    servicio,
+    estado,
+    fechaActivacion,
     bebidas,
     restaurante,
     recepcion,
-    descorche,
-    servicio
+    descorche
 
   ) => {
     if (!identificacion) {
@@ -103,11 +105,16 @@ const TransferirData = () => {
       pago,
       metodoPagoPendiente,
       pagoPendiente,
+      servicio,
+      estado,
+      fechaActivacion,
       bebidas,
       restaurante,
       recepcion,
-      descorche,
-      servicio
+      descorche
+      
+      
+      
 
     };
 
@@ -116,7 +123,6 @@ const TransferirData = () => {
       datosHistorial
     };
 
-    console.log("datos del usuario: ", datosParaEnviar)
 
     await realizarSolicitudHTTP(datosParaEnviar);
     await handleDelete(id)
@@ -228,6 +234,7 @@ const TransferirData = () => {
         <Table aria-label="Example static collection table" className=' pl-5 pr-5' >
           <TableHeader className='text-center' >
             <TableColumn className='text-center' >IDENTIFICACIÓN</TableColumn>
+         
             <TableColumn className='text-center' >NAME</TableColumn>
             <TableColumn className='text-center' >STATUS</TableColumn>
             <TableColumn className='text-center' >SERVICIO</TableColumn>
@@ -236,6 +243,7 @@ const TransferirData = () => {
             {datosFiltrados.map((data) => (
               <TableRow key={data._id} >
                 <TableCell className='text-center border-b-2 border-blue-300'>{data.identificacion}</TableCell>
+                
                 <TableCell className='uppercase text-center border-b-2 border-green-300' >{data.nombre}</TableCell>
                 <TableCell className='uppercase text-center border-b-2 border-blue-300' >{data.servicio}</TableCell>
                 <TableCell key={data._id} className='text-center border-b-2 border-green-300'  >
@@ -298,16 +306,13 @@ const TransferirData = () => {
                                         data.pagoAnticipado,
                                         data.mediosDePagoPendiente,
                                         data.pagoPendiente,
+                                        data.servicio,
+                                        data.estado,
+                                        data.fechaActivacion,
                                         data.bebidas,
                                         data.restaurante,
                                         data.recepcion,
-                                        data.descorche,
-                                        data.servicio
-
-
-
-
-
+                                        data.descorche
                                       );
                                       Swal.fire({
                                         title: "Deleted!",

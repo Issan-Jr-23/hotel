@@ -1,5 +1,5 @@
-import Cabania from "../models/client.cabania.model.js";
 import Usuario from '../models/transferencia.model.js';
+import Cabania from "../models/client.cabania.model.js";
 import Habitaciones from "../models/cliente.habitaciones.model.js";
 import Cliente from "../models/client.model.js";
 
@@ -44,7 +44,7 @@ export const obtenerTotalesNiniosYAdultosEnPasadia = async (req, res) => {
   
       usuarios.forEach((usuario) => {
         usuario.historial.forEach((reserva) => {
-          if (reserva.servicio === "cabania") {
+          if (reserva.servicio === "pasadia") {
             totalPago += reserva.pago || 0;
             totalPagoPendiente += reserva.pagoPendiente || 0;
           }
@@ -52,7 +52,7 @@ export const obtenerTotalesNiniosYAdultosEnPasadia = async (req, res) => {
       });
   
       clientes.forEach((x) => {
-        if (x.servicio === "cabania") {
+        if (x.servicio === "pasadia") {
           totalPago += x.pagoAnticipado || 0;
           totalPagoPendiente += x.pagoPendiente || 0;
         }
@@ -195,7 +195,9 @@ export const obtenerTotal = async (req, res) => {
       let nombres = [];
 
       doc.historial.forEach(historialItem => {
-        nombres.push(historialItem.nombre);
+        if (typeof historialItem.nombre === 'string') {
+          nombres.push(historialItem.nombre);
+        }
 
         historialItem.bebidas.forEach(item => {
           valorTotal += item.cantidad * item.precio;
@@ -207,7 +209,11 @@ export const obtenerTotal = async (req, res) => {
       });
 
       let nombreMasCompleto = nombres.reduce((nombreActual, nombreSiguiente) => {
-        return nombreActual.split(' ').length > nombreSiguiente.split(' ').length ? nombreActual : nombreSiguiente;
+        if (typeof nombreActual === 'string' && typeof nombreSiguiente === 'string') {
+          return nombreActual.split(' ').length > nombreSiguiente.split(' ').length ? nombreActual : nombreSiguiente;
+        } else {
+          return nombreActual; 
+        }
       }, '');
 
       return {
@@ -226,55 +232,65 @@ export const obtenerTotal = async (req, res) => {
 
 export const productosMasComprados = async (req, res) => {
   try {
-    const clientes = await Cliente.find({});
-    const cabanias = await Cabania.find({});
-    const habitaciones = await Habitaciones.find({});
+      const clientes = await Cliente.find({});
+      const cabanias = await Cabania.find({});
+      const habitaciones = await Habitaciones.find({});
+      const historiales = await Usuario.find({}); // Suponiendo que Usuario tiene el historial
 
-    let resultados = {
-        bebidas: {},
-        restaurante: {},
-        valorTotal: 0
-    };
+      let resultados = {
+          bebidas: {},
+          restaurante: {},
+          valorTotal: 0
+      };
 
-    // Función auxiliar para procesar y acumular los elementos
-    const acumularElementos = (elementos, tipo) => {
-        elementos.forEach(elemento => {
-            if (resultados[tipo][elemento._id]) {
-                resultados[tipo][elemento._id].cantidad += elemento.cantidad;
-                resultados[tipo][elemento._id].valorTotal += elemento.cantidad * elemento.precio;
-            } else {
-                resultados[tipo][elemento._id] = {
-                    nombre: elemento.nombre,
-                    cantidad: elemento.cantidad,
-                    precio: elemento.precio,
-                    valorTotal: elemento.cantidad * elemento.precio
-                };
-            }
-            resultados.valorTotal += elemento.cantidad * elemento.precio;
-        });
-    };
+      // Función auxiliar para procesar y acumular los elementos
+      const acumularElementos = (elementos, tipo) => {
+          elementos.forEach(elemento => {
+              if (resultados[tipo][elemento._id]) {
+                  resultados[tipo][elemento._id].cantidad += elemento.cantidad;
+                  resultados[tipo][elemento._id].valorTotal += elemento.cantidad * elemento.precio;
+              } else {
+                  resultados[tipo][elemento._id] = {
+                      nombre: elemento.nombre,
+                      cantidad: elemento.cantidad,
+                      precio: elemento.precio,
+                      valorTotal: elemento.cantidad * elemento.precio
+                  };
+              }
+              resultados.valorTotal += elemento.cantidad * elemento.precio;
+          });
+      };
 
-    // Procesar clientes, cabañas y habitaciones
-    [clientes, cabanias, habitaciones].forEach(coleccion => {
-        coleccion.forEach(item => {
-            acumularElementos(item.bebidas || [], 'bebidas');
-            acumularElementos(item.restaurante || [], 'restaurante');
-        });
-    });
+      // Procesar clientes, cabañas, habitaciones y historiales
+      [clientes, cabanias, habitaciones].forEach(coleccion => {
+          coleccion.forEach(item => {
+              acumularElementos(item.bebidas || [], 'bebidas');
+              acumularElementos(item.restaurante || [], 'restaurante');
+          });
+      });
 
-    // Convertir los resultados en arreglos para la respuesta
-    const resultadosArray = {
-        bebidas: Object.values(resultados.bebidas),
-        restaurante: Object.values(resultados.restaurante),
-       
-    };
+      // Procesar también el historial de cada usuario
+      historiales.forEach(usuario => {
+          usuario.historial.forEach(historial => {
+              acumularElementos(historial.bebidas || [], 'bebidas');
+              acumularElementos(historial.restaurante || [], 'restaurante');
+          });
+      });
 
-    res.status(200).json(resultadosArray);
-} catch (error) {
-    console.log(error)
-    res.status(500).send('Error en el servidor');
-}
+      // Convertir los resultados en arreglos para la respuesta
+      const resultadosArray = {
+          bebidas: Object.values(resultados.bebidas),
+          restaurante: Object.values(resultados.restaurante),
+          valorTotal: resultados.valorTotal
+      };
+
+      res.status(200).json(resultadosArray);
+  } catch (error) {
+      console.error(error);
+      res.status(500).send('Error en el servidor');
+  }
 };
+
 
 export const comprasUsers = async(req, res) => {
   try {
@@ -305,3 +321,18 @@ export const comprasUsers = async(req, res) => {
     res.status(500).send(error);
   }
 };
+
+// export const obtenerTotal = async(req, res) => {
+//   try {
+//     const historial = Usuario.find()
+
+//     historial.forEach((y) => {
+//       y.historial.forEach((data) => {
+
+//       })
+//     });
+    
+//   } catch (error) {
+    
+//   }
+// }
