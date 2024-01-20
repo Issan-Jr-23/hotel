@@ -15,6 +15,11 @@ const MyComponent = () => {
   const [restauranteC, setRestauranteC] = useState(0);
   const [recepcionC, setRecepcionC] = useState(0);
   const [descorcheC, setDescorcheC] = useState(0);
+  const [barH, setBarH ] = useState(0);
+  const [restauranteH, setRestauranteH] = useState(0);
+  const [recepcionH, setRecepcionH] = useState(0);
+  const [descorcheH, setDescorcheH] = useState(0);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -100,6 +105,16 @@ const MyComponent = () => {
     fetchData();
   }, [])
 
+  useEffect(() =>{
+    const fetchData = async() =>{
+      const response = AxiosInstance.get(`/total-generado-ventas-habitaciones-brad`);
+      const {bar, restaurante, recepcion, descorche} = response.data;
+      barH(bar);
+      restauranteH(restaurante);
+      recepcionH(recepcion);
+      descorcheH(descorche) 
+    }
+  })
 
 
   useEffect(() => {
@@ -205,31 +220,31 @@ const MyComponent = () => {
         },
         {
           name: 'Bar habitaciones',
-          data: filterData([{y: bar}]),
+          data: filterData([{y: barH}]),
           stack: 'Habitaciones',
           showInLegend: true
         },
         {
           name: 'Restaurante Habitaciones',
-          data: filterData([{y:restaurante}]),
+          data: filterData([{y:restauranteH}]),
           stack: 'Habitaciones',
           showInLegend: true
         },
         {
           name: 'Recepcion Habitaciones',
-          data: filterData([{y: recepcion}]),
+          data: filterData([{y: recepcionH}]),
           stack: 'Habitaciones',
           showInLegend: true
         },
         {
           name: 'Descorche Habitaciones',
-          data: filterData([{y: descorche}]),
+          data: filterData([{y: descorcheH}]),
           stack:'Habitaciones',
           showInLegend: true
         }
       ]
     });
-  }, [totalVentaPasadia, bar, restaurante, recepcion, descorche, totalVentaCabania, barC, restauranteC, recepcionC, descorcheC]);
+  }, [totalVentaPasadia, bar, restaurante, recepcion, descorche, totalVentaCabania, barC, restauranteC, recepcionC, descorcheC, barH, restauranteH, recepcionH, descorcheH]);
   
 
 

@@ -12,6 +12,9 @@ import Pmc from "../pages/apexCharts/productoMasComprado.jsx";
 import Umc from "../pages/apexCharts/UsuarioConMasCompras.jsx";
 import { useAuth } from "../context/authContext.jsx";
 import AxiosInstance from '../api/axios.js'
+import userimg from '../images/usuariopng.png'
+import userimg2 from '../images/usuariopng2.png'
+import userimg3 from '../images/usuariopng3.png'
 import "./css/homeSu.css"
 
 
@@ -212,15 +215,16 @@ const HomeSu = () => {
 
         </section>
         <section className='section-cards pt-2 mt-5 pb-2 flex '>
-          <article className=' vista-cantidades bd-vc'>
+          <article className=' vista-cantidades bd-vc '>
             <span className='box-style-hs justify-around flex flex-col'>
               <h3 className='fondo-text-hs' style={{ fontWeight: "600" }} >Total Pasadia</h3>
               <p className='fondo-text-hs' style={{ fontWeight: "600" }}>
                 ${typeof totalVentaPasadia === 'number' ? totalVentaPasadia.toLocaleString('es-CO') : '0'} COP
               </p>
               <p className=' fondo-text-hs text-3xl flex' style={{ fontWeight: "600" }}>  {totalUsers}</p>
-
             </span>
+            <img className='imagen-de-user-decoration' src={userimg} alt=""/>
+
           </article>
           <article className=' vista-cantidades bd-vc1  flex'>
             <span className='box-style-hs justify-around flex flex-col'>
@@ -231,27 +235,26 @@ const HomeSu = () => {
               <p className=' fondo-text-hs text-3xl flex' style={{ fontWeight: "600" }}> {totalUsersC}</p>
 
             </span>
+            <img className='imagen-de-user-decoration' src={userimg2} alt=""/>
           </article>
-          <article className=' vista-cantidades bd-vc2    flex'>
+          <article className=' vista-cantidades bd-vc2     flex'>
             <span className='box-style-hs justify-around flex flex-col'>
               <h3 className='fondo-text-hs' style={{ fontWeight: "600" }} >Total Habitaciones</h3>
               <p className='fondo-text-hs' style={{ fontWeight: "600" }}>
                 ${typeof totalVentaHabitaciones === 'number' ? totalVentaHabitaciones.toLocaleString('es-CO') : '0'} COP
               </p>
               <p className='  fondo-text-hs text-3xl flex' style={{ fontWeight: "600" }}>{totalUsersH}</p>
-
             </span>
+            <img className='imagen-de-user-decoration' src={userimg3} alt=""/>
           </article>
         </section>
 
         <section className='section-cont-pieyes flex'>
-          <div className=' div-cont-pieyes'>
-            <h3 className='flex justify-center items-center text-xl mb-2'>PROMEDIO DE RESERVAS</h3>
+          <div className=' div-cont-pieyes '>
             <article className=' bg-white cont-pieYes2' >
               <PieYes />
             </article>
-            <h3 className='flex justify-center items-center text-xl mt-4'>COMPRAS DE USUARIOS</h3>
-            <article className='article-alto'>
+            <article className='article-alto article-alto-grf-pd bg-white border-2' >
               {/* <Table aria-label="Example static collection table" className='overflow-y-auto'>
                 <TableHeader>
                   <TableColumn>NAME</TableColumn>
@@ -273,15 +276,13 @@ const HomeSu = () => {
           </div>
           <div className='div-graf'>
             <div className=''>
-              <h3 className='flex justify-center items-center text-xl uppercase mb-2'  >Clientes con mas compras</h3>
-              <article className='article-alto'>
+              <article className='article-alto  article-alto article-alto-grf-pdl'>
 
                 <LineGrafict />
               </article>
 
             </div>
             <div className='const-pieno'>
-              <h3 className='flex justify-center items-center text-xl'>COMPRAS DE USUARIOS</h3>
               <article className='article-alto cont-pieYes bg-white'>
                 {/* <PieNo/> */}
                 {/* <Table aria-label="Example dynamic collection table" className='overflow-y-auto '>

@@ -54,7 +54,7 @@ const UserMasCompras = () => {
       type: 'pie'
     },
     title: {
-      text: 'Productos Más Vendidos'
+      text: 'USUARIO CON MAS COMPRAS'
     },
     plotOptions: {
         pie: {
@@ -73,9 +73,8 @@ const UserMasCompras = () => {
   };
 
   return (
-    <div>
-      <h2>Productos Más Vendidos</h2>
-      <HighchartsReact highcharts={Highcharts} options={options} />
+    <div >
+      <HighchartsReact highcharts={Highcharts} options={options}  />
     </div>
   );
 };

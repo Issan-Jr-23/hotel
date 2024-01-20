@@ -41,8 +41,7 @@ const MiComponente = () => {
   };
 
   return (
-    <div>
-      <h2>Productos Más Vendidos</h2>
+    <div >
       <HighchartsReact highcharts={Highcharts} options={options} />
     </div>
   );

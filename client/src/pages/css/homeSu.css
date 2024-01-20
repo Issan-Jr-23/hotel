@@ -41,7 +41,15 @@
   border-radius:20px 20px 0px 0px;
   background-color: #ffffff;
   overflow: hidden;
+  position: relative;
   
+}
+
+.imagen-de-user-decoration{
+  position: absolute;
+  top: -15px;
+  right: -80px;
+  width: 220px;
 }
 
 .bd-vc{
@@ -61,20 +69,25 @@
   box-shadow: 0px 5px 10px 0px rgb(216, 216, 216);
   border-radius: 10px;
 }
+.article-alto-grf-pd{
+  margin-right: 10px;
+  margin-top: 30px;
+}
 
 .cont-graf {
   margin-left: 20px;
 }
 
 .cont-pieYes {
-  margin-left: 20px;
   border-radius: 20px;
   height: 72.3vh;
   box-shadow: 0px 5px 10px 0px rgb(216, 216, 216);
   border-radius: 10px;
+  margin-top: 30px;
+  margin-left: 10px;
 }
 .cont-pieYes2 {
-  margin-right: 20px;
+  margin-right: 10px;
   border-radius: 20px;
   height: 72.3vh;
   box-shadow: 0px 5px 10px 0px rgb(216, 216, 216);
@@ -87,10 +100,12 @@
 }
 
 .const-pieno{
-  padding-top: 17px;
   
 }
 
+.article-alto-grf-pdl{
+  margin-left: 10px;
+}
 .go-now {
   font-size: 14.2px;
   color: #58918e;
