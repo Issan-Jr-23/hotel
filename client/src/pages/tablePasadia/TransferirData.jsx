@@ -180,7 +180,7 @@ const TransferirData = () => {
     }
   };
 
-  const defaultOption = {
+  const defaultOption = { 
     loop: true,
     autoPlay: true,
     animationData: animacion,

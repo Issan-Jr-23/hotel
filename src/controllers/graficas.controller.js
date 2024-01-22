@@ -237,156 +237,310 @@ export const productosMasComprados = async (req, res) => {
     const habitaciones = await Habitaciones.find();
     const historial = await Usuario.find();
     const productosInfo = [];
-    const findProductById = (array, id) => {
-      return array.find((item) => item.id === id);
+
+    const findProductByIdAndItemId = (array, id, itemId) => {
+      return array.find(item => item.id === id || item.itemId === itemId);
     };
-
-
-    cabania.forEach((data) => {
-      data.restaurante.forEach((producto) => {
-        const existingProduct = findProductById(productosInfo, producto.id);
-
-        if (existingProduct) {
-          existingProduct.cantidad += producto.cantidad;
-          existingProduct.total += producto.cantidad * producto.precio;
-        } else {
-          productosInfo.push({
-            id: producto.id,
-            nombre: producto.nombre,
-            cantidad: producto.cantidad,
-            total: producto.cantidad * producto.precio,
+    
+    if (cabania) {
+      cabania.forEach(data => {
+        if (data.restaurante) {
+          data.restaurante.forEach(producto => {
+            const existingProduct = findProductByIdAndItemId(productosInfo, producto.id, producto.itemId);
+            if (existingProduct) {
+              existingProduct.total += producto.cantidad * producto.precio;
+            } else {
+              const newProduct = {
+                id: producto.id || producto.itemId,
+                nombre: producto.nombre,
+                total: producto.cantidad * producto.precio,
+              };
+              if (!newProduct.id) {
+                newProduct.id = producto.itemId;
+              }
+              productosInfo.push(newProduct);
+            }
           });
         }
       });
-    });
-    cabania.forEach((data) => {
-      data.bebidas.forEach((producto) => {
-        const existingProduct = findProductById(productosInfo, producto.id);
+    }
 
-        if (existingProduct) {
-          existingProduct.cantidad += producto.cantidad;
-          existingProduct.total += producto.cantidad * producto.precio;
-        } else {
-          productosInfo.push({
-            id: producto.id,
-            nombre: producto.nombre,
-            cantidad: producto.cantidad,
-            total: producto.cantidad * producto.precio,
+    if (cabania) {
+      cabania.forEach(data => {
+        if (data.bebidas) {
+          data.bebidas.forEach(producto => {
+            const existingProduct = findProductByIdAndItemId(productosInfo, producto.id, producto.itemId);
+            if (existingProduct) {
+              existingProduct.total += producto.cantidad * producto.precio;
+            } else {
+              const newProduct = {
+                id: producto.id || producto.itemId,
+                nombre: producto.nombre,
+                total: producto.cantidad * producto.precio,
+              };
+              if (!newProduct.id) {
+                newProduct.id = producto.itemId;
+              }
+              productosInfo.push(newProduct);
+            }
           });
         }
       });
-    });
+    }
+    
+    // if (pasadia) {
+    //   pasadia.forEach(data => {
+    //     if (data.restaurante) {
+    //       data.restaurante.forEach(producto => {
+    //         const existingProduct = findProductByIdAndItemId(productosInfo, producto.id, producto.itemId);
+    //         if (existingProduct) {
+    //           existingProduct.total += producto.cantidad * producto.precio;
+    //         } else {
+    //           const newProduct = {
+    //             id: producto.id || producto.itemId,
+    //             nombre: producto.nombre,
+    //             total: producto.cantidad * producto.precio,
+    //           };
+    //           if (!newProduct.id) {
+    //             newProduct.id = producto.itemId;
+    //           }
+    //           productosInfo.push(newProduct);
+    //         }
+    //       });
+    //     }
+    //   });
+    // }
 
-    pasadia.forEach((data) => {
-      data.restaurante.forEach((producto) => {
-        const existingProduct = findProductById(productosInfo, producto.id);
+    // if (pasadia) {
+    //   pasadia.forEach(data => {
+    //     if (data.bebidas) {
+    //       data.bebidas.forEach(producto => {
+    //         const existingProduct = findProductByIdAndItemId(productosInfo, producto.id, producto.itemId);
+    //         if (existingProduct) {
+    //           existingProduct.total += producto.cantidad * producto.precio;
+    //         } else {
+    //           const newProduct = {
+    //             id: producto.id || producto.itemId,
+    //             nombre: producto.nombre,
+    //             total: producto.cantidad * producto.precio,
+    //           };
+    //           if (!newProduct.id) {
+    //             newProduct.id = producto.itemId;
+    //           }
+    //           productosInfo.push(newProduct);
+    //         }
+    //       });
+    //     }
+    //   });
+    // }
+
+        
+    // if (habitaciones) {
+    //   habitaciones.forEach(data => {
+    //     if (data.bebidas) {
+    //       data.bebidas.forEach(producto => {
+    //         const existingProduct = findProductByIdAndItemId(productosInfo, producto.id, producto.itemId);
+    //         if (existingProduct) {
+    //           existingProduct.total += producto.cantidad * producto.precio;
+    //         } else {
+    //           const newProduct = {
+    //             id: producto.id || producto.itemId,
+    //             nombre: producto.nombre,
+    //             total: producto.cantidad * producto.precio,
+    //           };
+    //           if (!newProduct.id) {
+    //             newProduct.id = producto.itemId;
+    //           }
+    //           productosInfo.push(newProduct);
+    //         }
+    //       });
+    //     }
+    //   });
+    // }
+
+    // if (habitaciones) {
+    //   habitaciones.forEach(data => {
+    //     if (data.restaurante) {
+    //       data.restaurante.forEach(producto => {
+    //         const existingProduct = findProductByIdAndItemId(productosInfo, producto.id, producto.itemId);
+    //         if (existingProduct) {
+    //           existingProduct.total += producto.cantidad * producto.precio;
+    //         } else {
+    //           const newProduct = {
+    //             id: producto.id || producto.itemId,
+    //             nombre: producto.nombre,
+    //             total: producto.cantidad * producto.precio,
+    //           };
+    //           if (!newProduct.id) {
+    //             newProduct.id = producto.itemId;
+    //           }
+    //           productosInfo.push(newProduct);
+    //         }
+    //       });
+    //     }
+    //   });
+    // }
+
+
+    // historial.forEach(producto => {
+    //   producto.historial.forEach(response => {
+    //     response.restaurante.forEach(data => {
+    //       // Asegúrate de que 'data' tenga un campo 'itemId'
+    //       const existingProduct = findProductByIdAndItemId(productosInfo, data.id, data.itemId);
+    //       if (existingProduct) {
+    //         existingProduct.total += data.cantidad * data.precio;
+    //       } else {
+    //         productosInfo.push({
+    //           id: data.id,
+    //           itemId: data.itemId, // Asegúrate de que 'data' tenga este campo
+    //           nombre: data.nombre,
+    //           total: data.cantidad * data.precio,
+    //         });
+    //       }
+    //     });
+    
+    //     response.bebidas.forEach(data => {
+    //       // Asegúrate de que 'data' tenga un campo 'itemId'
+    //       const existingProduct = findProductByIdAndItemId(productosInfo, data.id, data.itemId);
+    //       if (existingProduct) {
+    //         existingProduct.total += data.cantidad * data.precio;
+    //       } else {
+    //         productosInfo.push({
+    //           id: data.id,
+    //           itemId: data.itemId, // Asegúrate de que 'data' tenga este campo
+    //           nombre: data.nombre,
+    //           total: data.cantidad * data.precio,
+    //         });
+    //       }
+    //     });
+    //   });
+    // });
+
+
+    // cabania.forEach((data) => {
+    //   data.bebidas.forEach((producto) => {
+    //     const existingProduct = findProductById(productosInfo, producto.id);
+
+    //     if (existingProduct) {
+    //       existingProduct.cantidad += producto.cantidad;
+    //       existingProduct.total += producto.cantidad * producto.precio;
+    //     } else {
+    //       productosInfo.push({
+    //         id: producto.id,
+    //         nombre: producto.nombre,
+    //         cantidad: producto.cantidad,
+    //         total: producto.cantidad * producto.precio,
+    //       });
+    //     }
+    //   });
+    // });
+
+    // pasadia.forEach((data) => {
+    //   data.restaurante.forEach((producto) => {
+    //     const existingProduct = findProductById(productosInfo, producto.id);
   
-        if (existingProduct) {
-          existingProduct.cantidad += producto.cantidad;
-          existingProduct.total += producto.cantidad * producto.precio;
-        } else {
-          productosInfo.push({
-            id: producto.id,
-            nombre: producto.nombre,
-            cantidad: producto.cantidad,
-            total: producto.cantidad * producto.precio,
-          });
-        }
-      } )
-    });
+    //     if (existingProduct) {
+    //       existingProduct.cantidad += producto.cantidad;
+    //       existingProduct.total += producto.cantidad * producto.precio;
+    //     } else {
+    //       productosInfo.push({
+    //         id: producto.id,
+    //         nombre: producto.nombre,
+    //         cantidad: producto.cantidad,
+    //         total: producto.cantidad * producto.precio,
+    //       });
+    //     }
+    //   } )
+    // });
 
-    pasadia.forEach((data) => {
-      data.bebidas.forEach((producto) => {
-        const existingProduct = findProductById(productosInfo, producto.id);
+    // pasadia.forEach((data) => {
+    //   data.bebidas.forEach((producto) => {
+    //     const existingProduct = findProductById(productosInfo, producto.id);
   
-        if (existingProduct) {
-          existingProduct.cantidad += producto.cantidad;
-          existingProduct.total += producto.cantidad * producto.precio;
-        } else {
-          productosInfo.push({
-            id: producto.id,
-            nombre: producto.nombre,
-            cantidad: producto.cantidad,
-            total: producto.cantidad * producto.precio,
-          });
-        }
-      } )
-    });
+    //     if (existingProduct) {
+    //       existingProduct.cantidad += producto.cantidad;
+    //       existingProduct.total += producto.cantidad * producto.precio;
+    //     } else {
+    //       productosInfo.push({
+    //         id: producto.id,
+    //         nombre: producto.nombre,
+    //         cantidad: producto.cantidad,
+    //         total: producto.cantidad * producto.precio,
+    //       });
+    //     }
+    //   } )
+    // });
 
-    habitaciones.forEach((data) => {
-      data.restaurante.forEach((producto) => {
-        const existingProduct = findProductById(productosInfo, producto.id);
+    // habitaciones.forEach((data) => {
+    //   data.restaurante.forEach((producto) => {
+    //     const existingProduct = findProductById(productosInfo, producto.id);
   
-        if (existingProduct) {
-          existingProduct.cantidad += producto.cantidad;
-          existingProduct.total += producto.cantidad * producto.precio;
-        } else {
-          productosInfo.push({
-            id: producto.id,
-            nombre: producto.nombre,
-            cantidad: producto.cantidad,
-            total: producto.cantidad * producto.precio,
-          });
-        }
-      } )
-    });
+    //     if (existingProduct) {
+    //       existingProduct.cantidad += producto.cantidad;
+    //       existingProduct.total += producto.cantidad * producto.precio;
+    //     } else {
+    //       productosInfo.push({
+    //         id: producto.id,
+    //         nombre: producto.nombre,
+    //         cantidad: producto.cantidad,
+    //         total: producto.cantidad * producto.precio,
+    //       });
+    //     }
+    //   } )
+    // });
 
-    habitaciones.forEach((data) => {
-      data.bebidas.forEach((producto) => {
-        const existingProduct = findProductById(productosInfo, producto.id);
+    // habitaciones.forEach((data) => {
+    //   data.bebidas.forEach((producto) => {
+    //     const existingProduct = findProductById(productosInfo, producto.id);
   
-        if (existingProduct) {
-          existingProduct.cantidad += producto.cantidad;
-          existingProduct.total += producto.cantidad * producto.precio;
-        } else {
-          productosInfo.push({
-            id: producto.id,
-            nombre: producto.nombre,
-            cantidad: producto.cantidad,
-            total: producto.cantidad * producto.precio,
-          });
-        }
-      } )
-    });
+    //     if (existingProduct) {
+    //       existingProduct.cantidad += producto.cantidad;
+    //       existingProduct.total += producto.cantidad * producto.precio;
+    //     } else {
+    //       productosInfo.push({
+    //         id: producto.id,
+    //         nombre: producto.nombre,
+    //         cantidad: producto.cantidad,
+    //         total: producto.cantidad * producto.precio,
+    //       });
+    //     }
+    //   } )
+    // });
 
 
 
-    historial.forEach((producto) => {
-      producto.historial.forEach((response) => {
-        response.restaurante.forEach((data) => {
-          const existingProduct = findProductById(productosInfo, data.id);
-          if (existingProduct) {
-            existingProduct.cantidad += data.cantidad;
-            existingProduct.total += data.cantidad * data.precio;
-          } else {
-            productosInfo.push({
-              id: data.id,
-              nombre: data.nombre,
-              cantidad: data.cantidad,
-              total: data.cantidad * data.precio,
-            });
-          }
-        });
-      });
-    });
-    historial.forEach((producto) => {
-      producto.historial.forEach((response) => {
-        response.bebidas.forEach((data) => {
-          const existingProduct = findProductById(productosInfo, data.id);
-          if (existingProduct) {
-            existingProduct.cantidad += data.cantidad;
-            existingProduct.total += data.cantidad * data.precio;
-          } else {
-            productosInfo.push({
-              id: data.id,
-              nombre: data.nombre,
-              cantidad: data.cantidad,
-              total: data.cantidad * data.precio,
-            });
-          }
-        });
-      });
-    });
+    // historial.forEach((producto) => {
+    //   producto.historial.forEach((response) => {
+    //     response.restaurante.forEach((data) => {
+    //       const existingProduct = findProductById(productosInfo, data.id);
+    //       if (existingProduct) {
+    //         existingProduct.total += data.cantidad * data.precio;
+    //       } else {
+    //         productosInfo.push({
+    //           id: data.id,
+    //           nombre: data.nombre,
+    //           total: data.cantidad * data.precio,
+    //         });
+    //       }
+    //     });
+    //   });
+    // });
+    // historial.forEach((producto) => {
+    //   producto.historial.forEach((response) => {
+    //     response.bebidas.forEach((data) => {
+    //       const existingProduct = findProductById(productosInfo, data.id);
+    //       if (existingProduct) {
+    //         existingProduct.total += data.cantidad * data.precio;
+    //       } else {
+    //         productosInfo.push({
+    //           id: data.id,
+    //           nombre: data.nombre,
+    //           total: data.cantidad * data.precio,
+    //         });
+    //       }
+    //     });
+    //   });
+    // });
 
 
 

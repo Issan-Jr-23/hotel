@@ -8,12 +8,16 @@ import TableUsers from "./tableUsersPasadia.jsx"
 import Box from "./box.jsx"
 import TableProductos from "./tableUsers.jsx"
 import AxiosInstance from '../../api/axios.js'
+import Lottie from "react-lottie"
 import users from "../../images/iconly-glass-tick.svg"
 import { Button, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@nextui-org/react"
 import "./styleDashboard.css"
-import down from "../../images/down.png"
+import cubo from "../../images/forma-abstracta2.png"
+import fa from "../../images/forma-abstracta.png"
+import fa1 from "../../images/forma-abstracta1.png"
+import animationDb from "../../images/Animation - 1705932434807.json"
 
- const dashboardPasadia = () => {
+const dashboardPasadia = () => {
 
   const [totalUsers, setTotalUsers] = useState()
   const [totalVentaPasadia, setTotalVentaPasadia] = useState()
@@ -73,7 +77,7 @@ import down from "../../images/down.png"
     const total = valorVenta + valorVentaPasadia;
     setSumaDeValores(total);
   }, [valorVenta, valorVentaPasadia])
-  
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -98,7 +102,7 @@ import down from "../../images/down.png"
   // const tv = valorVentaPasadia + valorVenta;
   // setSumaDeValores(tv)
   // console.log("suma de valores: ",sumaDeValores)
-  
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -139,54 +143,75 @@ import down from "../../images/down.png"
     fetchData();
   }, []);
 
+  const defaultOption = {
+    loop: true,
+    autoPlay: true,
+    animationData: animationDb,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice"
+    }
+  }
+
+
   return (
     <div className=' fondo pt-20 pl-5 pr-5 pb-20'>
-      <h1 className='text-4xl mb-5'>Overview</h1>
+      <div className='cont-icon-json'>
+      <article className='cont-title-json'> 
+      <h1 className='text-4xl mb-5 uppercase'>Overview</h1>
+
+      </article>
+      <article className='animation-lottie-json'>
+      <Lottie options={defaultOption} width="100%" height="100%"
+                           />
+      </article>
+
+      </div>
       <div className='flex justify-between flex-wrap'>
         <div className='box-style  flex rounded-2xl '>
           <span className='box-grafic justify-between flex flex-col p-4' >
             <h3 className='fondo-text' style={{ fontWeight: "600", fontSize: "20px" }} >Sales operations</h3>
-            <p className='fondo-text flex' style={{ fontWeight: "500" }}>
-              ${typeof totalVentaPasadia === 'number' ? totalVentaPasadia.toLocaleString('es-CO') : '0'} 
-              {<span className='fondo-text alza flex flex-row items-center ml-2 text-green-600'> 
-              {/* <span className='alza'> 
+            <p className='fondo-text flex' style={{ fontWeight: "600" }}>
+              ${typeof totalVentaPasadia === 'number' ? totalVentaPasadia.toLocaleString('es-CO') : '0'}
+              {<span className='fondo-text alza flex flex-row items-center ml-2 text-green-600'>
+                {/* <span className='alza'> 
               <img className='down' src={down} alt="" /> </span>   */}</span>}
             </p>
-            <p className=' fondo-text text-3xl flex' style={{ fontWeight: "400" }}>  {totalUsers}</p>
+            <p className=' fondo-text text-3xl flex' style={{ fontWeight: "600" }}>  {totalUsers}</p>
 
           </span>
 
+              <img className='img-cubo-dasboard' src={cubo} alt="" />
         </div>
         <div className='box-style  flex rounded-2xl '>
-          <span className='box-grafic justify-around flex flex-col p-4'>
-            <h3 className='fondo-text' style={{ fontWeight: "400", fontSize: "20px" }} >Units Sold</h3>
+          <span className='box-grafic justify-between flex flex-col p-4'>
+            <h3 className='fondo-text' style={{ fontWeight: "600", fontSize: "20px" }} >Units Sold</h3>
             <p className='fondo-text flex' style={{ fontWeight: "600" }}>
-              ${typeof sumaDeValores  === 'number' ? sumaDeValores.toLocaleString('es-CO') : '0'} 
-              {<span className='fondo-text alza flex items-center ml-2 text-red-600'> 
-              {/* <span className='alza'> 
+              ${typeof sumaDeValores === 'number' ? sumaDeValores.toLocaleString('es-CO') : '0'}
+              {<span className='fondo-text alza flex items-center ml-2 text-red-600'>
+                {/* <span className='alza'> 
               <img className='down' src={down} alt="" /> </span>   */}
               </span>}
             </p>
-            <p className= ' fondo-text text-3xl flex' style={{ fontWeight: "600" }}>   {cantidadVendida + cantidadVendidaPasadia}</p>
+            <p className=' fondo-text text-3xl flex' style={{ fontWeight: "600" }}>   {cantidadVendida + cantidadVendidaPasadia}</p>
 
           </span>
-
+          <img className='img-cubo-dasboard' src={fa} alt="" />
         </div>
         <div className='box-style  flex rounded-2xl '>
-          <span className='box-grafic justify-around flex flex-col p-4'>
-          <h3 className='fondo-text' style={{ fontWeight: "600", fontSize: "20px" }} >courtesies for clients</h3>
+          <span className='box-grafic justify-between flex flex-col p-4'>
+            <h3 className='fondo-text' style={{ fontWeight: "600", fontSize: "20px" }} >courtesies for clients</h3>
             <p className='fondo-text' style={{ fontWeight: "600" }}>
-              ${typeof valorVentaCortesias === 'number' ? valorVentaCortesias.toLocaleString('es-CO') : '0'} 
+              ${typeof valorVentaCortesias === 'number' ? valorVentaCortesias.toLocaleString('es-CO') : '0'}
             </p>
-            <p className=' fondo-text text-3xl flex' style={{ fontWeight: "600" }}> 
-             {cantidadVendidaCortesias}</p>
+            <p className=' fondo-text text-3xl flex' style={{ fontWeight: "600" }}>
+              {cantidadVendidaCortesias}</p>
 
           </span>
-
+          <img className='img-cubo-dasboard' src={fa1} alt="" />
         </div>
 
       </div>
-      <div className=' flex mt-10 cont-table-apexg '> 
+      <div className=' flex mt-10 cont-table-apexg '>
         <div className='box-table'>
           <TableUsers />
         </div>
@@ -195,7 +220,7 @@ import down from "../../images/down.png"
  
 </div> */}
       </div>
-<ApexSpline />
+      <ApexSpline />
       <div className='box-table-ventas flex'>
         {/* <div className='box-pie-table' >
           <ApexPie />
@@ -207,11 +232,11 @@ import down from "../../images/down.png"
       </div>
       <div className='flex container-apexPie-box '>
         <div className='container-apex-pie'>
-          <ApexPie/>
+          <ApexPie />
         </div>
-        <div  className='container-apex-box'>
+        <div className='container-apex-box'>
 
-        <Box/>
+          <Box />
         </div>
       </div>
     </div>
