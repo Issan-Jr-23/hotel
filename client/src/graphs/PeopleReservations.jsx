@@ -6,65 +6,40 @@ import AxiosInstance from '../api/axios.js';
 HC_accessibility(Highcharts);
 
 const DoughnutChart = () => {
-  const [data, setData] = useState([]);
-  const [totalReservas, setTotalReservas] = useState(0);
+
+  const [reservaPositiva, setReservaPositiva] = useState(0)
+  const [reservaNegativa, setReservaNegativa] = useState(0)
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const responseSi = await AxiosInstance.get('/obtener-historial-reservas-si');
-        let totalReservasSi = responseSi.data.historialReservasSi ? responseSi.data.historialReservasSi.reduce((total, usuario) => total + usuario.reservasSi.length, 0) : 0;
-        totalReservasSi += responseSi.data.reservasSiClientes ? responseSi.data.reservasSiClientes.length : 0;
-  
-        
-        const responseNo = await AxiosInstance.get('/obtener-historial-reservas-no');
-        console.log("***************** respuesta de la api", responseNo)
-        let totalReservasNo = responseNo.data.historialReservasSi ? responseNo.data.historialReservasSi.reduce((total, usuario) => total + usuario.reservasSi.length, 0) : 0;
-        totalReservasNo += responseNo.data.reservasSiClientes ? responseNo.data.reservasSiClientes.length : 0;
-        
-        const dataForChart = [
-          { name: "Reserva Si", y: totalReservasSi },
-          { name: "Reserva No", y: totalReservasNo }
-        ];
-  
-        setData(dataForChart);
-        setTotalReservas(totalReservasSi + totalReservasNo);
+        const response = await AxiosInstance.get(`/obtener-cantidad-total-reservas`);
+        const { si, no } = response.data;
+        setReservaPositiva(si)
+        setReservaNegativa(no)
+
       } catch (error) {
         console.error('Error al obtener los datos: ', error);
       }
     };
-  
+
     fetchData();
   }, []);
-  
-  
-  
-  
-  
 
   useEffect(() => {
-    const processedData = data.reduce((acc, item) => {
-      const existing = acc.find(({name}) => name === item.name);
-      if (existing) {
-        existing.y += 1;
-      } else {
-        acc.push({...item});
-      }
-      return acc;
-    }, []);
-
+    const totalReservas = reservaPositiva + reservaNegativa;
     const options = {
-      chart: { type: 'pie', backgroundColor: "transparent" },
+      chart: { type: 'pie', backgroundColor: 'transparent' },
       accessibility: { enabled: false },
-      title: { 
-        text: 'ESTADO DE RESERVAS', 
-        style: { color: '#000000/60' } 
+      title: {
+        text: 'ESTADO DE RESERVAS',
+        style: { color: '#000000/60' },
       },
       plotOptions: {
         pie: {
           innerSize: '70%',
-          showInLegend: true
-        }
+          showInLegend: true,
+        },
       },
       legend: {
         layout: 'horizontal',
@@ -72,9 +47,16 @@ const DoughnutChart = () => {
         verticalAlign: 'bottom',
         useHTML: true,
       },
-      series: [{ name: 'Cantidad', data: processedData }]
+      series: [
+        {
+          name: 'Reservas',
+          data: [
+            { name: 'Reserva positiva', y: reservaPositiva },
+            { name: 'Reserva Negativa', y: reservaNegativa },
+          ],
+        },
+      ],
     };
-
     Highcharts.chart('chart-container', {
       ...options,
       title: {
@@ -82,11 +64,11 @@ const DoughnutChart = () => {
         useHTML: true,
         align: 'center',
         verticalAlign: 'middle',
-        y: 50, // Ajuste la posición según sea necesario
-        text: `<div style=" text-align: center; color:black;" > Total <br/>  ${totalReservas}</div>`
-      }
+        y: 50,
+        text: `<div style=" text-align: center; color:black;" > Total ${totalReservas} <br/> </div>`,
+      },
     });
-  }, [data]);
+  }, [reservaPositiva, reservaNegativa]);
 
   return (
     <div className='w-12/12 ml-5 mr-5'>

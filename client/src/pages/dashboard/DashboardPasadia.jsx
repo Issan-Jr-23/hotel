@@ -13,7 +13,7 @@ import { Button, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell
 import "./styleDashboard.css"
 import down from "../../images/down.png"
 
-const dashboardPasadia = () => {
+ const dashboardPasadia = () => {
 
   const [totalUsers, setTotalUsers] = useState()
   const [totalVentaPasadia, setTotalVentaPasadia] = useState()
@@ -150,8 +150,7 @@ const dashboardPasadia = () => {
               ${typeof totalVentaPasadia === 'number' ? totalVentaPasadia.toLocaleString('es-CO') : '0'} 
               {<span className='fondo-text alza flex flex-row items-center ml-2 text-green-600'> 
               {/* <span className='alza'> 
-              <img className='down' src={down} alt="" /> </span>   */}
-              (+0.2%)</span>}
+              <img className='down' src={down} alt="" /> </span>   */}</span>}
             </p>
             <p className=' fondo-text text-3xl flex' style={{ fontWeight: "400" }}>  {totalUsers}</p>
 
@@ -166,7 +165,7 @@ const dashboardPasadia = () => {
               {<span className='fondo-text alza flex items-center ml-2 text-red-600'> 
               {/* <span className='alza'> 
               <img className='down' src={down} alt="" /> </span>   */}
-              (-0.2%)</span>}
+              </span>}
             </p>
             <p className= ' fondo-text text-3xl flex' style={{ fontWeight: "600" }}>   {cantidadVendida + cantidadVendidaPasadia}</p>
 
@@ -177,7 +176,7 @@ const dashboardPasadia = () => {
           <span className='box-grafic justify-around flex flex-col p-4'>
           <h3 className='fondo-text' style={{ fontWeight: "600", fontSize: "20px" }} >courtesies for clients</h3>
             <p className='fondo-text' style={{ fontWeight: "600" }}>
-              ${typeof valorVentaCortesias === 'number' ? valorVentaCortesias.toLocaleString('es-CO') : '0'} {"( )"}
+              ${typeof valorVentaCortesias === 'number' ? valorVentaCortesias.toLocaleString('es-CO') : '0'} 
             </p>
             <p className=' fondo-text text-3xl flex' style={{ fontWeight: "600" }}> 
              {cantidadVendidaCortesias}</p>
@@ -192,16 +191,16 @@ const dashboardPasadia = () => {
           <TableUsers />
         </div>
 
-        <div className='box-apex'>
+        {/* <div className='box-apex'>
  
-          <ApexSpline />
-        </div>
+</div> */}
       </div>
+<ApexSpline />
       <div className='box-table-ventas flex'>
         {/* <div className='box-pie-table' >
           <ApexPie />
         </div> */}
-        <div className='cont-table-user'> 
+        <div className='cont-table-user'>
 
           <TableProductos />
         </div>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
-import AxiosInstance from '../../api/axios.js'; 
+import AxiosInstance from '../../api/axios.js';
 
 const UserMasCompras = () => {
   const [datos, setDatos] = useState([]);
@@ -66,7 +66,7 @@ const UserMasCompras = () => {
       name: 'Valor Total',
       colorByPoint: true,
       data: datos.map(d => ({
-        name: d.nombre, // Asegúrate de que los objetos tienen una propiedad 'nombre'
+        name: d.nombre.toUpperCase(),
         y: d.valorTotal
       }))
     }]

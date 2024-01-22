@@ -3,6 +3,7 @@ import Usuario from "../models/transferencia.model.js";
 import Cliente from "../models/client.model.js";
 import Cabania from "../models/client.cabania.model.js"
 import Habitaciones from "../models/cliente.habitaciones.model.js"
+import { response } from "express";
 
 export const agregarOActualizarUsuario = async (req, res) => {
   const { identificacion, datosHistorial } = req.body;
@@ -91,23 +92,70 @@ export const obtenerHistorialReservasNo = async (req, res) => {
   }
 };
 
-export const obtenerHistorialReservasSi = async (req, res) => {
+export const obtenerCantidadGeneralResrvas = async (req, res) => {
   try {
-    const usuarios = await Usuario.find();
-    const clientes = await Cliente.find();
+    const historial = await Usuario.find();
+    const pasadia = await Cliente.find();
+    const cabania = await Cabania.find();
+    const habitaciones = await Habitaciones.find();
 
-    const historialReservasSi = usuarios.map((usuario) => ({
-      identificacion: usuario.identificacion,
-      reservasSi: usuario.historial.filter((item) => item.reserva === "Si"),
-    }));
+    let cantidadSi = 0;
+    let cantidadNo = 0;
 
 
-    const reservasSiClientes = clientes.filter((cliente) => cliente.reserva === "Si").map((cliente) => ({
-      identificacion: cliente.identificacion,
-      reserva: cliente.reserva,
-    }));
+    historial.forEach((data) =>{
+      data.historial?.forEach((response) => {
+        if (response.reserva === "Si") {
+          cantidadSi++
+        }else if (response.reserva === "No") {
+          cantidadNo++
+        }
+      })
+    })
 
-    res.json({ historialReservasSi, reservasSiClientes });
+    pasadia.forEach((data) => {
+      if (data.reserva === "Si") {
+        cantidadSi++
+      }else if(data.reserva === "No"){
+        cantidadNo++
+      }
+    })
+
+    cabania.forEach((data) => {
+      if (data.reserva === "Si") {
+        cantidadSi++
+      }else if(data.reserva === "No"){
+        cantidadNo++
+      }
+    })
+
+    habitaciones.forEach((data) => {
+      if (data.reserva === "Si") {
+        cantidadSi++
+      }else if(data.reserva === "No"){
+        cantidadNo++
+      }
+    })
+
+
+
+
+    // const historialReservasSi = usuarios.map((usuario) => ({
+    //   identificacion: usuario.identificacion,
+    //   reservasSi: usuario.historial.filter((item) => item.reserva === "Si"),
+    // }));
+
+
+    // const reservasSiClientes = clientes.filter((cliente) => cliente.reserva === "Si").map((cliente) => ({
+    //   identificacion: cliente.identificacion,
+    //   reserva: cliente.reserva,
+    // }));
+
+    res.json({ 
+      si:cantidadSi,
+      no:cantidadNo
+    
+    });
   } catch (error) {
     console.error("Error al obtener los datos: ", error);
     res.status(500).send("Error al procesar la solicitud");
@@ -148,7 +196,7 @@ export const obtenerTotalesNiniosYAdultosEnPasadia = async (req, res) => {
 export const totalgeneradoPas = async (req, res) => {
   try {
     const usuarios = await Usuario.find();
-    const clientes = await Cliente.find();
+    const clientes = await Cabania.find();
 
     let totalPago = 0;
     let totalPagoPendiente = 0;

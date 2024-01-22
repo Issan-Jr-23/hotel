@@ -361,7 +361,7 @@ export const obtenerResumenCompras = async (req, res) => {
       } else {
         resumenCompras.set(identificacion, {
           identificacion,
-          nombre: nombre || '', 
+          nombre: nombre || '',
           cantidadTotal: cantidad,
           valorTotal: valor
         });
@@ -399,8 +399,11 @@ export const obtenerResumenCompras = async (req, res) => {
       let valorTotalBebidas = 0;
       let valorTotalRestaurantes = 0;
 
+      let nombreUsuario = ""; 
+
       usuario.historial.forEach(h => {
         if (h.servicio === 'pasadia') {
+          nombreUsuario += h.nombre || "Nombre Desconocido"
           h.bebidas.forEach(bebida => {
             if (bebida.precio > 0) {
               cantidadTotalBebidas += bebida.cantidad;
@@ -420,7 +423,9 @@ export const obtenerResumenCompras = async (req, res) => {
       const cantidadTotal = cantidadTotalBebidas + cantidadTotalRestaurantes;
       const valorTotal = valorTotalBebidas + valorTotalRestaurantes;
 
-      actualizarResumen(usuario.identificacion, usuario.nombre, cantidadTotal, valorTotal);
+      if (!resumenCompras.has(usuario.identificacion)) {
+        actualizarResumen(usuario.identificacion, nombreUsuario, cantidadTotal, valorTotal);
+      }
     });
 
     const resultadoOrdenado = Array.from(resumenCompras.values())
@@ -430,9 +435,15 @@ export const obtenerResumenCompras = async (req, res) => {
     res.status(200).json(resultadoOrdenado);
 
   } catch (error) {
+    console.error(error);
     res.status(500).json({ mensaje: "Error al obtener el resumen de compras" });
   }
 };
+
+
+
+
+
 
 // export const obtenerProductosCop = async (req, res) => {
 //   try {
@@ -560,52 +571,52 @@ export const updateUserStatus = async (req, res) => {
 
 export const fechaActivacion = async (req, res) => {
   try {
-    const clientes = await Cliente.find({});
+    const pasadia = await Cliente.find();
 
-    const clientesActivados = clientes.filter(cliente => cliente.estado === 'activo');
+    const fechasContadas = {};
+    pasadia.forEach((response) => {
+      if (response.servicio === "pasadia" && response.estado === "activo") {
+        const fechaActivacion = new Date(response.fechaActivacion);
 
-    const fechasActivacion = clientesActivados.map(cliente => cliente.fechaActivacion);
+        // Formatear la fecha como "2024-01-19T14:38:14.749Z"
+        const fechaFormateada = fechaActivacion.toISOString();
 
-    const conteoFechas = fechasActivacion.reduce((contador, fecha) => {
-      const fechaFormateada = moment(fecha).format('YYYY-MM-DD');
-      contador[fechaFormateada] = (contador[fechaFormateada] || 0) + 1;
-      return contador;
-    }, {});
-
-    const resultado = Object.keys(conteoFechas).map(fecha => {
-      return { activacion: fecha, cantidad: conteoFechas[fecha] };
+        fechasContadas[fechaFormateada] = (fechasContadas[fechaFormateada] || 0) + 1;
+      }
     });
 
-    res.json(resultado);
+    const resultado = Object.entries(fechasContadas).map(([fecha, cantidad]) => ({ fecha, cantidad }));
+
+    res.status(200).json(resultado);
   } catch (error) {
-    res.status(500).send(error.message);
+    console.error("Error al obtener las fechas:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 };
-
 export const fechaFinalizacion = async (req, res) => {
+  const fechasContadas = {};
+
   try {
-    const clientes = await Cliente.find({});
+    const historial = await Usuario.find();
 
-    const clientesActivados = clientes.filter(cliente => cliente.estado === 'finalizado');
-
-    const fechasActivacion = clientesActivados.map(cliente => cliente.fechaActivacion);
-
-    const conteoFechas = fechasActivacion.reduce((contador, fecha) => {
-      const fechaFormateada = moment(fecha).format('YYYY-MM-DD');
-      contador[fechaFormateada] = (contador[fechaFormateada] || 0) + 1;
-      return contador;
-    }, {});
-
-    const resultado = Object.keys(conteoFechas).map(fecha => {
-      return { activacion: fecha, cantidad: conteoFechas[fecha] };
+    historial.forEach((data) => {
+      data.historial.forEach((response) => {
+        if (response.servicio === "pasadia" && response.estado === "finalizado") {
+          const fechaActivacion = response.fechaActivacion;
+          
+          fechasContadas[fechaActivacion] = (fechasContadas[fechaActivacion] || 0) + 1;
+        }
+      });
     });
 
-    res.json(resultado);
+    const resultado = Object.entries(fechasContadas).map(([fecha, cantidad]) => ({ fecha, cantidad }));
+
+    res.status(200).json(resultado);
   } catch (error) {
-    res.status(500).send(error.message);
+    console.error("Error al obtener las fechas:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 };
-
 export const obtenerFechasCompras = async (req, res) => {
   try {
     const clientes = await Cliente.find();
@@ -647,7 +658,6 @@ export const obtenerFechasCompras = async (req, res) => {
     res.status(500).json({ mensaje: "Error al sumar las cantidades de bebidas por fecha", error });
 }
 };
-
 export const obtenerClienteId = async (req, res) => {
   try {
     const clientId = req.params.id;
@@ -845,6 +855,183 @@ export const addFoodAdicionalSubproducto = async (req, res) => {
   }
 };
 
+
+export const productosMasCompradosPasadia = async (req, res) => {
+  try {
+    const pasadia = await Cliente.find();
+    const historial = await Usuario.find();
+    const productosInfo = [];
+    const findProductById = (array, id) => {
+      return array.find((item) => item.id === id);
+    };
+
+    pasadia.forEach((data) => {
+      data.restaurante.forEach((producto) => {
+        const existingProduct = findProductById(productosInfo, producto.id);
+  
+        if (existingProduct) {
+          existingProduct.cantidad += producto.cantidad;
+          existingProduct.total += producto.cantidad * producto.precio;
+        } else {
+          productosInfo.push({
+            id: producto.id,
+            nombre: producto.nombre,
+            total: producto.cantidad * producto.precio,
+          });
+        }
+      } )
+    });
+
+    pasadia.forEach((data) => {
+      data.bebidas.forEach((producto) => {
+        const existingProduct = findProductById(productosInfo, producto.id);
+        if (existingProduct) {
+          existingProduct.cantidad += producto.cantidad;
+          existingProduct.total += producto.cantidad * producto.precio;
+        } else {
+          productosInfo.push({
+            id: producto.id,
+            nombre: producto.nombre,
+            total: producto.cantidad * producto.precio,
+          });
+        }
+      } )
+    });
+
+
+    historial.forEach((producto) => {
+      producto.historial.forEach((response) => {
+        if (response.servicio === "pasadia") {
+        response.restaurante.forEach((data) => {
+            const existingProduct = findProductById(productosInfo, data.id);
+            if (existingProduct) {
+              existingProduct.cantidad += data.cantidad;
+              existingProduct.total += data.cantidad * data.precio;
+            } else {
+              productosInfo.push({
+                id: data.id,
+                nombre: data.nombre,
+                total: data.cantidad * data.precio,
+              });
+            }
+          });
+        }
+      });
+    });
+    historial.forEach((producto) => {
+      producto.historial.forEach((response) => {
+        if (response.servicio === "pasadia") {
+          response.bebidas.forEach((data) => {
+            const existingProduct = findProductById(productosInfo, data.id);
+            if (existingProduct) {
+              existingProduct.cantidad += data.cantidad;
+              existingProduct.total += data.cantidad * data.precio;
+            } else {
+              productosInfo.push({
+                id: data.id,
+                nombre: data.nombre,
+                total: data.cantidad * data.precio,
+              });
+            }
+          });
+        }
+      });
+    });
+
+
+
+    res.status(200).json({ productosInfo });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Error en el servidor' });
+  }
+};
+
+
+export const productosCategoria = async (req, res) => {
+  try {
+    const pasadia = await Cliente.find()
+    const historial = await Usuario.find()
+    let total = 0;
+    let totalBar = 0;
+    let totalRec = 0;
+    let totalDes = 0;
+    let totalAd = 0;
+    pasadia.forEach((data) => {
+        data.restaurante?.forEach((response) => {
+          if (response.adicional === "adicional") {
+          totalAd += response.cantidad * response.precio;
+          }else {
+            total += response.cantidad * response.precio;
+          }
+        })
+
+      data.bebidas?.forEach((response) => {
+        if (response.adicional === "adicional") {
+          totalAd += response.cantidad * response.precio;
+        } else {
+          totalBar += response.cantidad * response.precio;
+        }
+      })
+
+      data.recepcion?.forEach((response) => {
+        if (response.adicional === "adicional") {
+          totalAd += response.cantidad * response.precio;
+        } else {
+          totalRec += response.cantidad * response.precio;
+        }
+      })
+
+      data.descorche?.forEach((response) => {
+        totalDes += response.cantidad * response.precio;
+      })
+
+    })
+    historial.forEach((data) => {
+      data.historial.forEach((response) => {
+        response.restaurante?.forEach((dataRes) => {
+          total += dataRes.cantidad * dataRes.precio;
+        })
+      })
+
+      historial.forEach((data) => {
+        data.historial.forEach((response) => {
+          response.bebidas?.forEach((dataRes) => {
+            totalBar += dataRes.cantidad * dataRes.precio;
+          })
+        })
+      })
+
+      historial.forEach((data) => {
+        data.historial.forEach((response) => {
+          response.recepcion?.forEach((dataRes) => {
+            totalRec += dataRes.cantidad * dataRes.Precio;
+          })
+        })
+      })
+
+      historial.forEach((data) => {
+        data.historial.forEach((response) => {
+          response.descorche?.forEach((dataRes) => {
+            totalDes += dataRes.cantidad * dataRes.precio
+          })
+        })
+      })
+
+    })
+
+    res.status(200).json({
+      restaurante: total || 0,
+      bar: totalBar || 0,
+      recepcion: totalRec || 0,
+      descorche: totalDes || 0,
+      adicional: totalAd || 0
+    })
+
+  } catch (error) {
+    console.log(error)
+  }
+}
 
 
 

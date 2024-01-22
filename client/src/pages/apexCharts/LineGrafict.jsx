@@ -40,6 +40,7 @@ const MyComponent = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        //resuelto
         const response = await AxiosInstance.get('/cabania-total-generado');
         console.log(response);
 
@@ -161,44 +162,44 @@ const MyComponent = () => {
       series: [
         {
           name: 'Total Pasadía',
-          data: filterData([{ y: totalVentaPasadia }])
+          data: filterData([{ y: totalVentaPasadia }]),
         },
         {
           name: 'Bar pasadía',
           data: filterData([{ y: bar }]),
-          showInLegend: true
+          showInLegend: true,
         },
         {
           name: 'Restaurante pasadía',
           data: filterData([{ y: restaurante }]),
-          showInLegend: true
+          showInLegend: true,
         },
         {
           name: 'Recepcion pasadía',
           data: filterData([{ y: recepcion }]),
-          showInLegend: true
+          showInLegend: true,
         },
         {
           name: 'Descorche pasadía',
           data: filterData([{ y: descorche }]),
-          showInLegend: true
+          showInLegend: true,
         },
         {
-          name: 'Total Cabaña', 
+          name: 'Total Cabaña',
           data: filterData([{ y: totalVentaCabania }]),
-          stack: 'Cabaña'
+          stack: 'Cabaña',
         },
         {
-          name: 'Bar Cabaña', 
+          name: 'Bar Cabaña',
           data: filterData([{ y: barC }]),
-          stack: 'Cabaña', 
-          showInLegend: true
+          stack: 'Cabaña',
+          showInLegend: true,
         },
         {
-          name: 'Restaurante Cabaña', 
+          name: 'Restaurante Cabaña',
           data: filterData([{ y: restauranteC }]),
-          stack: 'Cabaña', 
-          showInLegend: true
+          stack: 'Cabaña',
+          showInLegend: true,
         },
         {
           name: 'Recepción Cabaña',

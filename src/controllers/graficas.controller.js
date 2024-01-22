@@ -232,70 +232,186 @@ export const obtenerTotal = async (req, res) => {
 
 export const productosMasComprados = async (req, res) => {
   try {
-      const clientes = await Cliente.find({});
-      const cabanias = await Cabania.find({});
-      const habitaciones = await Habitaciones.find({});
-      const historiales = await Usuario.find({}); // Suponiendo que Usuario tiene el historial
+    const pasadia = await Cliente.find();
+    const cabania = await Cabania.find();
+    const habitaciones = await Habitaciones.find();
+    const historial = await Usuario.find();
+    const productosInfo = [];
+    const findProductById = (array, id) => {
+      return array.find((item) => item.id === id);
+    };
 
-      let resultados = {
-          bebidas: {},
-          restaurante: {},
-          valorTotal: 0
-      };
 
-      // Función auxiliar para procesar y acumular los elementos
-      const acumularElementos = (elementos, tipo) => {
-          elementos.forEach(elemento => {
-              if (resultados[tipo][elemento._id]) {
-                  resultados[tipo][elemento._id].cantidad += elemento.cantidad;
-                  resultados[tipo][elemento._id].valorTotal += elemento.cantidad * elemento.precio;
-              } else {
-                  resultados[tipo][elemento._id] = {
-                      nombre: elemento.nombre,
-                      cantidad: elemento.cantidad,
-                      precio: elemento.precio,
-                      valorTotal: elemento.cantidad * elemento.precio
-                  };
-              }
-              resultados.valorTotal += elemento.cantidad * elemento.precio;
+    cabania.forEach((data) => {
+      data.restaurante.forEach((producto) => {
+        const existingProduct = findProductById(productosInfo, producto.id);
+
+        if (existingProduct) {
+          existingProduct.cantidad += producto.cantidad;
+          existingProduct.total += producto.cantidad * producto.precio;
+        } else {
+          productosInfo.push({
+            id: producto.id,
+            nombre: producto.nombre,
+            cantidad: producto.cantidad,
+            total: producto.cantidad * producto.precio,
           });
-      };
-
-      // Procesar clientes, cabañas, habitaciones y historiales
-      [clientes, cabanias, habitaciones].forEach(coleccion => {
-          coleccion.forEach(item => {
-              acumularElementos(item.bebidas || [], 'bebidas');
-              acumularElementos(item.restaurante || [], 'restaurante');
-          });
+        }
       });
+    });
+    cabania.forEach((data) => {
+      data.bebidas.forEach((producto) => {
+        const existingProduct = findProductById(productosInfo, producto.id);
 
-      // Procesar también el historial de cada usuario
-      historiales.forEach(usuario => {
-          usuario.historial.forEach(historial => {
-              acumularElementos(historial.bebidas || [], 'bebidas');
-              acumularElementos(historial.restaurante || [], 'restaurante');
+        if (existingProduct) {
+          existingProduct.cantidad += producto.cantidad;
+          existingProduct.total += producto.cantidad * producto.precio;
+        } else {
+          productosInfo.push({
+            id: producto.id,
+            nombre: producto.nombre,
+            cantidad: producto.cantidad,
+            total: producto.cantidad * producto.precio,
           });
+        }
       });
+    });
 
-      // Convertir los resultados en arreglos para la respuesta
-      const resultadosArray = {
-          bebidas: Object.values(resultados.bebidas),
-          restaurante: Object.values(resultados.restaurante),
-          valorTotal: resultados.valorTotal
-      };
+    pasadia.forEach((data) => {
+      data.restaurante.forEach((producto) => {
+        const existingProduct = findProductById(productosInfo, producto.id);
+  
+        if (existingProduct) {
+          existingProduct.cantidad += producto.cantidad;
+          existingProduct.total += producto.cantidad * producto.precio;
+        } else {
+          productosInfo.push({
+            id: producto.id,
+            nombre: producto.nombre,
+            cantidad: producto.cantidad,
+            total: producto.cantidad * producto.precio,
+          });
+        }
+      } )
+    });
 
-      res.status(200).json(resultadosArray);
+    pasadia.forEach((data) => {
+      data.bebidas.forEach((producto) => {
+        const existingProduct = findProductById(productosInfo, producto.id);
+  
+        if (existingProduct) {
+          existingProduct.cantidad += producto.cantidad;
+          existingProduct.total += producto.cantidad * producto.precio;
+        } else {
+          productosInfo.push({
+            id: producto.id,
+            nombre: producto.nombre,
+            cantidad: producto.cantidad,
+            total: producto.cantidad * producto.precio,
+          });
+        }
+      } )
+    });
+
+    habitaciones.forEach((data) => {
+      data.restaurante.forEach((producto) => {
+        const existingProduct = findProductById(productosInfo, producto.id);
+  
+        if (existingProduct) {
+          existingProduct.cantidad += producto.cantidad;
+          existingProduct.total += producto.cantidad * producto.precio;
+        } else {
+          productosInfo.push({
+            id: producto.id,
+            nombre: producto.nombre,
+            cantidad: producto.cantidad,
+            total: producto.cantidad * producto.precio,
+          });
+        }
+      } )
+    });
+
+    habitaciones.forEach((data) => {
+      data.bebidas.forEach((producto) => {
+        const existingProduct = findProductById(productosInfo, producto.id);
+  
+        if (existingProduct) {
+          existingProduct.cantidad += producto.cantidad;
+          existingProduct.total += producto.cantidad * producto.precio;
+        } else {
+          productosInfo.push({
+            id: producto.id,
+            nombre: producto.nombre,
+            cantidad: producto.cantidad,
+            total: producto.cantidad * producto.precio,
+          });
+        }
+      } )
+    });
+
+
+
+    historial.forEach((producto) => {
+      producto.historial.forEach((response) => {
+        response.restaurante.forEach((data) => {
+          const existingProduct = findProductById(productosInfo, data.id);
+          if (existingProduct) {
+            existingProduct.cantidad += data.cantidad;
+            existingProduct.total += data.cantidad * data.precio;
+          } else {
+            productosInfo.push({
+              id: data.id,
+              nombre: data.nombre,
+              cantidad: data.cantidad,
+              total: data.cantidad * data.precio,
+            });
+          }
+        });
+      });
+    });
+    historial.forEach((producto) => {
+      producto.historial.forEach((response) => {
+        response.bebidas.forEach((data) => {
+          const existingProduct = findProductById(productosInfo, data.id);
+          if (existingProduct) {
+            existingProduct.cantidad += data.cantidad;
+            existingProduct.total += data.cantidad * data.precio;
+          } else {
+            productosInfo.push({
+              id: data.id,
+              nombre: data.nombre,
+              cantidad: data.cantidad,
+              total: data.cantidad * data.precio,
+            });
+          }
+        });
+      });
+    });
+
+
+
+    res.status(200).json({ productosInfo });
   } catch (error) {
-      console.error(error);
-      res.status(500).send('Error en el servidor');
+    console.log(error);
+    res.status(500).json({ error: 'Error en el servidor' });
   }
 };
+
+
+
+
+
+
+
+
+
+
+
 
 
 export const comprasUsers = async(req, res) => {
   try {
     const Pasadia = await Cliente.find();
-
    
     const response = Pasadia.map(Cliente => {
       const totalBebidas = Cliente.bebidas.reduce((total, data) => {
@@ -322,17 +438,5 @@ export const comprasUsers = async(req, res) => {
   }
 };
 
-// export const obtenerTotal = async(req, res) => {
-//   try {
-//     const historial = Usuario.find()
 
-//     historial.forEach((y) => {
-//       y.historial.forEach((data) => {
 
-//       })
-//     });
-    
-//   } catch (error) {
-    
-//   }
-// }

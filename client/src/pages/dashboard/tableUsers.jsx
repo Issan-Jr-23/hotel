@@ -4,76 +4,43 @@ import HighchartsReact from 'highcharts-react-official';
 import AxiosInstance from '../../api/axios.js'; // Asegúrate de que la ruta es correcta
 
 const HorizontalBarChart = () => {
-  const [chartOptions, setChartOptions] = useState({});
+  const [productos, setProductos] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const obtenerProductos = async () => {
       try {
-        const response = await AxiosInstance.get('/pasadia-obtener-productosCop');
-        processData(response.data);
+        const respuesta = await AxiosInstance.get('/pasadia-productos-comprados');
+        const data = respuesta.data.productosInfo;
+        setProductos(data);
+        console.log('Productos más comprados:', productosTop10);
       } catch (error) {
-        console.error("Error al obtener los datos: ", error);
+        console.error('Hubo un error al obtener los productos:', error);
       }
     };
 
-    fetchData();
+    obtenerProductos();
   }, []);
 
-  const processData = (data) => {
-    const categories = data.map(item => item.nombre);
-    const cantidadVendida = data.map(item => item.cantidad);
-    const valorTotal = data.map(item => item.total);
-
-    // Define un arreglo de colores para las barras
-    const barColors = [ '#33FF57', '#3357FF', /* más colores según sea necesario */];
-
-    setChartOptions({
-      chart: {
-        type: 'bar',
-        spacingBottom: 30 // Ajusta el espacio en la parte inferior
-      },
-      colors: barColors, // Asigna el arreglo de colores aquí
+  const chartOptions = {
+    chart: {
+      type: 'column',
+    },
+    title: {
+      text: 'Productos comprados',
+    },
+    xAxis: {
+      categories: ["Producto"],
+      
+    },
+    yAxis: {
       title: {
-        text: 'Venta de productos'
+        text: 'Total',
       },
-      xAxis: {
-        categories: categories,
-        title: {
-          text: null
-        },
-        labels: {
-          rotation: 0, // Rota las etiquetas del eje X
-          style: {
-            fontSize: '10px' // Reduce el tamaño de la fuente si es necesario
-          },
-          overflow: 'justify'
-        }
-      },
-      yAxis: {
-        min: 0,
-        title: {
-          text: '',
-          align: 'high'
-        },
-        labels: {
-          overflow: 'justify'
-        }
-      },
-      plotOptions: {
-        bar: {
-          dataLabels: {
-            enabled: true
-          }
-        }
-      },
-      series: [{
-        name: 'Cantidad Vendida',
-        data: cantidadVendida
-      }, {
-        name: 'Valor Total',
-        data: valorTotal
-      }]
-    });
+    },
+    series: productos.map(producto => ({
+      name: producto.nombre,
+      data: [producto.total],
+    })),
   };
 
   return (
@@ -82,5 +49,6 @@ const HorizontalBarChart = () => {
     </div>
   );
 };
+
 
 export default HorizontalBarChart;
