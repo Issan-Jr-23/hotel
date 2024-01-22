@@ -9,15 +9,26 @@ const HorizontalBarChart = () => {
   useEffect(() => {
     const obtenerProductos = async () => {
       try {
-        const respuesta = await AxiosInstance.get('/pasadia-productos-comprados');
+        const respuesta = await AxiosInstance.get('/productos-mas-comprados-pass');
         const data = respuesta.data.productosInfo;
-        setProductos(data);
+        console.log("response: ",data)
+        const productosCombinados = data.reduce((acc, producto) => {
+          if (acc[producto.id]) {
+            acc[producto.id].total += producto.total;
+          } else {
+            acc[producto.id] = { ...producto };
+          }
+          return acc;
+        }, {});
+        const productosArray = Object.values(productosCombinados);
+        const productosOrdenados = productosArray.sort((a, b) => b.total - a.total);
+        const productosTop10 = productosOrdenados.slice(0, 10);
+        setProductos(productosTop10);
         console.log('Productos más comprados:', productosTop10);
       } catch (error) {
         console.error('Hubo un error al obtener los productos:', error);
       }
     };
-
     obtenerProductos();
   }, []);
 

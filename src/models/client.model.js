@@ -18,7 +18,6 @@ const clienteSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  
   reserva: {
     type: String,
     required: true,
@@ -57,7 +56,7 @@ const clienteSchema = new mongoose.Schema({
   },
   fechaDeRegistro: {
     type: Date,
-    default: () => moment.tz("America/Bogota").toDate(), 
+    default: () => moment.tz("America/Bogota").toDate(),
   },
   fechaPasadia: {
     type: Date
@@ -70,7 +69,7 @@ const clienteSchema = new mongoose.Schema({
       type: Date,
       default: getCurrentDateMinus5Hours
   }
-  }, 
+  },
   restaurante: {
     type: Array,
     required: false,

@@ -156,8 +156,8 @@ const dashboardPasadia = () => {
   return (
     <div className=' fondo pt-20 pl-5 pr-5 pb-20'>
       <div className='cont-icon-json'>
-      <article className='cont-title-json'> 
-      <h1 className='text-4xl mb-5 uppercase'>Overview</h1>
+      <article className='cont-title-json'>
+      <h1 className='text-4xl mb-5 uppercase border-b-3'>Dashboard Pasadia </h1>
 
       </article>
       <article className='animation-lottie-json'>

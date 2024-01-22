@@ -936,7 +936,7 @@ const Adicionales = () => {
 
             if (cantidadItem > 0 && itemSeleccionadoId) {
                 const item = {
-                    subproductoId: subItemSeleccionadoId,
+                    itemId: subItemSeleccionadoId,
                     nombre: itemSeleccionado,
                     cantidad: cantidadItem,
                     precio: precioItemSeleccionado,
