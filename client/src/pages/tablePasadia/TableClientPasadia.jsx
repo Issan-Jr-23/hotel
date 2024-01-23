@@ -375,6 +375,23 @@ export default function App() {
     });
   };
 
+  const guardarCortesiaBebidaInventory = async (foodId, cantidad) => {
+    try {
+      const response = await AxiosInstances.post('/guardar-cortesias-inventario', {
+        foodId,
+        cantidad
+      });
+
+      if (response.status === 200) {
+        console.log('Cortesías guardadas correctamente:', response.data);
+      } else {
+        console.error('Error en la respuesta del servidor:', response.status);
+      }
+    } catch (error) {
+      console.error('Error al enviar la petición:', error.message);
+    }
+  };
+
   const actualizarInventarioBebida = async (bebidaId, cantidad) => {
     try {
       const response = await AxiosInstances.post('/actualizar-inventario-bebida', {
@@ -514,12 +531,14 @@ export default function App() {
               fechaDeMarca: "",
               fecha: obtenerFechaConAjuste()
             };
+            await guardarCortesiaBebidaInventory(bebidaSeleccionadaId, cantidadBebida)
             await guardarBebida(bebidaCortesia);
             setCantidadBebida("");
             setBebidaSeleccionada('');
             setPrecioBebidaSeleccionada("");
             setBebidaSeleccionadaId('');
             setCantidadBebidaDisponible(0)
+            setResetKey(prevKey => prevKey + 1);
             atLeastOneCortesiaSaved = true;
           }
         }
@@ -536,7 +555,14 @@ export default function App() {
               fechaDeMarca: "",
               fecha: obtenerFechaConAjuste()
             };
+            await guardarCortesiaBebidaInventory(bebida1SeleccionadaId, cantidadBebida1)
             await guardarBebida(bebidaCortesia1);
+            setCantidadBebida1("");
+            setBebida1Seleccionada('');
+            setPrecioBebida1Seleccionada("");
+            setBebida1SeleccionadaId('');
+            setCantidadBebida1Disponible(0)
+            setResetKey1(prevKey => prevKey + 1);
             atLeastOneCortesiaSaved = true;
           }
         }
@@ -554,6 +580,12 @@ export default function App() {
               fecha: obtenerFechaConAjuste()
             };
             await guardarBebida(bebidaCortesia2);
+            setCantidadBebida2("");
+            setBebida2Seleccionada('');
+            setPrecioBebida2Seleccionada("");
+            setBebida2SeleccionadaId('');
+            setCantidadBebida2Disponible(0);
+            setResetKey2(prevKey => prevKey + 1);
             atLeastOneCortesiaSaved = true;
           }
         }
@@ -571,6 +603,12 @@ export default function App() {
               fecha: obtenerFechaConAjuste()
             };
             await guardarBebida(bebidaCortesia3);
+            setCantidadBebida3("");
+            setBebida3Seleccionada('');
+            setPrecioBebida3Seleccionada("");
+            setBebida3SeleccionadaId('');
+            setCantidadBebida3Disponible(0)
+            setResetKey3(prevKey => prevKey + 1);
             atLeastOneCortesiaSaved = true;
           }
         }
@@ -588,6 +626,12 @@ export default function App() {
               fecha: obtenerFechaConAjuste()
             };
             await guardarBebida(bebidaCortesia4);
+            setCantidadBebida4("");
+            setBebida4Seleccionada('');
+            setPrecioBebida4Seleccionada("");
+            setBebida4SeleccionadaId('');
+            setCantidadBebida4Disponible(0)
+            setResetKey4(prevKey => prevKey + 1);
             atLeastOneCortesiaSaved = true;
           }
         }
@@ -644,7 +688,7 @@ export default function App() {
         }
       }
 
-      // Handle the second drink selection
+      
       if (cantidadBebida2 > 0 && bebida2SeleccionadaId) {
         const bebidaAdultos2 = {
           id: bebida2SeleccionadaId,
@@ -951,8 +995,14 @@ export default function App() {
               fechaDeMarca: "",
               fecha: obtenerFechaConAjuste()
             };
-            await guardarFood(foodCortesia);
             await guardarCortesiaFoodInventory(foodSeleccionadaId, cantidadFood)
+            await guardarFood(foodCortesia);
+            setCantidadFood("");
+            setFoodSeleccionada('');
+            setPrecioFoodSeleccionada("");
+            setFoodSeleccionadaId('');
+            setCantidadFoodDisponible(0);
+            setResetKey(prevKey => prevKey + 1);
             atLeastOneCortesiaSaved = true;
           }
         }
@@ -969,12 +1019,17 @@ export default function App() {
               fechaDeMarca: "",
               fecha: obtenerFechaConAjuste()
             };
+            await guardarCortesiaFoodInventory(food1SeleccionadaId, cantidadFood1)
             await guardarFood(foodCortesia1);
+            setCantidadFood1("");
+            setFood1Seleccionada('');
+            setPrecioFood1Seleccionada("");
+            setFood1SeleccionadaId('');
+            setCantidadFood1Disponible(0)
+            setResetKey1(prevKey => prevKey + 1);
             atLeastOneCortesiaSaved = true;
           }
         }
-
-        //isCortesia
         if (cantidadFood2 > 0 && food2SeleccionadaId) {
           if (await checkStockAndUpdateInventory(food2SeleccionadaId, cantidadFood2)) {
             const foodCortesia2 = {
@@ -987,11 +1042,16 @@ export default function App() {
               fecha: obtenerFechaConAjuste()
             };
             await guardarFood(foodCortesia2);
+            await guardarCortesiaFoodInventory(food2SeleccionadaId, cantidadFood2)
+            setCantidadFood2("");
+            setFood2Seleccionada('');
+            setPrecioFood2Seleccionada("");
+            setFood2SeleccionadaId('');
+            setCantidadFood2Disponible(0)
+            setResetKey2(prevKey => prevKey + 1);
             atLeastOneCortesiaSaved = true;
           }
         }
-
-        //isCortesia
         if (cantidadFood3 > 0 && food3SeleccionadaId) {
           if (await checkStockAndUpdateInventory(food3SeleccionadaId, cantidadFood3)) {
             const foodCortesia3 = {
@@ -1004,11 +1064,16 @@ export default function App() {
               fecha: obtenerFechaConAjuste()
             };
             await guardarFood(foodCortesia3);
+            await guardarCortesiaFoodInventory(food3SeleccionadaId, cantidadFood3)
+            setCantidadFood3("");
+            setFood3Seleccionada('');
+            setPrecioFood3Seleccionada("");
+            setFood3SeleccionadaId('');
+            setCantidadFood3Disponible(0)
+            setResetKey3(prevKey => prevKey + 1);
             atLeastOneCortesiaSaved = true;
           }
         }
-
-        //isCortesia
         if (cantidadFood4 > 0 && food4SeleccionadaId) {
           if (await checkStockAndUpdateInventory(food4SeleccionadaId, cantidadFood4)) {
             const foodCortesia4 = {
@@ -1021,10 +1086,16 @@ export default function App() {
               fecha: obtenerFechaConAjuste()
             };
             await guardarFood(foodCortesia4);
+            await guardarCortesiaFoodInventory(food4SeleccionadaId, cantidadFood4)
+            setCantidadFood4("");
+            setFood4Seleccionada('');
+            setPrecioFood4Seleccionada("");
+            setFood4SeleccionadaId('');
+            setCantidadFood4Disponible(0)
+            setResetKey4(prevKey => prevKey + 1);
             atLeastOneCortesiaSaved = true;
           }
         }
-
         if (atLeastOneCortesiaSaved) {
           onClose();
         }
@@ -1046,11 +1117,17 @@ export default function App() {
 
         if (await checkStockAndUpdateInventory(foodSeleccionadaId, cantidadFood)) {
           await guardarFood(foodAdultos);
+          setCantidadFood("");
+          setFoodSeleccionada('');
+          setPrecioFoodSeleccionada("");
+          setFoodSeleccionadaId('');
+          setCantidadFoodDisponible(0)
+          setResetKey(prevKey => prevKey + 1);
           isBebidaAdded = true;
         }
       }
 
-      //nueva nuera
+
       if (cantidadFood1 > 0 && food1SeleccionadaId) {
         const foodAdultos1 = {
           id: food1SeleccionadaId,
@@ -1063,11 +1140,16 @@ export default function App() {
 
         if (await checkStockAndUpdateInventory(food1SeleccionadaId, cantidadFood1)) {
           await guardarFood(foodAdultos1);
+          setCantidadFood1("");
+          setFood1Seleccionada('');
+          setPrecioFood1Seleccionada("");
+          setFood1SeleccionadaId('');
+          setCantidadFood1Disponible(0);
+          setResetKey1(prevKey => prevKey + 1);
           isBebidaAdded = true;
         }
       }
 
-      //nueva nuera
       if (cantidadFood2 > 0 && food2SeleccionadaId) {
         const foodAdultos2 = {
           id: food2SeleccionadaId,
@@ -1080,11 +1162,17 @@ export default function App() {
 
         if (await checkStockAndUpdateInventory(food2SeleccionadaId, cantidadFood2)) {
           await guardarFood(foodAdultos2);
+          setCantidadFood2("");
+          setFood2Seleccionada('');
+          setPrecioFood2Seleccionada("");
+          setFood2SeleccionadaId('');
+          setCantidadFood2Disponible(0);
+          setResetKey2(prevKey => prevKey + 1);
           isBebidaAdded = true;
         }
       }
 
-      //nueva nuera
+
       if (cantidadFood3 > 0 && food3SeleccionadaId) {
         const foodAdultos3 = {
           id: food3SeleccionadaId,
@@ -1097,11 +1185,16 @@ export default function App() {
 
         if (await checkStockAndUpdateInventory(food3SeleccionadaId, cantidadFood3)) {
           await guardarFood(foodAdultos3);
+          setCantidadFood3("");
+          setFood3Seleccionada('');
+          setPrecioFood3Seleccionada("");
+          setFood3SeleccionadaId('');
+          setCantidadFood3Disponible(0);
+          setResetKey3(prevKey => prevKey + 1);
           isBebidaAdded = true;
         }
       }
 
-      //nueva nuera
       if (cantidadFood4 > 0 && food4SeleccionadaId) {
         const foodAdultos4 = {
           id: food4SeleccionadaId,
@@ -1114,6 +1207,12 @@ export default function App() {
 
         if (await checkStockAndUpdateInventory(food4SeleccionadaId, cantidadFood4)) {
           await guardarFood(foodAdultos4);
+          setCantidadFood4("");
+          setFood4Seleccionada('');
+          setPrecioFood4Seleccionada("");
+          setFood4SeleccionadaId('');
+          setCantidadFood4Disponible(0)
+          setResetKey4(prevKey => prevKey + 1);
           isBebidaAdded = true;
         }
       }
@@ -1123,8 +1222,6 @@ export default function App() {
       if (!isBebidaAdded) {
         toast.error("No se ha agregado ninguna comida");
         setIsSaving(false);
-      } else {
-        closeModalF();
       }
     } catch (error) {
       toast.error('No se ha seleccionado un cliente o una comida.');
@@ -3319,6 +3416,7 @@ export default function App() {
                                   style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 />
                                 <Select
+                                key={resetKey}
                                   className="ml-2 mt-1 "
                                   name="restaurante"
                                   label="Seleccionar comida"
@@ -3379,6 +3477,7 @@ export default function App() {
                                   style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 />
                                 <Select
+                                key={resetKey1}
                                   className="ml-2 mt-1"
                                   name="restaurante"
                                   label="Seleccionar comida"
@@ -3433,6 +3532,7 @@ export default function App() {
                                   style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 />
                                 <Select
+                                key={resetKey2}
                                   className="ml-2 mt-1"
                                   name="restaurante"
                                   label="Seleccionar comida"
@@ -3486,6 +3586,7 @@ export default function App() {
                                   style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 />
                                 <Select
+                                key={resetKey3}
                                   className="ml-2 mt-1"
                                   name="restaurante"
                                   label="Seleccionar comida"
@@ -3539,6 +3640,7 @@ export default function App() {
                                   style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 />
                                 <Select
+                                key={resetKey4}
                                   className="ml-2 mt-1"
                                   name="restaurante"
                                   label="Seleccionar comida"
@@ -3628,6 +3730,7 @@ export default function App() {
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                               />
                               <Select
+                              key={resetKey}
                                 className="ml-2 mt-1"
                                 name="restaurante"
                                 label="Seleccionar comida"
@@ -3683,6 +3786,7 @@ export default function App() {
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                               />
                               <Select
+                              key={resetKey1}
                                 className="ml-2 mt-1"
                                 name="restaurante"
                                 label="Seleccionar comida"
@@ -3736,6 +3840,7 @@ export default function App() {
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                               />
                               <Select
+                              key={resetKey2}
                                 className="ml-2 mt-1"
                                 name="restaurante"
                                 label="Seleccionar comida"
@@ -3790,6 +3895,7 @@ export default function App() {
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                               />
                               <Select
+                              key={resetKey3}
                                 className="ml-2 mt-1"
                                 name="restaurante"
                                 label="Seleccionar comida"
@@ -3844,6 +3950,7 @@ export default function App() {
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                               />
                               <Select
+                              key={resetKey4}
                                 className="ml-2 mt-1"
                                 name="restaurante"
                                 label="Seleccionar comida"

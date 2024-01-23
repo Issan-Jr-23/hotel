@@ -100,7 +100,8 @@ const NavMenu = () => {
                         style={{ height: "auto", display: "flex", flexDirection: "column", overflow: "hidden" }}>
                         <div className=' flex flex-col pl-9' style={{ overflow: "hidden" }} >
                             <Link to="/dashboard-pasadia" className='mb-1 pt-2 pb-2' >Dashboard pasadia</Link>
-                            <Link className='mb-1 pt-2 pb-2' >Dashboard</Link>
+                            <Link to="/dashboard-cabania" className='mb-1 pt-2 pb-2' >Dashboard cabaña</Link>
+                            <Link to="/dashboard-habitaciones" className='mb-1 pt-2 pb-2' >Dashboard habitaciones</Link>
                         </div>
                     </AccordionItem>
                 </Accordion>

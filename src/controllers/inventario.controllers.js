@@ -787,4 +787,49 @@ export const updateSubproduct = async (req, res) => {
   }
 };
 
+// export const guardarCortesiaBebidaAndFoodInventory = async (req, res) => {
+//   const { foodId, cantidad } = req.body;
+//   console.log(
+//     "datos de las cotersias que se guardaran - mensaje desde el servidor: ",
+//     foodId,
+//     cantidad
+//   );
+
+//   if (!foodId || cantidad === undefined) {
+//     return res
+//       .status(400)
+//       .send({
+//         message: "Faltan datos requeridos (foodId, subproductoId y cantidad).",
+//       });
+//   }
+
+//   if (cantidad < 0) {
+//     return res
+//       .status(400)
+//       .send({ message: "La cantidad no puede ser negativa." });
+//   }
+
+//   try {
+//     const alimento = await Bebida.findById(foodId);
+//     if (!alimento) {
+//       return res.status(404).send({ message: "Alimento no encontrado." });
+//     }
+
+//     alimento.Cortesias += cantidad;
+
+//     const alimentoActualizado = await alimento.save();
+//     console.log("Alimento actualizado con cortesías: ", alimentoActualizado);
+
+//     res
+//       .status(200)
+//       .send({
+//         message: "Cortesías actualizadas correctamente",
+//         alimento: alimentoActualizado,
+//       });
+//   } catch (error) {
+//     console.error("Error al actualizar las cortesías:", error);
+//     res.status(500).send({ message: "Error interno del servidor" });
+//   }
+// };
+
 

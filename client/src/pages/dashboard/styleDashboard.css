@@ -163,6 +163,7 @@
   height: auto;
   display: flex;
  }
+ 
  .cont-title-json{
   width: 50vw;
   height: 70vh;
@@ -181,6 +182,14 @@
   position: absolute;
   right: -70px;
   top: 10px;
+}
+
+.img-cubo-dasboard-cabania{
+  width: 350px;
+  position: absolute;
+  right: -170px;
+  top: -100px;
+  transform: rotate(-90deg);
 }
 
 .animation-lottie-json{

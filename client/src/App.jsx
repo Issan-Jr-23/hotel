@@ -25,6 +25,8 @@ import HistorialCompras from "./pages/HistorialCompras.jsx";
 import HistorialUsuario from "./pages/Historial.jsx";
 import NotFoundPage from "./pages/Page404.jsx"
 import DashboardPasadia from "./pages/dashboard/dashboardPasadia.jsx";
+import DashboardCabania from "./pages/dashboard/DashboardCabania.jsx";
+import DashboardHabitaciones from "./pages/dashboard/DashboardHabitaciones.jsx";
 import Adicionales from "./pages/adicionales/Adicionales.jsx";
 import AdicionalesHabitaciones from "./pages/adicionales/Adicionales.habitaciones.jsx";
 import AdicionalesCabanias from "./pages/adicionales/Adicionales.cabania.jsx";
@@ -67,6 +69,8 @@ function App() {
                 <Route path="/transferencia-data" element={<TransferenciaData/>}/>
                 <Route path="/historial-compras" element={<HistorialCompras/>}/>
                 <Route path="/dashboard-pasadia" element={<DashboardPasadia/>} ></Route>
+                <Route path="/dashboard-cabania" element={<DashboardCabania/>} ></Route>
+                <Route path="/dashboard-habitaciones" element={<DashboardHabitaciones/>} ></Route>
                 <Route path="/cabania-stock" element={<CabaniasStock/>} ></Route>
               </Route>
               <Route element={<ProtectedRoute allowedRoles={["editor"]} />}>

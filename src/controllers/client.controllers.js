@@ -280,36 +280,6 @@ export const getClienteByIdentificacion = async (req, res) => {
   }
 };
 
-export const totalPructosVendidos = async (req, res) => {
-  try {
-      const usuarios = await Cliente.find();
-
-      let totalPago = 0;
-      let cantidadVendidos = 0;
-
-      usuarios.forEach(usuario => {
-              if (usuario.servicio === 'pasadia') {
-                usuario.restaurante.forEach( item => {
-                  if (item.precio > 0){
-                    totalPago += item.cantidad * item.precio;
-                    cantidadVendidos += item.cantidad;
-                  }
-                })
-                usuario.bebidas.forEach( item => {
-                  if (item.precio > 0) {
-                    totalPago += item.cantidad * item.precio;
-                    cantidadVendidos += item.cantidad;
-                  }
-                })
-              }
-      });
-
-      res.json({ totalPago, cantidadVendidos });
-  } catch (error) {
-      console.error('Error al obtener los datos: ', error);
-      res.status(500).send('Error al procesar la solicitud');
-  }
-};
 
 export const totalPructosVendidosCortesias = async (req, res) => {
   try {
@@ -345,7 +315,7 @@ export const totalPructosVendidosCortesias = async (req, res) => {
 export const obtenerResumenCompras = async (req, res) => {
   try {
     const clientes = await Cliente.find({}).select('identificacion nombre bebidas restaurante servicio');
-    const usuarios = await Usuario.find({}).select('identificacion nombre historial');
+    const usuarios = await Usuario.find({}).select('identificacion historial');
 
     const resumenCompras = new Map();
 
@@ -354,8 +324,8 @@ export const obtenerResumenCompras = async (req, res) => {
         let datosUsuario = resumenCompras.get(identificacion);
         datosUsuario.cantidadTotal += cantidad;
         datosUsuario.valorTotal += valor;
-
-        if (nombre && datosUsuario.nombre && nombre.split(' ').length > datosUsuario.nombre.split(' ').length) {
+  
+        if (nombre && (!datosUsuario.nombre || nombre.length > datosUsuario.nombre.length)) {
           datosUsuario.nombre = nombre;
         }
       } else {
@@ -368,54 +338,52 @@ export const obtenerResumenCompras = async (req, res) => {
       }
     };
 
+  
     clientes.forEach(cliente => {
-      if (cliente.servicio === 'pasadia') {
-        let totalBebidas = 0;
-        let totalRestaurantes = 0;
-        let cantidadBebidas = 0;
-        let cantidadRestaurantes = 0;
+      let totalBebidas = 0;
+      let totalRestaurantes = 0;
+      let cantidadBebidas = 0;
+      let cantidadRestaurantes = 0;
 
-        cliente.bebidas.forEach(bebida => {
-          if (bebida.precio > 0) {
-            totalBebidas += bebida.precio * bebida.cantidad;
-            cantidadBebidas += bebida.cantidad;
-          }
-        });
+      cliente.bebidas.forEach(bebida => {
+        if (bebida.precio > 0) {
+          totalBebidas += bebida.precio * bebida.cantidad;
+          cantidadBebidas += bebida.cantidad;
+        }
+      });
 
-        cliente.restaurante.forEach(restaurante => {
-          if (restaurante.precio > 0) {
-            totalRestaurantes += restaurante.precio * restaurante.cantidad;
-            cantidadRestaurantes += restaurante.cantidad;
-          }
-        });
+      cliente.restaurante.forEach(restaurante => {
+        if (restaurante.precio > 0) {
+          totalRestaurantes += restaurante.precio * restaurante.cantidad;
+          cantidadRestaurantes += restaurante.cantidad;
+        }
+      });
 
-        actualizarResumen(cliente.identificacion, cliente.nombre, cantidadBebidas + cantidadRestaurantes, totalBebidas + totalRestaurantes);
-      }
+      actualizarResumen(cliente.identificacion, cliente.nombre, cantidadBebidas + cantidadRestaurantes, totalBebidas + totalRestaurantes);
     });
 
+    
     usuarios.forEach(usuario => {
       let cantidadTotalBebidas = 0;
       let cantidadTotalRestaurantes = 0;
       let valorTotalBebidas = 0;
       let valorTotalRestaurantes = 0;
+      let nombreMasLargo = '';
 
-      let nombreUsuario = ""; 
+      usuario.historial.forEach(historial => {
+        if (historial.servicio === 'pasadia') {
+          if (historial.nombre && historial.nombre.length > nombreMasLargo.length) {
+            nombreMasLargo = historial.nombre;
+          }
 
-      usuario.historial.forEach(h => {
-        if (h.servicio === 'pasadia') {
-          nombreUsuario += h.nombre || "Nombre Desconocido"
-          h.bebidas.forEach(bebida => {
-            if (bebida.precio > 0) {
-              cantidadTotalBebidas += bebida.cantidad;
-              valorTotalBebidas += bebida.precio * bebida.cantidad;
-            }
+          historial.bebidas.forEach(bebida => {
+            cantidadTotalBebidas += bebida.cantidad;
+            valorTotalBebidas += bebida.precio * bebida.cantidad;
           });
 
-          h.restaurante.forEach(restaurante => {
-            if (restaurante.precio > 0) {
-              cantidadTotalRestaurantes += restaurante.cantidad;
-              valorTotalRestaurantes += restaurante.precio * restaurante.cantidad;
-            }
+          historial.restaurante.forEach(restaurante => {
+            cantidadTotalRestaurantes += restaurante.cantidad;
+            valorTotalRestaurantes += restaurante.precio * restaurante.cantidad;
           });
         }
       });
@@ -423,10 +391,9 @@ export const obtenerResumenCompras = async (req, res) => {
       const cantidadTotal = cantidadTotalBebidas + cantidadTotalRestaurantes;
       const valorTotal = valorTotalBebidas + valorTotalRestaurantes;
 
-      if (!resumenCompras.has(usuario.identificacion)) {
-        actualizarResumen(usuario.identificacion, nombreUsuario, cantidadTotal, valorTotal);
-      }
+      actualizarResumen(usuario.identificacion, nombreMasLargo, cantidadTotal, valorTotal);
     });
+
 
     const resultadoOrdenado = Array.from(resumenCompras.values())
       .sort((a, b) => b.valorTotal - a.valorTotal)
@@ -439,6 +406,11 @@ export const obtenerResumenCompras = async (req, res) => {
     res.status(500).json({ mensaje: "Error al obtener el resumen de compras" });
   }
 };
+
+
+
+
+
 
 
 

@@ -12,10 +12,10 @@ import Lottie from "react-lottie"
 import users from "../../images/iconly-glass-tick.svg"
 import { Button, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@nextui-org/react"
 import "./styleDashboard.css"
-import cubo from "../../images/forma-abstracta2.png"
-import fa from "../../images/forma-abstracta.png"
-import fa1 from "../../images/forma-abstracta1.png"
-import animationDb from "../../images/Animation - 1705932434807.json"
+import cubo from "../../images/triangular.png"
+import fa from "../../images/triangular1.png"
+import fa1 from "../../images/triangular2.png"
+import animationDb from "../../images/Animation-cabania.json"
 
 const dashboardPasadia = () => {
 
@@ -34,16 +34,14 @@ const dashboardPasadia = () => {
   const [sumaDeValores, setSumaDeValores] = useState();
 
   useEffect(() => {
-    const fetchData = async () => { 
+    const fetchData = async () => {
       try {
-        const response = await AxiosInstance.get('/pasadia-productos-vendidos-dashboard');
-        console.log(response);
+        const response = await AxiosInstance.get('/cabania-productos-vendidos');
+        console.log("datos del front-end", response.data);
 
         const { totalPago, cantidadVendidos } = response.data;
         setValorVentaPasadia(totalPago)
         setCantidadVendidaPasadia(cantidadVendidos)
-        console.log("Total niños: ", totalPago);
-        console.log("Total adultos: ", cantidadVendidos);
 
       } catch (error) {
         console.error('Error al obtener los datos: ', error);
@@ -57,7 +55,7 @@ const dashboardPasadia = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstance.get('/productos-vendidos-pasadia-dashboard');
+        const response = await AxiosInstance.get('/productos-vendidos-cabania');
         console.log(response);
         const { totalPago, cantidadVendidos } = response.data;
         setValorVenta(totalPago)
@@ -81,7 +79,7 @@ const dashboardPasadia = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstance.get('/productos-cortesias-pasadia-dashboard');
+        const response = await AxiosInstance.get('/productos-cortesias-cabania');
         console.log(response);
 
         const { totalPago, cantidadVendidos } = response.data;
@@ -106,13 +104,14 @@ const dashboardPasadia = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstance.get('/obtener-cantidad-usuarios');
+        const response = await AxiosInstance.get('/obtener-cantidad-usuarios-cabania');
         console.log(response);
 
         const { totalNinios, totalAdultos } = response.data;
         console.log("Total niños: ", totalNinios);
         console.log("Total adultos: ", totalAdultos);
-        setTotalUsers(totalNinios + totalAdultos);
+        setTotalUsers(totalNinios + totalAdultos)
+
       } catch (error) {
         console.error('Error al obtener los datos: ', error);
       }
@@ -124,7 +123,7 @@ const dashboardPasadia = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstance.get('/total-generado-pasadia');
+        const response = await AxiosInstance.get('/cabania-total-generado');
         console.log(response);
 
         const { totalPago, totalPagoPendiente } = response.data;
@@ -154,7 +153,7 @@ const dashboardPasadia = () => {
     <div className=' fondo pt-20 pl-5 pr-5 pb-20'>
       <div className='cont-icon-json'>
       <article className='cont-title-json'>
-      <h1 className='text-4xl mb-5 uppercase border-b-3'>Dashboard Pasadia </h1>
+      <h1 className='text-4xl mb-5 uppercase border-b-3'>Dashboard Cabaña </h1>
 
       </article>
       <article className='animation-lottie-json'>
@@ -166,7 +165,7 @@ const dashboardPasadia = () => {
       <div className='flex justify-between flex-wrap'>
         <div className='box-style  flex rounded-2xl '>
           <span className='box-grafic justify-between flex flex-col p-4' >
-            <h3 className='fondo-text' style={{ fontWeight: "600", fontSize: "20px" }} >Sales operations</h3>
+            <h3 className='fondo-text' style={{ fontWeight: "600", fontSize: "20px" }} >Cabaña</h3>
             <p className='fondo-text flex' style={{ fontWeight: "600" }}>
               ${typeof totalVentaPasadia === 'number' ? totalVentaPasadia.toLocaleString('es-CO') : '0'}
               {<span className='fondo-text alza flex flex-row items-center ml-2 text-green-600'>
@@ -176,27 +175,25 @@ const dashboardPasadia = () => {
             <p className=' fondo-text text-3xl flex' style={{ fontWeight: "600" }}>  {totalUsers}</p>
 
           </span>
-
-              <img className='img-cubo-dasboard' src={cubo} alt="" />
+              <img className='img-cubo-dasboard-cabania' src={cubo} alt="" />
         </div>
         <div className='box-style  flex rounded-2xl '>
           <span className='box-grafic justify-between flex flex-col p-4'>
-            <h3 className='fondo-text' style={{ fontWeight: "600", fontSize: "20px" }} >Units Sold</h3>
+            <h3 className='fondo-text' style={{ fontWeight: "600", fontSize: "20px" }} >Productos Comprados</h3>
             <p className='fondo-text flex' style={{ fontWeight: "600" }}>
               ${typeof sumaDeValores === 'number' ? sumaDeValores.toLocaleString('es-CO') : '0'}
               {<span className='fondo-text alza flex items-center ml-2 text-red-600'>
-                {/* <span className='alza'> 
+                {/* <span className='alza'>
               <img className='down' src={down} alt="" /> </span>   */}
               </span>}
             </p>
             <p className=' fondo-text text-3xl flex' style={{ fontWeight: "600" }}>   {cantidadVendida + cantidadVendidaPasadia}</p>
-
           </span>
-          <img className='img-cubo-dasboard' src={fa} alt="" />
+          <img className='img-cubo-dasboard-cabania' src={fa} alt="" />
         </div>
         <div className='box-style  flex rounded-2xl '>
           <span className='box-grafic justify-between flex flex-col p-4'>
-            <h3 className='fondo-text' style={{ fontWeight: "600", fontSize: "20px" }} >courtesies for clients</h3>
+            <h3 className='fondo-text' style={{ fontWeight: "600", fontSize: "20px" }} >Cortesias</h3>
             <p className='fondo-text' style={{ fontWeight: "600" }}>
               ${typeof valorVentaCortesias === 'number' ? valorVentaCortesias.toLocaleString('es-CO') : '0'}
             </p>
@@ -204,7 +201,7 @@ const dashboardPasadia = () => {
               {cantidadVendidaCortesias}</p>
 
           </span>
-          <img className='img-cubo-dasboard' src={fa1} alt="" />
+          <img className='img-cubo-dasboard-cabania' src={fa1} alt="" />
         </div>
 
       </div>

@@ -12,10 +12,10 @@ import Lottie from "react-lottie"
 import users from "../../images/iconly-glass-tick.svg"
 import { Button, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@nextui-org/react"
 import "./styleDashboard.css"
-import cubo from "../../images/forma-abstracta2.png"
-import fa from "../../images/forma-abstracta.png"
-import fa1 from "../../images/forma-abstracta1.png"
-import animationDb from "../../images/Animation - 1705932434807.json"
+import cubo from "../../images/cubo.png"
+import fa from "../../images/cubo1.png"
+import fa1 from "../../images/3d.png"
+import animationDb from "../../images/Animation-habitaciones.json"
 
 const dashboardPasadia = () => {
 
@@ -34,9 +34,9 @@ const dashboardPasadia = () => {
   const [sumaDeValores, setSumaDeValores] = useState();
 
   useEffect(() => {
-    const fetchData = async () => { 
+    const fetchData = async () => {
       try {
-        const response = await AxiosInstance.get('/pasadia-productos-vendidos-dashboard');
+        const response = await AxiosInstance.get('/pasadia-productos-vendidos');
         console.log(response);
 
         const { totalPago, cantidadVendidos } = response.data;
@@ -57,7 +57,7 @@ const dashboardPasadia = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstance.get('/productos-vendidos-pasadia-dashboard');
+        const response = await AxiosInstance.get('/productos-vendidos-pasadia');
         console.log(response);
         const { totalPago, cantidadVendidos } = response.data;
         setValorVenta(totalPago)
@@ -81,7 +81,7 @@ const dashboardPasadia = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstance.get('/productos-cortesias-pasadia-dashboard');
+        const response = await AxiosInstance.get('/productos-cortesias-pasadia');
         console.log(response);
 
         const { totalPago, cantidadVendidos } = response.data;
@@ -112,7 +112,8 @@ const dashboardPasadia = () => {
         const { totalNinios, totalAdultos } = response.data;
         console.log("Total niños: ", totalNinios);
         console.log("Total adultos: ", totalAdultos);
-        setTotalUsers(totalNinios + totalAdultos);
+        setTotalUsers(totalNinios + totalAdultos)
+
       } catch (error) {
         console.error('Error al obtener los datos: ', error);
       }
@@ -154,7 +155,7 @@ const dashboardPasadia = () => {
     <div className=' fondo pt-20 pl-5 pr-5 pb-20'>
       <div className='cont-icon-json'>
       <article className='cont-title-json'>
-      <h1 className='text-4xl mb-5 uppercase border-b-3'>Dashboard Pasadia </h1>
+      <h1 className='text-4xl mb-5 uppercase border-b-3'>Dashboard Habitaciones</h1>
 
       </article>
       <article className='animation-lottie-json'>
@@ -166,7 +167,7 @@ const dashboardPasadia = () => {
       <div className='flex justify-between flex-wrap'>
         <div className='box-style  flex rounded-2xl '>
           <span className='box-grafic justify-between flex flex-col p-4' >
-            <h3 className='fondo-text' style={{ fontWeight: "600", fontSize: "20px" }} >Sales operations</h3>
+            <h3 className='fondo-text' style={{ fontWeight: "600", fontSize: "20px" }} >Habitaciones</h3>
             <p className='fondo-text flex' style={{ fontWeight: "600" }}>
               ${typeof totalVentaPasadia === 'number' ? totalVentaPasadia.toLocaleString('es-CO') : '0'}
               {<span className='fondo-text alza flex flex-row items-center ml-2 text-green-600'>
@@ -181,7 +182,7 @@ const dashboardPasadia = () => {
         </div>
         <div className='box-style  flex rounded-2xl '>
           <span className='box-grafic justify-between flex flex-col p-4'>
-            <h3 className='fondo-text' style={{ fontWeight: "600", fontSize: "20px" }} >Units Sold</h3>
+            <h3 className='fondo-text' style={{ fontWeight: "600", fontSize: "20px" }} >Productos comprados</h3>
             <p className='fondo-text flex' style={{ fontWeight: "600" }}>
               ${typeof sumaDeValores === 'number' ? sumaDeValores.toLocaleString('es-CO') : '0'}
               {<span className='fondo-text alza flex items-center ml-2 text-red-600'>
@@ -196,7 +197,7 @@ const dashboardPasadia = () => {
         </div>
         <div className='box-style  flex rounded-2xl '>
           <span className='box-grafic justify-between flex flex-col p-4'>
-            <h3 className='fondo-text' style={{ fontWeight: "600", fontSize: "20px" }} >courtesies for clients</h3>
+            <h3 className='fondo-text' style={{ fontWeight: "600", fontSize: "20px" }} >Cortesias</h3>
             <p className='fondo-text' style={{ fontWeight: "600" }}>
               ${typeof valorVentaCortesias === 'number' ? valorVentaCortesias.toLocaleString('es-CO') : '0'}
             </p>
@@ -206,7 +207,6 @@ const dashboardPasadia = () => {
           </span>
           <img className='img-cubo-dasboard' src={fa1} alt="" />
         </div>
-
       </div>
       <div className=' flex mt-10 cont-table-apexg '>
         <div className='box-table'>

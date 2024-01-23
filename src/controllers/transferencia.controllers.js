@@ -162,17 +162,19 @@ export const obtenerCantidadGeneralResrvas = async (req, res) => {
   }
 };
 
-export const obtenerTotalesNiniosYAdultosEnPasadia = async (req, res) => {
+
+
+export const obtenerTotalesNiniosYAdultosEnCabania = async (req, res) => {
   try {
     const usuarios = await Usuario.find();
-    const clientes = await Cliente.find();
+    const clientes = await Cabania.find();
 
     let totalNinios = 0;
     let totalAdultos = 0;
 
     usuarios.forEach((usuario) => {
       usuario.historial.forEach((reserva) => {
-        if (reserva.servicio === "pasadia") {
+        if (reserva.servicio === "cabania") {
           totalNinios += reserva.ninios || 0; // Asegurarse de que ninios sea un número
           totalAdultos += reserva.adultos || 0; // Asegurarse de que adultos sea un número
         }
@@ -180,7 +182,7 @@ export const obtenerTotalesNiniosYAdultosEnPasadia = async (req, res) => {
     });
 
     clientes.forEach((personas) => {
-      if (personas.servicio === "pasadia") {
+      if (personas.servicio === "cabania") {
         totalNinios += personas.cantidadPersonas.ninios || 0;
         totalAdultos += personas.cantidadPersonas.adultos || 0;
       }
@@ -224,7 +226,9 @@ export const totalgeneradoPas = async (req, res) => {
   }
 };
 
-export const totalPructosVendidos = async (req, res) => {
+
+
+export const totalPructosVendidosCabania = async (req, res) => {
   try {
     const usuarios = await Usuario.find();
 
@@ -233,7 +237,7 @@ export const totalPructosVendidos = async (req, res) => {
 
     usuarios.forEach((usuario) => {
       usuario.historial.forEach((reserva) => {
-        if (reserva.servicio === "pasadia") {
+        if (reserva.servicio === "cabania") {
           reserva.restaurante.forEach((item) => {
             if (item.precio > 0) {
               totalPago += item.cantidad * item.precio;
@@ -257,18 +261,34 @@ export const totalPructosVendidos = async (req, res) => {
   }
 };
 
-export const totalPructosCortesias = async (req, res) => {
+
+
+export const totalPructosCortesiasCabania = async (req, res) => {
   try {
     const usuarios = await Usuario.find();
+    const pasadia = await Cabania.find();
 
     let totalPago = 0;
     let cantidadVendidos = 0;
 
+    pasadia.forEach((data )=> {
+      data.restaurante?.forEach((response) => {
+        if (response.precio === 0 && response.mensaje === "Cortesía") {
+          cantidadVendidos += response.cantidad
+        }
+      })
+      data.bebidas?.forEach((response) => {
+        if (response.precio === 0 && response.mensaje === "Cortesía") {
+          cantidadVendidos += response.cantidad
+        }
+      })
+    })
+
     usuarios.forEach((usuario) => {
       usuario.historial.forEach((reserva) => {
-        if (reserva.servicio === "pasadia") {
+        if (reserva.servicio === "cabania") {
           reserva.restaurante.forEach((item) => {
-            if (item.precio === 0) {
+            if (item.precio === 0 && item.mensaje === "Cortesía") {
               totalPago += item.cantidad * item.precio;
               cantidadVendidos += item.cantidad;
             }

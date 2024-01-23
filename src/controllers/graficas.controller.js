@@ -3,41 +3,12 @@ import Cabania from "../models/client.cabania.model.js";
 import Habitaciones from "../models/cliente.habitaciones.model.js";
 import Cliente from "../models/client.model.js";
 
-export const obtenerTotalesNiniosYAdultosEnPasadia = async (req, res) => {
-    try {
-      const usuarios = await Usuario.find();
-      const clientes = await Cabania.find();
-  
-      let totalNinios = 0;
-      let totalAdultos = 0;
-  
-      usuarios.forEach((usuario) => {
-        usuario.historial.forEach((reserva) => {
-          if (reserva.servicio === "cabania") {
-            totalNinios += reserva.ninios || 0; // Asegurarse de que ninios sea un número
-            totalAdultos += reserva.adultos || 0; // Asegurarse de que adultos sea un número
-          }
-        });
-      });
-  
-      clientes.forEach((personas) => {
-        if (personas.servicio === "cabania") {
-          totalNinios += personas.cantidadPersonas.ninios || 0;
-          totalAdultos += personas.cantidadPersonas.adultos || 0;
-        }
-      });
-  
-      res.json({ totalNinios, totalAdultos });
-    } catch (error) {
-      console.error("Error al obtener los datos: ", error);
-      res.status(500).send("Error al procesar la solicitud");
-    }
-  };
+
   
   export const totalgenerado = async (req, res) => {
     try {
       const usuarios = await Usuario.find();
-      const clientes = await Cabania.find();
+      const clientes = await Cliente.find();
   
       let totalPago = 0;
       let totalPagoPendiente = 0;
@@ -510,4 +481,148 @@ export const productosMasCompradosPass = async (req, res) => {
   }
 };
 
+
+//dashboard pasadia
+
+export const totalPructosVendidosDashboard = async (req, res) => {
+  try {
+      const usuarios = await Cliente.find();
+
+      let totalPago = 0;
+      let cantidadVendidos = 0;
+
+      usuarios.forEach(usuario => {
+              if (usuario.servicio === 'pasadia') {
+                usuario.restaurante.forEach( item => {
+                  if (item.precio > 0){
+                    totalPago += item.cantidad * item.precio;
+                    cantidadVendidos += item.cantidad;
+                  }
+                })
+                usuario.bebidas.forEach( item => {
+                  if (item.precio > 0) {
+                    totalPago += item.cantidad * item.precio;
+                    cantidadVendidos += item.cantidad;
+                  }
+                })
+              }
+      });
+
+      res.json({ totalPago, cantidadVendidos });
+  } catch (error) {
+      console.error('Error al obtener los datos: ', error);
+      res.status(500).send('Error al procesar la solicitud');
+  }
+};
+
+export const totalPructosVendidosHistorialDashboard = async (req, res) => {
+  try {
+    const usuarios = await Usuario.find();
+
+    let totalPago = 0;
+    let cantidadVendidos = 0;
+
+    usuarios.forEach((usuario) => {
+      usuario.historial.forEach((reserva) => {
+        if (reserva.servicio === "pasadia") {
+          reserva.restaurante.forEach((item) => {
+            if (item.precio > 0) {
+              totalPago += item.cantidad * item.precio;
+              cantidadVendidos += item.cantidad;
+            }
+          });
+          reserva.bebidas.forEach((item) => {
+            if (item.precio > 0) {
+              totalPago += item.cantidad * item.precio;
+              cantidadVendidos += item.cantidad;
+            }
+          });
+        }
+      });
+    });
+
+    res.json({ totalPago, cantidadVendidos });
+  } catch (error) {
+    console.error("Error al obtener los datos: ", error);
+    res.status(500).send("Error al procesar la solicitud");
+  }
+};
+
+export const totalPructosCortesiasDashboard = async (req, res) => {
+  try {
+    const usuarios = await Usuario.find();
+    const pasadia = await Cliente.find();
+
+    let totalPago = 0;
+    let cantidadVendidos = 0;
+
+    pasadia.forEach((data )=> {
+      data.restaurante?.forEach((response) => {
+        if (response.precio === 0 && response.mensaje === "Cortesía") {
+          cantidadVendidos += response.cantidad
+        }
+      })
+      data.bebidas?.forEach((response) => {
+        if (response.precio === 0 && response.mensaje === "Cortesía") {
+          cantidadVendidos += response.cantidad
+        }
+      })
+    })
+
+    usuarios.forEach((usuario) => {
+      usuario.historial.forEach((reserva) => {
+        if (reserva.servicio === "pasadia") {
+          reserva.restaurante.forEach((item) => {
+            if (item.precio === 0 && item.mensaje === "Cortesía") {
+              totalPago += item.cantidad * item.precio;
+              cantidadVendidos += item.cantidad;
+            }
+          });
+          reserva.bebidas.forEach((item) => {
+            if (item.precio === 0) {
+              totalPago += item.cantidad * item.precio;
+              cantidadVendidos += item.cantidad;
+            }
+          });
+        }
+      });
+    });
+
+    res.json({ totalPago, cantidadVendidos });
+  } catch (error) {
+    console.error("Error al obtener los datos: ", error);
+    res.status(500).send("Error al procesar la solicitud");
+  }
+};
+
+export const obtenerTotalesNiniosYAdultosEnPasadia = async (req, res) => {
+  try {
+    const usuarios = await Usuario.find();
+    const clientes = await Cliente.find();
+
+    let totalNinios = 0;
+    let totalAdultos = 0;
+
+    usuarios.forEach((usuario) => {
+      usuario.historial.forEach((reserva) => {
+        if (reserva.servicio === "pasadia") {
+          totalNinios += reserva.ninios || 0; // Asegurarse de que ninios sea un número
+          totalAdultos += reserva.adultos || 0; // Asegurarse de que adultos sea un número
+        }
+      });
+    });
+
+    clientes.forEach((personas) => {
+      if (personas.servicio === "pasadia") {
+        totalNinios += personas.cantidadPersonas.ninios || 0;
+        totalAdultos += personas.cantidadPersonas.adultos || 0;
+      }
+    });
+
+    res.json({ totalNinios, totalAdultos });
+  } catch (error) {
+    console.error("Error al obtener los datos: ", error);
+    res.status(500).send("Error al procesar la solicitud");
+  }
+};
 
