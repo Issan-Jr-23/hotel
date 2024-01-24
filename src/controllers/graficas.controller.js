@@ -4,37 +4,7 @@ import Habitaciones from "../models/cliente.habitaciones.model.js";
 import Cliente from "../models/client.model.js";
 
 
-  
-  export const totalgenerado = async (req, res) => {
-    try {
-      const usuarios = await Usuario.find();
-      const clientes = await Cliente.find();
-  
-      let totalPago = 0;
-      let totalPagoPendiente = 0;
-  
-      usuarios.forEach((usuario) => {
-        usuario.historial.forEach((reserva) => {
-          if (reserva.servicio === "pasadia") {
-            totalPago += reserva.pago || 0;
-            totalPagoPendiente += reserva.pagoPendiente || 0;
-          }
-        });
-      });
-  
-      clientes.forEach((x) => {
-        if (x.servicio === "pasadia") {
-          totalPago += x.pagoAnticipado || 0;
-          totalPagoPendiente += x.pagoPendiente || 0;
-        }
-      });
-  
-      res.json({ totalPago, totalPagoPendiente });
-    } catch (error) {
-      console.error("Error al obtener los datos: ", error);
-      res.status(500).send("Error al procesar la solicitud");
-    }
-  };
+
 
 
 export const obtenerTotalesNiniosYAdultosEnHabitaciones = async (req, res) => {
@@ -626,3 +596,234 @@ export const obtenerTotalesNiniosYAdultosEnPasadia = async (req, res) => {
   }
 };
 
+export const totalgeneradoDashboard = async (req, res) => {
+  try {
+    const usuarios = await Usuario.find();
+    const clientes = await Cliente.find();
+
+    let totalPago = 0;
+    let totalPagoPendiente = 0;
+
+    usuarios.forEach((usuario) => {
+      usuario.historial.forEach((reserva) => {
+        if (reserva.servicio === "pasadia") {
+          totalPago += reserva.pago || 0;
+          totalPagoPendiente += reserva.pagoPendiente || 0;
+        }
+      });
+    });
+
+    clientes.forEach((x) => {
+      if (x.servicio === "pasadia") {
+        totalPago += x.pagoAnticipado || 0;
+        totalPagoPendiente += x.pagoPendiente || 0;
+      }
+    });
+
+    res.json({ totalPago, totalPagoPendiente });
+  } catch (error) {
+    console.error("Error al obtener los datos: ", error);
+    res.status(500).send("Error al procesar la solicitud");
+  }
+};
+
+//dashboard cabaña
+
+export const totalPructosVendidosCabaniaDashboard = async (req, res) => {
+  try {
+    const result = await Cabania.aggregate([
+      {
+        $match: {
+          servicio: 'cabania',
+        },
+      },
+      {
+        $project: {
+          totalPago: {
+            $sum: {
+              $map: {
+                input: {
+                  $concatArrays: ['$restaurante', '$bebidas'],
+                },
+                as: 'item',
+                in: {
+                  $cond: {
+                    if: {
+                      $and: [
+                        { $gt: ['$$item.precio', 0] },
+                        { $gt: ['$$item.cantidad', 0] },
+                      ],
+                    },
+                    then: { $multiply: ['$$item.cantidad', '$$item.precio'] },
+                    else: 0,
+                  },
+                },
+              },
+            },
+          },
+          cantidadVendidos: {
+            $sum: {
+              $cond: {
+                if: { $gt: ['$restaurante.precio', 0] },
+                then: '$restaurante.cantidad',
+                else: 0,
+              },
+            },
+          },
+        },
+      },
+    ]);
+
+    if (result.length > 0) {
+      res.json(result[0]);
+    } else {
+      res.json({ totalPago: 0, cantidadVendidos: 0 });
+    }
+  } catch (error) {
+    console.error('Error al obtener los datos: ', error);
+    res.status(500).send('Error al procesar la solicitud');
+  }
+};
+
+
+export const totalPructosVendidosHistorialCabaniaDashboard = async (req, res) => {
+  try {
+    const usuarios = await Usuario.find();
+
+    let totalPago = 0;
+    let cantidadVendidos = 0;
+
+    usuarios.forEach((usuario) => {
+      usuario.historial.forEach((reserva) => {
+        if (reserva.servicio === "cabania") {
+          reserva.restaurante.forEach((item) => {
+            if (item.precio > 0) {
+              totalPago += item.cantidad * item.precio;
+              cantidadVendidos += item.cantidad;
+            }
+          });
+          reserva.bebidas.forEach((item) => {
+            if (item.precio > 0) {
+              totalPago += item.cantidad * item.precio;
+              cantidadVendidos += item.cantidad;
+            }
+          });
+        }
+      });
+    });
+
+    res.json({ totalPago, cantidadVendidos });
+  } catch (error) {
+    console.error("Error al obtener los datos: ", error);
+    res.status(500).send("Error al procesar la solicitud");
+  }
+};
+
+export const totalPructosCortesiasCabaniaHistorialDashboard = async (req, res) => {
+  try {
+    const usuarios = await Usuario.find();
+    const pasadia = await Cabania.find();
+
+    let totalPago = 0;
+    let cantidadVendidos = 0;
+
+    pasadia.forEach((data )=> {
+      data.restaurante?.forEach((response) => {
+        if (response.precio === 0 && response.mensaje === "Cortesía") {
+          cantidadVendidos += response.cantidad
+        }
+      })
+      data.bebidas?.forEach((response) => {
+        if (response.precio === 0 && response.mensaje === "Cortesía") {
+          cantidadVendidos += response.cantidad
+        }
+      })
+    })
+
+    usuarios.forEach((usuario) => {
+      usuario.historial.forEach((reserva) => {
+        if (reserva.servicio === "cabania") {
+          reserva.restaurante.forEach((item) => {
+            if (item.precio === 0 && item.mensaje === "Cortesía") {
+              totalPago += item.cantidad * item.precio;
+              cantidadVendidos += item.cantidad;
+            }
+          });
+          reserva.bebidas.forEach((item) => {
+            if (item.precio === 0) {
+              totalPago += item.cantidad * item.precio;
+              cantidadVendidos += item.cantidad;
+            }
+          });
+        }
+      });
+    });
+
+    res.json({ totalPago, cantidadVendidos });
+  } catch (error) {
+    console.error("Error al obtener los datos: ", error);
+    res.status(500).send("Error al procesar la solicitud");
+  }
+};
+
+export const obtenerTotalesNiniosYAdultosEnCabaniaDashboard = async (req, res) => {
+  try {
+    const usuarios = await Usuario.find();
+    const clientes = await Cabania.find();
+
+    let totalNinios = 0;
+    let totalAdultos = 0;
+
+    usuarios.forEach((usuario) => {
+      usuario.historial.forEach((reserva) => {
+        if (reserva.servicio === "cabania") {
+          totalNinios += reserva.ninios || 0; // Asegurarse de que ninios sea un número
+          totalAdultos += reserva.adultos || 0; // Asegurarse de que adultos sea un número
+        }
+      });
+    });
+
+    clientes.forEach((personas) => {
+      if (personas.servicio === "cabania") {
+        totalNinios += personas.cantidadPersonas.ninios || 0;
+        totalAdultos += personas.cantidadPersonas.adultos || 0;
+      }
+    });
+
+    res.json({ totalNinios, totalAdultos });
+  } catch (error) {
+    console.error("Error al obtener los datos: ", error);
+    res.status(500).send("Error al procesar la solicitud");
+  }
+};
+
+export const totalgeneradoCabaniaDashboard = async (req, res) => {
+  try {
+    const usuarios = await Usuario.find();
+    const clientes = await Cabania.find();
+
+    let totalPago = 0;
+    let totalPagoPendiente = 0;
+
+    usuarios.forEach((usuario) => {
+      usuario.historial.forEach((reserva) => {
+        if (reserva.servicio === "cabania") {
+          totalPago += reserva.pago || 0;
+          totalPagoPendiente += reserva.pagoPendiente || 0;
+        }
+      });
+    });
+
+    clientes.forEach((x) => {
+      if (x.servicio === "cabania") {
+        totalPago += x.pagoAnticipado || 0;
+        totalPagoPendiente += x.pagoPendiente || 0;
+      }
+    });
+
+    res.json({ totalPago, totalPagoPendiente });
+  } catch (error) {
+    console.error("Error al obtener los datos: ", error);
+    res.status(500).send("Error al procesar la solicitud");
+  }
+};

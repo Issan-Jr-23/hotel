@@ -4,7 +4,17 @@ import Habitaciones from "../models/cliente.habitaciones.model.js";
 
 export const obtenerClientes = async (req, res) => {
   try {
-    const clientesObtenidos = await Habitaciones.find();
+
+    const page = req.query.page || 1;
+    const pageSize = 15;
+
+    const skip = (page -1 ) * pageSize;
+
+    const pipeline = [
+      {$skip: skip},
+      {$limit: pageSize}
+    ]
+    const clientesObtenidos = await Habitaciones.aggregate(pipeline);
     res.status(200).json(clientesObtenidos);
   } catch (error) {
     console.error(error);

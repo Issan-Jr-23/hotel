@@ -5,15 +5,26 @@ import Usuario from '../models/transferencia.model.js';
 
 export const obtenerClientes = async (req, res) => {
   try {
-    const clientesObtenidos = await Cliente.find(); 
+    const page = req.query.page || 1;
+    const pageSize = 15;
+
+    const skip = (page - 1) * pageSize;
+
+    const pipeline = [
+      { $skip: skip },
+      { $limit: pageSize },
+    ];
+
+    const clientesObtenidos = await Cliente.aggregate(pipeline);
+
     res.status(200).json(clientesObtenidos);
   } catch (error) {
     console.error(error);
-    res
-      .status(500)
-      .send("Error al obtener los clientes desde la base de datos");
+    res.status(500).send("Error al obtener los clientes desde la base de datos");
   }
 };
+
+
 
 export const crearCliente = async (req, res) => {
   try {

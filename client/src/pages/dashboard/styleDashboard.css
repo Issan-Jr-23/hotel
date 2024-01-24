@@ -1,3 +1,28 @@
+.app {
+  position: relative;
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.8);/* Fondo semi-transparente */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.4s ease; 
+  pointer-events: none; 
+}
+
+.loading-overlay.visible {
+  opacity: 1;
+  transition: opacity 0.4s ease;
+}
+
 .box-style {
    background-color: rgb(255, 255, 255);
    height: 160px;
