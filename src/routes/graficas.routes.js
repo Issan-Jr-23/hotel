@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { comprasUsers, obtenerTotal, obtenerTotalesNiniosYAdultosEnCabaniaDashboard, obtenerTotalesNiniosYAdultosEnHabitaciones, obtenerTotalesNiniosYAdultosEnPasadia, productosMasComprados, productosMasCompradosPass, totalPructosCortesiasCabaniaHistorialDashboard, totalPructosCortesiasDashboard, totalPructosVendidosCabaniaDashboard, totalPructosVendidosDashboard, totalPructosVendidosHistorialCabaniaDashboard, totalPructosVendidosHistorialDashboard, totalgeneradoDashboard, totalgeneradoCabaniaDashboard, totalgeneradoHabitaciones, usuariosQueMasCompraron } from "../controllers/graficas.controller.js";
+import { comprasUsers, obtenerTotal, obtenerTotalesNiniosYAdultosEnCabaniaDashboard, obtenerTotalesNiniosYAdultosEnHabitaciones, obtenerTotalesNiniosYAdultosEnPasadia, productosMasComprados, productosMasCompradosPass, totalProductosCortesiasCabaniaHistorialDashboard, totalPructosCortesiasDashboard, totalPructosVendidosCabaniaDashboard, totalProductosVendidosDashboard, totalProductosVendidosHistorialCabaniaDashboard, totalPructosVendidosHistorialDashboard, totalgeneradoDashboard, totalgeneradoCabaniaDashboard, totalgeneradoHabitaciones, usuariosQueMasCompraron } from "../controllers/graficas.controller.js";
 import { totalGeneradoBar, totalGeneradoCabaniaBard, totalGeneradoHabitacionesBard } from "../controllers/transferencia.controllers.js";
 
 const router = Router();
@@ -19,7 +19,7 @@ router.get("/grafic-usuarios-mas-compras", comprasUsers)
 
 
 //dashboard pasadia
-router.get("/pasadia-productos-vendidos-dashboard", totalPructosVendidosDashboard)
+router.get("/pasadia-productos-vendidos-dashboard", totalProductosVendidosDashboard)
 router.get('/productos-vendidos-pasadia-dashboard',totalPructosVendidosHistorialDashboard);
 router.get('/productos-cortesias-pasadia-dashboard',totalPructosCortesiasDashboard);
 router.get('/obtener-cantidad-usuarios',obtenerTotalesNiniosYAdultosEnPasadia);
@@ -27,8 +27,8 @@ router.get('/total-generado-pasadia',totalgeneradoDashboard);
 
 //dashboar cabaña
 router.get("/cabania-productos-vendidos-dashboard", totalPructosVendidosCabaniaDashboard)
-router.get('/productos-vendidos-cabania-dashboard',totalPructosVendidosHistorialCabaniaDashboard);
-router.get('/productos-cortesias-cabania-dashboard',totalPructosCortesiasCabaniaHistorialDashboard);
+router.get('/productos-vendidos-cabania-dashboard',totalProductosVendidosHistorialCabaniaDashboard);
+router.get('/productos-cortesias-cabania-dashboard',totalProductosCortesiasCabaniaHistorialDashboard);
 router.get('/obtener-cantidad-usuarios-cabania-dashboard',obtenerTotalesNiniosYAdultosEnCabaniaDashboard);
 router.get('/cabania-total-generado',totalgeneradoCabaniaDashboard);
 

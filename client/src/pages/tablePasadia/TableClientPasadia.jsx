@@ -27,7 +27,7 @@ import Brightness1Icon from '@mui/icons-material/Brightness1';
 import { AddNoteIcon } from "../iconos/AddNoteIcon.jsx";
 import { green, purple, blue, red } from '@mui/material/colors';
 import { subHours } from 'date-fns';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import stats from "../../images/stats.svg"
 
 
@@ -39,6 +39,14 @@ import Modal from '@mui/material/Modal';
 
 
 // import SubMenu from "./SubMenu.jsx"
+
+const parseQuery = (queryString) => {
+  const query = {};
+  new URLSearchParams(queryString).forEach((value, key) => {
+    query[key] = value;
+  });
+  return query;
+};
 
 
 //#endregion
@@ -257,15 +265,39 @@ export default function App() {
   const [pasadiaAdultos, setPasadiaAdultos] = useState(null)
   const [pasadiaNinios, setPasadiaNinios] = useState(null)
   const [ccDisponibles, setCcDisponibles] = useState(null)
+  const location = useLocation();
+  const [totalPages, setTotalPages] = useState(0);
+
+  const query = parseQuery(location.search);
+  let page = parseInt(query.page);
+
+  useEffect(() => {
+    if (!page) {
+      page = 1;
+      navigate(`/pasadia?page=${page}`, { replace: true });
+    }
+
+    const fetchData = async () => {
+      try {
+        const response = await AxiosInstances.get(`/pasadia-clientes?page=${page}`);
+        setUsers(response.data.clientes);
+        setTotalPages(response.data.totalPages);
+      } catch (error) {
+        console.error("Error al obtener datos del servidor:", error);
+      }
+    };
+    fetchData();
+  }, [page, navigate]);
+
+  const changePage = (newPage) => {
+    navigate(`/pasadia?page=${newPage}`);
+  };
 
   function obtenerFechaConAjuste() {
     const fechaActual = new Date();
     fechaActual.setHours(fechaActual.getHours() - 5);
     return fechaActual.toISOString();
   }
-
-
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -688,7 +720,7 @@ export default function App() {
         }
       }
 
-      
+
       if (cantidadBebida2 > 0 && bebida2SeleccionadaId) {
         const bebidaAdultos2 = {
           id: bebida2SeleccionadaId,
@@ -1254,18 +1286,8 @@ export default function App() {
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await AxiosInstances.get("/pasadia-clientes");
-        const usuariosOrdenados = response.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
-        setUsers(usuariosOrdenados);
-      } catch (error) {
-        console.error("Error al obtener datos del servidor:", error);
-      }
-    };
-    fetchData();
-  }, []);
+
+
 
   //#endregion
 
@@ -1667,9 +1689,9 @@ export default function App() {
 
 
 
-  const totalPages = Math.ceil(datosFiltrados.length / displayLimit + 1);
-  const start = (currentPage - 1) * displayLimit;
-  const end = start + displayLimit;
+  // const totalPages = Math.ceil(datosFiltrados.length / displayLimit + 1);
+  // const start = (currentPage - 1) * displayLimit;
+  // const end = start + displayLimit;
 
 
   async function actualizarFechaEnProductos() {
@@ -3416,7 +3438,7 @@ export default function App() {
                                   style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 />
                                 <Select
-                                key={resetKey}
+                                  key={resetKey}
                                   className="ml-2 mt-1 "
                                   name="restaurante"
                                   label="Seleccionar comida"
@@ -3477,7 +3499,7 @@ export default function App() {
                                   style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 />
                                 <Select
-                                key={resetKey1}
+                                  key={resetKey1}
                                   className="ml-2 mt-1"
                                   name="restaurante"
                                   label="Seleccionar comida"
@@ -3532,7 +3554,7 @@ export default function App() {
                                   style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 />
                                 <Select
-                                key={resetKey2}
+                                  key={resetKey2}
                                   className="ml-2 mt-1"
                                   name="restaurante"
                                   label="Seleccionar comida"
@@ -3586,7 +3608,7 @@ export default function App() {
                                   style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 />
                                 <Select
-                                key={resetKey3}
+                                  key={resetKey3}
                                   className="ml-2 mt-1"
                                   name="restaurante"
                                   label="Seleccionar comida"
@@ -3640,7 +3662,7 @@ export default function App() {
                                   style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 />
                                 <Select
-                                key={resetKey4}
+                                  key={resetKey4}
                                   className="ml-2 mt-1"
                                   name="restaurante"
                                   label="Seleccionar comida"
@@ -3730,7 +3752,7 @@ export default function App() {
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                               />
                               <Select
-                              key={resetKey}
+                                key={resetKey}
                                 className="ml-2 mt-1"
                                 name="restaurante"
                                 label="Seleccionar comida"
@@ -3786,7 +3808,7 @@ export default function App() {
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                               />
                               <Select
-                              key={resetKey1}
+                                key={resetKey1}
                                 className="ml-2 mt-1"
                                 name="restaurante"
                                 label="Seleccionar comida"
@@ -3840,7 +3862,7 @@ export default function App() {
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                               />
                               <Select
-                              key={resetKey2}
+                                key={resetKey2}
                                 className="ml-2 mt-1"
                                 name="restaurante"
                                 label="Seleccionar comida"
@@ -3895,7 +3917,7 @@ export default function App() {
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                               />
                               <Select
-                              key={resetKey3}
+                                key={resetKey3}
                                 className="ml-2 mt-1"
                                 name="restaurante"
                                 label="Seleccionar comida"
@@ -3950,7 +3972,7 @@ export default function App() {
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                               />
                               <Select
-                              key={resetKey4}
+                                key={resetKey4}
                                 className="ml-2 mt-1"
                                 name="restaurante"
                                 label="Seleccionar comida"
@@ -4095,6 +4117,17 @@ export default function App() {
             ))}
           </TableBody>
         </Table>
+        <button onClick={() => changePage(page - 1)} disabled={page === 1}>Anterior</button>
+
+        {/* Botones para cada página */}
+        {[...Array(totalPages).keys()].map(num => (
+          <button key={num} onClick={() => changePage(num + 1)} disabled={page === num + 1}>
+            {num + 1}
+          </button>
+        ))}
+
+        <button onClick={() => changePage(page + 1)} disabled={page === totalPages}>Siguiente</button>
+
       </section>
     </div>
   );
