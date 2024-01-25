@@ -14,7 +14,7 @@ import {
   ModalFooter,
   useDisclosure,
   Select,
-  SelectItem, Checkbox, Popover, PopoverTrigger, PopoverContent, Tabs, Tab, DropdownMenu, Dropdown, DropdownItem, DropdownTrigger
+  SelectItem, Checkbox, Popover, PopoverTrigger, PopoverContent, Tabs, Tab, DropdownMenu, Dropdown, DropdownItem, DropdownTrigger, Pagination
 } from "@nextui-org/react";
 
 import axios from "axios";
@@ -42,8 +42,10 @@ import AxiosInstance from "../../api/axios.js";
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
+import Lottie from "react-lottie"
+import loading_progress from "../../images/Animation-alternativa-loading.json"
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 
 export default function App() {
@@ -240,6 +242,51 @@ export default function App() {
 
   const [busqueda, setBusqueda] = useState('');
   const [valorHabitaciones, setValorHabitaciones] = useState(null)
+
+  const location = useLocation();
+  const [totalPages, setTotalPages] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+
+
+  const parseQuery = (queryString) => {
+    const query = {};
+    new URLSearchParams(queryString).forEach((value, key) => {
+      query[key] = value;
+    });
+    return query;
+  };
+
+  const query = parseQuery(location.search);
+  let page = parseInt(query.page);
+
+  useEffect(() => {
+    if (!page) {
+      page = 1;
+      navigate(`/habitaciones?page=${page}`, { replace: true });
+    }
+
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const response = await AxiosInstance.get(`/habitaciones-clientes?page=${page}`);
+        setUsers(response.data.clientes);
+        console.log("data: ",response.data.clientes);
+        setTotalPages(response.data.totalPages);
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 100);
+      } catch (error) {
+        setIsLoading(false);
+        console.error("Error al obtener datos del servidor:", error);
+      }
+    };
+    fetchData();
+  }, [page, navigate]);
+
+  const changePage = (newPage) => {
+    setIsLoading(true);
+    navigate(`/habitaciones?page=${newPage}`);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -1041,18 +1088,7 @@ export default function App() {
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await AxiosInstance.get("/habitaciones-clientes");
-        setUsers(response.data);
-        const usuariosOrdenados = response.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
-      } catch (error) {
-        console.error("Error al obtener datos del servidor:", error);
-      }
-    };
-    fetchData();
-  }, []);
+
 
   const handleFormSubmit = async () => {
     try {
@@ -1135,13 +1171,8 @@ export default function App() {
           fechaPasadia: "",
           habitaciones: ""
         });
-        const responses = await AxiosInstance.get("/habitaciones-clientes");
-
-        // Ordena los datos de la respuesta de la petición GET, no del PUT
-        const usuariosOrdenados = responses.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
-
-        // Actualiza el estado con los usuarios ordenados
-        setUsers(usuariosOrdenados);
+        const response = await AxiosInstance.get(`/habitaciones-clientes?page=${page}`);
+        setUsers(response.data.clientes);
       }
     } catch (error) {
       toast.error('Ocurrió un error al agregar el cliente.');
@@ -1597,9 +1628,9 @@ export default function App() {
     pdf.save("factura.pdf");
   };
 
-  const totalPages = Math.ceil(datosFiltrados.length / displayLimit + 1);
-  const start = (currentPage - 1) * displayLimit;
-  const end = start + displayLimit;
+  // const totalPages = Math.ceil(datosFiltrados.length / displayLimit + 1);
+  // const start = (currentPage - 1) * displayLimit;
+  // const end = start + displayLimit;
   let fecha = new Date();
   fecha.setHours(fecha.getHours() - 5);
   const fechaAjustada = fecha.toLocaleString();
@@ -2150,9 +2181,23 @@ export default function App() {
     outline: "none"
   };
 
+  const defaultOptionLoading = {
+    loop: true,
+    autoPlay: true,
+    animationData: loading_progress,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice"
+    }
+  }
+
 
 
   return (
+    <div>
+      <div className={`loading-overlay ${isLoading ? 'visible' : ''}`}>
+        <Lottie options={defaultOptionLoading} width={100} height={100} />
+        {/* <p>Cargando recursos</p> */}
+      </div>
     <div className="max-w-full w-98 mx-auto">
       <Toaster position="top-right" />
       <div className="btnAdd flex  px-5 flex-wrap">
@@ -2411,10 +2456,17 @@ export default function App() {
           </select>
 
         </div>
+        <div className=" flex justify-end">
+            <Pagination
+              showControls
+              color="primary"
+              total={totalPages}
+              initialPage={1}
+              onChange={(newPage) => changePage(newPage)}
+            />
+          </div>
+        
         <Table className=" text-center uppercase" aria-label="Lista de Usuarios"
-
-
-
         >
           <TableHeader className="text-center">
             <TableColumn className="text-center">+</TableColumn>
@@ -2431,7 +2483,7 @@ export default function App() {
           </TableHeader>
 
           <TableBody emptyContent="No hay elementos por mostrar" className="">
-            {datosFiltrados.slice(start, end).map((cliente) => (
+            {users.map((cliente) => (
 
               <TableRow className="cursor-pointer hover:bg-blue-200" key={cliente._id}>
 
@@ -3705,7 +3757,19 @@ export default function App() {
             ))}
           </TableBody>
         </Table>
+
+        <div className=" flex justify-end">
+            <Pagination
+              showControls
+              color="danger"
+              total={totalPages}
+              initialPage={1}
+              onChange={(newPage) => changePage(newPage)}
+            />
+          </div>
+
       </section>
+    </div>
     </div>
   );
 }

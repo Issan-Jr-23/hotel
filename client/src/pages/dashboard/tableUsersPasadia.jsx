@@ -18,8 +18,7 @@ export default function BasicTable() {
 
     fetchData();
   }, []);
-
-  // Preparar datos para Highcharts
+  
   const chartData = data.map((row) => ({
     name: row.nombre,
     y: row.valorTotal,
@@ -28,6 +27,7 @@ export default function BasicTable() {
   const chartOptions = {
     chart: {
       type: 'bar',
+      height: 500, 
     },
     title: {
       text: 'Total Value by Client',
@@ -43,12 +43,13 @@ export default function BasicTable() {
     series: [{
       name: 'Client',
       data: chartData,
+      colorByPoint: true,
     }],
-  };
+};
 
   return (
-    <div>
-      <HighchartsReact highcharts={Highcharts} options={chartOptions} />
+    <div >
+      <HighchartsReact highcharts={Highcharts} options={chartOptions}  />
     </div>
   );
 }

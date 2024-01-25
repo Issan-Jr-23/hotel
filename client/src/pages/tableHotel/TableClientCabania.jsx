@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import {
-  Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button, Input, useDisclosure, Select, SelectItem, Checkbox, Popover, PopoverTrigger, PopoverContent, Tabs, Tab, Dropdown, DropdownItem, DropdownTrigger, DropdownMenu
+  Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button, Input, useDisclosure, Select, SelectItem, Checkbox, Popover, PopoverTrigger, PopoverContent, Tabs, Tab, Dropdown, DropdownItem, DropdownTrigger, DropdownMenu, Pagination
 } from "@nextui-org/react";
 import editar from "../../images/boligrafo.png";
 import borrar from "../../images/borrar.png";
@@ -24,8 +24,10 @@ import AxiosInstance from "../../api/axios.js";
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { green, purple, blue, red } from '@mui/material/colors';
+import loading_progress from "../../images/Animation-alternativa-loading.json"
+import Lottie from "react-lottie"
 
 
 export default function App() {
@@ -192,9 +194,63 @@ export default function App() {
     nuevoTotal: ""
   });
 
+  const location = useLocation();
+  const [totalPages, setTotalPages] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+
 
 
   const options = ["Si", "No"];
+
+
+  const navigate = useNavigate();
+
+  const adicionalCabania = (id) => {
+    console.log(" id de cabañas: ", id)
+    navigate(`/cabanias-adicional/${id}`);
+    console.log("id del usuario para ver el historial del usuario: " + id)
+  };
+
+
+  const parseQuery = (queryString) => {
+    const query = {};
+    new URLSearchParams(queryString).forEach((value, key) => {
+      query[key] = value;
+    });
+    return query;
+  };
+
+  const query = parseQuery(location.search);
+  let page = parseInt(query.page);
+
+  useEffect(() => {
+    if (!page) {
+      page = 1;
+      navigate(`/cabanias?page=${page}`, { replace: true });
+    }
+
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const response = await AxiosInstance.get(`/cabania-clientes?page=${page}`);
+        setUsers(response.data.clientes);
+        setTotalPages(response.data.totalPages);
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 100);
+      } catch (error) {
+        setIsLoading(false);
+        console.error("Error al obtener datos del servidor:", error);
+      }
+    };
+    fetchData();
+  }, [page, navigate]);
+
+  const changePage = (newPage) => {
+    setIsLoading(true);
+    navigate(`/cabanias?page=${newPage}`);
+  };
+
 
   const toBase64 = (url) => new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
@@ -211,13 +267,7 @@ export default function App() {
   });
 
 
-  const navigate = useNavigate();
 
-  const adicionalCabania = (id) => {
-    console.log(" id de cabañas: ", id)
-    navigate(`/cabania-adicional/${id}`);
-    console.log("id del usuario para ver el historial del usuario: " + id)
-  };
 
 
   //#region 
@@ -1095,18 +1145,7 @@ export default function App() {
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await AxiosInstance.get("/cabania-clientes");
-        setUsers(response.data);
-        const usuariosOrdenados = response.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
-      } catch (error) {
-        console.error("Error al obtener datos del servidor:", error);
-      }
-    };
-    fetchData();
-  }, []);
+
 
   const handleFormSubmit = async (event) => {
     try {
@@ -1188,9 +1227,9 @@ export default function App() {
           },
           tipo_cabania: ""
         });
-        const response = await AxiosInstance.get("/cabania-clientes");
-        setUsers(response.data);
-        const usuariosOrdenados = response.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
+        const response = await AxiosInstance.get(`/cabania-clientes?page=${page}`);
+        setUsers(response.data.clientes);
+        setTotalPages(response.data.totalPages);
       }
     } catch (error) {
       toast.error('Ocurrió un error al agregar el cliente.');
@@ -1666,9 +1705,6 @@ export default function App() {
     pdf.save("factura.pdf");
   };
 
-  const totalPages = Math.ceil(datosFiltrados.length / displayLimit + 1);
-  const start = (currentPage - 1) * displayLimit;
-  const end = start + displayLimit;
   let fecha2 = new Date();
   fecha2.setHours(fecha2.getHours());
   const hours = fecha2.toLocaleString();
@@ -2177,9 +2213,9 @@ export default function App() {
         userId: userId,
         estado: nuevoEstado
       });
-      const responses = await AxiosInstance.get("/cabania-clientes");
-      const usuariosOrdenados = responses.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
-      setUsers(usuariosOrdenados);
+      const responses = await AxiosInstance.get(`/cabania-clientes?page=${page}`);
+      setUsers(responses.data.clientes);
+      setTotalPages(responses.data.totalPages);
       console.log('Estado actualizado con éxito:', response.data);
     } catch (error) {
       console.error('Hubo un problema con la petición Axios:', error);
@@ -2207,8 +2243,21 @@ export default function App() {
     return <Brightness1Icon style={{ color, width: "14px" }} />;
   };
 
+  const defaultOptionLoading = {
+    loop: true,
+    autoPlay: true,
+    animationData: loading_progress,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice"
+    }
+  }
+
 
   return (
+    <div>
+      <div className={`loading-overlay ${isLoading ? 'visible' : ''}`}>
+        <Lottie options={defaultOptionLoading} width={100} height={100} />
+      </div>
     <div className="max-w-full w-98 mx-auto">
       <Toaster position="top-right" />
       <div className="btnAdd flex  px-5 flex-wrap">
@@ -2466,7 +2515,17 @@ export default function App() {
           </select>
 
         </div>
-        <Table className=" text-center uppercase" aria-label="Lista de Usuarios"
+        <div className=" flex justify-end">
+            <Pagination
+              showControls
+              color="primary"
+              total={totalPages}
+              initialPage={1}
+              onChange={(newPage) => changePage(newPage)}
+              className="bg-inherent text-black"
+            />
+          </div>
+        <Table className=" text-center uppercase pt-5 pb-5" aria-label="Lista de Usuarios"
         >
           <TableHeader className="text-center">
             <TableColumn className="text-center">+</TableColumn>
@@ -2483,7 +2542,7 @@ export default function App() {
           </TableHeader>
 
           <TableBody emptyContent="No hay elementos por mostrar" className="">
-            {datosFiltrados.slice(start, end).map((cliente) => (
+            {users.map((cliente) => (
 
               <TableRow className="cursor-pointer hover:bg-blue-200" key={cliente._id}
 
@@ -3771,7 +3830,18 @@ export default function App() {
             ))}
           </TableBody>
         </Table>
+        <div className=" flex justify-end">
+            <Pagination
+              showControls
+              color="danger"
+              total={totalPages}
+              initialPage={1}
+              onChange={(newPage) => changePage(newPage)}
+              className="bg-inherent"
+            />
+          </div>
       </section>
+    </div>
     </div>
   );
 }

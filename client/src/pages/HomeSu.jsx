@@ -116,7 +116,7 @@ const HomeSu = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstance.get('/cabania-obtener-cantidad-usuarios');
+        const response = await AxiosInstance.get('/obtener-cantidad-usuarios-cabania-dashboard');
         console.log(response);
 
         const { totalNinios, totalAdultos } = response.data;
@@ -154,7 +154,7 @@ const HomeSu = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstance.get('/habitaciones-obtener-cantidad-usuarios');
+        const response = await AxiosInstance.get('/obtener-cantidad-usuarios-habitaciones-dashboard');
         console.log(response);
 
         const { totalNinios, totalAdultos } = response.data;

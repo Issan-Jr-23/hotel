@@ -7,67 +7,9 @@ import Cliente from "../models/client.model.js";
 
 
 
-export const obtenerTotalesNiniosYAdultosEnHabitaciones = async (req, res) => {
-    try {
-      const usuarios = await Usuario.find();
-      const clientes = await Habitaciones.find();
+
   
-      let totalNinios = 0;
-      let totalAdultos = 0;
-  
-      usuarios.forEach((usuario) => {
-        usuario.historial.forEach((reserva) => {
-          if (reserva.servicio === "habitaciones") {
-            totalNinios += reserva.ninios || 0;
-            totalAdultos += reserva.adultos || 0;
-          }
-        });
-      });
-  
-      clientes.forEach((personas) => {
-        if (personas.servicio === "habitaciones") {
-          totalNinios += personas.cantidadPersonas.ninios || 0;
-          totalAdultos += personas.cantidadPersonas.adultos || 0;
-        }
-      });
-  
-      res.json({ totalNinios, totalAdultos });
-    } catch (error) {
-      console.error("Error al obtener los datos: ", error);
-      res.status(500).send("Error al procesar la solicitud");
-    }
-  };
-  
-  export const totalgeneradoHabitaciones = async (req, res) => {
-    try {
-      const usuarios = await Usuario.find();
-      const clientes = await Habitaciones.find();
-  
-      let totalPago = 0;
-      let totalPagoPendiente = 0;
-  
-      usuarios.forEach((usuario) => {
-        usuario.historial.forEach((reserva) => {
-          if (reserva.servicio === "habitaciones") {
-            totalPago += reserva.pago || 0;
-            totalPagoPendiente += reserva.pagoPendiente || 0;
-          }
-        });
-      });
-  
-      clientes.forEach((x) => {
-        if (x.servicio === "habitaciones") {
-          totalPago += x.pagoAnticipado || 0;
-          totalPagoPendiente += x.pagoPendiente || 0;
-        }
-      });
-  
-      res.json({ totalPago, totalPagoPendiente });
-    } catch (error) {
-      console.error("Error al obtener los datos: ", error);
-      res.status(500).send("Error al procesar la solicitud");
-    }
-  };
+
   
   export const usuariosQueMasCompraron = async (req, res) => {
     try {
@@ -595,38 +537,40 @@ export const totalPructosCortesiasDashboard = async (req, res) => {
 
 export const obtenerTotalesNiniosYAdultosEnPasadia = async (req, res) => {
   try {
-   
     const resultadoUsuarios = await Usuario.aggregate([
       { $unwind: "$historial" },
       { $match: { "historial.servicio": "pasadia" } },
-      { $group: {
-        _id: null,
-        totalNinios: { $sum: "$historial.ninios" },
-        totalAdultos: { $sum: "$historial.adultos" }
-      }}
+      {
+        $group: {
+          _id: null,
+          totalNinios: { $sum: "$historial.ninios"},
+          totalAdultos: { $sum: "$historial.adultos"}
+        }
+      }
     ]);
 
     const resultadoCabanias = await Cliente.aggregate([
       { $match: { "servicio": "pasadia" } },
-      { $group: {
-        _id: null,
-        totalNinios: { $sum: "$cantidadPersonas.ninios" },
-        totalAdultos: { $sum: "$cantidadPersonas.adultos" }
-      }}
+      {
+        $group: {
+          _id: null,
+          totalNinios: { $sum: "$cantidadPersonas.ninios" },
+          totalAdultos: { $sum: "$cantidadPersonas.adultos" }
+        }
+      }
     ]);
-
 
     let totalNinios = 0;
     let totalAdultos = 0;
 
     if (resultadoUsuarios.length > 0) {
-      totalNinios += resultadoUsuarios[0].totalNinios;
-      totalAdultos += resultadoUsuarios[0].totalAdultos;
+      totalNinios += resultadoUsuarios[0].totalNinios || 0;
+      totalAdultos += resultadoUsuarios[0].totalAdultos || 0;
     }
 
     if (resultadoCabanias.length > 0) {
-      totalNinios += resultadoCabanias[0].totalNinios;
-      totalAdultos += resultadoCabanias[0].totalAdultos;
+      totalNinios += resultadoCabanias[0].totalNinios || 0;
+      totalAdultos += resultadoCabanias[0].totalAdultos || 0;
     }
 
     res.json({ totalNinios, totalAdultos });
@@ -648,8 +592,8 @@ export const totalgeneradoDashboard = async (req, res) => {
       }}
     ]);
 
-    const resultadoCabanias = await Cabania.aggregate([
-      { $match: { "servicio": "cabania" } },
+    const resultadoCabanias = await Cliente.aggregate([
+      { $match: { "servicio": "pasadia" } },
       { $group: {
         _id: null,
         totalPago: { $sum: "$pagoAnticipado" },
@@ -905,3 +849,230 @@ export const totalgeneradoCabaniaDashboard = async (req, res) => {
     res.status(500).send("Error al procesar la solicitud");
   }
 };
+
+//dashboard habitaciones
+
+export const obtenerTotalesNiniosYAdultosEnHabitaciones = async (req, res) => {
+  try {
+
+    const resultadoUsuarios = await Usuario.aggregate([
+      { $unwind: "$historial" },
+      { $match: { "historial.servicio": "habitaciones" } },
+      { $group: {
+        _id: null,
+        totalNinios: { $sum: "$historial.ninios" },
+        totalAdultos: { $sum: "$historial.adultos" }
+      }}
+    ]);
+
+    const resultadoCabanias = await Habitaciones.aggregate([
+      { $match: { "servicio": "habitaciones" } },
+      { $group: {
+        _id: null,
+        totalNinios: { $sum: "$cantidadPersonas.ninios" },
+        totalAdultos: { $sum: "$cantidadPersonas.adultos" }
+      }}
+    ]);
+
+
+    let totalNinios = 0;
+    let totalAdultos = 0;
+
+    if (resultadoUsuarios.length > 0) {
+      totalNinios += resultadoUsuarios[0].totalNinios;
+      totalAdultos += resultadoUsuarios[0].totalAdultos;
+    }
+
+    if (resultadoCabanias.length > 0) {
+      totalNinios += resultadoCabanias[0].totalNinios;
+      totalAdultos += resultadoCabanias[0].totalAdultos;
+    }
+
+    res.json({ totalNinios, totalAdultos });
+  } catch (error) {
+    console.error("Error al obtener los datos: ", error);
+    res.status(500).send("Error al procesar la solicitud");
+  }
+};
+
+export const totalgeneradoHabitaciones = async (req, res) => {
+  try {
+    const resultadoUsuarios = await Usuario.aggregate([
+      { $unwind: "$historial" },
+      { $match: { "historial.servicio": "habitaciones" } },
+      { $group: {
+        _id: null,
+        totalPago: { $sum: "$historial.pago" },
+        totalPagoPendiente: { $sum: "$historial.pagoPendiente" }
+      }}
+    ]);
+
+    const resultadoCabanias = await Habitaciones.aggregate([
+      { $match: { "servicio": "habitaciones" } },
+      { $group: {
+        _id: null,
+        totalPago: { $sum: "$pagoAnticipado" },
+        totalPagoPendiente: { $sum: "$pagoPendiente" }
+      }}
+    ]);
+
+    let totalPago = 0;
+    let totalPagoPendiente = 0;
+
+    if (resultadoUsuarios.length > 0) {
+      totalPago += resultadoUsuarios[0].totalPago;
+      totalPagoPendiente += resultadoUsuarios[0].totalPagoPendiente;
+    }
+
+    if (resultadoCabanias.length > 0) {
+      totalPago += resultadoCabanias[0].totalPago;
+      totalPagoPendiente += resultadoCabanias[0].totalPagoPendiente;
+    }
+
+    res.json({ totalPago, totalPagoPendiente });
+  } catch (error) {
+    console.error("Error al obtener los datos: ", error);
+    res.status(500).send("Error al procesar la solicitud");
+  }
+};
+
+export const totalProductosCortesiasHabitacionesHistorialDashboard = async (req, res) => {
+  try {
+    const resultadoCabania = await Habitaciones.aggregate([
+      { $unwind: "$restaurante" },
+      { $match: { "restaurante.precio": 0, "restaurante.mensaje": "Cortesía" } },
+      { $group: {
+        _id: null,
+        cantidadVendidos: { $sum: "$restaurante.cantidad" }
+      }},
+      { $unwind: "$bebidas" },
+      { $match: { "bebidas.precio": 0, "bebidas.mensaje": "Cortesía" } },
+      { $group: {
+        _id: null,
+        cantidadVendidos: { $sum: "$bebidas.cantidad" }
+      }}
+    ]);
+
+    const resultadoUsuarios = await Usuario.aggregate([
+      { $unwind: "$historial" },
+      { $match: { "historial.servicio": "habitaciones" }},
+      { $unwind: "$historial.restaurante" },
+      { $match: { "historial.restaurante.precio": 0, "historial.restaurante.mensaje": "Cortesía"}},
+      { $group: {
+        _id: null,
+        totalPago: { $sum: { $multiply: ["$historial.restaurante.cantidad", "$historial.restaurante.precio"] } },
+        cantidadVendidos: { $sum: "$historial.restaurante.cantidad" }
+      }},
+      { $unwind: "$historial.bebidas" },
+      { $match: { "historial.bebidas.precio": 0, "historial.bebidas.mensaje": "Cortesía" } },
+      { $group: {
+        _id: null,
+        totalPago: { $sum: { $multiply: ["$historial.bebidas.cantidad", "$historial.bebidas.precio"] } },
+        cantidadVendidos: { $sum: "$historial.bebidas.cantidad" }
+      }}
+    ]);
+
+    let totalCantidadVendidos = 0;
+    if (resultadoCabania.length > 0) {
+      totalCantidadVendidos += resultadoCabania[0].cantidadVendidos;
+    }
+    if (resultadoUsuarios.length > 0) {
+      totalCantidadVendidos += resultadoUsuarios[0].cantidadVendidos;
+    }
+
+    res.json({ totalPago: 0, cantidadVendidos: totalCantidadVendidos });
+  } catch (error) {
+    console.error("Error al obtener los datos: ", error);
+    res.status(500).send("Error al procesar la solicitud");
+  }
+};
+
+export const totalProductosVendidosHistorialHabitacionesDashboard = async (req, res) => {
+  try {
+    const resultado = await Usuario.aggregate([
+      { $unwind: "$historial" },
+      { $match: { "historial.servicio": "habitaciones" } },
+      { $unwind: "$historial.restaurante" },
+      { $match: { "historial.restaurante.precio": { $gt: 0 } } },
+      { $group: {
+        _id: null,
+        totalPago: { $sum: { $multiply: ["$historial.restaurante.cantidad", "$historial.restaurante.precio"] } },
+        cantidadVendidos: { $sum: "$historial.restaurante.cantidad" }
+      }},
+      { $unwind: "$historial.bebidas" },
+      { $match: { "historial.bebidas.precio": { $gt: 0 } } },
+      { $group: {
+        _id: null,
+        totalPago: { $sum: { $multiply: ["$historial.bebidas.cantidad", "$historial.bebidas.precio"] } },
+        cantidadVendidos: { $sum: "$historial.bebidas.cantidad" }
+      }}
+    ]);
+
+    if (resultado.length > 0) {
+      res.json({ totalPago: resultado[0].totalPago, cantidadVendidos: resultado[0].cantidadVendidos });
+    } else {
+      res.json({ totalPago: 0, cantidadVendidos: 0 });
+    }
+  } catch (error) {
+    console.error("Error al obtener los datos: ", error);
+    res.status(500).send("Error al procesar la solicitud");
+  }
+};
+
+export const totalPructosVendidosHabitacionesDashboard = async (req, res) => {
+  try {
+    const result = await Habitaciones.aggregate([
+      {
+        $match: {
+          servicio: 'habitaciones',
+        },
+      },
+      {
+        $project: {
+          totalPago: {
+            $sum: {
+              $map: {
+                input: {
+                  $concatArrays: ['$restaurante', '$bebidas'],
+                },
+                as: 'item',
+                in: {
+                  $cond: {
+                    if: {
+                      $and: [
+                        { $gt: ['$$item.precio', 0] },
+                        { $gt: ['$$item.cantidad', 0] },
+                      ],
+                    },
+                    then: { $multiply: ['$$item.cantidad', '$$item.precio'] },
+                    else: 0,
+                  },
+                },
+              },
+            },
+          },
+          cantidadVendidos: {
+            $sum: {
+              $cond: {
+                if: { $gt: ['$restaurante.precio', 0] },
+                then: '$restaurante.cantidad',
+                else: 0,
+              },
+            },
+          },
+        },
+      },
+    ]);
+
+    if (result.length > 0) {
+      res.json(result[0]);
+    } else {
+      res.json({ totalPago: 0, cantidadVendidos: 0 });
+    }
+  } catch (error) {
+    console.error('Error al obtener los datos: ', error);
+    res.status(500).send('Error al procesar la solicitud');
+  }
+};
+
+

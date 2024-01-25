@@ -41,13 +41,13 @@ import Modal from '@mui/material/Modal';
 
 // import SubMenu from "./SubMenu.jsx"
 
-const parseQuery = (queryString) => {
-  const query = {};
-  new URLSearchParams(queryString).forEach((value, key) => {
-    query[key] = value;
-  });
-  return query;
-};
+// const parseQuery = (queryString) => {
+//   const query = {};
+//   new URLSearchParams(queryString).forEach((value, key) => {
+//     query[key] = value;
+//   });
+//   return query;
+// };
 
 
 //#endregion
@@ -267,7 +267,7 @@ export default function App() {
   const [pasadiaNinios, setPasadiaNinios] = useState(null)
   const [ccDisponibles, setCcDisponibles] = useState(null)
   const location = useLocation();
-  const [totalPages, setTotalPages] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searching, setSearching] = useState(false);
@@ -293,36 +293,24 @@ export default function App() {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const response = await AxiosInstances.get(`/pasadia-clientes?page=${page}&identificacion=${searchQuery}`);
+        const response = await AxiosInstances.get(`/pasadia-clientes?page=${page}`);
         setUsers(response.data.clientes);
-        console.log("paginación: ", response.data.clientes);
+        console.log("data:",response.data.clientes);
         setTotalPages(response.data.totalPages);
         setTimeout(() => {
           setIsLoading(false);
         }, 100);
-        setSearching(false);
       } catch (error) {
         setIsLoading(false);
         console.error("Error al obtener datos del servidor:", error);
       }
     };
-
     fetchData();
-  }, [page, searchQuery, navigate]);
-
+  }, [page, navigate]);
 
   const changePage = (newPage) => {
     setIsLoading(true);
-    navigate(`/pasadia?page=${newPage}&identificacion=${searchQuery}`);
-  };
-
-
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
-  };
-
-  const handleSearchClick = () => {
-    setSearching(true);
+    navigate(`/pasadia?page=${newPage}`);
   };
 
 
@@ -1393,9 +1381,9 @@ export default function App() {
           fechaPasadia: ""
 
         });
-        const response = await AxiosInstances.get("/pasadia-clientes");
-        setUsers(response.data);
-        const usuariosOrdenados = response.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
+        const response = await AxiosInstances.get(`/pasadia-clientes?page=${page}`);
+        setUsers(response.data.clientes);
+        setTotalPages(response.data.totalPages);
       }
     } catch (error) {
       toast.error('Ocurrió un error al agregar el cliente o el registro ya existe.');
@@ -2501,13 +2489,7 @@ export default function App() {
                 <SearchIcon className="text-black/50 mb-0.5 dark:text-black/90 text-black pointer-events-none flex-shrink-0" />
               }
             /> */}
-            <input
-              type="text"
-              placeholder="Buscar por identificación"
-              value={searchQuery}
-              onChange={handleSearchChange}
-            />
-            <button onClick={handleSearchClick}>Buscar</button>
+            
           </div>
 
           <div className="">
@@ -2728,7 +2710,7 @@ export default function App() {
               showControls
               color="primary"
               total={totalPages}
-              initialPage={page}
+              initialPage={1}
               onChange={(newPage) => changePage(newPage)}
             />
           </div>
@@ -4194,9 +4176,8 @@ export default function App() {
               showControls
               color="danger"
               total={totalPages}
-              initialPage={page}
+              initialPage={1}
               onChange={(newPage) => changePage(newPage)}
-              className="bg-inherent"
             />
           </div>
         </section>

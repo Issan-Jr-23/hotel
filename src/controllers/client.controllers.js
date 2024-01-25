@@ -6,20 +6,14 @@ import Usuario from '../models/transferencia.model.js';
 export const obtenerClientes = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const pageSize = 1;
+    const pageSize = 3;
 
-    const identificacionQuery = req.query.identificacion;
-    const identificacionFilter = identificacionQuery
-      ? { identificacion: parseInt(identificacionQuery) }
-      : {};
-
-    const totalClientes = await Cliente.countDocuments(identificacionFilter);
+    const totalClientes = await Cliente.countDocuments();
     const totalPages = Math.ceil(totalClientes / pageSize);
 
     const skip = (page - 1) * pageSize;
 
     const pipeline = [
-      { $match: identificacionFilter },
       { $sort: { fechaDeRegistro: -1 } },
       { $skip: skip },
       { $limit: pageSize },
@@ -32,7 +26,7 @@ export const obtenerClientes = async (req, res) => {
       page,
       totalPages,
       pageSize,
-      totalClientes,
+      totalClientes
     });
   } catch (error) {
     console.error(error);
@@ -344,8 +338,27 @@ export const totalPructosVendidosCortesias = async (req, res) => {
 
 export const obtenerResumenCompras = async (req, res) => {
   try {
-    const clientes = await Cliente.find({}).select('identificacion nombre bebidas restaurante servicio');
-    const usuarios = await Usuario.find({}).select('identificacion historial');
+
+    const clientes = await Cliente.aggregate([
+      {
+        $project: {
+          identificacion: 1,
+          nombre: 1,
+          bebidas: 1,
+          restaurante: 1
+        }
+      }
+    ]);
+
+
+    const usuarios = await Usuario.aggregate([
+      {
+        $project: {
+          identificacion: 1,
+          historial: 1
+        }
+      }
+    ]);
 
     const resumenCompras = new Map();
 
@@ -354,7 +367,7 @@ export const obtenerResumenCompras = async (req, res) => {
         let datosUsuario = resumenCompras.get(identificacion);
         datosUsuario.cantidadTotal += cantidad;
         datosUsuario.valorTotal += valor;
-  
+
         if (nombre && (!datosUsuario.nombre || nombre.length > datosUsuario.nombre.length)) {
           datosUsuario.nombre = nombre;
         }
@@ -368,7 +381,6 @@ export const obtenerResumenCompras = async (req, res) => {
       }
     };
 
-  
     clientes.forEach(cliente => {
       let totalBebidas = 0;
       let totalRestaurantes = 0;
@@ -392,7 +404,6 @@ export const obtenerResumenCompras = async (req, res) => {
       actualizarResumen(cliente.identificacion, cliente.nombre, cantidadBebidas + cantidadRestaurantes, totalBebidas + totalRestaurantes);
     });
 
-    
     usuarios.forEach(usuario => {
       let cantidadTotalBebidas = 0;
       let cantidadTotalRestaurantes = 0;
@@ -424,7 +435,6 @@ export const obtenerResumenCompras = async (req, res) => {
       actualizarResumen(usuario.identificacion, nombreMasLargo, cantidadTotal, valorTotal);
     });
 
-
     const resultadoOrdenado = Array.from(resumenCompras.values())
       .sort((a, b) => b.valorTotal - a.valorTotal)
       .slice(0, 7);
@@ -436,6 +446,7 @@ export const obtenerResumenCompras = async (req, res) => {
     res.status(500).json({ mensaje: "Error al obtener el resumen de compras" });
   }
 };
+
 
 
 

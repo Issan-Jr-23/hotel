@@ -108,7 +108,6 @@ const dashboardPasadia = () => {
       try {
         const response = await AxiosInstance.get('/obtener-cantidad-usuarios');
         console.log(response);
-
         const { totalNinios, totalAdultos } = response.data;
         console.log("Total niños: ", totalNinios);
         console.log("Total adultos: ", totalAdultos);

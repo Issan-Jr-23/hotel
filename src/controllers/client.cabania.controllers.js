@@ -4,18 +4,29 @@ import { mongoose } from "mongoose";
 
 export const obtenerClientes = async (req, res) => {
   try {
-    const page = req.query.page || 1;
-    const pageSize = 15;
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = 3;
+
+    const totalClientes = await Cabania.countDocuments();
+    const totalPages = Math.ceil(totalClientes / pageSize);
 
     const skip = (page - 1) * pageSize;
 
     const pipeline = [
-      {$skip: skip},
-      {$limit: pageSize}
-    ]
+      { $sort: { fechaDeRegistro: -1 } },
+      { $skip: skip },
+      { $limit: pageSize },
+    ];
 
     const clientesObtenidos = await Cabania.aggregate(pipeline);
-    res.status(200).json(clientesObtenidos);
+
+    res.status(200).json({
+      clientes: clientesObtenidos,
+      page,
+      totalPages,
+      pageSize,
+      totalClientes
+    });
   } catch (error) {
     console.error(error);
     res.status(500).send("Error al obtener los clientes desde la base de datos");

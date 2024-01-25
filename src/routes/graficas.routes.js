@@ -1,13 +1,13 @@
 import { Router } from "express";
-import { comprasUsers, obtenerTotal, obtenerTotalesNiniosYAdultosEnCabaniaDashboard, obtenerTotalesNiniosYAdultosEnHabitaciones, obtenerTotalesNiniosYAdultosEnPasadia, productosMasComprados, productosMasCompradosPass, totalProductosCortesiasCabaniaHistorialDashboard, totalPructosCortesiasDashboard, totalPructosVendidosCabaniaDashboard, totalProductosVendidosDashboard, totalProductosVendidosHistorialCabaniaDashboard, totalPructosVendidosHistorialDashboard, totalgeneradoDashboard, totalgeneradoCabaniaDashboard, totalgeneradoHabitaciones, usuariosQueMasCompraron } from "../controllers/graficas.controller.js";
+import { comprasUsers, obtenerTotal, obtenerTotalesNiniosYAdultosEnCabaniaDashboard, obtenerTotalesNiniosYAdultosEnHabitaciones, obtenerTotalesNiniosYAdultosEnPasadia, productosMasComprados, productosMasCompradosPass, totalProductosCortesiasCabaniaHistorialDashboard, totalPructosCortesiasDashboard, totalPructosVendidosCabaniaDashboard, totalProductosVendidosDashboard, totalProductosVendidosHistorialCabaniaDashboard, totalPructosVendidosHistorialDashboard, totalgeneradoDashboard, totalgeneradoCabaniaDashboard, totalgeneradoHabitaciones, usuariosQueMasCompraron, totalProductosCortesiasHabitacionesHistorialDashboard, totalProductosVendidosHistorialHabitacionesDashboard, totalPructosVendidosHabitacionesDashboard } from "../controllers/graficas.controller.js";
 import { totalGeneradoBar, totalGeneradoCabaniaBard, totalGeneradoHabitacionesBard } from "../controllers/transferencia.controllers.js";
 
 const router = Router();
 
 
 
-router.get('/habitaciones-obtener-cantidad-usuarios',obtenerTotalesNiniosYAdultosEnHabitaciones);
-router.get('/habitaciones-total-generado',totalgeneradoHabitaciones);
+
+
 router.get('/mayor-compra',usuariosQueMasCompraron);
 router.get('/obtener-historial-usuarios', obtenerTotal);
 router.get('/productos-mas-comprados', productosMasComprados);
@@ -31,5 +31,12 @@ router.get('/productos-vendidos-cabania-dashboard',totalProductosVendidosHistori
 router.get('/productos-cortesias-cabania-dashboard',totalProductosCortesiasCabaniaHistorialDashboard);
 router.get('/obtener-cantidad-usuarios-cabania-dashboard',obtenerTotalesNiniosYAdultosEnCabaniaDashboard);
 router.get('/cabania-total-generado',totalgeneradoCabaniaDashboard);
+
+//dashboard habitaciones
+router.get("/habitaciones-productos-vendidos-dashboard", totalPructosVendidosHabitacionesDashboard)
+router.get('/productos-vendidos-habitaciones-dashboard',totalProductosVendidosHistorialHabitacionesDashboard);
+router.get('/productos-cortesias-habitaciones-dashboard',totalProductosCortesiasHabitacionesHistorialDashboard);
+router.get('/obtener-cantidad-usuarios-habitaciones-dashboard',obtenerTotalesNiniosYAdultosEnHabitaciones);
+router.get('/habitaciones-total-generado',totalgeneradoHabitaciones);
 
 export default router;

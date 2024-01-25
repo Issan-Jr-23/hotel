@@ -54,7 +54,7 @@ function App() {
                 <Route path="/habitaciones" element={<Habitaciones />} />
                 <Route path="/historial/:id" element={<HistorialUsuario />} />
                 <Route path="/adicional/:id" element={<Adicionales />} />
-                <Route path="/cabania-adicional/:id" element={<AdicionalesCabanias />} />
+                <Route path="/cabanias-adicional/:id" element={<AdicionalesCabanias />} />
                 <Route path="/habitaciones-adicional/:id" element={<AdicionalesHabitaciones />} />
                 <Route path="/crear-registro" element={<RegistroAnimales/>}></Route>
               </Route>

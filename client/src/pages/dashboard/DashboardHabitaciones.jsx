@@ -3,7 +3,7 @@ import ApexSpline from "../apexCharts/apexSpline.jsx"
 import ApexLine from "../apexCharts/apexLine.jsx"
 import ApexLine2 from "../apexCharts/apexLine2.jsx"
 import ApexLine3 from "../apexCharts/apexLine3.jsx"
-import ApexPie from "../apexCharts/apexChartSpline.jsx"
+import ApexPie from "../apexCharts/apexChartSpline.jsx" 
 import TableUsers from "./tableUsersPasadia.jsx"
 import Box from "./box.jsx"
 import TableProductos from "./tableUsers.jsx"
@@ -36,7 +36,7 @@ const dashboardPasadia = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstance.get('/pasadia-productos-vendidos');
+        const response = await AxiosInstance.get('/habitaciones-productos-vendidos-dashboard');
         console.log(response);
 
         const { totalPago, cantidadVendidos } = response.data;
@@ -57,7 +57,7 @@ const dashboardPasadia = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstance.get('/productos-vendidos-pasadia');
+        const response = await AxiosInstance.get('/productos-vendidos-habitaciones-dashboard');
         console.log(response);
         const { totalPago, cantidadVendidos } = response.data;
         setValorVenta(totalPago)
@@ -81,7 +81,7 @@ const dashboardPasadia = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstance.get('/productos-cortesias-pasadia');
+        const response = await AxiosInstance.get('/productos-cortesias-habitaciones-dashboard');
         console.log(response);
 
         const { totalPago, cantidadVendidos } = response.data;
@@ -106,7 +106,7 @@ const dashboardPasadia = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstance.get('/obtener-cantidad-usuarios');
+        const response = await AxiosInstance.get('/obtener-cantidad-usuarios-habitaciones-dashboard');
         console.log(response);
 
         const { totalNinios, totalAdultos } = response.data;
@@ -125,7 +125,7 @@ const dashboardPasadia = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstance.get('/total-generado-pasadia');
+        const response = await AxiosInstance.get('/habitaciones-total-generado');
         console.log(response);
 
         const { totalPago, totalPagoPendiente } = response.data;
