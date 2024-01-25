@@ -8,17 +8,18 @@ export const obtenerClientes = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const pageSize = 1;
 
+    const identificacionQuery = req.query.identificacion;
+    const identificacionFilter = identificacionQuery
+      ? { identificacion: parseInt(identificacionQuery) }
+      : {};
 
-    
-
-
-
-    const totalClientes = await Cliente.countDocuments();
+    const totalClientes = await Cliente.countDocuments(identificacionFilter);
     const totalPages = Math.ceil(totalClientes / pageSize);
 
     const skip = (page - 1) * pageSize;
 
     const pipeline = [
+      { $match: identificacionFilter },
       { $sort: { fechaDeRegistro: -1 } },
       { $skip: skip },
       { $limit: pageSize },
@@ -31,13 +32,14 @@ export const obtenerClientes = async (req, res) => {
       page,
       totalPages,
       pageSize,
-      totalClientes
+      totalClientes,
     });
   } catch (error) {
     console.error(error);
     res.status(500).send("Error al obtener los clientes desde la base de datos");
   }
 };
+
 
 
 
