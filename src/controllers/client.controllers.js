@@ -34,11 +34,6 @@ export const obtenerClientes = async (req, res) => {
   }
 };
 
-
-
-
-
-
 export const crearCliente = async (req, res) => {
   try {
     const nuevoCliente = new Cliente(req.body);
@@ -449,15 +444,6 @@ export const obtenerResumenCompras = async (req, res) => {
 
 
 
-
-
-
-
-
-
-
-
-
 // export const obtenerProductosCop = async (req, res) => {
 //   try {
 //     // Obtener datos de las colecciones de clientes y usuarios
@@ -606,6 +592,7 @@ export const fechaActivacion = async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 };
+
 export const fechaFinalizacion = async (req, res) => {
   const fechasContadas = {};
 
@@ -630,6 +617,7 @@ export const fechaFinalizacion = async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 };
+
 export const obtenerFechasCompras = async (req, res) => {
   try {
     const clientes = await Cliente.find();
@@ -671,6 +659,7 @@ export const obtenerFechasCompras = async (req, res) => {
     res.status(500).json({ mensaje: "Error al sumar las cantidades de bebidas por fecha", error });
 }
 };
+
 export const obtenerClienteId = async (req, res) => {
   try {
     const clientId = req.params.id;
@@ -868,7 +857,6 @@ export const addFoodAdicionalSubproducto = async (req, res) => {
   }
 };
 
-
 export const productosMasCompradosPasadia = async (req, res) => {
   try {
     const pasadia = await Cliente.find();
@@ -959,7 +947,6 @@ export const productosMasCompradosPasadia = async (req, res) => {
     res.status(500).json({ error: 'Error en el servidor' });
   }
 };
-
 
 export const productosCategoria = async (req, res) => {
   try {

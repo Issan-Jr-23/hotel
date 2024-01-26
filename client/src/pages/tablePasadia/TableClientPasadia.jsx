@@ -41,13 +41,13 @@ import Modal from '@mui/material/Modal';
 
 // import SubMenu from "./SubMenu.jsx"
 
-// const parseQuery = (queryString) => {
-//   const query = {};
-//   new URLSearchParams(queryString).forEach((value, key) => {
-//     query[key] = value;
-//   });
-//   return query;
-// };
+const parseQuery = (queryString) => {
+  const query = {};
+  new URLSearchParams(queryString).forEach((value, key) => {
+    query[key] = value;
+  });
+  return query;
+};
 
 
 //#endregion
@@ -273,44 +273,29 @@ export default function App() {
   const [searching, setSearching] = useState(false);
 
 
-  const parseQuery = (queryString) => {
-    const query = {};
-    new URLSearchParams(queryString).forEach((value, key) => {
-      query[key] = value;
-    });
-    return query;
-  };
+
 
   const query = parseQuery(location.search);
-  let page = parseInt(query.page);
+  let page = parseInt(query.page) || 1;
 
   useEffect(() => {
-    if (!page) {
-      page = 1;
-      navigate(`/pasadia?page=${page}`, { replace: true });
-    }
-
     const fetchData = async () => {
       try {
         setIsLoading(true);
         const response = await AxiosInstances.get(`/pasadia-clientes?page=${page}`);
         setUsers(response.data.clientes);
-        console.log("data:",response.data.clientes);
         setTotalPages(response.data.totalPages);
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 100);
       } catch (error) {
-        setIsLoading(false);
         console.error("Error al obtener datos del servidor:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchData();
-  }, [page, navigate]);
+  }, [page, location.search]);
 
-  const changePage = (newPage) => {
-    setIsLoading(true);
-    navigate(`/pasadia?page=${newPage}`);
+  const handlePageChange = (newPage) => {
+    navigate(`?page=${newPage}`);
   };
 
 
@@ -2375,12 +2360,12 @@ export default function App() {
         userId: userId,
         estado: nuevoEstado
       });
-      const responses = await AxiosInstances.get("/pasadia-clientes");
-      const usuariosOrdenados = responses.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
-      setUsers(usuariosOrdenados);
-      console.log('Estado actualizado con éxito:', response.data);
+      const responses = await AxiosInstances.get(`/pasadia-clientes?page=${page}`);
+      setUsers(responses.data.clientes);
+      setTotalPages(responses.data.totalPages);
     } catch (error) {
       console.error('Hubo un problema con la petición Axios:', error);
+      cosnsole.log("depuración: ", error)
     }
   }
 
@@ -2489,7 +2474,7 @@ export default function App() {
                 <SearchIcon className="text-black/50 mb-0.5 dark:text-black/90 text-black pointer-events-none flex-shrink-0" />
               }
             /> */}
-            
+
           </div>
 
           <div className="">
@@ -2708,10 +2693,10 @@ export default function App() {
           <div className=" flex justify-end">
             <Pagination
               showControls
-              color="primary"
+              color="danger"
               total={totalPages}
-              initialPage={1}
-              onChange={(newPage) => changePage(newPage)}
+              initialPage={page} // Establece esto para reflejar la página actual desde la URL
+              onChange={(newPage) => handlePageChange(newPage)} // Cambia el nombre del método si es necesario
             />
           </div>
           <Table className=" text-center uppercase mb-5 mt-5" aria-label="Lista de Usuarios"
@@ -2903,7 +2888,7 @@ export default function App() {
                               <option value="daviplata">Daviplata</option>
                               <option value="pse">PSE</option>
                               <option value="efecty">Efecty</option>
-                              <option value="transferencia">Transferencia</option>
+                              <option value="transferencia">Transferencia</option> 
                             </select></div>
                             <div className=" flex justify-end mt-2">
 
@@ -4151,7 +4136,6 @@ export default function App() {
                           </DropdownItem>
                         </DropdownMenu>
                       )}
-                      {/* No se muestra ningún menú desplegable para los estados 'cancelado' y 'finalizado' */}
                     </Dropdown>
                   </TableCell>
 
@@ -4171,15 +4155,8 @@ export default function App() {
         ))}
 
         <button onClick={() => changePage(page + 1)} disabled={page === totalPages}>Siguiente</button> */}
-          <div className=" flex justify-end">
-            <Pagination
-              showControls
-              color="danger"
-              total={totalPages}
-              initialPage={1}
-              onChange={(newPage) => changePage(newPage)}
-            />
-          </div>
+
+
         </section>
       </div>
 

@@ -32,6 +32,7 @@ import AdicionalesHabitaciones from "./pages/adicionales/Adicionales.habitacione
 import AdicionalesCabanias from "./pages/adicionales/Adicionales.cabania.jsx";
 import CabaniasStock from "./pages/stock/CabaniasStock.jsx";
 import RegistroAnimales from "./pages/finca/Registro.jsx"
+import Review from "./pages/table-component/Review.jsx"
 
 
 function App() {
@@ -57,6 +58,7 @@ function App() {
                 <Route path="/cabanias-adicional/:id" element={<AdicionalesCabanias />} />
                 <Route path="/habitaciones-adicional/:id" element={<AdicionalesHabitaciones />} />
                 <Route path="/crear-registro" element={<RegistroAnimales/>}></Route>
+                <Route path="/review" element={<Review/>}></Route>
               </Route>
               <Route element={<ProtectedRoute allowedRoles={["superUser"]}/>}>
                 <Route path="/hotel-graphs" element={<Hotel_graphs />}/>
