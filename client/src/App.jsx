@@ -7,7 +7,7 @@ import { TaskProvider } from "./context/tasksContext";
 import { MenuProvider } from "./context/menuContext.jsx";
 import { Home } from "./pages/Home";
 import Register from "./pages/RegisterPage.jsx";
-import Pasadia from "./pages/Pasadia.jsx";
+// import Pasadia from "./pages/Pasadia.jsx";
 import Cabanias from "./pages/Cabanias.jsx";
 import InvBebidas from "./pages/inventario.jsx";
 import Habitaciones from "./pages/Habitaciones.jsx";
@@ -32,7 +32,8 @@ import AdicionalesHabitaciones from "./pages/adicionales/Adicionales.habitacione
 import AdicionalesCabanias from "./pages/adicionales/Adicionales.cabania.jsx";
 import CabaniasStock from "./pages/stock/CabaniasStock.jsx";
 import RegistroAnimales from "./pages/finca/Registro.jsx"
-import Review from "./pages/table-component/Review.jsx"
+import Pasadia from "./pages/table-component/PasadiaTable.jsx"
+import Review from "./pages/table-component/CabaniaTable.jsx"
 
 
 function App() {
