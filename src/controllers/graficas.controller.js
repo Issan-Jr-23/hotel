@@ -410,7 +410,7 @@ export const totalProductosVendidosDashboard = async (req, res) => {
             $sum: {
               $map: {
                 input: {
-                  $concatArrays: ['$restaurante', '$bebidas'],
+                  $concatArrays: ['$restaurante' , '$bebidas' , '$recepcion' ],
                 },
                 as: 'item',
                 in: {

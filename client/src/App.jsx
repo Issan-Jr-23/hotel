@@ -10,7 +10,7 @@ import Register from "./pages/RegisterPage.jsx";
 // import Pasadia from "./pages/Pasadia.jsx";
 // import Cabanias from "./pages/Cabanias.jsx";
 import InvBebidas from "./pages/inventario.jsx";
-import Habitaciones from "./pages/Habitaciones.jsx";
+// import Habitaciones from "./pages/Habitaciones.jsx";
 import Precios from "./pages/Price.jsx";
 import Hotel_graphs from "./graphs/LinearCharts.jsx";
 import FincaVisualizacion from "./pages/FincaVisualizacion.jsx"; 
@@ -34,6 +34,7 @@ import CabaniasStock from "./pages/stock/CabaniasStock.jsx";
 import RegistroAnimales from "./pages/finca/Registro.jsx"
 import Pasadia from "./pages/table-component/PasadiaTable.jsx"
 import Cabanias from "./pages/table-component/CabaniaTable.jsx"
+import Habitaciones from "./pages/table-component/HabitacionesTable.jsx"
 
 
 function App() {
@@ -59,7 +60,7 @@ function App() {
                 <Route path="/cabanias-adicional/:id" element={<AdicionalesCabanias />} />
                 <Route path="/habitaciones-adicional/:id" element={<AdicionalesHabitaciones />} />
                 <Route path="/crear-registro" element={<RegistroAnimales/>}></Route>
-                {/* <Route path="/review" element={<Review/>}></Route> */}
+                <Route path="/review" element={<Habitaciones/>}></Route>
               </Route>
               <Route element={<ProtectedRoute allowedRoles={["superUser"]}/>}>
                 <Route path="/hotel-graphs" element={<Hotel_graphs />}/>

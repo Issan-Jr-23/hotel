@@ -91,6 +91,9 @@ const clienteSchema = new mongoose.Schema({
       type: Date, 
       default: null  
   },
+  pago:{
+    type: Number, default:0
+  }
   // estadoFinalizacion:{
   //   type:String,
   //   default:"esperando respuesta",

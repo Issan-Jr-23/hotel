@@ -40,7 +40,6 @@ export default function cabaniaTable() {
     const [errorReserva, setErrorReserva] = useState(false);
     const [errorAdultos, setErrorAdultos] = useState(false);
     const [errorCabania, setErrorCabania] = useState(false);
-    // const { isOpen, onOpen, onClose } = useDisclosure();
     const [paginaActual, setPaginaActual] = useState(1);
     const [totalPaginas, setTotalPaginas] = useState(0);
     const [selectedUser, setSelectedUser] = useState(null);
@@ -209,6 +208,7 @@ export default function cabaniaTable() {
     const [resetKey2, setResetKey2] = useState(0);
     const [resetKey3, setResetKey3] = useState(0);
     const [resetKey4, setResetKey4] = useState(0);
+    const [resTotal, setResTotal] = useState({});
 
     const [formData, setFormData] = useState({
         identificacion: "",
@@ -411,6 +411,7 @@ export default function cabaniaTable() {
             throw error;
         }
     };
+
     const actualizarStockInicialBebida = async (bebidaId, cantidad) => {
         try {
             const response = await AxiosInstance.post(`/actualizar-stock-inicial/${bebidaId}`, { cantidad });
@@ -1461,7 +1462,9 @@ export default function cabaniaTable() {
     });
 
 
-    const seleccionarCliente = (identificacion) => {
+    const seleccionarCliente = async (identificacion) => {
+        const response = await AxiosInstance.get(`/cabania-totalidad-pago/${identificacion}`)
+        setResTotal(response.data)
         setSelectedClienteId(identificacion);
         calcularPagoPendiente(identificacion);
     };
@@ -1484,10 +1487,10 @@ export default function cabaniaTable() {
     };
 
     const actualizarDatosCliente = async () => {
-        if (!formDatas.pagoPendiente || !formDatas.mediosDePagoPendiente) {
-            toast.error('Debe llenar todos los campos');
-            return;
-        }
+        // if (!formDatas.pagoPendiente || !formDatas.mediosDePagoPendiente) {
+        //     toast.error('Debe llenar todos los campos');
+        //     return;
+        // }
 
         if (selectedClienteId) {
             console.log("identificacion del cliente: " + selectedClienteId)
@@ -2186,7 +2189,6 @@ export default function cabaniaTable() {
                 <Lottie options={defaultOptionLoading} width={100} height={100} />
                 {/* <p>Cargando recursos</p> */}
             </div>
-
             <div className="media-query-add-search">
                 <div className="">
                     <Input
@@ -2459,8 +2461,6 @@ export default function cabaniaTable() {
                     </Modal>
                 </div>
             </div>
-
-
             <span className="media-query-tittle"><h1>Cabañas</h1></span>
             <div className="flex justify-end mb-5 w-full mr-20">
                 <Pagination
@@ -2472,14 +2472,12 @@ export default function cabaniaTable() {
                 />
             </div>
             <section className="table-scroll-transform" style={{ width: "90vw", }}>
-                <Table className=" bg-white snaop-x " style={{ paddingTop: "40px" }}>
+                <Table className=" bg-white" style={{ paddingTop: "40px" }}>
                     <thead className="html-table-thead">
                         <tr className="html-table-tr border-b-2 border-red-100" >
                             <th className="html-table-tr-th"><span className="html-table-thead-span pl-5"><p></p> + <img className="cursor-pointer mr-5 ml-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th>
                             <th className="html-table-tr-th"> <span className="html-table-thead-span"> <p></p>  Id<img className="cursor-pointer mr-2 ml-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th>
                             <th className="html-table-tr-th"> <span className="html-table-thead-span pr-5 pl-5"> <p></p>  Nombre <img className="cursor-pointer mr-2 ml-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th>
-                            {/* <th className="html-table-tr-th"> <span className="html-table-thead-span pr-5 pl-5"> <p></p> Reserva <img className="cursor-pointer mr-2 ml-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th> */}
-                            {/* <th className="html-table-tr-th "> <span className="html-table-thead-span pl-5"> <p></p> Cabaña <img className="cursor-pointer ml-2 mr-5" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th> */}
                             <th className="html-table-tr-th"> <span className="html-table-thead-span pl-5"> <p></p> Fecha Inicio <img className="cursor-pointer mr-5 ml-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th>
                             <th className="html-table-tr-th"> <span className="html-table-thead-span pl-5 "> <p></p>  Agregar bebida <img className="cursor-pointer mr-5 ml-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th>
                             <th className="html-table-tr-th"> <span className="html-table-thead-span pl-5"> <p></p>  Agregar comida <img className="cursor-pointer mr-5 ml-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th>
@@ -2521,6 +2519,7 @@ export default function cabaniaTable() {
                                                         <section className="flex justify-between w-full flex-wrap">
 
                                                             <div className="mx-5 my-1  w-full">
+                                                                <div className="mt-2 mb-2" style={{ fontWeight: "600" }}> Pago pendiente cabaña {selectedUser.tipo_cabania} : {selectedUser.nuevoTotal}</div>
                                                                 <h4 className="text-green-600">Productos (Bebidas y Comidas)</h4>
 
                                                                 {/* Combina ambos arrays (bebidas y comidas) y verifica si tiene elementos */}
@@ -2538,7 +2537,6 @@ export default function cabaniaTable() {
                                                                             </tr>
                                                                         </thead>
                                                                         <tbody>
-                                                                            {/* Muestra los productos (bebidas y comidas) */}
                                                                             {[...selectedUser.bebidas, ...selectedUser.restaurante, ...selectedUser.descorche, ...selectedUser.recepcion].map((producto, index) => (
                                                                                 <tr key={index}>
                                                                                     <td className="text-left" style={{ width: "280px" }}>{producto.nombre}</td>
@@ -2573,37 +2571,52 @@ export default function cabaniaTable() {
                                                 </Typography>
 
 
-                                                <Typography component="div" >
-                                                    <Button color="primary" onClick={() => {
-                                                        Swal.fire({
-                                                            title: '¿Estás seguro?',
-                                                            text: "¿Quieres guardar esto como PDF?",
-                                                            icon: 'warning',
-                                                            showCancelButton: true,
-                                                            confirmButtonColor: '#3085d6',
-                                                            cancelButtonColor: '#d33',
-                                                            confirmButtonText: 'Sí, guardar',
-                                                            cancelButtonText: 'No, cancelar'
-                                                        }).then((result) => {
-                                                            if (result.isConfirmed) {
-                                                                generarPDF(selectedUser._id);
-                                                                // Muestra un nuevo SweetAlert con el chulito de confirmación
-                                                                Swal.fire({
-                                                                    title: '¡Guardado!',
-                                                                    text: 'El archivo PDF ha sido guardado exitosamente.',
-                                                                    icon: 'success',
-                                                                    confirmButtonColor: '#3085d6',
-                                                                    confirmButtonText: 'Ok'
-                                                                });
-                                                            }
-                                                        })
-                                                    }}>
-                                                        Guardar como PDF
-                                                    </Button>
-                                                    <Button color="danger" variant="light" onClick={closeModal}>
-                                                        Cerrar
-                                                    </Button>
-                                                </Typography>
+                                                <div className="flex justify-between">
+                                                    <Typography component="div" >
+                                                        <Button color="primary" onClick={() => {
+                                                            Swal.fire({
+                                                                title: '¿Estás seguro?',
+                                                                text: "¿Quieres guardar esto como PDF?",
+                                                                icon: 'warning',
+                                                                showCancelButton: true,
+                                                                confirmButtonColor: '#3085d6',
+                                                                cancelButtonColor: '#d33',
+                                                                confirmButtonText: 'Sí, guardar',
+                                                                cancelButtonText: 'No, cancelar'
+                                                            }).then((result) => {
+                                                                if (result.isConfirmed) {
+                                                                    generarPDF(selectedUser._id);
+                                                                    // Muestra un nuevo SweetAlert con el chulito de confirmación
+                                                                    Swal.fire({
+                                                                        title: '¡Guardado!',
+                                                                        text: 'El archivo PDF ha sido guardado exitosamente.',
+                                                                        icon: 'success',
+                                                                        confirmButtonColor: '#3085d6',
+                                                                        confirmButtonText: 'Ok'
+                                                                    });
+                                                                }
+                                                            })
+                                                        }}>
+                                                            Guardar como PDF
+                                                        </Button>
+                                                        <Button className="ml-2" color="danger" variant="shadow" onClick={closeModal}>
+                                                            Cerrar
+                                                        </Button>
+                                                    </Typography>
+
+                                                    <Typography>
+                                                        {selectedUser.nuevoTotal >  0  && selectedUser.pago <= 0 ? (
+                                                        <Button color="secondary" variant="shadow" onClick={() => actualizarDatosCliente(selectedUser.nuevoTotal)}>
+                                                            Guardar
+                                                        </Button>
+                                                        ) : (
+                                                            <Button color="secondary" variant="shadow" >
+                                                            Inhabilitado
+                                                        </Button>
+                                                        )}
+                                                    </Typography>
+
+                                                </div>
                                             </Box>
                                         </Modal>
                                     )}
@@ -2635,21 +2648,23 @@ export default function cabaniaTable() {
                                                         onChange={handleInputChanges}
                                                     />
 
-                                                    <div><select
-                                                        className="w-full h-10 mt-2 outline-none rounded-xl border-2 border-blue-400"
-                                                        id="mediosDePagoPendiente"
-                                                        name="mediosDePagoPendiente"
-                                                        value={formDatas.mediosDePagoPendiente}
-                                                        onChange={handleInputChanges}
-                                                    >
-                                                        <option value="">METODO DE PAGO</option>
-                                                        <option value="efectivo">Efectivo</option>
-                                                        <option value="nequi">Nequi</option>
-                                                        <option value="daviplata">Daviplata</option>
-                                                        <option value="pse">PSE</option>
-                                                        <option value="efecty">Efecty</option>
-                                                        <option value="transferencia">Transferencia</option>
-                                                    </select></div>
+                                                    <div>
+                                                        <select
+                                                            className="w-full h-10 mt-2 outline-none rounded-xl border-2 border-blue-400"
+                                                            id="mediosDePagoPendiente"
+                                                            name="mediosDePagoPendiente"
+                                                            value={formDatas.mediosDePagoPendiente}
+                                                            onChange={handleInputChanges}
+                                                        >
+                                                            <option value="">METODO DE PAGO</option>
+                                                            <option value="efectivo">Efectivo</option>
+                                                            <option value="nequi">Nequi</option>
+                                                            <option value="daviplata">Daviplata</option>
+                                                            <option value="pse">PSE</option>
+                                                            <option value="efecty">Efecty</option>
+                                                            <option value="transferencia">Transferencia</option>
+                                                        </select>
+                                                        </div>
                                                     <div className=" flex justify-end mt-2">
 
                                                         <Button color="danger" onClick={actualizarDatosCliente}>Guardar</Button>
@@ -3619,13 +3634,13 @@ export default function cabaniaTable() {
                                 <td className="html-table-tbody">
                                     <Dropdown>
                                         <DropdownTrigger>
-                                            <Button className="bg-inherent">
+                                            <Button className="bg-inherent" onClick={() => seleccionarCliente(cliente.identificacion)}>
                                                 <VerticalDotsIcon />
                                             </Button>
                                         </DropdownTrigger>
                                         {cliente.estado === 'activo' && (
                                             <DropdownMenu aria-label="Static Actions">
-                                                <DropdownItem key="finalizado" color="primary" onClick={() => handleStatus("finalizado", cliente._id)}>Finalizado</DropdownItem>
+                                                <DropdownItem key="finalizado" color="primary" onClick={() => handleOpenModal(cliente)}>Finalizado</DropdownItem>
                                                 <DropdownItem
                                                     key="new"
                                                     className="font-semibold"

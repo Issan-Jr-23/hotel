@@ -33,6 +33,34 @@ export const obtenerClientes = async (req, res) => {
   }
 };
 
+export const resTotal = async (req, res) => {
+  try {
+    const identificacion = req.params.id;
+    console.log("response: ", identificacion)
+     const usuario = await Cabania.findOne({ identificacion: identificacion });
+
+
+    if (!usuario) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    let total = 0;
+
+    if (usuario.restaurante && usuario.restaurante.length > 0) {
+      usuario.restaurante.forEach((item) => {
+        total += item.cantidad * item.precio;
+      });
+    }
+
+    res.status(200).json({ total: total });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+}
+
+
+
 export const crearCliente = async (req, res) => {
   try {
     const nuevoCliente = new Cabania(req.body);
