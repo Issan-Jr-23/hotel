@@ -1,6 +1,6 @@
-.media-query-add-search{
+.media-query-add-search {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; 
     width: 100%;
     flex-direction: row-reverse;
     align-items: center;
@@ -8,21 +8,22 @@
     margin-bottom: 20px;
 }
 
-.html-table-tr-th{
+.html-table-tr-th {
     height: 50px;
     border-bottom: 2px solid rgb(216, 216, 216);
+    white-space: nowrap;
 }
 
-.html-table-thead-span{
+.html-table-thead-span {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-left: 8px;
     border-right: 2px solid rgb(230, 230, 230);
     height: 30px;
+    overflow: hidden;
 }
 
-.html-table-thead-span-fn{
+.html-table-thead-span-fn {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -30,18 +31,25 @@
     height: 30px;
 }
 
-.html-table-tbody{
+.html-table-tbody {
     padding: 20px 0;
     padding-left: 10px;
-}
-
-.media-query-tittle{
     
 }
 
-.media-query-tittle h1{
+.media-query-tittle {}
+
+.media-query-tittle h1 {
     font-size: 38px;
     text-transform: uppercase;
     border-bottom: 3px solid red;
     padding: 0 5px;
+}
+
+.table-scroll-transform {
+    overflow-x: auto;
+}
+
+.first-page-disabled .MuiPaginationItem-page.Mui-selected {
+    opacity: 0.5;
 }

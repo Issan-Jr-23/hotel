@@ -238,17 +238,20 @@ export default function review() {
 
 
     const cambiarPagina = (event, value) => {
+        if (value === paginaActual || (value === 1 && paginaActual === 1)) {
+            return;
+        }
         setIsLoading(true);
         setPaginaActual(value);
     };
 
-    const refresh = async() => {
+    const refresh = async () => {
         const response = await AxiosInstance.get(`/pasadia-clientes?page=${paginaActual}`);
-                setUsers(response.data.clientes);
-                setTotalPaginas(response.data.totalPages);
-                setTimeout(() => {
-                    setIsLoading(false);
-                }, 100);
+        setUsers(response.data.clientes);
+        setTotalPaginas(response.data.totalPages);
+        setTimeout(() => {
+            setIsLoading(false);
+        }, 100);
     }
 
     const toBase64 = (url) => new Promise((resolve, reject) => {
@@ -1246,7 +1249,6 @@ export default function review() {
                 food,
             });
             toast.success('Comida guardada exitosamente!');
-            resetInpurGuardarFood();
             setEsCortesia(false);
             closeModalF();
             setIsSaving(false);
@@ -1335,6 +1337,9 @@ export default function review() {
                     fechaPasadia: ""
 
                 });
+                const response = await AxiosInstance.get(`/pasadia-clientes?page=${paginaActual}`);
+                setUsers(response.data.clientes);
+                setTotalPaginas(response.data.totalPages);
             }
         } catch (error) {
             toast.error('Ocurrió un error al agregar el cliente o el registro ya existe.');
@@ -1375,8 +1380,8 @@ export default function review() {
         const fetchData = async () => {
             try {
                 const response = await AxiosInstance.get("/drinks");
-                setDrinks(response.data);
-                setCantidadDeBebidas(response.data)
+                const filteredDrinks = response.data.filter(drink => drink.CantidadInicial > 0);
+                setDrinks(filteredDrinks);
             } catch (error) {
                 console.error("Error al obtener datos del servidor:", error);
             }
@@ -1388,11 +1393,17 @@ export default function review() {
         const fetchData = async () => {
             try {
                 const response = await AxiosInstance.get("/food");
-                setSnacks(response.data);
+                const snacksWithoutSubproducts = response.data.filter(product =>
+                    (!product.subproductos || product.subproductos.length === 0) &&
+                    product.CantidadInicial > 0
+                );
+
+                setSnacks(snacksWithoutSubproducts);
             } catch (error) {
                 console.error("Error al obtener datos del servidor:", error);
             }
         };
+
         fetchData();
     }, []);
 
@@ -1404,11 +1415,13 @@ export default function review() {
 
                 let subProducts = [];
                 allProducts.forEach(product => {
-                    if (product.subproductos) {
-                        const subProductosConCantidadPadre = product.subproductos.map(sub => {
-                            return { ...sub, cantidadPadre: product.CantidadInicial, idPadre: product._id };
-                        });
-                        subProducts = subProducts.concat(subProductosConCantidadPadre);
+                    if (product.CantidadInicial > 0) {
+                        if (product.subproductos) {
+                            const subProductosConCantidadPadre = product.subproductos.map(sub => {
+                                return { ...sub, cantidadPadre: product.CantidadInicial, idPadre: product._id };
+                            });
+                            subProducts = subProducts.concat(subProductosConCantidadPadre);
+                        }
                     }
                 });
 
@@ -1419,7 +1432,6 @@ export default function review() {
         };
         fetchData();
     }, []);
-
 
     const [isModalOpen, setModalOpen] = useState(false);
 
@@ -1443,15 +1455,11 @@ export default function review() {
 
     const sizess = ["5xl",];
 
-    const handleOpenM = (size) => {
-        setSize(size)
-    }
+
 
     const { isOpen: isModalOpenM, onOpen: openModalM, onClose: closeModalM } = useDisclosure();
     const { isOpen: isModalOpenF, onOpen: openModalF, onClose: closeModalF } = useDisclosure();
 
-    const [ancho, setAncho] = React.useState('2xl')
-    const sizesm = ["4xl"];
 
     const limpiarCampos = () => {
 
@@ -1480,11 +1488,7 @@ export default function review() {
         setPrecioBebida4Seleccionada(""); // o el valor por defecto inicial
         setBebida4SeleccionadaId('');
 
-        setFiltro("")
-        setFiltro2("")
-        setFiltro3("")
-        setFiltro4("")
-        setFiltro5("")
+
 
         setCantidadBebidaDisponible("")
         setCantidadBebida1Disponible("")
@@ -1523,12 +1527,6 @@ export default function review() {
         setPrecioFood4Seleccionada(""); // o el valor por defecto inicial
         setFood4SeleccionadaId('');
 
-        setFoodFiltro("")
-        setFoodFiltro2("")
-        setFoodFiltro3("")
-        setFoodFiltro4("")
-        setFoodFiltro5("")
-
         setCantidadFoodDisponible("")
         setCantidadFood1Disponible("")
         setCantidadFood2Disponible("")
@@ -1544,9 +1542,9 @@ export default function review() {
 
 
         const response = await AxiosInstance.get("/drinks");
-        setDrinks(response.data);
-        const responses = await AxiosInstance.get("/food");
-        setSnacks(responses.data);
+        const filteredDrinks = response.data.filter(drink => drink.CantidadInicial > 0);
+        setDrinks(filteredDrinks);
+
 
     };
 
@@ -1561,10 +1559,26 @@ export default function review() {
         limpiarCampos1();
 
 
-        const response = await AxiosInstance.get("/drinks");
-        setDrinks(response.data);
         const responses = await AxiosInstance.get("/food");
-        setSnacks(responses.data);
+        const snacksWithoutSubproducts = responses.data.filter(product =>
+            (!product.subproductos || product.subproductos.length === 0) &&
+            product.CantidadInicial > 0
+        );
+        setSnacks(snacksWithoutSubproducts);
+        const response = await AxiosInstance.get("/food");
+        const allProducts = response.data;
+        let subProducts = [];
+        allProducts.forEach(product => {
+            if (product.CantidadInicial > 0) {
+                if (product.subproductos) {
+                    const subProductosConCantidadPadre = product.subproductos.map(sub => {
+                        return { ...sub, cantidadPadre: product.CantidadInicial, idPadre: product._id };
+                    });
+                    subProducts = subProducts.concat(subProductosConCantidadPadre);
+                }
+            }
+        });
+        setComidas(subProducts);
 
 
     };
@@ -1783,59 +1797,6 @@ export default function review() {
 
     //#region
 
-    const [filtro, setFiltro] = useState('');
-    const [filtro2, setFiltro2] = useState('');
-    const [filtro3, setFiltro3] = useState('');
-    const [filtro4, setFiltro4] = useState('');
-    const [filtro5, setFiltro5] = useState('');
-
-    const [foodFiltro, setFoodFiltro] = useState('');
-    const [foodFiltro2, setFoodFiltro2] = useState('');
-    const [foodFiltro3, setFoodFiltro3] = useState('');
-    const [foodFiltro4, setFoodFiltro4] = useState('');
-    const [foodFiltro5, setFoodFiltro5] = useState('');
-
-    const bebidasFiltradas = drinks.filter(bebida =>
-        bebida.Descripcion.toLowerCase().includes(filtro.toLowerCase())
-    );
-
-    const bebidasFiltradas2 = drinks.filter(bebida =>
-        bebida.Descripcion.toLowerCase().includes(filtro2.toLowerCase())
-    );
-
-    const bebidasFiltradas3 = drinks.filter(bebida =>
-        bebida.Descripcion.toLowerCase().includes(filtro3.toLowerCase())
-    );
-
-    const bebidasFiltradas4 = drinks.filter(bebida =>
-        bebida.Descripcion.toLowerCase().includes(filtro4.toLowerCase())
-    );
-
-    const bebidasFiltradas5 = drinks.filter(bebida =>
-        bebida.Descripcion.toLowerCase().includes(filtro5.toLowerCase())
-    );
-
-
-
-    const foodFiltradas = snacks.filter(food =>
-        food.Descripcion.toLowerCase().includes(foodFiltro.toLowerCase())
-    );
-
-    const foodFiltradas2 = snacks.filter(food =>
-        food.Descripcion.toLowerCase().includes(foodFiltro2.toLowerCase())
-    );
-
-    const foodFiltradas3 = snacks.filter(food =>
-        food.Descripcion.toLowerCase().includes(foodFiltro3.toLowerCase())
-    );
-
-    const foodFiltradas4 = snacks.filter(food =>
-        food.Descripcion.toLowerCase().includes(foodFiltro4.toLowerCase())
-    );
-
-    const foodFiltradas5 = snacks.filter(food =>
-        food.Descripcion.toLowerCase().includes(foodFiltro5.toLowerCase())
-    );
 
 
 
@@ -1847,41 +1808,6 @@ export default function review() {
 
 
     const limpiarItems = async () => {
-
-        setItemSeleccionado("");
-        setCantidadItem("");
-        setPrecioItemSeleccionado("");
-        setItemSeleccionadoId("");
-        setSubItemSeleccionadoId("");
-        setCantidadFoodDisponible("");
-
-        setItemSeleccionado1("");
-        setCantidadItem1("");
-        setPrecioItemSeleccionado1("");
-        setItemSeleccionadoId1("");
-        setSubItemSeleccionadoId1("");
-        setCantidadFood1Disponible("");
-
-        setItemSeleccionado2("");
-        setCantidadItem2("");
-        setPrecioItemSeleccionado2("");
-        setItemSeleccionadoId2("");
-        setSubItemSeleccionadoId2("");
-        setCantidadFood2Disponible("");
-
-        setItemSeleccionado3("");
-        setCantidadItem3("");
-        setPrecioItemSeleccionado3("");
-        setItemSeleccionadoId3("");
-        setSubItemSeleccionadoId3("");
-        setCantidadFood3Disponible("");
-
-        setItemSeleccionado4("");
-        setCantidadItem4("");
-        setPrecioItemSeleccionado4("");
-        setItemSeleccionadoId4("");
-        setSubItemSeleccionadoId4("");
-        setCantidadFood4Disponible("");
 
         const response = await AxiosInstance.get("/food");
         const allProducts = response.data;
@@ -2069,6 +1995,13 @@ export default function review() {
                         let subproductoId = subItemSeleccionadoId;
                         await guardarItem(itemCortesia);
                         await guardarCortesiaItemInventory(itemSeleccionadoId, subproductoId, cantidadItem)
+                        setItemSeleccionado("");
+                        setCantidadItem("");
+                        setPrecioItemSeleccionado("");
+                        setItemSeleccionadoId("");
+                        setSubItemSeleccionadoId("");
+                        setCantidadFoodDisponible("");
+                        setResetKey(prevKey => prevKey + 1);
                         atLeastOneCortesiaSaved = true;
                     }
                 }
@@ -2088,6 +2021,13 @@ export default function review() {
                         let subproductoId = subItemSeleccionadoId1;
                         await guardarItem(itemCortesia1);
                         await guardarCortesiaItemInventory(itemSeleccionadoId1, subproductoId, cantidadItem1)
+                        setItemSeleccionado1("");
+                        setCantidadItem1("");
+                        setPrecioItemSeleccionado1("");
+                        setItemSeleccionadoId1("");
+                        setSubItemSeleccionadoId1("");
+                        setCantidadFood1Disponible("");
+                        setResetKey1(prevKey => prevKey + 1);
                         atLeastOneCortesiaSaved = true;
                     }
                 }
@@ -2107,6 +2047,13 @@ export default function review() {
                         let subproductoId = subItemSeleccionadoId2;
                         await guardarItem(itemCortesia2);
                         await guardarCortesiaItemInventory(itemSeleccionadoId2, subproductoId, cantidadItem2)
+                        setItemSeleccionado2("");
+                        setCantidadItem2("");
+                        setPrecioItemSeleccionado2("");
+                        setItemSeleccionadoId2("");
+                        setSubItemSeleccionadoId2("");
+                        setCantidadFood2Disponible("");
+                        setResetKey2(prevKey => prevKey + 1);
                         atLeastOneCortesiaSaved = true;
                     }
                 }
@@ -2126,6 +2073,13 @@ export default function review() {
                         let subproductoId = subItemSeleccionadoId3;
                         await guardarItem(itemCortesia3);
                         await guardarCortesiaItemInventory(itemSeleccionadoId3, subproductoId, cantidadItem3)
+                        setItemSeleccionado3("");
+                        setCantidadItem3("");
+                        setPrecioItemSeleccionado3("");
+                        setItemSeleccionadoId3("");
+                        setSubItemSeleccionadoId3("");
+                        setCantidadFood3Disponible("");
+                        setResetKey3(prevKey => prevKey + 1);
                         atLeastOneCortesiaSaved = true;
                     }
                 }
@@ -2145,6 +2099,13 @@ export default function review() {
                         let subproductoId = subItemSeleccionadoId4;
                         await guardarItem(itemCortesia4);
                         await guardarCortesiaItemInventory(itemSeleccionadoId4, subproductoId, cantidadItem4)
+                        setItemSeleccionado4("");
+                        setCantidadItem4("");
+                        setPrecioItemSeleccionado4("");
+                        setItemSeleccionadoId4("");
+                        setSubItemSeleccionadoId4("");
+                        setCantidadFood4Disponible("");
+                        setResetKey4(prevKey => prevKey + 1);
                         atLeastOneCortesiaSaved = true;
                     }
                 }
@@ -2172,6 +2133,13 @@ export default function review() {
                 console.log("depuracion dentro del checkInventory: ", itemSeleccionadoId, subproductoId, cantidadItem)
                 if (await checkStockAndUpdateInventory(itemSeleccionadoId, subproductoId, cantidadItem)) {
                     await guardarItem(item);
+                    setItemSeleccionado("");
+                    setCantidadItem("");
+                    setPrecioItemSeleccionado("");
+                    setItemSeleccionadoId("");
+                    setSubItemSeleccionadoId("");
+                    setCantidadFoodDisponible("");
+                    setResetKey(prevKey => prevKey + 1);
                     isBebidaAdded = true;
                 }
             }
@@ -2188,6 +2156,13 @@ export default function review() {
                 let subproductoId = subItemSeleccionadoId1;
                 if (await checkStockAndUpdateInventory(itemSeleccionadoId1, subproductoId, cantidadItem1)) {
                     await guardarItem(item1);
+                    setItemSeleccionado1("");
+                    setCantidadItem1("");
+                    setPrecioItemSeleccionado1("");
+                    setItemSeleccionadoId1("");
+                    setSubItemSeleccionadoId1("");
+                    setCantidadFood1Disponible("");
+                    setResetKey1(prevKey => prevKey + 1);
                     isBebidaAdded = true;
                 }
             }
@@ -2204,6 +2179,13 @@ export default function review() {
                 let subproductoId = subItemSeleccionadoId2;
                 if (await checkStockAndUpdateInventory(itemSeleccionadoId2, subproductoId, cantidadItem2)) {
                     await guardarItem(item2);
+                    setItemSeleccionado2("");
+                    setCantidadItem2("");
+                    setPrecioItemSeleccionado2("");
+                    setItemSeleccionadoId2("");
+                    setSubItemSeleccionadoId2("");
+                    setCantidadFood2Disponible("");
+                    setResetKey2(prevKey => prevKey + 1);
                     isBebidaAdded = true;
                 }
             }
@@ -2220,6 +2202,13 @@ export default function review() {
                 let subproductoId = subItemSeleccionadoId3;
                 if (await checkStockAndUpdateInventory(itemSeleccionadoId3, subproductoId, cantidadItem3)) {
                     await guardarItem(item3);
+                    setItemSeleccionado3("");
+                    setCantidadItem3("");
+                    setPrecioItemSeleccionado3("");
+                    setItemSeleccionadoId3("");
+                    setSubItemSeleccionadoId3("");
+                    setCantidadFood3Disponible("");
+                    setResetKey3(prevKey => prevKey + 1);
                     isBebidaAdded = true;
                 }
             }
@@ -2236,6 +2225,13 @@ export default function review() {
                 let subproductoId = subItemSeleccionadoId4;
                 if (await checkStockAndUpdateInventory(itemSeleccionadoId4, subproductoId, cantidadItem4)) {
                     await guardarItem(item4);
+                    setItemSeleccionado4("");
+                    setCantidadItem4("");
+                    setPrecioItemSeleccionado4("");
+                    setItemSeleccionadoId4("");
+                    setSubItemSeleccionadoId4("");
+                    setCantidadFood4Disponible("");
+                    setResetKey4(prevKey => prevKey + 1);
                     isBebidaAdded = true;
                 }
             }
@@ -2243,7 +2239,6 @@ export default function review() {
             if (!isBebidaAdded) {
                 toast.promise("No se ha agregado ninguna comida");
                 setIsSaving(false);
-            } else {
             }
         } catch (error) {
             toast.error('Error al guardar las bebidas en el cliente:', error.message);
@@ -2264,10 +2259,9 @@ export default function review() {
             closeModalF()
             setIsSaving(false);
 
-            const responses = await AxiosInstance.get("/pasadia-clientes");
-            const usuariosOrdenados = responses.data.sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
-
-            setUsers(usuariosOrdenados);
+            const response = await AxiosInstance.get(`/pasadia-clientes?page=${paginaActual}`);
+            setUsers(response.data.clientes);
+            setTotalPaginas(response.data.totalPages);
         } catch (error) {
             setIsSaving(false);
             console.error('Error al guardar la comida en el cliente:', error.message);
@@ -2359,7 +2353,7 @@ export default function review() {
 
     return (
         <div className="pt-20 flex justify-center items-center flex-col">
-            <Toaster/>
+            <Toaster />
             <div className={`loading-overlay ${isLoading ? 'visible' : ''}`}>
                 <Lottie options={defaultOptionLoading} width={100} height={100} />
                 {/* <p>Cargando recursos</p> */}
@@ -2442,13 +2436,18 @@ export default function review() {
                                             isRequired
                                             id="identificacion"
                                             name="identificacion"
-                                            type="number"
+                                            type="text"
 
                                             variant="flat"
                                             label="IDENTIFICACIÓN DE USUARIO"
                                             value={formData.identificacion}
                                             onChange={handleInputChange}
                                             className={`rounded-xl h-12 border-2 mr-2 ${errorIdentificacion ? 'border-red-500' : 'border-blue-400'}`}
+                                            onKeyDown={(event) => {
+                                                if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                    event.preventDefault();
+                                                }
+                                            }}
                                         />
 
                                         <Input
@@ -2461,6 +2460,7 @@ export default function review() {
                                             value={formData.nombre}
                                             onChange={handleInputChange}
                                             className={`rounded-xl h-12 border-2 ml-2 ${errorNombre ? 'border-red-500' : 'border-blue-400'}`}
+                                            style={{ textTransform: 'capitalize' }}
                                         />
                                     </div>
 
@@ -2488,25 +2488,34 @@ export default function review() {
                                             isRequired
                                             id="adultos"
                                             name="adultos"
-                                            type="number"
+                                            type="text"
                                             variant="flat"
                                             label="CANTIDAD DE ADULTOS"
                                             value={formData.cantidadPersonas.adultos}
                                             onChange={(event) => handleInputChange(event, "adultos")}
                                             className={`rounded-xl h-12 border-2 mr-2 ${errorAdultos ? 'border-red-500' : 'border-green-400'}`}
+                                            onKeyDown={(event) => {
+                                                if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                    event.preventDefault();
+                                                }
+                                            }}
                                         />
 
                                         <Input
                                             required
                                             id="ninios"
                                             name="ninios"
-                                            type="number"
+                                            type="text"
                                             variant="flat"
                                             label="CANTIDAD DE NIÑOS"
                                             value={formData.cantidadPersonas.ninios}
                                             onChange={(event) => handleInputChange(event, "ninios")}
                                             className={`rounded-xl h-12 border-2 ml-2 ${errorNinios ? 'border-red-500' : 'border-green-400'}`}
-
+                                            onKeyDown={(event) => {
+                                                if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                    event.preventDefault();
+                                                }
+                                            }}
                                         />
                                     </div>
                                     <div className="flex mt-2">
@@ -2533,12 +2542,16 @@ export default function review() {
                                             id="pagoAnticipado"
                                             name="pagoAnticipado"
                                             className="w-6/12 ml-3 rounded-xl border-2 h-12  border-blue-400"
-                                            type="number"
+                                            type="text"
                                             variant="flat"
                                             label="PAGO ANTICIPADO"
                                             value={formData.pagoAnticipado}
                                             onChange={handleInputChange}
-
+                                            onKeyDown={(event) => {
+                                                if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                    event.preventDefault();
+                                                }
+                                            }}
                                         />
                                     </div>
                                     <Input
@@ -2572,11 +2585,16 @@ export default function review() {
                                             id="pagoPendiente"
                                             name="pagoPendiente"
                                             className="w-6/12 h-12 border-2 border-blue-400 rounded-xl"
-                                            type="number"
+                                            type="text"
                                             variant="flat"
                                             label="PAGO ANTICIPADO"
                                             value={formData.pagoPendiente}
                                             onChange={handleInputChange}
+                                            onKeyDown={(event) => {
+                                                if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                    event.preventDefault();
+                                                }
+                                            }}
                                         />
                                     </div>
 
@@ -2596,32 +2614,35 @@ export default function review() {
                 </div>
             </div>
             <span className="media-query-tittle"><h1>Pasadia</h1></span>
-            <section className="" style={{ width: "90vw" }}>
-                <div className="flex justify-end mb-5">
-                    <Pagination
-                        count={totalPaginas}
-                        page={paginaActual}
-                        onChange={cambiarPagina}
-                        color="primary"
-                    />
-                </div>
-                <Table className=" bg-white p-5" style={{ paddingTop: "40px", width: "90vw" }}>
-                    <thead className="html-table-thead">
+            <div className="flex w-full justify-end mb-5 pr-20">
+                <Pagination
+                    count={totalPaginas}
+                    page={paginaActual}
+                    onChange={cambiarPagina}
+                    color="primary"
+                    className={paginaActual === 1 ? "first-page-disabled" : ""}
+                />
+            </div>
+            <section className="table-scroll-transform" style={{ width: "90vw" }}>
+                <Table className="  bg-white p-5" style={{ paddingTop: "40px", width: "90vw" }}>
+                    <thead className="html-table-thead ">
                         <tr className="html-table-tr border-b-2 border-red-100" >
-                            <th className="html-table-tr-th"> <span className="html-table-thead-span">+ <p></p>  <img className="cursor-pointer mr-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th>
-                            <th className="html-table-tr-th"> <span className="html-table-thead-span"> <p></p>  Id<img className="cursor-pointer mr-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th>
-                            <th className="html-table-tr-th"> <span className="html-table-thead-span"> <p></p>  Nombre <img className="cursor-pointer mr-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th>
-                            <th className="html-table-tr-th"> <span className="html-table-thead-span"> <p></p>  Agregar bebida <img className="cursor-pointer mr-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th>
-                            <th className="html-table-tr-th"> <span className="html-table-thead-span"> <p></p>  Agregar comida <img className="cursor-pointer mr-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th>
-                            <th className="html-table-tr-th"> <span className="html-table-thead-span"> <p></p>  Pago pendiente <img className="cursor-pointer mr-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th>
-                            <th className="html-table-tr-th"> <span className="html-table-thead-span"> <p></p>  Estado <img className="cursor-pointer mr-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th>
-                            <th className="html-table-tr-th"> <span className="html-table-thead-span-fn"> <p></p><img className="cursor-pointer mr-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th>
+                            <th className="html-table-tr-th"> <span className="html-table-thead-span pl-5"><p></p> +  <img className="cursor-pointer mr-2 ml-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th>
+                            <th className="html-table-tr-th"> <span className="html-table-thead-span pl-5"> <p></p>  Id<img className="cursor-pointer mr-5 ml-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th>
+                            <th className="html-table-tr-th pl-5"> <span className="html-table-thead-span"> <p></p>  Nombre <img className="cursor-pointer mr-5 ml-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th>
+                            <th className="html-table-tr-th pl-5"> <span className="html-table-thead-span"> <p></p>Fecha de Inicio<img className="cursor-pointer mr-5 ml-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th>
+                            <th className="html-table-tr-th"> <span className="html-table-thead-span pl-5"> <p></p>  Agregar bebida <img className="cursor-pointer mr-5 ml-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th>
+                            <th className="html-table-tr-th pl-5"> <span className="html-table-thead-span"> <p></p>  Agregar comida <img className="cursor-pointer mr-5 ml-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th>
+                            <th className="html-table-tr-th pl-5"> <span className="html-table-thead-span"> <p></p>  Pago pendiente <img className="cursor-pointer mr-5 ml-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th>
+                            <th className="html-table-tr-th"> <span className="html-table-thead-span pl-5"> <p></p>  Estado <img className="cursor-pointer mr-5 ml-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th>
+                            <th className="html-table-tr-th"> <span className="html-table-thead-span-fn"><p></p> <img className="cursor-pointer mr-5  ml-3" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> <p></p> </span></th>
                         </tr>
                     </thead>
+                    <span className="flex h-2"></span>
                     <tbody className="">
                         {users.map((cliente) => (
                             <tr key={cliente._id} className="">
-                                <td className="text-left html-table-tbody">
+                                <td className="text-left html-table-tbody ">
                                     <Button className="bg-inherent" onClick={() => handleOpenModal(cliente)}>
                                         <img className="w-4" src={chevron} alt="" />
                                     </Button>
@@ -2735,7 +2756,7 @@ export default function review() {
                                         </Modal>
                                     )}
                                 </td>
-                                <td className="text-left html-table-tbody">
+                                <td className="text-left html-table-tbody border-r-2 pr-3 border-blue-500 text-center">
                                     <Popover placement="top">
                                         <PopoverTrigger>
                                             <p onClick={() => seleccionarCliente(cliente.identificacion)}>{cliente.identificacion}</p>
@@ -2784,7 +2805,7 @@ export default function review() {
                                         </PopoverContent>
                                     </Popover>
                                 </td>
-                                <td className="text-left html-table-tbody">
+                                <td className="text-center html-table-tbody border-r-2 pr-3 border-red-500 uppercase">
                                     <Popover placement="bottom" offset={20} showArrow>
                                         <PopoverTrigger>
                                             {cliente._id === editedUserId ? (
@@ -2888,6 +2909,14 @@ export default function review() {
                                         </PopoverContent>
                                     </Popover>
                                 </td>
+                                <td className="text-center html-table-tbody uppercase whitespace-nowrap pr-2">
+                                    {new Date(new Date(cliente.fechaPasadia).getTime() + new Date().getTimezoneOffset() * 60000)
+                                        .toLocaleDateString('es-ES', {
+                                            year: 'numeric',
+                                            month: 'long',
+                                            day: 'numeric'
+                                        })}
+                                </td>
                                 <td className="text-center html-table-tbody">
                                     <div className=" flex justify-center">
                                         <div className="flex flex-wrap gap-3">
@@ -2968,7 +2997,7 @@ export default function review() {
                                                                     }
                                                                 }}
                                                             >
-                                                                {bebidasFiltradas.map((bebida) => (
+                                                                {drinks.map((bebida) => (
                                                                     <SelectItem key={bebida.Descripcion}>
                                                                         {bebida.Descripcion}
                                                                     </SelectItem>
@@ -3020,7 +3049,7 @@ export default function review() {
                                                                     }
                                                                 }}
                                                             >
-                                                                {bebidasFiltradas2.map((bebida) => (
+                                                                {drinks.map((bebida) => (
                                                                     <SelectItem key={bebida.Descripcion}>
                                                                         {bebida.Descripcion}
                                                                     </SelectItem>
@@ -3074,7 +3103,7 @@ export default function review() {
 
                                                                 }}
                                                             >
-                                                                {bebidasFiltradas3.map((bebida) => (
+                                                                {drinks.map((bebida) => (
                                                                     <SelectItem key={bebida.Descripcion}>
                                                                         {bebida.Descripcion}
                                                                     </SelectItem>
@@ -3125,7 +3154,7 @@ export default function review() {
                                                                     }
                                                                 }}
                                                             >
-                                                                {bebidasFiltradas4.map((bebida) => (
+                                                                {drinks.map((bebida) => (
                                                                     <SelectItem key={bebida.Descripcion}>
                                                                         {bebida.Descripcion}
                                                                     </SelectItem>
@@ -3177,7 +3206,7 @@ export default function review() {
                                                                     }
                                                                 }}
                                                             >
-                                                                {bebidasFiltradas5.map((bebida) => (
+                                                                {drinks.map((bebida) => (
                                                                     <SelectItem key={bebida.Descripcion}>
                                                                         {bebida.Descripcion}
                                                                     </SelectItem>
@@ -3286,7 +3315,7 @@ export default function review() {
                                                                         style={{ height: "40px" }}
 
                                                                     >
-                                                                        {foodFiltradas.map((food) => (
+                                                                        {snacks.map((food) => (
                                                                             <SelectItem key={food.Descripcion}>
                                                                                 {food.Descripcion}
                                                                             </SelectItem>
@@ -3342,7 +3371,7 @@ export default function review() {
                                                                         }}
                                                                         style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                                                     >
-                                                                        {foodFiltradas2.map((food) => (
+                                                                        {snacks.map((food) => (
                                                                             <SelectItem key={food.Descripcion}>
                                                                                 {food.Descripcion}
                                                                             </SelectItem>
@@ -3396,7 +3425,7 @@ export default function review() {
                                                                         }}
                                                                         style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                                                     >
-                                                                        {foodFiltradas3.map((food) => (
+                                                                        {snacks.map((food) => (
                                                                             <SelectItem key={food.Descripcion}>
                                                                                 {food.Descripcion}
                                                                             </SelectItem>
@@ -3450,7 +3479,7 @@ export default function review() {
                                                                         }}
                                                                         style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                                                     >
-                                                                        {foodFiltradas4.map((food) => (
+                                                                        {snacks.map((food) => (
                                                                             <SelectItem key={food.Descripcion}>
                                                                                 {food.Descripcion}
                                                                             </SelectItem>
@@ -3504,7 +3533,7 @@ export default function review() {
                                                                         }}
                                                                         style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                                                     >
-                                                                        {foodFiltradas5.map((food) => (
+                                                                        {snacks.map((food) => (
                                                                             <SelectItem key={food.Descripcion}>
                                                                                 {food.Descripcion}
                                                                             </SelectItem>
@@ -3826,7 +3855,7 @@ export default function review() {
                                         </Modal>
                                     </div>
                                 </td>
-                                <td className="html-table-tbody">
+                                <td className="html-table-tbody text-center">
                                     {cliente.nuevoTotal}
                                 </td>
                                 <td className="html-table-tbody">
@@ -3881,6 +3910,7 @@ export default function review() {
                                 </td>
                             </tr>
                         ))}
+                        <span className="flex h-2"></span>
                     </tbody>
                 </Table>
             </section>

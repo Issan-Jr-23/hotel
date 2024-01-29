@@ -4,6 +4,33 @@ import Cliente from "../models/client.model.js";
 import Cabania from "../models/client.cabania.model.js"
 import Habitaciones from "../models/cliente.habitaciones.model.js"
 
+export const obtenerClientes = async (req, res) => {
+  try {
+    const clientesObtenidos = await Cliente.find({})
+    res.status(200).json( clientesObtenidos);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error al obtener los clientes desde la base de datos");
+  }
+};
+export const obtenerClientesCabania = async (req, res) => {
+  try {
+    const clientesObtenidos = await Cabania.find({})
+    res.status(200).json( clientesObtenidos);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error al obtener los clientes desde la base de datos");
+  }
+};
+export const obtenerClientesHabitaciones = async (req, res) => {
+  try {
+    const clientesObtenidos = await Habitaciones.find({})
+    res.status(200).json( clientesObtenidos);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error al obtener los clientes desde la base de datos");
+  }
+};
 
 export const agregarOActualizarUsuario = async (req, res) => {
   const { identificacion, datosHistorial } = req.body;

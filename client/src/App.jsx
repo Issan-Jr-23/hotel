@@ -8,7 +8,7 @@ import { MenuProvider } from "./context/menuContext.jsx";
 import { Home } from "./pages/Home";
 import Register from "./pages/RegisterPage.jsx";
 // import Pasadia from "./pages/Pasadia.jsx";
-import Cabanias from "./pages/Cabanias.jsx";
+// import Cabanias from "./pages/Cabanias.jsx";
 import InvBebidas from "./pages/inventario.jsx";
 import Habitaciones from "./pages/Habitaciones.jsx";
 import Precios from "./pages/Price.jsx";
@@ -33,7 +33,7 @@ import AdicionalesCabanias from "./pages/adicionales/Adicionales.cabania.jsx";
 import CabaniasStock from "./pages/stock/CabaniasStock.jsx";
 import RegistroAnimales from "./pages/finca/Registro.jsx"
 import Pasadia from "./pages/table-component/PasadiaTable.jsx"
-import Review from "./pages/table-component/CabaniaTable.jsx"
+import Cabanias from "./pages/table-component/CabaniaTable.jsx"
 
 
 function App() {
@@ -59,7 +59,7 @@ function App() {
                 <Route path="/cabanias-adicional/:id" element={<AdicionalesCabanias />} />
                 <Route path="/habitaciones-adicional/:id" element={<AdicionalesHabitaciones />} />
                 <Route path="/crear-registro" element={<RegistroAnimales/>}></Route>
-                <Route path="/review" element={<Review/>}></Route>
+                {/* <Route path="/review" element={<Review/>}></Route> */}
               </Route>
               <Route element={<ProtectedRoute allowedRoles={["superUser"]}/>}>
                 <Route path="/hotel-graphs" element={<Hotel_graphs />}/>
@@ -74,7 +74,7 @@ function App() {
                 <Route path="/dashboard-pasadia" element={<DashboardPasadia/>} ></Route>
                 <Route path="/dashboard-cabania" element={<DashboardCabania/>} ></Route>
                 <Route path="/dashboard-habitaciones" element={<DashboardHabitaciones/>} ></Route>
-                <Route path="/cabania-stock" element={<CabaniasStock/>} ></Route>
+                {/* <Route path="/cabania-stock" element={<CabaniasStock/>} ></Route> */}
               </Route>
               <Route element={<ProtectedRoute allowedRoles={["editor"]} />}>
                 <Route path="/Register" element={<Register/>} />
