@@ -209,6 +209,9 @@ export default function cabaniaTable() {
     const [resetKey3, setResetKey3] = useState(0);
     const [resetKey4, setResetKey4] = useState(0);
     const [resTotal, setResTotal] = useState({});
+    const [barTotal, setBarTotal] = useState({});
+    const [recTotal, setRecTotal] = useState({});
+    const [desTotal, setDesTotal] = useState({});
 
     const [formData, setFormData] = useState({
         identificacion: "",
@@ -1464,7 +1467,10 @@ export default function cabaniaTable() {
 
     const seleccionarCliente = async (identificacion) => {
         const response = await AxiosInstance.get(`/cabania-totalidad-pago/${identificacion}`)
-        setResTotal(response.data)
+        const {restaurante, bar, recepcion} = response.data
+        setResTotal(restaurante)
+        setBarTotal(bar)
+        setRecTotal(recepcion)
         setSelectedClienteId(identificacion);
         calcularPagoPendiente(identificacion);
     };
@@ -2495,7 +2501,7 @@ export default function cabaniaTable() {
                     <tbody>
                         {users.map((cliente) => (
                             <tr>
-                                <td className="text-left html-table-tbody">
+                                <td className="text-left html-table-tbody flex flex-col">
                                     <Button className="bg-white" onClick={() => handleOpenModal(cliente)}>
                                         <img className="w-4" src={chevron} alt="" />
                                     </Button>
@@ -2569,7 +2575,16 @@ export default function cabaniaTable() {
                                                         </section>
                                                     </div>
                                                 </Typography>
+                                                <div className="flex flex-col">
+                                                <span className=" flex w-full  pr-20">Bar: {barTotal}</span>
+                                                <span className=" flex w-full  pr-20">Adicional: {recTotal}</span>
+                                                <span className=" flex w-full  pr-20">PagoAnticipado: {selectedUser.pagoAnticipado}</span>
+                                                <span className=" flex w-full  pr-20">Pago pendiente: {selectedUser.pagoPendiente}</span>
+                                                <span className=" flex w-full  pr-20">Restaurante: {resTotal}</span>
+                                                <hr className="bg-gray-400" style={{height:"3px"}} />
+                                                <span className=" flex w-full  pr-20">Tatal a pagar: { (barTotal + resTotal + recTotal) + (selectedUser.pagoAnticipado + selectedUser.pagoPendiente) }</span>
 
+                                                </div>
 
                                                 <div className="flex justify-between">
                                                     <Typography component="div" >
@@ -2605,14 +2620,14 @@ export default function cabaniaTable() {
                                                     </Typography>
 
                                                     <Typography>
-                                                        {selectedUser.nuevoTotal >  0  && selectedUser.pago <= 0 ? (
-                                                        <Button color="secondary" variant="shadow" onClick={() => actualizarDatosCliente(selectedUser.nuevoTotal)}>
-                                                            Guardar
-                                                        </Button>
+                                                        {selectedUser.nuevoTotal > 0 && selectedUser.pago <= 0 ? (
+                                                            <Button color="secondary" variant="shadow" onClick={() => actualizarDatosCliente(selectedUser.nuevoTotal)}>
+                                                                Guardar
+                                                            </Button>
                                                         ) : (
                                                             <Button color="secondary" variant="shadow" >
-                                                            Inhabilitado
-                                                        </Button>
+                                                                Inhabilitado
+                                                            </Button>
                                                         )}
                                                     </Typography>
 
@@ -2664,7 +2679,7 @@ export default function cabaniaTable() {
                                                             <option value="efecty">Efecty</option>
                                                             <option value="transferencia">Transferencia</option>
                                                         </select>
-                                                        </div>
+                                                    </div>
                                                     <div className=" flex justify-end mt-2">
 
                                                         <Button color="danger" onClick={actualizarDatosCliente}>Guardar</Button>

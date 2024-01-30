@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { Dropdown, DropdownTrigger, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Input, DropdownMenu, DropdownSection, DropdownItem, Button, cn } from "@nextui-org/react";
-import {Pagination} from "@mui/material"
+import { Pagination } from "@mui/material"
 import { Link } from "react-router-dom";
 import { EditDocumentIcon } from "../iconos/EditDocumentIcon.jsx";
 import { DeleteDocumentIcon } from "../iconos/DeleteDocumentIcon.jsx";
@@ -255,11 +255,11 @@ const TransferirData = () => {
         </div>
         <div className='flex flex-col w-full'>
           <Pagination
-          count={totalPages}
-          page={currentPage}
-          onChange={handleChangePage}
-          color="primary"
-        />
+            count={totalPages}
+            page={currentPage}
+            onChange={handleChangePage}
+            color="primary"
+          />
           <Table aria-label="Example static collection table" className=' pl-5 pr-5' >
             <TableHeader className='text-center' >
               <TableColumn className='text-center' >IDENTIFICACIÓN</TableColumn>

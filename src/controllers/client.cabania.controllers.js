@@ -44,15 +44,35 @@ export const resTotal = async (req, res) => {
       return res.status(404).json({ error: 'Usuario no encontrado' });
     }
 
-    let total = 0;
+    let totalRes = 0;
+    let totalBar = 0;
+    let totalRec = 0;
 
     if (usuario.restaurante && usuario.restaurante.length > 0) {
       usuario.restaurante.forEach((item) => {
-        total += item.cantidad * item.precio;
+        totalRes += item.cantidad * item.precio;
       });
     }
 
-    res.status(200).json({ total: total });
+    if (usuario.bebidas && usuario.bebidas.length > 0) {
+      usuario.bebidas.forEach((item) => {
+        totalBar += item.cantidad * item.precio;
+      });
+    }
+
+    if (usuario.recepcion && usuario.recepcion.length > 0) {
+      usuario.bebidas.forEach((item) => {
+        totalRec += item.cantidad * item.precio;
+      });
+    }
+
+
+
+    res.status(200).json({
+      restaurante: totalRes || 0,
+      bar: totalBar || 0,
+      recepcion: totalRec || 0
+      });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error interno del servidor' });
