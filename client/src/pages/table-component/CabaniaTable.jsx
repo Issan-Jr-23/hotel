@@ -23,6 +23,7 @@ import stats from "../../images/stats.svg"
 
 
 
+
 export default function cabaniaTable() {
     const [isLoading, setIsLoading] = useState(true)
     const [busqueda, setBusqueda] = useState("")
@@ -45,6 +46,7 @@ export default function cabaniaTable() {
     const [selectedUser, setSelectedUser] = useState(null);
     const [isModalOpen, setModalOpen] = useState(false);
     const [selectedClienteId, setSelectedClienteId] = useState(null);
+    const [almacenamiento, setAlmacenamiento] = useState(null)
 
 
     useEffect(() => {
@@ -201,6 +203,7 @@ export default function cabaniaTable() {
     const [valorCabania, setValorCabania] = useState(null);
     const [valorCabaniaM, setValorCabaniaM] = useState(null);
     const [valorPorPersonaAdicional, setValorPorPersonaAdicional] = useState(null);
+    const [esPagoAnticipado, setEsPagoAnticipado] = useState(false)
 
     const [isSaving, setIsSaving] = useState(false);
     const [resetKey, setResetKey] = useState(0);
@@ -256,6 +259,10 @@ export default function cabaniaTable() {
     //#region 
     const handleCortesiaChange = (event) => {
         setEsCortesia(event.target.checked);
+    };
+
+    const handlePagoAnticipadoChange = (event) => {
+        setEsPagoAnticipado(event.target.checked);
     };
 
     function obtenerFechaConAjuste() {
@@ -397,7 +404,6 @@ export default function cabaniaTable() {
             reserva: selectedSize,
         });
     };
-
 
     const actualizarInventarioBebida = async (bebidaId, cantidad) => {
         try {
@@ -1186,6 +1192,7 @@ export default function cabaniaTable() {
             throw error;
         }
     };
+
     const handleFormSubmit = async (event) => {
         try {
             event.preventDefault();
@@ -1465,12 +1472,22 @@ export default function cabaniaTable() {
     });
 
 
+
     const seleccionarCliente = async (identificacion) => {
+
+        if (identificacion) {
+            const response = await AxiosInstance.get(`/cabania-totalidad-pago/${identificacion}`)
+            const { restaurante, bar, recepcion, descorche } = response.data
+            setAlmacenamiento(restaurante+ bar +recepcion + descorche)
+            console.log("datos para almacenar: ", almacenamiento)
+        }
+
         const response = await AxiosInstance.get(`/cabania-totalidad-pago/${identificacion}`)
-        const {restaurante, bar, recepcion} = response.data
+        const { restaurante, bar, recepcion, descorche } = response.data
         setResTotal(restaurante)
         setBarTotal(bar)
         setRecTotal(recepcion)
+        setDesTotal(descorche)
         setSelectedClienteId(identificacion);
         calcularPagoPendiente(identificacion);
     };
@@ -1493,13 +1510,20 @@ export default function cabaniaTable() {
     };
 
     const actualizarDatosCliente = async () => {
-        // if (!formDatas.pagoPendiente || !formDatas.mediosDePagoPendiente) {
-        //     toast.error('Debe llenar todos los campos');
-        //     return;
-        // }
+        if (selectedClientId) {
+            try {
+                const response = await AxiosInstance.get(`/cabania-totalidad-reserva-pago/${selectedClientId}`);
+                const { restaurante, bar, recepcion, descorche, reserva } = response.data;
+                if (reserva === "Si") {
+                    alert("...")
+                }
+
+            } catch (error) {
+                console.log(error)
+            }
+        }
 
         if (selectedClienteId) {
-            console.log("identificacion del cliente: " + selectedClienteId)
             try {
                 const clienteResponse = await AxiosInstance.get(`/cabania-clientes-identificacion/${selectedClienteId}`);
                 const clienteData = clienteResponse.data;
@@ -2576,13 +2600,51 @@ export default function cabaniaTable() {
                                                     </div>
                                                 </Typography>
                                                 <div className="flex flex-col">
-                                                <span className=" flex w-full  pr-20">Bar: {barTotal}</span>
-                                                <span className=" flex w-full  pr-20">Adicional: {recTotal}</span>
-                                                <span className=" flex w-full  pr-20">PagoAnticipado: {selectedUser.pagoAnticipado}</span>
-                                                <span className=" flex w-full  pr-20">Pago pendiente: {selectedUser.pagoPendiente}</span>
-                                                <span className=" flex w-full  pr-20">Restaurante: {resTotal}</span>
-                                                <hr className="bg-gray-400" style={{height:"3px"}} />
-                                                <span className=" flex w-full  pr-20">Tatal a pagar: { (barTotal + resTotal + recTotal) + (selectedUser.pagoAnticipado + selectedUser.pagoPendiente) }</span>
+                                                    {/* <span className=" flex w-full  pr-20">¿El cliente realizo un pago anticipado para reservar? <Checkbox checked={esPagoAnticipado}
+                                                            onChange={handlePagoAnticipadoChange} className="ml-1"></Checkbox></span> */}
+                                                    <hr className="bg-gray-400 mb-2 mt-2" style={{ height: "4px" }} />
+                                                    {selectedUser.reserva === "Si" ? (
+                                                        <div>
+                                                            <span className=" flex w-full  pr-20">Pago pendiente cabania {selectedUser.tipo_cabania}: {selectedUser.nuevoTotal || 0}</span>
+                                                            <span className=" flex w-full  pr-20">Pago adelantado:<span className="text-red-500"> {selectedUser.pagoAnticipado || 0}</span></span>
+                                                            <span className=" flex w-full  pr-20">Pago posterior: {selectedUser.pagoPendiente || 0}</span>
+                                                            <span className=" flex w-full  pr-20">Bar: {barTotal || 0}</span>
+                                                            <span className=" flex w-full  pr-20">Adicional: {recTotal || 0}</span>
+                                                            <span className=" flex w-full  pr-20">Descorche: {desTotal || 0}</span>
+                                                            <span className=" flex w-full  pr-20">Restaurante: {resTotal || 0}</span>
+                                                            <hr className="bg-gray-400 mt-2" style={{ height: "3px" }} />
+                                                            <span className=" flex w-full mt-2  pr-20">Tatal a pagar:
+                                                                {(
+                                                                    barTotal +
+                                                                    resTotal +
+                                                                    recTotal +
+                                                                    desTotal +
+                                                                    selectedUser.pagoPendiente +
+                                                                    selectedUser.nuevoTotal +
+                                                                    selectedUser.pagoAnticipado
+                                                                ) - (selectedUser.pagoAnticipado)}</span>
+                                                            <hr className="bg-gray-400 mt-2 mb-5" style={{ height: "3px" }} />
+
+                                                        </div>
+                                                    ) : (
+                                                        <div>
+                                                            <span className=" flex w-full  pr-20">Pago pendiente cabania {selectedUser.tipo_cabania}: {selectedUser.nuevoTotal}</span>
+                                                            <span className=" flex w-full  pr-20">Bar: {barTotal}</span>
+                                                            <hr />
+                                                            <span className=" flex w-full  pr-20">Adicional: {recTotal}</span>
+                                                            <span className=" flex w-full  pr-20">PagoAnticipado: {selectedUser.pagoAnticipado}</span>
+                                                            <span className=" flex w-full  pr-20">Pago pendiente: {selectedUser.pagoPendiente || 0}</span>
+                                                            <span className=" flex w-full  pr-20">Restaurante: {resTotal}</span>
+                                                            <hr className="bg-gray-400" style={{ height: "3px" }} />
+                                                            <span className=" flex w-full  pr-20">Tatal a pagar: {(
+                                                                barTotal +
+                                                                resTotal +
+                                                                recTotal +
+                                                                selectedUser.pagoAnticipado +
+                                                                selectedUser.pagoPendiente +
+                                                                selectedUser.nuevoTotal)}</span>
+                                                        </div>
+                                                    )}
 
                                                 </div>
 

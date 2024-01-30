@@ -38,16 +38,64 @@ export const resTotal = async (req, res) => {
     const identificacion = req.params.id;
     console.log("response: ", identificacion)
      const usuario = await Cabania.findOne({ identificacion: identificacion });
-
-
     if (!usuario) {
       return res.status(404).json({ error: 'Usuario no encontrado' });
     }
-
     let totalRes = 0;
     let totalBar = 0;
     let totalRec = 0;
+    let totalDes = 0;
+    if (usuario.restaurante && usuario.restaurante.length > 0) {
+      usuario.restaurante.forEach((item) => {
+        totalRes += item.cantidad * item.precio;
+      });
+    }
+    if (usuario.bebidas && usuario.bebidas.length > 0) {
+      usuario.bebidas.forEach((item) => {
+        totalBar += item.cantidad * item.precio;
+      });
+    }
 
+    if (usuario.recepcion && usuario.recepcion.length > 0) {
+      usuario.bebidas.forEach((item) => {
+        totalRec += item.cantidad * item.precio;
+      });
+    }
+
+    if(usuario.descorche && usuario.recepcion.length > 0){
+      usuario.descorche.forEach((item) => {
+        totalDes += item.precio;
+      })
+    }
+
+    res.status(200).json({
+      restaurante: totalRes || 0,
+      bar: totalBar || 0,
+      recepcion: totalRec || 0,
+      descorche: totalDes || 0
+      });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+}
+
+export const postPago = async (req, res) => {
+  try {
+    const identificacion = req.params.id;
+    console.log("response: ", identificacion)
+     const usuario = await Cabania.findOne({ identificacion: identificacion });
+    if (!usuario) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+    let totalRes = 0;
+    let totalBar = 0;
+    let totalRec = 0;
+    let totalDes = 0;
+    let reserva = "";
+    let anticipado = 0;
+    let posterior = 0;
+    let pendiente = 0;
     if (usuario.restaurante && usuario.restaurante.length > 0) {
       usuario.restaurante.forEach((item) => {
         totalRes += item.cantidad * item.precio;
@@ -66,12 +114,26 @@ export const resTotal = async (req, res) => {
       });
     }
 
+    if(usuario.descorche && usuario.recepcion.length > 0){
+      usuario.descorche.forEach((item) => {
+        totalDes += item.precio;
+      })
+    }
 
+    reserva = usuario.reserva;
+    anticipado = usuario.pagoAnticipado;
+    posterior = usuario.pagoPendiente;
+    pendiente = usuario.nuevoTotal;
 
     res.status(200).json({
       restaurante: totalRes || 0,
       bar: totalBar || 0,
-      recepcion: totalRec || 0
+      recepcion: totalRec || 0,
+      descorche: totalDes || 0,
+      reserva: reserva,
+      aticipado: anticipado || 0,
+      posterior: posterior || 0,
+      pendiente: pendiente || 0
       });
   } catch (error) {
     console.error(error);
