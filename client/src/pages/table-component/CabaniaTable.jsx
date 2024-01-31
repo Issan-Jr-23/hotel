@@ -1474,13 +1474,7 @@ export default function cabaniaTable() {
 
 
     const seleccionarCliente = async (identificacion) => {
-
-        if (identificacion) {
-            const response = await AxiosInstance.get(`/cabania-totalidad-pago/${identificacion}`)
-            const { restaurante, bar, recepcion, descorche } = response.data
-            setAlmacenamiento(restaurante+ bar +recepcion + descorche)
-            console.log("datos para almacenar: ", almacenamiento)
-        }
+       
 
         const response = await AxiosInstance.get(`/cabania-totalidad-pago/${identificacion}`)
         const { restaurante, bar, recepcion, descorche } = response.data
@@ -1510,42 +1504,52 @@ export default function cabaniaTable() {
     };
 
     const actualizarDatosCliente = async () => {
-        if (selectedClientId) {
-            try {
-                const response = await AxiosInstance.get(`/cabania-totalidad-reserva-pago/${selectedClientId}`);
-                const { restaurante, bar, recepcion, descorche, reserva } = response.data;
-                if (reserva === "Si") {
-                    alert("...")
-                }
-
-            } catch (error) {
-                console.log(error)
-            }
-        }
 
         if (selectedClienteId) {
             try {
-                const clienteResponse = await AxiosInstance.get(`/cabania-clientes-identificacion/${selectedClienteId}`);
-                const clienteData = clienteResponse.data;
 
-                const nuevoValorTotal = clienteData.valorTotal - formDatas.pagoPendiente;
+                console.log("id: ", selectedClienteId)
+                const responseData = await AxiosInstance.get(`/cabania-totalidad-reserva-pago/${selectedClienteId}`);
+                const { restaurante, bar, recepcion, descorche, reserva, anticipado, posterior, pendiente } = responseData.data;
+                console.log("reservas: ", reserva)
+                if (reserva === "Si") {
+                    const calculo1 = restaurante + bar + recepcion + descorche + anticipado + posterior + pendiente;
+                    const calculo2 = calculo1 - anticipado;
+                    console.log('verificacion: ', calculo2)
 
-                const response = await AxiosInstance.put(`/cabania-clientes/${selectedClienteId}/actualizar`, {
-                    valorTotal: nuevoValorTotal,
-                    pagoPendiente: formDatas.pagoPendiente,
-                    mediosDePagoPendiente: formDatas.mediosDePagoPendiente
-                });
+                    await AxiosInstance.put("/cabania-actualizar-valor", { id: selectedClientId, valor: calculo2 })
+                    console.log("success")
+                    toast.success("datos actualizados")
+                    const responses = await AxiosInstance.get(`/cabania-clientes?page=${paginaActual}`);
+                    setUsers(responses.data.clientes);
+                    setTotalPaginas(responses.data.totalPages);
+                }
 
-                setFormDatas({
-                    pagoPendiente: '',
-                    mediosDePagoPendiente: ''
-                });
 
-                toast.success('Datos actualizados exitosamente');
+                if (pendiente !== 0) {
+                    const clienteResponse = await AxiosInstance.get(`/cabania-clientes-identificacion/${selectedClienteId}`);
+                    const clienteData = clienteResponse.data;
 
-                const responses = await AxiosInstance.get(`/cabania-clientes?page=${paginaActual}`);
-                setUsers(responses.data.clientes);
-                setTotalPaginas(responses.data.totalPages);
+                    const nuevoValorTotal = clienteData.valorTotal - formDatas.pagoPendiente;
+
+                    const response = await AxiosInstance.put(`/cabania-clientes/${selectedClienteId}/actualizar`, {
+                        valorTotal: nuevoValorTotal,
+                        pagoPendiente: formDatas.pagoPendiente,
+                        mediosDePagoPendiente: formDatas.mediosDePagoPendiente
+                    });
+
+                    setFormDatas({
+                        pagoPendiente: '',
+                        mediosDePagoPendiente: ''
+                    });
+
+                    toast.success('Datos actualizados exitosamente');
+
+                    const responses = await AxiosInstance.get(`/cabania-clientes?page=${paginaActual}`);
+                    setUsers(responses.data.clientes);
+                    setTotalPaginas(responses.data.totalPages);
+
+                }
 
             } catch (error) {
                 console.error('Hubo un problema con la petición Axios:', error);
@@ -2612,7 +2616,7 @@ export default function cabaniaTable() {
                                                             <span className=" flex w-full  pr-20">Adicional: {recTotal || 0}</span>
                                                             <span className=" flex w-full  pr-20">Descorche: {desTotal || 0}</span>
                                                             <span className=" flex w-full  pr-20">Restaurante: {resTotal || 0}</span>
-                                                            <hr className="bg-gray-400 mt-2" style={{ height: "3px" }} />
+                                                            <hr className="bg-gray-400 mt-2 flex justify-between" style={{ height: "3px" }} />
                                                             <span className=" flex w-full mt-2  pr-20">Tatal a pagar:
                                                                 {(
                                                                     barTotal +
@@ -2623,6 +2627,7 @@ export default function cabaniaTable() {
                                                                     selectedUser.nuevoTotal +
                                                                     selectedUser.pagoAnticipado
                                                                 ) - (selectedUser.pagoAnticipado)}</span>
+                                                            <span>Cancelado: {selectedUser.pago}</span>
                                                             <hr className="bg-gray-400 mt-2 mb-5" style={{ height: "3px" }} />
 
                                                         </div>
@@ -2682,15 +2687,15 @@ export default function cabaniaTable() {
                                                     </Typography>
 
                                                     <Typography>
-                                                        {selectedUser.nuevoTotal > 0 && selectedUser.pago <= 0 ? (
-                                                            <Button color="secondary" variant="shadow" onClick={() => actualizarDatosCliente(selectedUser.nuevoTotal)}>
-                                                                Guardar
-                                                            </Button>
-                                                        ) : (
-                                                            <Button color="secondary" variant="shadow" >
-                                                                Inhabilitado
-                                                            </Button>
-                                                        )}
+                                                        {/* {selectedUser.nuevoTotal > 0 && selectedUser.pago <= 0 ? ( */}
+                                                        <Button color="secondary" variant="shadow" onClick={() => actualizarDatosCliente(selectedUser.nuevoTotal)}>
+                                                            Guardar
+                                                        </Button>
+                                                        {/* ) : (
+                                                             <Button color="secondary" variant="shadow" >
+                                                                 Inhabilitado
+                                                             </Button>
+                                                         )} */}
                                                     </Typography>
 
                                                 </div>

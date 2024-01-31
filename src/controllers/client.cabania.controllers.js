@@ -57,7 +57,7 @@ export const resTotal = async (req, res) => {
     }
 
     if (usuario.recepcion && usuario.recepcion.length > 0) {
-      usuario.bebidas.forEach((item) => {
+      usuario.recepcion.forEach((item) => {
         totalRec += item.cantidad * item.precio;
       });
     }
@@ -69,11 +69,13 @@ export const resTotal = async (req, res) => {
     }
 
     res.status(200).json({
-      restaurante: totalRes || 0,
-      bar: totalBar || 0,
-      recepcion: totalRec || 0,
-      descorche: totalDes || 0
-      });
+  restaurante: totalRes || 0,
+  bar: totalBar || 0,
+  recepcion: totalRec || 0,
+  descorche: totalDes || 0,
+  total: (totalRes || 0) + (totalBar || 0) + (totalRec || 0) + (totalDes || 0)
+});
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error interno del servidor' });
@@ -83,6 +85,7 @@ export const resTotal = async (req, res) => {
 export const postPago = async (req, res) => {
   try {
     const identificacion = req.params.id;
+    console.log("id: ", identificacion)
     console.log("response: ", identificacion)
      const usuario = await Cabania.findOne({ identificacion: identificacion });
     if (!usuario) {
@@ -109,7 +112,7 @@ export const postPago = async (req, res) => {
     }
 
     if (usuario.recepcion && usuario.recepcion.length > 0) {
-      usuario.bebidas.forEach((item) => {
+      usuario.recepcion.forEach((item) => {
         totalRec += item.cantidad * item.precio;
       });
     }
@@ -131,7 +134,7 @@ export const postPago = async (req, res) => {
       recepcion: totalRec || 0,
       descorche: totalDes || 0,
       reserva: reserva,
-      aticipado: anticipado || 0,
+      anticipado: anticipado || 0,
       posterior: posterior || 0,
       pendiente: pendiente || 0
       });
@@ -141,6 +144,29 @@ export const postPago = async (req, res) => {
   }
 }
 
+export const actualizarValor = async (req, res) => {
+  try {
+    const { id, valor } = req.body;
+
+    // Verifica si la cabania existe
+    const cabania = await Cabania.findOne({ id });
+
+    if (!cabania) {
+      return res.status(404).json({ mensaje: 'Cabania no encontrada' });
+    }
+
+    // Actualiza el valor deseado
+    cabania.pago = valor;
+
+    // Guarda los cambios en la base de datos
+    await cabania.save();
+
+    res.json({ mensaje: 'Valor actualizado correctamente' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ mensaje: 'Error interno del servidor' });
+  }
+};
 
 
 export const crearCliente = async (req, res) => {
