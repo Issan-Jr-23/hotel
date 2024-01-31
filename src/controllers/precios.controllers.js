@@ -16,7 +16,7 @@ export const guardarPrecioPasadia = async (req, res) => {
 export const obtenerPrecios = async (req, res) => {
     try {
       const precios = await Precios.find();
-      res.status(200).json(precios);
+      res.status(200).json(precios); 
     } catch (error) {
       console.error(error);
       res.status(500).send("Error al obtener las precios desde la base de datos");
@@ -56,3 +56,20 @@ export const obtenerPrecios = async (req, res) => {
 //       res.status(500).send("Error al guardar el cliente en la base de datos");
 //     }
 //   };
+
+export const opad = async (req,res) => {
+    try {
+        let precio = 0;
+        const precios = await Precios.find();
+        precios.forEach((data) => {
+            if (data.servicio === "adicional") {
+                precio = data.precio
+            }
+        })
+
+        res.status(200).json({precio:precio})
+
+    } catch (error) {
+        console.log(error)
+    }
+}

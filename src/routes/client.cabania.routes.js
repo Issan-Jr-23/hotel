@@ -20,13 +20,14 @@ router.put('/cabania-clientes/:id/actualizar',auth, updatePP);
 router.put("/cabania-clientes/:id/cortesias",auth, updateClientCts);
 router.put("/cabania-facturacion",auth, actualizarFacturacion);
 router.get('/cabania-clientes-identificacion/:identificacion', auth, getClienteByIdentificacion);
-router.put("/cabania-actualizar-estado", updateUserStatus)
-router.get('/cabania-cliente-info/:id', obtenerClienteId)
+router.put("/cabania-actualizar-estado", updateUserStatus);
+router.get('/cabania-cliente-info/:id', obtenerClienteId);
 router.post("/cabania-agregar-bebida/:id",auth, addBebidaAdicional);
 router.post("/cabania-agregar-item-recepcion/:id",auth, addItemRecepcion);
 router.post("/cabania-agregar-descorche/:id",auth, addDescorche);
 router.post("/cabania-agregar-food/:id",auth, addFoodAdicional);
 router.post("/cabania-agregar-food-subproducto/:id",auth, addFoodAdicionalSubproducto);
+
 router.get("/cabania-totalidad-pago/:id", resTotal)
 router.get("/cabania-totalidad-reserva-pago/:id", postPago)
 router.put("/cabania-actualizar-valor", actualizarValor)

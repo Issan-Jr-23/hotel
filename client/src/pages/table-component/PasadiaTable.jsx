@@ -187,6 +187,11 @@ export default function review() {
 
     const [isSaving, setIsSaving] = useState(false);
 
+    const [resTotal, setResTotal] = useState({});
+    const [barTotal, setBarTotal] = useState({});
+    const [recTotal, setRecTotal] = useState({});
+    const [desTotal, setDesTotal] = useState({});
+
 
     const options = ["Si", "No"];
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -1583,7 +1588,15 @@ export default function review() {
 
     };
 
-    const seleccionarCliente = (identificacion) => {
+    const seleccionarCliente = async (identificacion) => {
+        console.log("id: ", identificacion)
+        const response = await AxiosInstance.get(`/pasadia-totalidad-pago/${identificacion}`)
+        const { restaurante, bar, recepcion, descorche } = response.data
+        console.log("datos del restaurante: ",restaurante)
+        setResTotal(restaurante)
+        setBarTotal(bar)
+        setRecTotal(recepcion)
+        setDesTotal(descorche)
         setSelectedClienteId(identificacion);
         calcularPagoPendiente(identificacion);
     };
@@ -1607,33 +1620,62 @@ export default function review() {
     };
 
 
-    const actualizarDatosCliente = async () => {
-        if (!formDatas.pagoPendiente || !formDatas.mediosDePagoPendiente) {
-            toast.error('Debe llenar todos los campos');
-            return;
-        }
+    const actualizarDatosCliente = async (data1, data2, estado, userId) => {
+        console.log("DATOS ENVIADOS: ", estado, userId)
+        await handleStatus(estado, userId)
 
         if (selectedClienteId) {
-            console.log("identificacion del cliente: " + selectedClienteId)
             try {
-                const clienteResponse = await AxiosInstance.get(`/pasadia-clientes-identificacion/${selectedClienteId}`);
-                const clienteData = clienteResponse.data;
+                const responseData = await AxiosInstance.get(`/pasadia-totalidad-reserva-pago/${selectedClienteId}`);
+                const { identificacion, restaurante, bar, recepcion, descorche, reserva, anticipado, posterior, pendiente } = responseData.data;
+                if (reserva === "Si") {
+                    console.log("ingresos al condicional")
+                    const calculo1 = restaurante + bar + recepcion + descorche + anticipado + posterior + pendiente;
+                    const calculo2 = calculo1 - anticipado;
+                    console.log("id del usuario: ", selectedClienteId)
+                    await AxiosInstance.put(`/pasadia-actualizar-valor`, { id: selectedClienteId, valor: calculo2 })
+                    console.log("success")
+                    toast.success("datos actualizados")
+                    const responses = await AxiosInstance.get(`/pasadia-clientes?page=${paginaActual}`);
+                    setUsers(responses.data.clientes);
+                    setTotalPaginas(responses.data.totalPages);
+                } else {
+                    console.log("ingresos al condicional")
+                    const calculo1 = restaurante + bar + recepcion + descorche + anticipado + posterior + pendiente;
+                    console.log("id del usuario: ", selectedClienteId)
+                    await AxiosInstance.put(`/pasadia-actualizar-valor`, { id: selectedClienteId, valor: calculo1 })
+                    console.log("success")
+                    toast.success("datos actualizados")
+                    const responses = await AxiosInstance.get(`/pasadia-clientes?page=${paginaActual}`);
+                    setUsers(responses.data.clientes);
+                    setTotalPaginas(responses.data.totalPages);
 
-                const nuevoValorTotal = clienteData.nuevoTotal - formDatas.pagoPendiente;
-                console.log("nuevo total: " + nuevoValorTotal)
+                }
 
-                const response = await AxiosInstance.put(`/pasadia-clientes/${selectedClienteId}/actualizar`, {
-                    nuevoTotal: nuevoValorTotal,
-                    pagoPendiente: formDatas.pagoPendiente,
-                    mediosDePagoPendiente: formDatas.mediosDePagoPendiente
-                });
+                if (pendiente !== 0) {
+                    const clienteResponse = await AxiosInstance.get(`/pasadia-clientes-identificacion/${selectedClienteId}`);
+                    const clienteData = clienteResponse.data;
 
-                setFormDatas({
-                    pagoPendiente: '',
-                    mediosDePagoPendiente: ''
-                });
+                    const nuevoValorTotal = clienteData.valorTotal - formDatas.pagoPendiente;
 
-                toast.success('Datos actualizados exitosamente');
+                    const response = await AxiosInstance.put(`/pasadia-clientes/${selectedClienteId}/actualizar`, {
+                        valorTotal: nuevoValorTotal,
+                        pagoPendiente: formDatas.pagoPendiente,
+                        mediosDePagoPendiente: formDatas.mediosDePagoPendiente
+                    });
+
+                    setFormDatas({
+                        pagoPendiente: '',
+                        mediosDePagoPendiente: ''
+                    });
+
+                    toast.success('Datos actualizados exitosamente');
+
+                    const responses = await AxiosInstance.get(`/pasadia-clientes?page=${paginaActual}`);
+                    setUsers(responses.data.clientes);
+                    setTotalPaginas(responses.data.totalPages);
+
+                }
 
             } catch (error) {
                 console.error('Hubo un problema con la petición Axios:', error);
@@ -2643,31 +2685,27 @@ export default function review() {
                         {users.map((cliente) => (
                             <tr key={cliente._id} className="">
                                 <td className="text-left html-table-tbody ">
-                                    <Button className="bg-inherent" onClick={() => handleOpenModal(cliente)}>
-                                        <img className="w-4" src={chevron} alt="" />
-                                    </Button>
-
                                     {selectedUser && (
                                         <Modal open={openTd} onClose={handleCloseTd} className=""
-                                            classNames={{
-                                                body: "py-6",
-                                                backdrop: "bg-inherit",
-                                            }}
                                             BackdropProps={{
-                                                style: { backgroundColor: 'rgba(0, 0, 0, 0.1)' }
+                                                style: { backgroundColor: 'rgba(0, 0, 0, 0.3)' }
                                             }}
                                         >
-                                            <Box sx={style} className="max-h-96 overflow-y-auto overflow-x-auto">
-                                                <Typography className="border-b-3 border-blue-500 text-3xl flex  justify-between" component="div">
+                                            <Box sx={styleAdd} style={{
+                                                maxHeight: "90vh",
+                                                minHeight: "min-content",
+                                                overflowY: "auto"
+                                            }} >
+                                                <Typography component="div" className="border-b-3 border-blue-500 text-3xl flex  justify-between">
                                                     <div className="mb-0.5 text-2xl">History</div>
                                                     <div className="uppercase text-lg"> {selectedUser.nombre} - {selectedUser.identificacion}</div>
                                                 </Typography>
-                                                <Typography className="uppercase flex" component="div" >
+                                                <Typography component="div" className="uppercase flex">
                                                     <div className="flex w-full">
-                                                        <section className="flex justify-between w-full flex-wrap ">
+                                                        <section className="flex justify-between w-full flex-wrap">
 
-                                                            {/* Sección de Productos (Bebidas + Comidas) */}
                                                             <div className="mx-5 my-1  w-full">
+                                                                <div className="mt-2 mb-2" style={{ fontWeight: "600" }}> Pago pendiente cabaña {selectedUser.tipo_cabania} : {selectedUser.nuevoTotal}</div>
                                                                 <h4 className="text-green-600">Productos (Bebidas y Comidas)</h4>
 
                                                                 {/* Combina ambos arrays (bebidas y comidas) y verifica si tiene elementos */}
@@ -2685,7 +2723,6 @@ export default function review() {
                                                                             </tr>
                                                                         </thead>
                                                                         <tbody>
-                                                                            {/* Muestra los productos (bebidas y comidas) */}
                                                                             {[...selectedUser.bebidas, ...selectedUser.restaurante, ...selectedUser.descorche, ...selectedUser.recepcion].map((producto, index) => (
                                                                                 <tr key={index}>
                                                                                     <td className="text-left" style={{ width: "280px" }}>{producto.nombre}</td>
@@ -2718,45 +2755,109 @@ export default function review() {
                                                         </section>
                                                     </div>
                                                 </Typography>
+                                                <div className="flex flex-col">
+                                                    {/* <span className=" flex w-full  pr-20">¿El cliente realizo un pago anticipado para reservar? <Checkbox checked={esPagoAnticipado}
+                                                            onChange={handlePagoAnticipadoChange} className="ml-1"></Checkbox></span> */}
+                                                    <hr className="bg-gray-400 mb-2 mt-2" style={{ height: "4px" }} />
+                                                    {selectedUser.reserva === "Si" ? (
+                                                        <div>
+                                                            <span className=" flex w-full  pr-20">Pago pendiente cabania {selectedUser.tipo_cabania}: {selectedUser.nuevoTotal || 0}</span>
+                                                            <span className=" flex w-full  pr-20">Pago adelantado:<span className="text-red-500"> {selectedUser.pagoAnticipado || 0}</span></span>
+                                                            <span className=" flex w-full  pr-20">Pago posterior: {selectedUser.pagoPendiente || 0}</span>
+                                                            <span className=" flex w-full  pr-20">Bar: {barTotal || 0}</span>
+                                                            <span className=" flex w-full  pr-20">Adicional: {recTotal || 0}</span>
+                                                            <span className=" flex w-full  pr-20">Descorche: {desTotal || 0}</span>
+                                                            <span className=" flex w-full  pr-20">Restaurante: {resTotal || 0}</span>
+                                                            <hr className="bg-gray-400 mt-2 flex justify-between" style={{ height: "3px" }} />
+                                                            <span className=" flex w-full mt-2  pr-20">Tatal a pagar:
+                                                                {(
+                                                                    barTotal +
+                                                                    resTotal +
+                                                                    recTotal +
+                                                                    desTotal +
+                                                                    selectedUser.pagoPendiente +
+                                                                    selectedUser.nuevoTotal +
+                                                                    selectedUser.pagoAnticipado
+                                                                ) - (selectedUser.pagoAnticipado)}</span>
+                                                            <hr className="bg-gray-400 mt-2 mb-5" style={{ height: "3px" }} />
+                                                            <span>Cancelado: {selectedUser.pago}</span>
 
+                                                        </div>
+                                                    ) : (
+                                                        <div>
+                                                            <span className=" flex w-full  pr-20">Pago pendiente cabania {selectedUser.tipo_cabania}: {selectedUser.nuevoTotal || 0}</span>
+                                                            <span className=" flex w-full  pr-20">Pago adelantado:<span className="text-red-500"> {selectedUser.pagoAnticipado || 0}</span></span>
+                                                            <span className=" flex w-full  pr-20">Pago posterior: {selectedUser.pagoPendiente || 0}</span>
+                                                            <span className=" flex w-full  pr-20">Bar: {barTotal || 0}</span>
+                                                            <span className=" flex w-full  pr-20">Adicional: {recTotal || 0}</span>
+                                                            <span className=" flex w-full  pr-20">Descorche: {desTotal || 0}</span>
+                                                            <span className=" flex w-full  pr-20">Restaurante: {resTotal || 0}</span>
+                                                            <span className=" flex w-full  pr-20 mt-2">Tatal a pagar: {(
+                                                                barTotal +
+                                                                resTotal +
+                                                                recTotal +
+                                                                desTotal +
+                                                                selectedUser.pagoAnticipado +
+                                                                selectedUser.pagoPendiente +
+                                                                selectedUser.nuevoTotal)} </span>
+                                                            <hr className="bg-gray-400 mt-2 mb-5" style={{ height: "3px" }} />
+                                                            <span className="">Cancelado: {selectedUser.pago || 0}</span>
+                                                        </div>
+                                                    )}
 
-                                                <Typography component="div">
-                                                    <Button color="primary" onClick={() => {
-                                                        Swal.fire({
-                                                            title: '¿Estás seguro?',
-                                                            text: "¿Quieres guardar esto como PDF?",
-                                                            icon: 'warning',
-                                                            showCancelButton: true,
-                                                            confirmButtonColor: '#3085d6',
-                                                            cancelButtonColor: '#d33',
-                                                            confirmButtonText: 'Sí, guardar',
-                                                            cancelButtonText: 'No, cancelar'
-                                                        }).then((result) => {
-                                                            if (result.isConfirmed) {
-                                                                generarPDF(selectedUser._id);
-                                                                // Muestra un nuevo SweetAlert con el chulito de confirmación
-                                                                Swal.fire({
-                                                                    title: '¡Guardado!',
-                                                                    text: 'El archivo PDF ha sido guardado exitosamente.',
-                                                                    icon: 'success',
-                                                                    confirmButtonColor: '#3085d6',
-                                                                    confirmButtonText: 'Ok'
-                                                                });
-                                                            }
-                                                        })
-                                                    }}>
-                                                        Guardar como PDF
-                                                    </Button>
+                                                </div>
 
-                                                    <Button color="danger" variant="light" onClick={closeModal}>
-                                                        Cerrar
-                                                    </Button>
-                                                </Typography>
+                                                <div className="flex justify-between mt-5">
+                                                    <Typography component="div" >
+                                                        <Button color="primary" onClick={() => {
+                                                            Swal.fire({
+                                                                title: '¿Estás seguro?',
+                                                                text: "¿Quieres guardar esto como PDF?",
+                                                                icon: 'warning',
+                                                                showCancelButton: true,
+                                                                confirmButtonColor: '#3085d6',
+                                                                cancelButtonColor: '#d33',
+                                                                confirmButtonText: 'Sí, guardar',
+                                                                cancelButtonText: 'No, cancelar'
+                                                            }).then((result) => {
+                                                                if (result.isConfirmed) {
+                                                                    generarPDF(selectedUser._id);
+                                                                    // Muestra un nuevo SweetAlert con el chulito de confirmación
+                                                                    Swal.fire({
+                                                                        title: '¡Guardado!',
+                                                                        text: 'El archivo PDF ha sido guardado exitosamente.',
+                                                                        icon: 'success',
+                                                                        confirmButtonColor: '#3085d6',
+                                                                        confirmButtonText: 'Ok'
+                                                                    });
+                                                                }
+                                                            })
+                                                        }}>
+                                                            Guardar como PDF
+                                                        </Button>
+                                                        <Button className="ml-2" color="danger" variant="shadow" onClick={closeModal}>
+                                                            Cerrar
+                                                        </Button>
+                                                    </Typography>
+
+                                                    <Typography>
+                                                        {/* {selectedUser.nuevoTotal > 0 && selectedUser.pago <= 0 ? ( */}
+                                                        <Button color="secondary" variant="shadow" onClick={() => actualizarDatosCliente(selectedUser.nuevoTotal, selectedUser.identificacion, "finalizado", selectedUser._id)}>
+                                                            Guardar
+                                                        </Button>
+                                                        {/* ) : (
+                                                             <Button color="secondary" variant="shadow" >
+                                                                 Inhabilitado
+                                                             </Button>
+                                                         )} */}
+                                                    </Typography>
+
+                                                </div>
                                             </Box>
                                         </Modal>
                                     )}
                                 </td>
-                                <td className="text-left html-table-tbody border-r-2 pr-3 border-blue-500 text-center">
+                                <td className=" html-table-tbody border-r-2 pr-3 border-blue-500 text-center">
                                     <Popover placement="top">
                                         <PopoverTrigger>
                                             <p onClick={() => seleccionarCliente(cliente.identificacion)}>{cliente.identificacion}</p>
@@ -3866,24 +3967,25 @@ export default function review() {
                                         {cliente.estado}
                                     </div>
                                 </td>
-                                <td>
+                                <td className="html-table-tbody">
                                     <Dropdown>
                                         <DropdownTrigger>
-                                            <Button className="bg-inherent">
+                                            <Button className="bg-inherent" onClick={() => seleccionarCliente(cliente.identificacion)}>
                                                 <VerticalDotsIcon />
                                             </Button>
                                         </DropdownTrigger>
                                         {cliente.estado === 'activo' && (
                                             <DropdownMenu aria-label="Static Actions">
-                                                <DropdownItem key="finalizado" color="primary" onClick={() => handleStatus("finalizado", cliente._id)}>Finalizado</DropdownItem>
+                                                <DropdownItem key="finalizado" color="primary" onClick={() => handleOpenModal(cliente)}>Finalizado</DropdownItem>
                                                 <DropdownItem
                                                     key="new"
                                                     className="font-semibold"
                                                     style={{ fontWeight: "700" }}
-                                                    onClick={() => adicional(cliente._id)}
+                                                    onClick={() => adicionalCabania(cliente._id)}
                                                 >
                                                     Agregar algo mas
                                                 </DropdownItem>
+                                                <DropdownItem key="finalizado" color="primary" onClick={() => handleOpenModal(cliente)}>Ver compras</DropdownItem>
 
                                             </DropdownMenu>
                                         )}
@@ -3900,12 +4002,14 @@ export default function review() {
                                                     key="new"
                                                     className="font-semibold"
                                                     style={{ fontWeight: "700" }}
-                                                    onClick={() => adicional(cliente._id)}
+                                                    onClick={() => adicionalCabania(cliente._id)}
                                                 >
                                                     Agregar algo mas
                                                 </DropdownItem>
+                                                <DropdownItem key="finalizado" color="primary" onClick={() => handleOpenModal(cliente)}>Ver compras</DropdownItem>
                                             </DropdownMenu>
                                         )}
+                                        {/* No se muestra ningún menú desplegable para los estados 'cancelado' y 'finalizado' */}
                                     </Dropdown>
                                 </td>
                             </tr>

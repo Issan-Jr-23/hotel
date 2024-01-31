@@ -1335,7 +1335,7 @@ export default function cabaniaTable() {
         fetchData();
     }, []);
 
-    const handleOpenModal = (user) => {
+    const handleOpenModal = async (user) => {
         setSelectedUser(user);
         setOpenTd(true);
     };
@@ -1474,8 +1474,6 @@ export default function cabaniaTable() {
 
 
     const seleccionarCliente = async (identificacion) => {
-       
-
         const response = await AxiosInstance.get(`/cabania-totalidad-pago/${identificacion}`)
         const { restaurante, bar, recepcion, descorche } = response.data
         setResTotal(restaurante)
@@ -1503,28 +1501,37 @@ export default function cabaniaTable() {
         }
     };
 
-    const actualizarDatosCliente = async () => {
+    const actualizarDatosCliente = async (data1, data2, estado, userId) => {
+        console.log("DATOS ENVIADOS: ", estado, userId)
+        await handleStatus(estado, userId)
 
         if (selectedClienteId) {
             try {
-
-                console.log("id: ", selectedClienteId)
                 const responseData = await AxiosInstance.get(`/cabania-totalidad-reserva-pago/${selectedClienteId}`);
-                const { restaurante, bar, recepcion, descorche, reserva, anticipado, posterior, pendiente } = responseData.data;
-                console.log("reservas: ", reserva)
+                const { identificacion, restaurante, bar, recepcion, descorche, reserva, anticipado, posterior, pendiente } = responseData.data;
                 if (reserva === "Si") {
+                    console.log("ingresos al condicional")
                     const calculo1 = restaurante + bar + recepcion + descorche + anticipado + posterior + pendiente;
                     const calculo2 = calculo1 - anticipado;
-                    console.log('verificacion: ', calculo2)
-
-                    await AxiosInstance.put("/cabania-actualizar-valor", { id: selectedClientId, valor: calculo2 })
+                    console.log("id del usuario: ", selectedClienteId)
+                    await AxiosInstance.put(`/cabania-actualizar-valor`, { id: selectedClienteId, valor: calculo2 })
                     console.log("success")
                     toast.success("datos actualizados")
                     const responses = await AxiosInstance.get(`/cabania-clientes?page=${paginaActual}`);
                     setUsers(responses.data.clientes);
                     setTotalPaginas(responses.data.totalPages);
-                }
+                } else {
+                    console.log("ingresos al condicional")
+                    const calculo1 = restaurante + bar + recepcion + descorche + anticipado + posterior + pendiente;
+                    console.log("id del usuario: ", selectedClienteId)
+                    await AxiosInstance.put(`/cabania-actualizar-valor`, { id: selectedClienteId, valor: calculo1 })
+                    console.log("success")
+                    toast.success("datos actualizados")
+                    const responses = await AxiosInstance.get(`/cabania-clientes?page=${paginaActual}`);
+                    setUsers(responses.data.clientes);
+                    setTotalPaginas(responses.data.totalPages);
 
+                }
 
                 if (pendiente !== 0) {
                     const clienteResponse = await AxiosInstance.get(`/cabania-clientes-identificacion/${selectedClienteId}`);
@@ -1550,6 +1557,8 @@ export default function cabaniaTable() {
                     setTotalPaginas(responses.data.totalPages);
 
                 }
+
+                
 
             } catch (error) {
                 console.error('Hubo un problema con la petición Axios:', error);
@@ -2509,8 +2518,10 @@ export default function cabaniaTable() {
                 <Table className=" bg-white" style={{ paddingTop: "40px" }}>
                     <thead className="html-table-thead">
                         <tr className="html-table-tr border-b-2 border-red-100" >
-                            <th className="html-table-tr-th"><span className="html-table-thead-span pl-5"><p></p> + <img className="cursor-pointer mr-5 ml-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th>
-                            <th className="html-table-tr-th"> <span className="html-table-thead-span"> <p></p>  Id<img className="cursor-pointer mr-2 ml-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th>
+                            <th className="html-table-tr-th">
+                                {/* <span className="html-table-thead-span pl-5"><p></p> + <img className="cursor-pointer mr-5 ml-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span> */}
+                            </th>
+                            <th className="html-table-tr-th"> <span className="html-table-thead-span"> <p></p>  Identificación<img className="cursor-pointer mr-2 ml-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th>
                             <th className="html-table-tr-th"> <span className="html-table-thead-span pr-5 pl-5"> <p></p>  Nombre <img className="cursor-pointer mr-2 ml-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th>
                             <th className="html-table-tr-th"> <span className="html-table-thead-span pl-5"> <p></p> Fecha Inicio <img className="cursor-pointer mr-5 ml-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th>
                             <th className="html-table-tr-th"> <span className="html-table-thead-span pl-5 "> <p></p>  Agregar bebida <img className="cursor-pointer mr-5 ml-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th>
@@ -2530,9 +2541,9 @@ export default function cabaniaTable() {
                         {users.map((cliente) => (
                             <tr>
                                 <td className="text-left html-table-tbody flex flex-col">
-                                    <Button className="bg-white" onClick={() => handleOpenModal(cliente)}>
+                                    {/* <Button className="bg-white" onClick={() => handleOpenModal(cliente)}>
                                         <img className="w-4" src={chevron} alt="" />
-                                    </Button>
+                                    </Button> */}
                                     {selectedUser && (
                                         <Modal open={openTd} onClose={handleCloseTd} className=""
                                             BackdropProps={{
@@ -2627,33 +2638,35 @@ export default function cabaniaTable() {
                                                                     selectedUser.nuevoTotal +
                                                                     selectedUser.pagoAnticipado
                                                                 ) - (selectedUser.pagoAnticipado)}</span>
-                                                            <span>Cancelado: {selectedUser.pago}</span>
                                                             <hr className="bg-gray-400 mt-2 mb-5" style={{ height: "3px" }} />
+                                                            <span>Cancelado: {selectedUser.pago}</span>
 
                                                         </div>
                                                     ) : (
                                                         <div>
-                                                            <span className=" flex w-full  pr-20">Pago pendiente cabania {selectedUser.tipo_cabania}: {selectedUser.nuevoTotal}</span>
-                                                            <span className=" flex w-full  pr-20">Bar: {barTotal}</span>
-                                                            <hr />
-                                                            <span className=" flex w-full  pr-20">Adicional: {recTotal}</span>
-                                                            <span className=" flex w-full  pr-20">PagoAnticipado: {selectedUser.pagoAnticipado}</span>
-                                                            <span className=" flex w-full  pr-20">Pago pendiente: {selectedUser.pagoPendiente || 0}</span>
-                                                            <span className=" flex w-full  pr-20">Restaurante: {resTotal}</span>
-                                                            <hr className="bg-gray-400" style={{ height: "3px" }} />
-                                                            <span className=" flex w-full  pr-20">Tatal a pagar: {(
+                                                            <span className=" flex w-full  pr-20">Pago pendiente cabania {selectedUser.tipo_cabania}: {selectedUser.nuevoTotal || 0}</span>
+                                                            <span className=" flex w-full  pr-20">Pago adelantado:<span className="text-red-500"> {selectedUser.pagoAnticipado || 0}</span></span>
+                                                            <span className=" flex w-full  pr-20">Pago posterior: {selectedUser.pagoPendiente || 0}</span>
+                                                            <span className=" flex w-full  pr-20">Bar: {barTotal || 0}</span>
+                                                            <span className=" flex w-full  pr-20">Adicional: {recTotal || 0}</span>
+                                                            <span className=" flex w-full  pr-20">Descorche: {desTotal || 0}</span>
+                                                            <span className=" flex w-full  pr-20">Restaurante: {resTotal || 0}</span>
+                                                            <span className=" flex w-full  pr-20 mt-2">Tatal a pagar: {(
                                                                 barTotal +
                                                                 resTotal +
                                                                 recTotal +
+                                                                desTotal +
                                                                 selectedUser.pagoAnticipado +
                                                                 selectedUser.pagoPendiente +
-                                                                selectedUser.nuevoTotal)}</span>
+                                                                selectedUser.nuevoTotal)} </span>
+                                                            <hr className="bg-gray-400 mt-2 mb-5" style={{ height: "3px" }} />
+                                                            <span className="">Cancelado: {selectedUser.pago || 0}</span>
                                                         </div>
                                                     )}
 
                                                 </div>
 
-                                                <div className="flex justify-between">
+                                                <div className="flex justify-between mt-5">
                                                     <Typography component="div" >
                                                         <Button color="primary" onClick={() => {
                                                             Swal.fire({
@@ -2688,7 +2701,7 @@ export default function cabaniaTable() {
 
                                                     <Typography>
                                                         {/* {selectedUser.nuevoTotal > 0 && selectedUser.pago <= 0 ? ( */}
-                                                        <Button color="secondary" variant="shadow" onClick={() => actualizarDatosCliente(selectedUser.nuevoTotal)}>
+                                                        <Button color="secondary" variant="shadow" onClick={() => actualizarDatosCliente(selectedUser.nuevoTotal, selectedUser.identificacion, "finalizado", selectedUser._id)}>
                                                             Guardar
                                                         </Button>
                                                         {/* ) : (
@@ -2820,16 +2833,21 @@ export default function cabaniaTable() {
                                                         >
                                                             Cortesía cabañas
                                                         </Checkbox>
-                                                        <div className="flex">
+                                                        <div className="flex flex-row-reverse mb-2">
                                                             <Input
-                                                                className="mr-2"
+                                                                className="ml-2"
                                                                 name="bebidas"
                                                                 label="Ingrese la cantidad"
-                                                                type="number"
+                                                                type="text"
                                                                 value={isNaN(cantidadBebida) ? '' : cantidadBebida}
                                                                 onChange={(e) => {
                                                                     const value = parseInt(e.target.value, 10);
                                                                     setCantidadBebida(isNaN(value) ? "" : value);
+                                                                }}
+                                                                onKeyDown={(event) => {
+                                                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                                        event.preventDefault();
+                                                                    }
                                                                 }}
                                                             />
                                                             <Input
@@ -2840,7 +2858,7 @@ export default function cabaniaTable() {
                                                             />
                                                             <Select
                                                                 key={resetKey}
-                                                                className="ml-2"
+                                                                className="mr-2"
                                                                 name="bebidas"
                                                                 label="Seleccionar bebida"
                                                                 value={bebidaSeleccionada}
@@ -2869,16 +2887,21 @@ export default function cabaniaTable() {
                                                                 ))}
                                                             </Select>
                                                         </div>
-                                                        <div className="flex">
+                                                        <div className="flex flex-row-reverse mb-2">
                                                             <Input
-                                                                className="mr-2"
+                                                                className="ml-2"
                                                                 name="bebidas"
                                                                 label="Ingrese la cantidad"
-                                                                type="number"
+                                                                type="text"
                                                                 value={isNaN(cantidadBebida1) ? '' : cantidadBebida1}
                                                                 onChange={(e) => {
                                                                     const value = parseInt(e.target.value, 10);
                                                                     setCantidadBebida1(isNaN(value) ? "" : value);
+                                                                }}
+                                                                onKeyDown={(event) => {
+                                                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                                        event.preventDefault();
+                                                                    }
                                                                 }}
                                                             />
                                                             <Input
@@ -2889,7 +2912,7 @@ export default function cabaniaTable() {
                                                             />
                                                             <Select
                                                                 key={resetKey1}
-                                                                className="ml-2"
+                                                                className="mr-2"
                                                                 name="bebidas"
                                                                 label="Seleccionar bebida"
                                                                 value={bebida1Seleccionada}
@@ -2918,16 +2941,21 @@ export default function cabaniaTable() {
                                                                 ))}
                                                             </Select>
                                                         </div>
-                                                        <div className="flex">
+                                                        <div className="flex flex-row-reverse mb-2">
                                                             <Input
-                                                                className="mr-2"
+                                                                className="ml-2"
                                                                 name="bebidas"
                                                                 label="Ingrese la cantidad"
-                                                                type="number"
+                                                                type="text"
                                                                 value={isNaN(cantidadBebida2) ? '' : cantidadBebida2}
                                                                 onChange={(e) => {
                                                                     const value = parseInt(e.target.value, 10);
                                                                     setCantidadBebida2(isNaN(value) ? "" : value);
+                                                                }}
+                                                                onKeyDown={(event) => {
+                                                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                                        event.preventDefault();
+                                                                    }
                                                                 }}
                                                             />
                                                             <Input
@@ -2938,7 +2966,7 @@ export default function cabaniaTable() {
                                                             />
                                                             <Select
                                                                 key={resetKey2}
-                                                                className="ml-2"
+                                                                className="mr-2"
                                                                 name="bebidas"
                                                                 label="Seleccionar bebida"
                                                                 value={bebida2Seleccionada}
@@ -2967,16 +2995,21 @@ export default function cabaniaTable() {
                                                                 ))}
                                                             </Select>
                                                         </div>
-                                                        <div className="flex">
+                                                        <div className="flex flex-row-reverse mb-2">
                                                             <Input
-                                                                className="mr-2"
+                                                                className="ml-2"
                                                                 name="bebidas"
                                                                 label="Ingrese la cantidad"
-                                                                type="number"
+                                                                type="text"
                                                                 value={isNaN(cantidadBebida3) ? '' : cantidadBebida3}
                                                                 onChange={(e) => {
                                                                     const value = parseInt(e.target.value, 10);
                                                                     setCantidadBebida3(isNaN(value) ? "" : value);
+                                                                }}
+                                                                onKeyDown={(event) => {
+                                                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                                        event.preventDefault();
+                                                                    }
                                                                 }}
                                                             />
                                                             <Input
@@ -2987,7 +3020,7 @@ export default function cabaniaTable() {
                                                             />
                                                             <Select
                                                                 key={resetKey3}
-                                                                className="ml-2"
+                                                                className="mr-2"
                                                                 name="bebidas"
                                                                 label="Seleccionar bebida"
                                                                 value={bebida3Seleccionada}
@@ -3016,16 +3049,21 @@ export default function cabaniaTable() {
                                                                 ))}
                                                             </Select>
                                                         </div>
-                                                        <div className="flex">
+                                                        <div className="flex flex-row-reverse " >
                                                             <Input
-                                                                className="mr-2"
+                                                                className="ml-2"
                                                                 name="bebidas"
                                                                 label="Ingrese la cantidad"
-                                                                type="number"
+                                                                type="text"
                                                                 value={isNaN(cantidadBebida4) ? '' : cantidadBebida4}
                                                                 onChange={(e) => {
                                                                     const value = parseInt(e.target.value, 10);
                                                                     setCantidadBebida4(isNaN(value) ? "" : value);
+                                                                }}
+                                                                onKeyDown={(event) => {
+                                                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                                        event.preventDefault();
+                                                                    }
                                                                 }}
                                                             />
                                                             <Input
@@ -3036,7 +3074,7 @@ export default function cabaniaTable() {
                                                             />
                                                             <Select
                                                                 key={resetKey4}
-                                                                className="ml-2"
+                                                                className="mr-2"
                                                                 name="bebidas"
                                                                 label="Seleccionar bebida"
                                                                 value={bebida4Seleccionada}
@@ -3113,18 +3151,23 @@ export default function cabaniaTable() {
                                                             >
                                                                 Cortesía pasadia
                                                             </Checkbox>
-                                                            <div className="flex">
+                                                            <div className="flex flex-row-reverse">
                                                                 <input
-                                                                    className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                                                    className="inventario-box-option-input-01 outline-none pl-2 mb-2 ml-2"
                                                                     name="restaurante"
                                                                     placeholder="Ingrese la cantidad"
-                                                                    type="number"
+                                                                    type="text"
                                                                     value={isNaN(cantidadFood) ? '' : cantidadFood}
                                                                     onChange={(e) => {
                                                                         const value = parseInt(e.target.value);
                                                                         setCantidadFood(isNaN(value) ? '' : value);
                                                                     }}
                                                                     style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                                                                    onKeyDown={(event) => {
+                                                                        if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                                            event.preventDefault();
+                                                                        }
+                                                                    }}
 
                                                                 />
                                                                 <input
@@ -3135,7 +3178,7 @@ export default function cabaniaTable() {
                                                                 />
                                                                 <Select
                                                                     key={resetKey}
-                                                                    className="ml-2 mt-1 "
+                                                                    className="mr-2 mt-1 "
                                                                     name="restaurante"
                                                                     label="Seleccionar comida"
                                                                     value={foodSeleccionada}
@@ -3170,19 +3213,24 @@ export default function cabaniaTable() {
                                                                     ))}
                                                                 </Select>
                                                             </div>
-                                                            <div className="flex">
+                                                            <div className="flex flex-row-reverse">
 
                                                                 <input
-                                                                    className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                                                    className="inventario-box-option-input-01 outline-none pl-2 mb-2 ml-2"
                                                                     name="restaurante"
                                                                     placeholder="Ingrese la cantidad"
-                                                                    type="number"
+                                                                    type="text"
                                                                     value={isNaN(cantidadFood1) ? '' : cantidadFood1}
                                                                     onChange={(e) => {
                                                                         const value = parseInt(e.target.value);
                                                                         setCantidadFood1(isNaN(value) ? '' : value);
                                                                     }}
                                                                     style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                                                                    onKeyDown={(event) => {
+                                                                        if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                                            event.preventDefault();
+                                                                        }
+                                                                    }}
                                                                 />
                                                                 <input
                                                                     disabled
@@ -3193,7 +3241,7 @@ export default function cabaniaTable() {
                                                                 />
                                                                 <Select
                                                                     key={resetKey1}
-                                                                    className="ml-2 mt-1"
+                                                                    className="mr-2 mt-1"
                                                                     name="restaurante"
                                                                     label="Seleccionar comida"
                                                                     value={food1Seleccionada}
@@ -3225,17 +3273,22 @@ export default function cabaniaTable() {
                                                                     ))}
                                                                 </Select>
                                                             </div>
-                                                            <div className="flex">
+                                                            <div className="flex flex-row-reverse">
 
                                                                 <input
-                                                                    className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                                                    className="inventario-box-option-input-01 outline-none pl-2 mb-2 ml-2"
                                                                     name="restaurante"
                                                                     placeholder="Ingrese la cantidad"
-                                                                    type="number"
+                                                                    type="text"
                                                                     value={isNaN(cantidadFood2) ? '' : cantidadFood2}
                                                                     onChange={(e) => {
                                                                         const value = parseInt(e.target.value);
                                                                         setCantidadFood2(isNaN(value) ? '' : value);
+                                                                    }}
+                                                                    onKeyDown={(event) => {
+                                                                        if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                                            event.preventDefault();
+                                                                        }
                                                                     }}
                                                                     style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                                                 />
@@ -3248,7 +3301,7 @@ export default function cabaniaTable() {
                                                                 />
                                                                 <Select
                                                                     key={resetKey2}
-                                                                    className="ml-2 mt-1"
+                                                                    className="mr-2 mt-1"
                                                                     name="restaurante"
                                                                     label="Seleccionar comida"
                                                                     value={food2Seleccionada}
@@ -3278,17 +3331,22 @@ export default function cabaniaTable() {
                                                                     ))}
                                                                 </Select>
                                                             </div>
-                                                            <div className="flex">
+                                                            <div className="flex flex-row-reverse">
 
                                                                 <input
-                                                                    className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                                                    className="inventario-box-option-input-01 outline-none pl-2 mb-2 ml-2"
                                                                     name="restaurante"
                                                                     placeholder="Ingrese la cantidad"
-                                                                    type="number"
+                                                                    type="text"
                                                                     value={isNaN(cantidadFood3) ? '' : cantidadFood3}
                                                                     onChange={(e) => {
                                                                         const value = parseInt(e.target.value);
                                                                         setCantidadFood3(isNaN(value) ? '' : value);
+                                                                    }}
+                                                                    onKeyDown={(event) => {
+                                                                        if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                                            event.preventDefault();
+                                                                        }
                                                                     }}
                                                                     style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                                                 />
@@ -3301,7 +3359,7 @@ export default function cabaniaTable() {
                                                                 />
                                                                 <Select
                                                                     key={resetKey3}
-                                                                    className="ml-2 mt-1"
+                                                                    className="mr-2 mt-1"
                                                                     name="restaurante"
                                                                     label="Seleccionar comida"
                                                                     value={food3Seleccionada}
@@ -3331,17 +3389,22 @@ export default function cabaniaTable() {
                                                                     ))}
                                                                 </Select>
                                                             </div>
-                                                            <div className="flex">
+                                                            <div className="flex flex-row-reverse">
 
                                                                 <input
-                                                                    className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                                                    className="inventario-box-option-input-01 outline-none pl-2 mb-2 ml-2"
                                                                     name="restaurante"
                                                                     placeholder="Ingrese la cantidad"
-                                                                    type="number"
+                                                                    type="text"
                                                                     value={isNaN(cantidadFood4) ? '' : cantidadFood4}
                                                                     onChange={(e) => {
                                                                         const value = parseInt(e.target.value);
                                                                         setCantidadFood4(isNaN(value) ? '' : value);
+                                                                    }}
+                                                                    onKeyDown={(event) => {
+                                                                        if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                                            event.preventDefault();
+                                                                        }
                                                                     }}
                                                                     style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                                                 />
@@ -3354,7 +3417,7 @@ export default function cabaniaTable() {
                                                                 />
                                                                 <Select
                                                                     key={resetKey4}
-                                                                    className="ml-2 mt-1"
+                                                                    className="mr-2 mt-1"
                                                                     name="restaurante"
                                                                     label="Seleccionar comida"
                                                                     value={food4Seleccionada}
@@ -3406,16 +3469,21 @@ export default function cabaniaTable() {
                                                         </Checkbox>
 
 
-                                                        <div className="flex mb-1">
+                                                        <div className="flex mb-1 flex-row-reverse">
                                                             <input
-                                                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 ml-2"
                                                                 name="restaurante"
                                                                 placeholder="Ingrese la cantidad"
-                                                                type="number"
+                                                                type="text"
                                                                 value={isNaN(cantidadItem) ? '' : cantidadItem}
                                                                 onChange={(e) => {
                                                                     const value = parseInt(e.target.value);
                                                                     setCantidadItem(isNaN(value) ? '' : value);
+                                                                }}
+                                                                onKeyDown={(event) => {
+                                                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                                        event.preventDefault();
+                                                                    }
                                                                 }}
                                                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                                             />
@@ -3428,7 +3496,7 @@ export default function cabaniaTable() {
                                                             />
                                                             <Select
                                                                 key={resetKey}
-                                                                className="ml-2 mt-1"
+                                                                className="mr-2 mt-1"
                                                                 name="restaurante"
                                                                 label="Seleccionar comida"
                                                                 value={itemSeleccionado}
@@ -3461,16 +3529,21 @@ export default function cabaniaTable() {
                                                             </Select>
                                                         </div>
 
-                                                        <div className="flex mb-1">
+                                                        <div className="flex mb-1 flex-row-reverse">
                                                             <input
-                                                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 ml-2"
                                                                 name="restaurante"
                                                                 placeholder="Ingrese la cantidad"
-                                                                type="number"
+                                                                type="text"
                                                                 value={isNaN(cantidadItem1) ? '' : cantidadItem1}
                                                                 onChange={(e) => {
                                                                     const value = parseInt(e.target.value);
                                                                     setCantidadItem1(isNaN(value) ? '' : value);
+                                                                }}
+                                                                onKeyDown={(event) => {
+                                                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                                        event.preventDefault();
+                                                                    }
                                                                 }}
                                                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                                             />
@@ -3483,7 +3556,7 @@ export default function cabaniaTable() {
                                                             />
                                                             <Select
                                                                 key={resetKey1}
-                                                                className="ml-2 mt-1"
+                                                                className="mr-2 mt-1"
                                                                 name="restaurante"
                                                                 label="Seleccionar comida"
                                                                 value={itemSeleccionado1}
@@ -3516,16 +3589,21 @@ export default function cabaniaTable() {
                                                             </Select>
                                                         </div>
 
-                                                        <div className="flex mb-1">
+                                                        <div className="flex mb-1 flex-row-reverse">
                                                             <input
-                                                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 ml-2"
                                                                 name="restaurante"
                                                                 placeholder="Ingrese la cantidad"
-                                                                type="number"
+                                                                type="text"
                                                                 value={isNaN(cantidadItem2) ? '' : cantidadItem2}
                                                                 onChange={(e) => {
                                                                     const value = parseInt(e.target.value);
                                                                     setCantidadItem2(isNaN(value) ? '' : value);
+                                                                }}
+                                                                onKeyDown={(event) => {
+                                                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                                        event.preventDefault();
+                                                                    }
                                                                 }}
                                                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                                             />
@@ -3538,7 +3616,7 @@ export default function cabaniaTable() {
                                                             />
                                                             <Select
                                                                 key={resetKey2}
-                                                                className="ml-2 mt-1"
+                                                                className="mr-2 mt-1"
                                                                 name="restaurante"
                                                                 label="Seleccionar comida"
                                                                 value={itemSeleccionado2}
@@ -3571,16 +3649,21 @@ export default function cabaniaTable() {
                                                             </Select>
                                                         </div>
 
-                                                        <div className="flex mb-1">
+                                                        <div className="flex mb-1 flex-row-reverse">
                                                             <input
-                                                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 ml-2"
                                                                 name="restaurante"
                                                                 placeholder="Ingrese la cantidad"
-                                                                type="number"
+                                                                type="text"
                                                                 value={isNaN(cantidadItem3) ? '' : cantidadItem3}
                                                                 onChange={(e) => {
                                                                     const value = parseInt(e.target.value);
                                                                     setCantidadItem3(isNaN(value) ? '' : value);
+                                                                }}
+                                                                onKeyDown={(event) => {
+                                                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                                        event.preventDefault();
+                                                                    }
                                                                 }}
                                                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                                             />
@@ -3593,7 +3676,7 @@ export default function cabaniaTable() {
                                                             />
                                                             <Select
                                                                 key={resetKey3}
-                                                                className="ml-2 mt-1"
+                                                                className="mr-2 mt-1"
                                                                 name="restaurante"
                                                                 label="Seleccionar comida"
                                                                 value={itemSeleccionado3}
@@ -3626,16 +3709,21 @@ export default function cabaniaTable() {
                                                             </Select>
                                                         </div>
 
-                                                        <div className="flex mb-1">
+                                                        <div className="flex mb-1 flex-row-reverse">
                                                             <input
-                                                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 ml-2"
                                                                 name="restaurante"
                                                                 placeholder="Ingrese la cantidad"
-                                                                type="number"
+                                                                type="text"
                                                                 value={isNaN(cantidadItem4) ? '' : cantidadItem4}
                                                                 onChange={(e) => {
                                                                     const value = parseInt(e.target.value);
                                                                     setCantidadItem4(isNaN(value) ? '' : value);
+                                                                }}
+                                                                onKeyDown={(event) => {
+                                                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                                        event.preventDefault();
+                                                                    }
                                                                 }}
                                                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                                             />
@@ -3648,7 +3736,7 @@ export default function cabaniaTable() {
                                                             />
                                                             <Select
                                                                 key={resetKey4}
-                                                                className="ml-2 mt-1"
+                                                                className="mr-2 mt-1"
                                                                 name="restaurante"
                                                                 label="Seleccionar comida"
                                                                 value={itemSeleccionado4}
@@ -3731,6 +3819,7 @@ export default function cabaniaTable() {
                                                 >
                                                     Agregar algo mas
                                                 </DropdownItem>
+                                                <DropdownItem key="finalizado" color="primary" onClick={() => handleOpenModal(cliente)}>Ver compras</DropdownItem>
 
                                             </DropdownMenu>
                                         )}
@@ -3751,6 +3840,7 @@ export default function cabaniaTable() {
                                                 >
                                                     Agregar algo mas
                                                 </DropdownItem>
+                                                <DropdownItem key="finalizado" color="primary" onClick={() => handleOpenModal(cliente)}>Ver compras</DropdownItem>
                                             </DropdownMenu>
                                         )}
                                         {/* No se muestra ningún menú desplegable para los estados 'cancelado' y 'finalizado' */}

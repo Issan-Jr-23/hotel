@@ -100,6 +100,9 @@ const clienteSchema = new mongoose.Schema({
     fechaActivacion: {
       type: Date, 
       default: null  
+  },
+    pago:{
+    type: Number, default:0
   }
 });
 

@@ -46,6 +46,7 @@ const clienteSchema = new mongoose.Schema({
   cantidadPersonas: {
     adultos: {
       type: Number,
+      default: 0
     },
     ninios: {
       type: Number,

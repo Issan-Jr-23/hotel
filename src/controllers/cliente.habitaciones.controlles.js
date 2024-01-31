@@ -506,3 +506,145 @@ export const addFoodAdicionalSubproducto = async (req, res) => {
   }
 };
 
+
+
+
+
+
+export const resTotal = async (req, res) => {
+  try {
+    const identificacion = req.params.id;
+    console.log("response: ", identificacion)
+     const usuario = await Habitaciones.findOne({ identificacion: identificacion });
+    if (!usuario) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+    let totalRes = 0;
+    let totalBar = 0;
+    let totalRec = 0;
+    let totalDes = 0;
+    if (usuario.restaurante && usuario.restaurante.length > 0) {
+      usuario.restaurante.forEach((item) => {
+        totalRes += item.cantidad * item.precio;
+      });
+    }
+    if (usuario.bebidas && usuario.bebidas.length > 0) {
+      usuario.bebidas.forEach((item) => {
+        totalBar += item.cantidad * item.precio;
+      });
+    }
+
+    if (usuario.recepcion && usuario.recepcion.length > 0) {
+      usuario.recepcion.forEach((item) => {
+        totalRec += item.cantidad * item.precio;
+      });
+    }
+
+    if(usuario.descorche && usuario.recepcion.length > 0){
+      usuario.descorche.forEach((item) => {
+        totalDes += item.precio;
+      })
+    }
+
+    res.status(200).json({
+  restaurante: totalRes || 0,
+  bar: totalBar || 0,
+  recepcion: totalRec || 0,
+  descorche: totalDes || 0,
+  total: (totalRes || 0) + (totalBar || 0) + (totalRec || 0) + (totalDes || 0)
+});
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+}
+
+export const postPago = async (req, res) => {
+  try {
+    const identificacion = req.params.id;
+    console.log("id: ", identificacion)
+    console.log("response: ", identificacion)
+     const usuario = await Habitaciones.findOne({ identificacion: identificacion });
+    if (!usuario) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+    let totalRes = 0;
+    let totalBar = 0;
+    let totalRec = 0;
+    let totalDes = 0;
+    let reserva = "";
+    let anticipado = 0;
+    let posterior = 0;
+    let pendiente = 0;
+    let id = 0;
+    if (usuario.restaurante && usuario.restaurante.length > 0) {
+      usuario.restaurante.forEach((item) => {
+        totalRes += item.cantidad * item.precio;
+      });
+    }
+
+    if (usuario.bebidas && usuario.bebidas.length > 0) {
+      usuario.bebidas.forEach((item) => {
+        totalBar += item.cantidad * item.precio;
+      });
+    }
+
+    if (usuario.recepcion && usuario.recepcion.length > 0) {
+      usuario.recepcion.forEach((item) => {
+        totalRec += item.cantidad * item.precio;
+      });
+    }
+
+    if(usuario.descorche && usuario.recepcion.length > 0){
+      usuario.descorche.forEach((item) => {
+        totalDes += item.precio;
+      })
+    }
+
+    reserva = usuario.reserva;
+    anticipado = usuario.pagoAnticipado;
+    posterior = usuario.pagoPendiente;
+    pendiente = usuario.nuevoTotal;
+    id = usuario.identificacion;
+
+    res.status(200).json({
+      restaurante: totalRes || 0,
+      bar: totalBar || 0,
+      recepcion: totalRec || 0,
+      descorche: totalDes || 0,
+      reserva: reserva,
+      anticipado: anticipado || 0,
+      posterior: posterior || 0,
+      pendiente: pendiente || 0,
+      identificacion: id || 0
+      });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+}
+
+export const actualizarValor = async (req, res) => {
+  try {
+    const { id, valor } = req.body;
+    console.log("id del usuario: ",id)
+
+    const cliente = await Habitaciones.findOne({identificacion: id});
+    if (!cliente) {
+      return res.status(404).json({ error: 'Cliente no encontrado' });
+    }
+
+    cliente.pago = valor;
+
+    await cliente.save();
+
+    res.json(cliente);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+  }
+
+
+

@@ -99,6 +99,7 @@ export const postPago = async (req, res) => {
     let anticipado = 0;
     let posterior = 0;
     let pendiente = 0;
+    let id = 0;
     if (usuario.restaurante && usuario.restaurante.length > 0) {
       usuario.restaurante.forEach((item) => {
         totalRes += item.cantidad * item.precio;
@@ -127,6 +128,7 @@ export const postPago = async (req, res) => {
     anticipado = usuario.pagoAnticipado;
     posterior = usuario.pagoPendiente;
     pendiente = usuario.nuevoTotal;
+    id = usuario.identificacion;
 
     res.status(200).json({
       restaurante: totalRes || 0,
@@ -136,7 +138,8 @@ export const postPago = async (req, res) => {
       reserva: reserva,
       anticipado: anticipado || 0,
       posterior: posterior || 0,
-      pendiente: pendiente || 0
+      pendiente: pendiente || 0,
+      identificacion: id || 0
       });
   } catch (error) {
     console.error(error);
@@ -147,26 +150,26 @@ export const postPago = async (req, res) => {
 export const actualizarValor = async (req, res) => {
   try {
     const { id, valor } = req.body;
+    console.log("id del usuario: ",id)
 
-    // Verifica si la cabania existe
-    const cabania = await Cabania.findOne({ id });
-
-    if (!cabania) {
-      return res.status(404).json({ mensaje: 'Cabania no encontrada' });
+    const cliente = await Cabania.findOne({identificacion: id});
+    if (!cliente) {
+      return res.status(404).json({ error: 'Cliente no encontrado' });
     }
 
-    // Actualiza el valor deseado
-    cabania.pago = valor;
+    cliente.pago = valor;
 
-    // Guarda los cambios en la base de datos
-    await cabania.save();
+    await cliente.save();
 
-    res.json({ mensaje: 'Valor actualizado correctamente' });
+    res.json(cliente);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ mensaje: 'Error interno del servidor' });
+    res.status(500).json({ error: 'Error interno del servidor' });
   }
-};
+  }
+
+
+
 
 
 export const crearCliente = async (req, res) => {
@@ -339,7 +342,7 @@ export const obtenerCPI = async (req, res) => {
 
 export const updatePP = async (req, res) => {
   const clienteId = req.params.id;
-  const { pagoPendiente, mediosDePagoPendiente } = req.body; 
+  const { pagoPendiente, mediosDePagoPendiente } = req.body;
 
   try {
     const clienteActual = await Cabania.findOne({ identificacion: clienteId });
@@ -347,11 +350,13 @@ export const updatePP = async (req, res) => {
       return res.status(404).json({ message: 'Cliente no encontrado' });
     }
 
+    const nuevoValorPagoPendiente = (Number(clienteActual.pagoPendiente) || 0) + Number(pagoPendiente);
+
     const nuevoValorTotal = clienteActual.nuevoTotal - pagoPendiente;
 
     const clienteActualizado = await Cabania.findOneAndUpdate(
-      { identificacion: clienteId }, 
-      { nuevoTotal: nuevoValorTotal, pagoPendiente, mediosDePagoPendiente },
+      { identificacion: clienteId },
+      { nuevoTotal: nuevoValorTotal, pagoPendiente: nuevoValorPagoPendiente, mediosDePagoPendiente },
       { new: true }
     );
 
@@ -359,14 +364,13 @@ export const updatePP = async (req, res) => {
       return res.status(404).json({ message: 'Error al actualizar el cliente' });
     }
 
-
-
     res.status(200).json({ message: `Datos del cliente ${clienteId} actualizados correctamente`, cliente: clienteActualizado });
   } catch (error) {
     console.error('Error al actualizar el cliente:', error);
     res.status(500).json({ message: 'Error al actualizar el cliente' });
   }
 };
+
 
 
 export const updateClientCts = async (req, res) => {

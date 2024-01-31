@@ -1,6 +1,5 @@
 import fs  from '../models/welcome.model.js';
 
-// Controlador para obtener la plantilla actual
 export const getTemplate = async (req, res) => {
   try {
     const template = await fs.readFile('welcomeTemplate.json', 'utf8');
@@ -10,7 +9,6 @@ export const getTemplate = async (req, res) => {
   }
 };
 
-// Controlador para actualizar la plantilla
 export const updateTemplate = async (req, res) => {
   try {
     await fs.writeFile('welcomeTemplate.json', JSON.stringify(req.body, null, 2), 'utf8');

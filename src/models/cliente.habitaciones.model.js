@@ -79,7 +79,7 @@ const clienteSchema = new mongoose.Schema({
     required: false,
     default: [],
   },
-  consumoTotal: {
+  nuevoTotal: {
     type: Number,
     default: 0
   },
@@ -98,6 +98,9 @@ const clienteSchema = new mongoose.Schema({
     fechaActivacion: {
       type: Date, 
       default: null  
+  },
+    pago:{
+    type: Number, default:0
   }
 });
 
