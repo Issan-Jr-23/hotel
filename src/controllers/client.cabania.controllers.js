@@ -342,7 +342,7 @@ export const obtenerCPI = async (req, res) => {
 
 export const updatePP = async (req, res) => {
   const clienteId = req.params.id;
-  const { pagoPendiente, mediosDePagoPendiente } = req.body;
+  const { pagoPendiente, mediosDePagoPendiente } = req.body; 
 
   try {
     const clienteActual = await Cabania.findOne({ identificacion: clienteId });
@@ -421,7 +421,7 @@ export const actualizarFacturacion = async (req, res) => {
 export const getClienteByIdentificacion = async (req, res) => {
   try {
     const identificacion = req.params.identificacion;
-    const cliente = await Cabania.findOne({ identificacion: identificacion }); // Busca por el campo 'identificacion'
+    const cliente = await Cabania.findOne({ identificacion: identificacion });
 
     if (!cliente) {
       return res.status(404).send('Cliente no encontrado');

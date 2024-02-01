@@ -1677,6 +1677,8 @@ export default function review() {
 
                 }
 
+                closeModal();
+
             } catch (error) {
                 console.error('Hubo un problema con la petición Axios:', error);
             }
@@ -1813,7 +1815,7 @@ export default function review() {
                 if (y > 282) { // 297 - Margen inferior
                     // Cambiar a una nueva página
                     pdf.addPage();
-                    y = 10; // Reiniciar la posición Y
+                    y = 10; // Reiniciar la posición Y 
                 }
             }
         };

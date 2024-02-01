@@ -10,7 +10,7 @@ import { green, purple, blue, red } from '@mui/material/colors';
 import chevron from "../../images/right.png";
 import { VerticalDotsIcon } from "../iconos/VerticalDotsIcon.jsx"
 import Brightness1Icon from '@mui/icons-material/Brightness1';
-import loading_progress from "../../images/Animation-alternativa-loading.json"
+import loading_progress from "../../images/Animation-alternativa-loading.json" 
 import plus from "../../images/plus.png";
 import plusb from "../../images/plus_blue.png";
 import Lottie from "react-lottie"
@@ -245,7 +245,8 @@ export default function habitacionesTable() {
     mediosDePagoPendiente: "",
     pagoPendiente: "",
     fechaPasadia: "",
-    habitaciones: ""
+    habitaciones: "",
+    nuevoTotal: ""
   });
 
 
@@ -315,6 +316,9 @@ export default function habitacionesTable() {
   const handleInputChange = (event, fieldName) => {
     const { name, value } = event.target;
     const totalCosto = (valorHabitaciones);
+    const data = formData.pagoAnticipado + formData.pagoPendiente;
+    const result = totalCosto - data;
+    formData.nuevoTotal = result;
     const totalPendiente = totalCosto;
     if ((name === 'pagoPendiente' && parseFloat(value) > totalPendiente) ||
       (name === 'pagoAnticipado' && parseFloat(value) > totalCosto)) {
@@ -323,6 +327,7 @@ export default function habitacionesTable() {
       setFormData({
         ...formData,
         [name]: value,
+        nuevoTotal: formData.nuevoTotal,
         ...(fieldName ? { cantidadPersonas: { ...formData.cantidadPersonas, [fieldName]: parseInt(value, 10) } } : {})
       });
     }
@@ -1522,6 +1527,7 @@ export default function habitacionesTable() {
                     const responses = await AxiosInstance.get(`/habitaciones-clientes?page=${paginaActual}`);
                     setUsers(responses.data.clientes);
                     setTotalPaginas(responses.data.totalPages);
+                     closeModal();
                 } else {
                     console.log("ingresos al condicional")
                     const calculo1 = restaurante + bar + recepcion + descorche + anticipado + posterior + pendiente;

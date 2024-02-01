@@ -202,31 +202,35 @@ export const obtenerCPI = async (req, res) => {
 
 export const updatePP = async (req, res) => {
   const clienteId = req.params.id;
-  const { pagoPendiente, mediosDePagoPendiente } = req.body;
+  const { pagoPendiente, mediosDePagoPendiente } = req.body; 
 
   try {
-    // Busca el cliente por su identificación y actualiza
-    const cliente = await Habitaciones.findOneAndUpdate(
-      { identificacion: clienteId }, // Asegúrese de que esta línea esté utilizando la variable correcta `clienteId`
-      { pagoPendiente, mediosDePagoPendiente },
-      { new: true } // Devuelve el documento modificado
-    );
-
-    if (!cliente) {
+    const clienteActual = await Habitaciones.findOne({ identificacion: clienteId });
+    if (!clienteActual) {
       return res.status(404).json({ message: 'Cliente no encontrado' });
     }
 
-    console.log(`Cliente con ID ${clienteId} ha sido actualizado con la siguiente información:`);
-    console.log('Pago Pendiente:', pagoPendiente);
-    console.log('Medios de Pago Pendiente:', mediosDePagoPendiente);
+    const nuevoValorPagoPendiente = (Number(clienteActual.pagoPendiente) || 0) + Number(pagoPendiente);
 
-    // Respuesta exitosa con el cliente actualizado
-    res.status(200).json({ message: `Datos del cliente ${clienteId} actualizados correctamente`, cliente });
+    const nuevoValorTotal = clienteActual.nuevoTotal - pagoPendiente;
+
+    const clienteActualizado = await Habitaciones.findOneAndUpdate(
+      { identificacion: clienteId },
+      { nuevoTotal: nuevoValorTotal, pagoPendiente: nuevoValorPagoPendiente, mediosDePagoPendiente },
+      { new: true }
+    );
+
+    if (!clienteActualizado) {
+      return res.status(404).json({ message: 'Error al actualizar el cliente' });
+    }
+
+    res.status(200).json({ message: `Datos del cliente ${clienteId} actualizados correctamente`, cliente: clienteActualizado });
   } catch (error) {
     console.error('Error al actualizar el cliente:', error);
     res.status(500).json({ message: 'Error al actualizar el cliente' });
   }
 };
+
 
 export const updateClientCts = async (req, res) => {
   const identificacion = req.params.id;
@@ -647,4 +651,18 @@ export const actualizarValor = async (req, res) => {
   }
 
 
+export const getClienteByIdentificacion = async (req, res) => {
+  try {
+    const identificacion = req.params.identificacion;
+    const cliente = await Habitaciones.findOne({ identificacion: identificacion });
 
+    if (!cliente) {
+      return res.status(404).send('Cliente no encontrado');
+    }
+
+    res.json(cliente);
+  } catch (error) {
+    console.error('Error al obtener el cliente:', error);
+    res.status(500).send('Error interno del servidor');
+  }
+};
