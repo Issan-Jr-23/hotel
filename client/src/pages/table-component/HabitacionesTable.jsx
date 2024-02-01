@@ -10,7 +10,7 @@ import { green, purple, blue, red } from '@mui/material/colors';
 import chevron from "../../images/right.png";
 import { VerticalDotsIcon } from "../iconos/VerticalDotsIcon.jsx"
 import Brightness1Icon from '@mui/icons-material/Brightness1';
-import loading_progress from "../../images/Animation-alternativa-loading.json" 
+import loading_progress from "../../images/Animation-alternativa-loading.json"
 import plus from "../../images/plus.png";
 import plusb from "../../images/plus_blue.png";
 import Lottie from "react-lottie"
@@ -213,12 +213,16 @@ export default function habitacionesTable() {
 
   const [isSaving, setIsSaving] = useState(false);
   const [resetKey, setResetKey] = useState(0);
+  const [resetKey1, setResetKey1] = useState(0);
+  const [resetKey2, setResetKey2] = useState(0);
+  const [resetKey3, setResetKey3] = useState(0);
+  const [resetKey4, setResetKey4] = useState(0);
 
 
-    const [resTotal, setResTotal] = useState({});
-    const [barTotal, setBarTotal] = useState({});
-    const [recTotal, setRecTotal] = useState({});
-    const [desTotal, setDesTotal] = useState({});
+  const [resTotal, setResTotal] = useState({});
+  const [barTotal, setBarTotal] = useState({});
+  const [recTotal, setRecTotal] = useState({});
+  const [desTotal, setDesTotal] = useState({});
 
 
   const [openAb, setOpenAb] = React.useState(false);
@@ -299,39 +303,56 @@ export default function habitacionesTable() {
     setBusqueda(event.target.value);
   };
 
-    // if (name === 'identificacion') {
-    //   setErrorIdentificacion(!value);
-    // } else if (name === 'nombre') {
-    //   setErrorNombre(!value);
-    // } else if (name === 'fechaPasadia') {
-    //   setErrorFechaPasadia(!value);
-    // } else if (name === 'reserva') {
-    //   setErrorReserva(!value);
-    // } else if (name === 'adultos') {
-    //   setErrorAdultos(!value)
-    // } else if (name === 'habitaciones') {
 
-    // }
+const handleInputChange = (event, fieldName) => {
+  let { name, value } = event.target;
+  if (name === 'identificacion') {
+    setErrorIdentificacion(!value);
+  } else if (name === 'nombre') {
+    setErrorNombre(!value);
+  } else if (name === 'fechaPasadia') {
+    setErrorFechaPasadia(!value);
+  } else if (name === 'reserva') {
+    setErrorReserva(!value);
+  } else if (name === 'adultos') {
+    setErrorAdultos(!value)
+  } else if (name === 'habitaciones') {
 
-  const handleInputChange = (event, fieldName) => {
-    const { name, value } = event.target;
-    const totalCosto = (valorHabitaciones);
-    const data = formData.pagoAnticipado + formData.pagoPendiente;
-    const result = totalCosto - data;
-    formData.nuevoTotal = result;
-    const totalPendiente = totalCosto;
-    if ((name === 'pagoPendiente' && parseFloat(value) > totalPendiente) ||
-      (name === 'pagoAnticipado' && parseFloat(value) > totalCosto)) {
-      alert('El monto no puede ser mayor que el costo total o el monto pendiente.');
-    } else {
-      setFormData({
-        ...formData,
-        [name]: value,
-        nuevoTotal: formData.nuevoTotal,
-        ...(fieldName ? { cantidadPersonas: { ...formData.cantidadPersonas, [fieldName]: parseInt(value, 10) } } : {})
-      });
-    }
-  };
+  }
+
+if (formData.pagoAnticipado < 1000) {
+  formData.pagoAnticipado = 0
+}else {
+  formData.pagoPendiente = 0
+}
+  console.log("data 1: ",formData.pagoAnticipado)
+  console.log("data 2: ",formData.pagoPendiente)
+
+  let adjustedValue;
+  if (value === '') {
+    adjustedValue = '0';
+  } else {
+    adjustedValue = value.startsWith('0') && value.length > 1 ? value.substring(1) : value;
+  }
+  const numericValue = fieldName ? parseInt(adjustedValue, 10) : adjustedValue;
+  const totalCosto = valorHabitaciones;
+  const data = parseFloat(formData.pagoAnticipado || '0') + parseFloat(formData.pagoPendiente || '0');
+  const result = totalCosto - data;
+  if ((name === 'pagoPendiente' && parseFloat(adjustedValue) > totalCosto) ||
+    (name === 'pagoAnticipado' && parseFloat(adjustedValue) > totalCosto)) {
+    alert('El monto no puede ser mayor que el costo total o el monto pendiente.');
+  } else {
+    setFormData({
+      ...formData,
+      [name]: numericValue,
+      nuevoTotal: result,
+      ...(fieldName ? { cantidadPersonas: { ...formData.cantidadPersonas, [fieldName]: numericValue } } : {})
+    });
+  }
+};
+
+
+
 
 
   const handleReservaChange = (selectedSize) => {
@@ -403,7 +424,6 @@ export default function habitacionesTable() {
       throw error;
     }
   };
-
 
   const handleGuardarBebida = async () => {
 
@@ -680,6 +700,7 @@ export default function habitacionesTable() {
       const responses = await AxiosInstance.get(`/habitaciones-clientes?page=${paginaActual}`);
       setUsers(responses.data.clientes);
       setTotalPaginas(responses.data.totalPages);
+      handleCloseAb();
     } catch (error) {
       console.error('Error al guardar la bebida en el cliente:', error.message);
       setIsSaving(false);
@@ -1092,11 +1113,11 @@ export default function habitacionesTable() {
       toast.success('Comida guardada exitosamente!');
       setEsCortesia(false);
       closeModalF();
-      resetInpurGuardarFood();
       setIsSaving(false);
       const responses = await AxiosInstance.get(`/habitaciones-clientes?page=${paginaActual}`);
       setUsers(responses.data.clientes);
       setTotalPaginas(responses.data.totalPages);
+      handleCloseAf();
     } catch (error) {
       setIsSaving(false);
       console.error('Error al guardar la bebida en el cliente:', error.message);
@@ -1479,18 +1500,18 @@ export default function habitacionesTable() {
     mediosDePagoPendiente: ''
   });
 
-    const seleccionarCliente = async (identificacion) => {
-        console.log("id: ", identificacion)
-        const response = await AxiosInstance.get(`/habitaciones-totalidad-pago/${identificacion}`)
-        const { restaurante, bar, recepcion, descorche } = response.data
-        console.log("datos del restaurante: ",restaurante)
-        setResTotal(restaurante)
-        setBarTotal(bar)
-        setRecTotal(recepcion)
-        setDesTotal(descorche)
-        setSelectedClienteId(identificacion);
-        calcularPagoPendiente(identificacion);
-    };
+  const seleccionarCliente = async (identificacion) => {
+    console.log("id: ", identificacion)
+    const response = await AxiosInstance.get(`/habitaciones-totalidad-pago/${identificacion}`)
+    const { restaurante, bar, recepcion, descorche } = response.data
+    console.log("datos del restaurante: ", restaurante)
+    setResTotal(restaurante)
+    setBarTotal(bar)
+    setRecTotal(recepcion)
+    setDesTotal(descorche)
+    setSelectedClienteId(identificacion);
+    calcularPagoPendiente(identificacion);
+  };
 
   const handleInputChanges = (e) => {
     const { name, value } = e.target;
@@ -1508,65 +1529,65 @@ export default function habitacionesTable() {
     }
   };
 
-    const actualizarDatosCliente = async (data1, data2, estado, userId) => {
-        console.log("DATOS ENVIADOS: ", estado, userId)
-        await handleStatus(estado, userId)
+  const actualizarDatosCliente = async (data1, data2, estado, userId) => {
+    console.log("DATOS ENVIADOS: ", estado, userId)
+    await handleStatus(estado, userId)
 
-        if (selectedClienteId) {
-            try {
-                const responseData = await AxiosInstance.get(`/habitaciones-totalidad-reserva-pago/${selectedClienteId}`);
-                const { identificacion, restaurante, bar, recepcion, descorche, reserva, anticipado, posterior, pendiente } = responseData.data;
-                if (reserva === "Si") {
-                    console.log("ingresos al condicional")
-                    const calculo1 = restaurante + bar + recepcion + descorche + anticipado + posterior + pendiente;
-                    const calculo2 = calculo1 - anticipado;
-                    console.log("id del usuario: ", selectedClienteId)
-                    await AxiosInstance.put(`/habitaciones-actualizar-valor`, { id: selectedClienteId, valor: calculo2 })
-                    console.log("success")
-                    toast.success("datos actualizados")
-                    const responses = await AxiosInstance.get(`/habitaciones-clientes?page=${paginaActual}`);
-                    setUsers(responses.data.clientes);
-                    setTotalPaginas(responses.data.totalPages);
-                     closeModal();
-                } else {
-                    console.log("ingresos al condicional")
-                    const calculo1 = restaurante + bar + recepcion + descorche + anticipado + posterior + pendiente;
-                    console.log("id del usuario: ", selectedClienteId)
-                    await AxiosInstance.put(`/habitaciones-actualizar-valor`, { id: selectedClienteId, valor: calculo1 })
-                    console.log("success")
-                    toast.success("datos actualizados")
-                    const responses = await AxiosInstance.get(`/habitaciones-clientes?page=${paginaActual}`);
-                    setUsers(responses.data.clientes);
-                    setTotalPaginas(responses.data.totalPages);
-                }
-
-                if (pendiente !== 0) {
-                    const clienteResponse = await AxiosInstance.get(`/habitaciones-clientes-identificacion/${selectedClienteId}`);
-                    const clienteData = clienteResponse.data;
-                    const nuevoValorTotal = clienteData.valorTotal - formDatas.pagoPendiente;
-                    const response = await AxiosInstance.put(`/habitaciones-clientes/${selectedClienteId}/actualizar`, {
-                        valorTotal: nuevoValorTotal,
-                        pagoPendiente: formDatas.pagoPendiente,
-                        mediosDePagoPendiente: formDatas.mediosDePagoPendiente
-                    });
-                    setFormDatas({
-                        pagoPendiente: '',
-                        mediosDePagoPendiente: ''
-                    });
-                    toast.success('Datos actualizados exitosamente');
-                    const responses = await AxiosInstance.get(`/habitaciones-clientes?page=${paginaActual}`);
-                    setUsers(responses.data.clientes);
-                    setTotalPaginas(responses.data.totalPages);
-
-                }
-
-            } catch (error) {
-                console.error('Hubo un problema con la petición Axios:', error);
-            }
+    if (selectedClienteId) {
+      try {
+        const responseData = await AxiosInstance.get(`/habitaciones-totalidad-reserva-pago/${selectedClienteId}`);
+        const { identificacion, restaurante, bar, recepcion, descorche, reserva, anticipado, posterior, pendiente } = responseData.data;
+        if (reserva === "Si") {
+          console.log("ingresos al condicional")
+          const calculo1 = restaurante + bar + recepcion + descorche + anticipado + posterior + pendiente;
+          const calculo2 = calculo1 - anticipado;
+          console.log("id del usuario: ", selectedClienteId)
+          await AxiosInstance.put(`/habitaciones-actualizar-valor`, { id: selectedClienteId, valor: calculo2 })
+          console.log("success")
+          toast.success("datos actualizados")
+          const responses = await AxiosInstance.get(`/habitaciones-clientes?page=${paginaActual}`);
+          setUsers(responses.data.clientes);
+          setTotalPaginas(responses.data.totalPages);
+          closeModal();
         } else {
-            console.error('No hay un cliente seleccionado para actualizar');
+          console.log("ingresos al condicional")
+          const calculo1 = restaurante + bar + recepcion + descorche + anticipado + posterior + pendiente;
+          console.log("id del usuario: ", selectedClienteId)
+          await AxiosInstance.put(`/habitaciones-actualizar-valor`, { id: selectedClienteId, valor: calculo1 })
+          console.log("success")
+          toast.success("datos actualizados")
+          const responses = await AxiosInstance.get(`/habitaciones-clientes?page=${paginaActual}`);
+          setUsers(responses.data.clientes);
+          setTotalPaginas(responses.data.totalPages);
         }
-    };
+
+        if (pendiente !== 0) {
+          const clienteResponse = await AxiosInstance.get(`/habitaciones-clientes-identificacion/${selectedClienteId}`);
+          const clienteData = clienteResponse.data;
+          const nuevoValorTotal = clienteData.valorTotal - formDatas.pagoPendiente;
+          const response = await AxiosInstance.put(`/habitaciones-clientes/${selectedClienteId}/actualizar`, {
+            valorTotal: nuevoValorTotal,
+            pagoPendiente: formDatas.pagoPendiente,
+            mediosDePagoPendiente: formDatas.mediosDePagoPendiente
+          });
+          setFormDatas({
+            pagoPendiente: '',
+            mediosDePagoPendiente: ''
+          });
+          toast.success('Datos actualizados exitosamente');
+          const responses = await AxiosInstance.get(`/habitaciones-clientes?page=${paginaActual}`);
+          setUsers(responses.data.clientes);
+          setTotalPaginas(responses.data.totalPages);
+
+        }
+
+      } catch (error) {
+        console.error('Hubo un problema con la petición Axios:', error);
+      }
+    } else {
+      console.error('No hay un cliente seleccionado para actualizar');
+    }
+  };
 
 
   const [displayLimit, setDisplayLimit] = useState(5);
@@ -2352,13 +2373,18 @@ export default function habitacionesTable() {
                     isRequired
                     id="identificacion"
                     name="identificacion"
-                    type="number"
+                    type="text"
 
                     variant="flat"
                     label="IDENTIFICACIÓN DE USUARIO"
                     value={formData.identificacion}
                     onChange={handleInputChange}
                     className={`rounded-xl h-12 border-2 mr-2 ${errorIdentificacion ? 'border-red-500' : 'border-blue-400'}`}
+                    onKeyDown={(event) => {
+                      if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                        event.preventDefault();
+                      }
+                    }}
                   />
                   <Input
                     isRequired
@@ -2412,11 +2438,16 @@ export default function habitacionesTable() {
                     isRequired
                     id="adultos"
                     name="adultos"
-                    type="number"
+                    type="text"
                     variant="flat"
                     label="CANTIDAD DE ADULTOS"
                     value={formData.cantidadPersonas.adultos}
                     onChange={(event) => handleInputChange(event, "adultos")}
+                    onKeyDown={(event) => {
+                      if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                        event.preventDefault();
+                      }
+                    }}
                     className={`rounded-xl h-12 border-2 ${errorAdultos ? 'border-red-500' : 'border-blue-400'}`}
                   />
 
@@ -2424,11 +2455,16 @@ export default function habitacionesTable() {
                     required
                     id="ninios"
                     name="ninios"
-                    type="number"
+                    type="text"
                     variant="flat"
                     label="CANTIDAD DE NIÑOS"
                     value={formData.cantidadPersonas.ninios}
                     onChange={(event) => handleInputChange(event, "ninios")}
+                    onKeyDown={(event) => {
+                      if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                        event.preventDefault();
+                      }
+                    }}
                     className="ml-3 h-12 border-green-400 border-2 rounded-xl"
 
                   />
@@ -2456,12 +2492,16 @@ export default function habitacionesTable() {
                     id="pagoAnticipado"
                     name="pagoAnticipado"
                     className="w-6/12 ml-2 rounded-xl border-2 h-12  border-blue-400"
-                    type="number"
+                    type="text"
                     variant="flat"
                     label="PAGO ANTICIPADO"
                     value={formData.pagoAnticipado}
                     onChange={handleInputChange}
-
+                    onKeyDown={(event) => {
+                      if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                        event.preventDefault();
+                      }
+                    }}
                   />
                 </div>
                 <Input
@@ -2494,11 +2534,16 @@ export default function habitacionesTable() {
                     id="pagoPendiente"
                     name="pagoPendiente"
                     className="w-6/12 ml-2 h-12 border-2 border-blue-400 rounded-xl"
-                    type="number"
+                    type="text"
                     variant="flat"
                     label="PAGO ANTICIPADO"
                     value={formData.pagoPendiente}
                     onChange={handleInputChange}
+                    onKeyDown={(event) => {
+                      if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                        event.preventDefault();
+                      }
+                    }}
                   />
                 </div>
 
@@ -2811,8 +2856,8 @@ export default function habitacionesTable() {
                   <div className=" flex justify-center">
                     <div className="flex flex-wrap gap-3">
 
-                      <Button className="bg-white-100" onClick={() => handleOpenm(cliente._id)}  >
-                        <img className="w-7 h-7" src={plus} alt="" />
+                      <Button className="bg-white-100" onClick={() => handleOpenm(cliente._id)} disabled={cliente.estado !== "activo"}  >
+                        <img className="w-7 h-7" src={plus} alt="plus" />
                       </Button>
 
                     </div>
@@ -2837,12 +2882,17 @@ export default function habitacionesTable() {
                                 className="mr-2"
                                 name="bebidas"
                                 label="Ingrese la cantidad"
-                                type="number"
+                                type="text"
                                 value={isNaN(cantidadBebida) ? '' : cantidadBebida}
                                 onChange={(e) => {
                                   const value = parseInt(e.target.value, 10);
                                   setCantidadBebida(isNaN(value) ? "" : value);
                                 }}
+                                onKeyDown={(event) => {
+                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                      event.preventDefault();
+                                    }
+                                  }}
                               />
                               <Input
                                 disabled
@@ -2886,12 +2936,17 @@ export default function habitacionesTable() {
                                 className="mr-2"
                                 name="bebidas"
                                 label="Ingrese la cantidad"
-                                type="number"
+                                type="text"
                                 value={isNaN(cantidadBebida1) ? '' : cantidadBebida1}
                                 onChange={(e) => {
                                   const value = parseInt(e.target.value, 10);
                                   setCantidadBebida1(isNaN(value) ? "" : value);
                                 }}
+                                onKeyDown={(event) => {
+                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                      event.preventDefault();
+                                    }
+                                  }}
                               />
                               <Input
                                 disabled
@@ -2935,12 +2990,17 @@ export default function habitacionesTable() {
                                 className="mr-2"
                                 name="bebidas"
                                 label="Ingrese la cantidad"
-                                type="number"
+                                type="text"
                                 value={isNaN(cantidadBebida2) ? '' : cantidadBebida2}
                                 onChange={(e) => {
                                   const value = parseInt(e.target.value, 10);
                                   setCantidadBebida2(isNaN(value) ? "" : value);
                                 }}
+                                onKeyDown={(event) => {
+                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                      event.preventDefault();
+                                    }
+                                  }}
                               />
                               <Input
                                 disabled
@@ -2984,12 +3044,17 @@ export default function habitacionesTable() {
                                 className="mr-2"
                                 name="bebidas"
                                 label="Ingrese la cantidad"
-                                type="number"
+                                type="text"
                                 value={isNaN(cantidadBebida3) ? '' : cantidadBebida3}
                                 onChange={(e) => {
                                   const value = parseInt(e.target.value, 10);
                                   setCantidadBebida3(isNaN(value) ? "" : value);
                                 }}
+                                onKeyDown={(event) => {
+                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                      event.preventDefault();
+                                    }
+                                  }}
                               />
                               <Input
                                 disabled
@@ -3033,12 +3098,17 @@ export default function habitacionesTable() {
                                 className="mr-2"
                                 name="bebidas"
                                 label="Ingrese la cantidad"
-                                type="number"
+                                type="text"
                                 value={isNaN(cantidadBebida4) ? '' : cantidadBebida4}
                                 onChange={(e) => {
                                   const value = parseInt(e.target.value, 10);
                                   setCantidadBebida4(isNaN(value) ? "" : value);
                                 }}
+                                onKeyDown={(event) => {
+                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                      event.preventDefault();
+                                    }
+                                  }}
                               />
                               <Input
                                 disabled
@@ -3097,8 +3167,8 @@ export default function habitacionesTable() {
                   <div className="flex justify-center">
                     <div className="flex flex-wrap gap-3">
 
-                      <Button className="bg-white-100" onClick={() => handleOpenmf(cliente._id)}  >
-                        <img className="w-7 h-7" src={plusb} alt="" />
+                      <Button className="bg-white-100" onClick={() => handleOpenmf(cliente._id)} disabled={cliente.estado !== "activo"}>
+                        <img className="w-7 h-7" src={plusb} alt="plus" />
                       </Button>
 
                     </div>
@@ -3132,11 +3202,16 @@ export default function habitacionesTable() {
                                   className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
                                   name="restaurante"
                                   placeholder="Ingrese la cantidad"
-                                  type="number"
+                                  type="text"
                                   value={isNaN(cantidadFood) ? '' : cantidadFood}
                                   onChange={(e) => {
                                     const value = parseInt(e.target.value);
                                     setCantidadFood(isNaN(value) ? '' : value);
+                                  }}
+                                  onKeyDown={(event) => {
+                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                      event.preventDefault();
+                                    }
                                   }}
                                   style={{ height: "40px", backgroundColor: "#f4f4f5" }}
 
@@ -3149,14 +3224,13 @@ export default function habitacionesTable() {
                                 />
                                 <Select
                                   key={resetKey}
-                                  className="ml-2 mt-1 "
+                                  className="ml-2 mt-1"
                                   name="restaurante"
                                   label="Seleccionar comida"
                                   value={foodSeleccionada}
                                   onChange={(e) => {
                                     const selectedFood = e.target.value;
                                     setFoodSeleccionada(selectedFood);
-
 
                                     if (selectedFood) {
                                       const foodSeleccionadaInfo = snacks.find(food => food.Descripcion === selectedFood);
@@ -3191,11 +3265,16 @@ export default function habitacionesTable() {
                                   className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
                                   name="restaurante"
                                   placeholder="Ingrese la cantidad"
-                                  type="number"
+                                  type="text"
                                   value={isNaN(cantidadFood1) ? '' : cantidadFood1}
                                   onChange={(e) => {
                                     const value = parseInt(e.target.value);
                                     setCantidadFood1(isNaN(value) ? '' : value);
+                                  }}
+                                  onKeyDown={(event) => {
+                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                      event.preventDefault();
+                                    }
                                   }}
                                   style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 />
@@ -3207,7 +3286,7 @@ export default function habitacionesTable() {
                                   style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 />
                                 <Select
-                                  key={resetKey}
+                                  key={resetKey1}
                                   className="ml-2 mt-1"
                                   name="restaurante"
                                   label="Seleccionar comida"
@@ -3245,11 +3324,16 @@ export default function habitacionesTable() {
                                   className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
                                   name="restaurante"
                                   placeholder="Ingrese la cantidad"
-                                  type="number"
+                                  type="text"
                                   value={isNaN(cantidadFood2) ? '' : cantidadFood2}
                                   onChange={(e) => {
                                     const value = parseInt(e.target.value);
                                     setCantidadFood2(isNaN(value) ? '' : value);
+                                  }}
+                                  onKeyDown={(event) => {
+                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                      event.preventDefault();
+                                    }
                                   }}
                                   style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 />
@@ -3261,7 +3345,7 @@ export default function habitacionesTable() {
                                   style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 />
                                 <Select
-                                  key={resetKey}
+                                  key={resetKey2}
                                   className="ml-2 mt-1"
                                   name="restaurante"
                                   label="Seleccionar comida"
@@ -3298,11 +3382,16 @@ export default function habitacionesTable() {
                                   className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
                                   name="restaurante"
                                   placeholder="Ingrese la cantidad"
-                                  type="number"
+                                  type="text"
                                   value={isNaN(cantidadFood3) ? '' : cantidadFood3}
                                   onChange={(e) => {
                                     const value = parseInt(e.target.value);
                                     setCantidadFood3(isNaN(value) ? '' : value);
+                                  }}
+                                  onKeyDown={(event) => {
+                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                      event.preventDefault();
+                                    }
                                   }}
                                   style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 />
@@ -3314,7 +3403,7 @@ export default function habitacionesTable() {
                                   style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 />
                                 <Select
-                                  key={resetKey}
+                                  key={resetKey3}
                                   className="ml-2 mt-1"
                                   name="restaurante"
                                   label="Seleccionar comida"
@@ -3357,6 +3446,11 @@ export default function habitacionesTable() {
                                     const value = parseInt(e.target.value);
                                     setCantidadFood4(isNaN(value) ? '' : value);
                                   }}
+                                  onKeyDown={(event) => {
+                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                      event.preventDefault();
+                                    }
+                                  }}
                                   style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 />
                                 <input
@@ -3367,7 +3461,7 @@ export default function habitacionesTable() {
                                   style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                                 />
                                 <Select
-                                  key={resetKey}
+                                  key={resetKey4}
                                   className="ml-2 mt-1"
                                   name="restaurante"
                                   label="Seleccionar comida"
@@ -3400,7 +3494,7 @@ export default function habitacionesTable() {
                               </div>
                             </Typography>
                             <Typography component="div" >
-                              <Button color="danger" variant="light" onPress={closeModalF}>
+                              <Button color="danger" variant="light" onPress={handleCloseAf}>
                                 Close
                               </Button>
                               <Button color="primary" onClick={handleGuardarFood} disabled={isSaving} >
@@ -3426,12 +3520,17 @@ export default function habitacionesTable() {
                                 className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
                                 name="restaurante"
                                 placeholder="Ingrese la cantidad"
-                                type="number"
+                                type="text"
                                 value={isNaN(cantidadItem) ? '' : cantidadItem}
                                 onChange={(e) => {
                                   const value = parseInt(e.target.value);
                                   setCantidadItem(isNaN(value) ? '' : value);
                                 }}
+                                onKeyDown={(event) => {
+                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                      event.preventDefault();
+                                    }
+                                  }}
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                               />
                               <input
@@ -3480,12 +3579,17 @@ export default function habitacionesTable() {
                                 className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
                                 name="restaurante"
                                 placeholder="Ingrese la cantidad"
-                                type="number"
+                                type="text"
                                 value={isNaN(cantidadItem1) ? '' : cantidadItem1}
                                 onChange={(e) => {
                                   const value = parseInt(e.target.value);
                                   setCantidadItem1(isNaN(value) ? '' : value);
                                 }}
+                                onKeyDown={(event) => {
+                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                      event.preventDefault();
+                                    }
+                                  }}
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                               />
                               <input
@@ -3496,7 +3600,7 @@ export default function habitacionesTable() {
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                               />
                               <Select
-                                key={resetKey}
+                                key={resetKey1}
                                 className="ml-2 mt-1"
                                 name="restaurante"
                                 label="Seleccionar comida"
@@ -3535,12 +3639,17 @@ export default function habitacionesTable() {
                                 className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
                                 name="restaurante"
                                 placeholder="Ingrese la cantidad"
-                                type="number"
+                                type="text"
                                 value={isNaN(cantidadItem2) ? '' : cantidadItem2}
                                 onChange={(e) => {
                                   const value = parseInt(e.target.value);
                                   setCantidadItem2(isNaN(value) ? '' : value);
                                 }}
+                                onKeyDown={(event) => {
+                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                      event.preventDefault();
+                                    }
+                                  }}
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                               />
                               <input
@@ -3551,7 +3660,7 @@ export default function habitacionesTable() {
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                               />
                               <Select
-                                key={resetKey}
+                                key={resetKey2}
                                 className="ml-2 mt-1"
                                 name="restaurante"
                                 label="Seleccionar comida"
@@ -3590,12 +3699,17 @@ export default function habitacionesTable() {
                                 className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
                                 name="restaurante"
                                 placeholder="Ingrese la cantidad"
-                                type="number"
+                                type="text"
                                 value={isNaN(cantidadItem3) ? '' : cantidadItem3}
                                 onChange={(e) => {
                                   const value = parseInt(e.target.value);
                                   setCantidadItem3(isNaN(value) ? '' : value);
                                 }}
+                                onKeyDown={(event) => {
+                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                      event.preventDefault();
+                                    }
+                                  }}
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                               />
                               <input
@@ -3606,7 +3720,7 @@ export default function habitacionesTable() {
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                               />
                               <Select
-                                key={resetKey}
+                                key={resetKey3}
                                 className="ml-2 mt-1"
                                 name="restaurante"
                                 label="Seleccionar comida"
@@ -3661,7 +3775,7 @@ export default function habitacionesTable() {
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                               />
                               <Select
-                                key={resetKey}
+                                key={resetKey4}
                                 className="ml-2 mt-1"
                                 name="restaurante"
                                 label="Seleccionar comida"
@@ -3697,7 +3811,7 @@ export default function habitacionesTable() {
                             </div>
 
                             <Typography component="div" >
-                              <Button color="danger" variant="light" onPress={closeModalF}>
+                              <Button color="danger" variant="light" onPress={handleCloseAf}>
                                 Close
                               </Button>
                               <Button color="primary" onClick={handleGuardarItem} disabled={isSaving} >
@@ -3742,7 +3856,7 @@ export default function habitacionesTable() {
                         >
                           Agregar algo mas
                         </DropdownItem>
-                        <DropdownItem key="finalizado" color="primary" onClick={() => handleOpenModal(cliente)}>Ver compras</DropdownItem>
+                        <DropdownItem key="compras" color="primary" onClick={() => handleOpenModal(cliente)}>Ver compras</DropdownItem>
 
                       </DropdownMenu>
                     )}
@@ -3763,7 +3877,7 @@ export default function habitacionesTable() {
                         >
                           Agregar algo mas
                         </DropdownItem>
-                        <DropdownItem key="finalizado" color="primary" onClick={() => handleOpenModal(cliente)}>Ver compras</DropdownItem>
+                        <DropdownItem key="verCompras" color="primary" onClick={() => handleOpenModal(cliente)}>Ver compras</DropdownItem>
                       </DropdownMenu>
                     )}
                     {/* No se muestra ningún menú desplegable para los estados 'cancelado' y 'finalizado' */}

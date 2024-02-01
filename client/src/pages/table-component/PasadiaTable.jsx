@@ -1462,8 +1462,8 @@ export default function review() {
 
 
 
-    const { isOpen: isModalOpenM, onOpen: openModalM, onClose: closeModalM } = useDisclosure();
-    const { isOpen: isModalOpenF, onOpen: openModalF, onClose: closeModalF } = useDisclosure();
+    const {  onClose: closeModalM } = useDisclosure();
+    const {  onClose: closeModalF } = useDisclosure();
 
 
     const limpiarCampos = () => {
@@ -1589,10 +1589,8 @@ export default function review() {
     };
 
     const seleccionarCliente = async (identificacion) => {
-        console.log("id: ", identificacion)
         const response = await AxiosInstance.get(`/pasadia-totalidad-pago/${identificacion}`)
         const { restaurante, bar, recepcion, descorche } = response.data
-        console.log("datos del restaurante: ",restaurante)
         setResTotal(restaurante)
         setBarTotal(bar)
         setRecTotal(recepcion)
@@ -1621,7 +1619,6 @@ export default function review() {
 
 
     const actualizarDatosCliente = async (data1, data2, estado, userId) => {
-        console.log("DATOS ENVIADOS: ", estado, userId)
         await handleStatus(estado, userId)
 
         if (selectedClienteId) {
@@ -2453,7 +2450,6 @@ export default function review() {
                             </Button>
                         </div>
                     </div>
-
                     <Modal
                         open={open}
                         onClose={handleClose}
@@ -2468,10 +2464,8 @@ export default function review() {
                             overflowY: "auto"
                         }} >
                             <>
-                                <Typography className="flex flex-col justify-center items-center " style={{ height: "300px", }}>
-
+                                <Typography component="div" className="flex flex-col justify-center items-center " style={{ height: "300px", }}>
                                     <img style={{ width: "450px" }} src={stats} alt="" />
-
                                 </Typography>
                                 <Typography component="h2" ><h2 className="text-2xl pt-5 pl-2 pb-4" >REGISTRAR USUARIO</h2></Typography>
                                 <Typography componet="div" >
@@ -2682,7 +2676,7 @@ export default function review() {
                             <th className="html-table-tr-th"> <span className="html-table-thead-span-fn"><p></p> <img className="cursor-pointer mr-5  ml-3" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> <p></p> </span></th>
                         </tr>
                     </thead>
-                    <span className="flex h-2"></span>
+                    {/* <hr className="flex h-2"/> */}
                     <tbody className="">
                         {users.map((cliente) => (
                             <tr key={cliente._id} className="">
@@ -2757,9 +2751,7 @@ export default function review() {
                                                         </section>
                                                     </div>
                                                 </Typography>
-                                                <div className="flex flex-col">
-                                                    {/* <span className=" flex w-full  pr-20">¿El cliente realizo un pago anticipado para reservar? <Checkbox checked={esPagoAnticipado}
-                                                            onChange={handlePagoAnticipadoChange} className="ml-1"></Checkbox></span> */}
+                                                {/* <div className="flex flex-col">
                                                     <hr className="bg-gray-400 mb-2 mt-2" style={{ height: "4px" }} />
                                                     {selectedUser.reserva === "Si" ? (
                                                         <div>
@@ -2782,7 +2774,7 @@ export default function review() {
                                                                     selectedUser.pagoAnticipado
                                                                 ) - (selectedUser.pagoAnticipado)}</span>
                                                             <hr className="bg-gray-400 mt-2 mb-5" style={{ height: "3px" }} />
-                                                            <span>Cancelado: {selectedUser.pago}</span>
+                                                            <td>Cancelado: {selectedUser.pago}</td>
 
                                                         </div>
                                                     ) : (
@@ -2803,11 +2795,11 @@ export default function review() {
                                                                 selectedUser.pagoPendiente +
                                                                 selectedUser.nuevoTotal)} </span>
                                                             <hr className="bg-gray-400 mt-2 mb-5" style={{ height: "3px" }} />
-                                                            <span className="">Cancelado: {selectedUser.pago || 0}</span>
+                                                            <td className="">Cancelado: {selectedUser.pago || 0}</td>
                                                         </div>
                                                     )}
 
-                                                </div>
+                                                </div> */}
 
                                                 <div className="flex justify-between mt-5">
                                                     <Typography component="div" >
@@ -3978,7 +3970,8 @@ export default function review() {
                                         </DropdownTrigger>
                                         {cliente.estado === 'activo' && (
                                             <DropdownMenu aria-label="Static Actions">
-                                                <DropdownItem key="finalizado" color="primary" onClick={() => handleOpenModal(cliente)}>Finalizado</DropdownItem>
+                                                <DropdownItem key="finalizado" color="primary" onClick={() => handleOpenModal(cliente)}>Finalizado
+                                                </DropdownItem>
                                                 <DropdownItem
                                                     key="new"
                                                     className="font-semibold"
@@ -3987,7 +3980,6 @@ export default function review() {
                                                 >
                                                     Agregar algo mas
                                                 </DropdownItem>
-                                                <DropdownItem key="finalizado" color="primary" onClick={() => handleOpenModal(cliente)}>Ver compras</DropdownItem>
 
                                             </DropdownMenu>
                                         )}
@@ -4008,7 +4000,7 @@ export default function review() {
                                                 >
                                                     Agregar algo mas
                                                 </DropdownItem>
-                                                <DropdownItem key="finalizado" color="primary" onClick={() => handleOpenModal(cliente)}>Ver compras</DropdownItem>
+                                                <DropdownItem  color="primary" onClick={() => handleOpenModal(cliente)}>Ver compras</DropdownItem>
                                             </DropdownMenu>
                                         )}
                                         {/* No se muestra ningún menú desplegable para los estados 'cancelado' y 'finalizado' */}
@@ -4016,7 +4008,7 @@ export default function review() {
                                 </td>
                             </tr>
                         ))}
-                        <span className="flex h-2"></span>
+                        {/* <span className="flex h-2"></span> */}
                     </tbody>
                 </Table>
             </section>

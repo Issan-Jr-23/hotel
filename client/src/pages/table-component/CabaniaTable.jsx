@@ -308,95 +308,67 @@ export default function cabaniaTable() {
         setBusqueda(event.target.value);
     };
 
-    const handleInputChange = (event, fieldName) => {
-        const { name, value } = event.target;
-        let nuevoTotal, totalCosto;
+const handleInputChange = (event, fieldName) => {
+    const { name, value } = event.target;
 
+    let nuevoTotal, totalCosto;
 
-        if (name === 'identificacion') {
-            setErrorIdentificacion(!value);
-        } else if (name === 'nombre') {
-            setErrorNombre(!value);
-        } else if (name === 'fechaPasadia') {
-            setErrorFechaPasadia(!value);
-        } else if (name === 'reserva') {
-            setErrorReserva(!value);
-        } else if (name === 'adultos') {
-            setErrorAdultos(!value);
-        } else if (name === 'tipo_cabania') {
-            setErrorCabania(!value)
-        }
+    // Lógica para manejar campos de texto simples como 'identificacion', 'nombre', etc.
+    if (name === 'identificacion') {
+        setErrorIdentificacion(!value);
+    } else if (name === 'nombre') {
+        setErrorNombre(!value);
+    } else if (name === 'fechaPasadia') {
+        setErrorFechaPasadia(!value);
+    } else if (name === 'reserva') {
+        setErrorReserva(!value);
+    } else if (name === 'tipo_cabania') {
+        setErrorCabania(!value);
+    }
 
+    // Cálculo de totalCosto basado en el tipo de cabaña seleccionado
+    if (name === "tipo_cabania") {
+        totalCosto = value === "Mayapo" ? valorCabaniaM : valorCabania;
+    } else {
+        totalCosto = formData.tipo_cabania === "Mayapo" ? valorCabaniaM : valorCabania;
+    }
 
-        if (name === "tipo_cabania") {
-            totalCosto = value === "Mayapo" ? valorCabaniaM : valorCabania;
+    // Lógica para calcular totalCosto basado en el número de 'ninios' y 'adultos'
+    const cantidadDeClientes = (name === 'ninios' || name === 'adultos') ? parseInt(value, 10) || 0 : formData.cantidadPersonas.ninios + formData.cantidadPersonas.adultos;
+    if (cantidadDeClientes > 4) {
+        totalCosto += ((cantidadDeClientes - 4) * valorPorPersonaAdicional);
+    }
+
+    // Lógica para 'pagoPendiente' y 'pagoAnticipado'
+    if (name === 'pagoPendiente' || name === 'pagoAnticipado') {
+        const pagoPendiente = name === 'pagoPendiente' ? parseFloat(value || "0") : parseFloat(formData.pagoPendiente || "0");
+        const pagoAnticipado = name === 'pagoAnticipado' ? parseFloat(value || "0") : parseFloat(formData.pagoAnticipado || "0");
+        const totalPagos = pagoPendiente + pagoAnticipado;
+
+        if (totalPagos > totalCosto) {
+            alert('La suma de los montos no puede ser mayor que el costo total.');
+            return; // Detiene la ejecución si la validación falla
         } else {
-            totalCosto = formData.tipo_cabania === "Mayapo" ? valorCabaniaM : valorCabania;
+            nuevoTotal = totalCosto - totalPagos;
+            formData.nuevoTotal = nuevoTotal;
+
+            console.log("el total que debe pagar la persona: " + nuevoTotal);
         }
+    }
 
-        const cantidadDeClientes = formData.cantidadPersonas.ninios + formData.cantidadPersonas.adultos;
-        if (cantidadDeClientes > 4) {
-            totalCosto += ((cantidadDeClientes - 4) * valorPorPersonaAdicional);
-        }
-
-
-        if (name === 'pagoPendiente' || name === 'pagoAnticipado') {
-            const pagoPendiente = name === 'pagoPendiente' ? parseFloat(value) : parseFloat(formData.pagoPendiente || 0);
-            const pagoAnticipado = name === 'pagoAnticipado' ? parseFloat(value) : parseFloat(formData.pagoAnticipado || 0);
-            const totalPagos = pagoPendiente + pagoAnticipado;
-
-            if (totalPagos > totalCosto) {
-                alert('La suma de los montos no puede ser mayor que el costo total.');
-            } else {
-                nuevoTotal = totalCosto - totalPagos;
-                formData.nuevoTotal = nuevoTotal;
-
-                console.log("el total que debe pagar la persona: " + nuevoTotal)
+    // Actualización de formData para reflejar cambios en cualquier campo, similar a 'pagoPendiente' y 'pagoAnticipado'
+    setFormData({
+        ...formData,
+        [name]: value, // Permite valores vacíos para todos los campos.
+        totalCosto,
+        nuevoTotal: formData.nuevoTotal,
+        ...(name === 'ninios' || name === 'adultos' ? { cantidadPersonas: { ...formData.cantidadPersonas, [name]: parseInt(value, 10) || 0 } } : {}),
+        ...(name === "tipo_cabania" && { [name]: value })
+    });
+};
 
 
-                if (nuevoTotal > 0) {
 
-
-                }
-            }
-        }
-
-
-        console.log("alerta de nuevo total: " + formData.nuevoTotal)
-
-
-        console.log("total de personas: " + formData.cantidadPersonas.ninios);
-        console.log("total costo 3: " + totalCosto);
-
-        const totalPendiente = totalCosto;
-        console.log("total costo 2: " + totalPendiente);
-
-        if ((name === 'pagoPendiente' && parseFloat(value) > totalPendiente) ||
-            (name === 'pagoAnticipado' && parseFloat(value) > totalCosto)) {
-            alert('El monto no puede ser mayor que el costo total o el monto pendiente.');
-        } else {
-            if ((name === 'ninios' || name === 'adultos')) {
-                const nuevosValores = {
-                    ...formData.cantidadPersonas,
-                    [fieldName]: parseInt(value, 10)
-                };
-                const nuevoTotalClientes = nuevosValores.ninios + nuevosValores.adultos;
-
-                if (nuevoTotalClientes !== cantidadDeClientes) {
-                    formData.pagoAnticipado = "";
-                }
-            }
-
-            setFormData({
-                ...formData,
-                [name]: value,
-                totalCosto,
-                nuevoTotal: formData.nuevoTotal,
-                ...(name === "tipo_cabania" && { [name]: value }),
-                ...(fieldName ? { cantidadPersonas: { ...formData.cantidadPersonas, [fieldName]: parseInt(value, 10) } } : {})
-            });
-        }
-    };
 
     const handleReservaChange = (selectedSize) => {
         setFormData({
@@ -2301,7 +2273,7 @@ export default function cabaniaTable() {
                             overflowY: "auto"
                         }}>
                             <>
-                                <Typography className="flex flex-col justify-center items-center " style={{ height: "300px", }}>
+                                <Typography component="div" className="flex flex-col justify-center items-center " style={{ height: "300px", }}>
 
                                     <img style={{ width: "450px" }} src={stats} alt="" />
 
@@ -2808,7 +2780,7 @@ export default function cabaniaTable() {
                                     <div className=" flex justify-center">
                                         <div className="flex flex-wrap gap-3">
 
-                                            <Button className="bg-white-100" onClick={() => handleOpenm(cliente._id)}  >
+                                            <Button className="bg-white-100" onClick={() => handleOpenm(cliente._id)} disabled={cliente.estado !== "activo"} >
                                                 <img className="w-5 h-5" src={plus} alt="" />
                                             </Button>
 
@@ -3123,7 +3095,7 @@ export default function cabaniaTable() {
                                     <div className="flex justify-center">
                                         <div className="flex flex-wrap gap-3">
 
-                                            <Button className="bg-white-100" onClick={() => handleOpenmf(cliente._id)}  >
+                                            <Button className="bg-white-100" onClick={() => handleOpenmf(cliente._id)} disabled={cliente.estado !== "activo"}  >
                                                 <img className="w-5 h-5" src={plusb} alt="" />
                                             </Button>
 
@@ -3819,7 +3791,6 @@ export default function cabaniaTable() {
                                                 >
                                                     Agregar algo mas
                                                 </DropdownItem>
-                                                <DropdownItem key="finalizado" color="primary" onClick={() => handleOpenModal(cliente)}>Ver compras</DropdownItem>
 
                                             </DropdownMenu>
                                         )}
@@ -3829,7 +3800,6 @@ export default function cabaniaTable() {
                                                 <DropdownItem key="cancelado" color="danger" onClick={() => handleStatus("cancelado", cliente._id)}>Cancelado</DropdownItem>
                                             </DropdownMenu>
                                         )}
-
                                         {cliente.estado === "finalizado" && (
                                             <DropdownMenu>
                                                 <DropdownItem
@@ -3840,10 +3810,9 @@ export default function cabaniaTable() {
                                                 >
                                                     Agregar algo mas
                                                 </DropdownItem>
-                                                <DropdownItem key="finalizado" color="primary" onClick={() => handleOpenModal(cliente)}>Ver compras</DropdownItem>
+                                                <DropdownItem key="verCompras" color="primary" onClick={() => handleOpenModal(cliente)}>Ver compras</DropdownItem>
                                             </DropdownMenu>
                                         )}
-                                        {/* No se muestra ningún menú desplegable para los estados 'cancelado' y 'finalizado' */}
                                     </Dropdown>
                                 </td>
                             </tr>
