@@ -53,3 +53,7 @@
 .first-page-disabled .MuiPaginationItem-page.Mui-selected {
     opacity: 0.5;
 }
+
+.custom-dropdown-toggle::after {
+    display: none;
+}

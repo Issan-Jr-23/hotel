@@ -37,6 +37,7 @@ import Cabanias from "./pages/table-component/CabaniaTable.jsx"
 import Habitaciones from "./pages/table-component/HabitacionesTable.jsx"
 
 
+
 function App() {
   return (
     <AuthProvider>

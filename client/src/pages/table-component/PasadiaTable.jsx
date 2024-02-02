@@ -5,20 +5,22 @@ import fd from "../../images/flechas-dobles.png"
 import { Table } from "@mui/material"
 import AxiosInstance from "../../api/axios.js"
 import { Pagination, Modal, Box, Typography } from "@mui/material"
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Popover, PopoverContent, PopoverTrigger, Input, useDisclosure, Checkbox, Select, SelectItem, Tabs, Tab } from "@nextui-org/react"
+import { Button, DropdownItem, DropdownMenu, DropdownTrigger, Popover, PopoverContent, PopoverTrigger, Input, useDisclosure, Checkbox, Select, SelectItem, Tabs, Tab } from "@nextui-org/react"
 import { green, purple, blue, red } from '@mui/material/colors';
 import chevron from "../../images/right.png";
-import { VerticalDotsIcon } from "../iconos/VerticalDotsIcon.jsx"
+import { VerticalDotsIcon } from "../iconos/VerticalDotsIcon.jsx";
 import Brightness1Icon from '@mui/icons-material/Brightness1';
-import loading_progress from "../../images/Animation-alternativa-loading.json"
+import loading_progress from "../../images/Animation-alternativa-loading.json";
 import plus from "../../images/plus.png";
 import plusb from "../../images/plus_blue.png";
-import Lottie from "react-lottie"
+import Lottie from "react-lottie";
 import { PlusIcon } from "../finca/PlusIcon.jsx";
 import { SearchIcon } from "../tablePasadia/SearchIcon.jsx";
 import stats from "../../images/stats.svg"
 import toast, { Toaster } from 'react-hot-toast';
 import "./pasadiaTable.css"
+// import { CDropdown, CDropdownItem,CDropdownMenu,CDropdownToggle } from '@coreui/react';
+import Dropdown from 'react-bootstrap/Dropdown';
 
 
 export default function review() {
@@ -54,7 +56,7 @@ export default function review() {
     const isAdmin = user && user.role === 'admin';
     const isEditor = user && user.role === 'editor';
 
-    //#region 
+    //#region
     const [esCortesia, setEsCortesia] = useState(false);
     const [users, setUsers] = useState([]);
     const [drinks, setDrinks] = useState([]);
@@ -193,9 +195,13 @@ export default function review() {
     const [desTotal, setDesTotal] = useState({});
 
 
+
+
+
     const options = ["Si", "No"];
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [backdrop, setBackdrop] = useState("blur");
+
     const [formData, setFormData] = useState({
         identificacion: "",
         nombre: "",
@@ -1266,9 +1272,6 @@ export default function review() {
         }
     };
 
-
-
-
     //#endregion
 
     const handleFormSubmit = async (event) => {
@@ -1350,8 +1353,7 @@ export default function review() {
             toast.error('Ocurrió un error al agregar el cliente o el registro ya existe.');
         }
     };
-    //#region 
-
+    //#region
 
     const handleEditUser = async (id) => {
         try {
@@ -1462,8 +1464,8 @@ export default function review() {
 
 
 
-    const {  onClose: closeModalM } = useDisclosure();
-    const {  onClose: closeModalF } = useDisclosure();
+    const { onClose: closeModalM } = useDisclosure();
+    const { onClose: closeModalF } = useDisclosure();
 
 
     const limpiarCampos = () => {
@@ -1619,69 +1621,67 @@ export default function review() {
 
 
     const actualizarDatosCliente = async (data1, data2, estado, userId) => {
-        await handleStatus(estado, userId)
+        try {
+            await handleStatus(estado, userId)
+            if (selectedClienteId) {
+                try {
+                    const responseData = await AxiosInstance.get(`/pasadia-totalidad-reserva-pago/${selectedClienteId}`);
+                    const { identificacion, restaurante, bar, recepcion, descorche, reserva, anticipado, posterior, pendiente } = responseData.data;
+                    if (reserva === "Si") {
+                        const calculo1 = restaurante + bar + recepcion + descorche + anticipado + posterior + pendiente;
+                        const calculo2 = calculo1 - anticipado;
+                        await AxiosInstance.put(`/pasadia-actualizar-valor`, { id: selectedClienteId, valor: calculo2 })
+                        toast.success("datos actualizados")
+                        const responses = await AxiosInstance.get(`/pasadia-clientes?page=${paginaActual}`);
+                        setUsers(responses.data.clientes);
+                        setTotalPaginas(responses.data.totalPages);
+                    } else {
+                        const calculo1 = restaurante + bar + recepcion + descorche + anticipado + posterior + pendiente;
+                        await AxiosInstance.put(`/pasadia-actualizar-valor`, { id: selectedClienteId, valor: calculo1 })
+                        toast.success("datos actualizados")
+                        const responses = await AxiosInstance.get(`/pasadia-clientes?page=${paginaActual}`);
+                        setUsers(responses.data.clientes);
+                        setTotalPaginas(responses.data.totalPages);
 
-        if (selectedClienteId) {
-            try {
-                const responseData = await AxiosInstance.get(`/pasadia-totalidad-reserva-pago/${selectedClienteId}`);
-                const { identificacion, restaurante, bar, recepcion, descorche, reserva, anticipado, posterior, pendiente } = responseData.data;
-                if (reserva === "Si") {
-                    console.log("ingresos al condicional")
-                    const calculo1 = restaurante + bar + recepcion + descorche + anticipado + posterior + pendiente;
-                    const calculo2 = calculo1 - anticipado;
-                    console.log("id del usuario: ", selectedClienteId)
-                    await AxiosInstance.put(`/pasadia-actualizar-valor`, { id: selectedClienteId, valor: calculo2 })
-                    console.log("success")
-                    toast.success("datos actualizados")
-                    const responses = await AxiosInstance.get(`/pasadia-clientes?page=${paginaActual}`);
-                    setUsers(responses.data.clientes);
-                    setTotalPaginas(responses.data.totalPages);
-                } else {
-                    console.log("ingresos al condicional")
-                    const calculo1 = restaurante + bar + recepcion + descorche + anticipado + posterior + pendiente;
-                    console.log("id del usuario: ", selectedClienteId)
-                    await AxiosInstance.put(`/pasadia-actualizar-valor`, { id: selectedClienteId, valor: calculo1 })
-                    console.log("success")
-                    toast.success("datos actualizados")
-                    const responses = await AxiosInstance.get(`/pasadia-clientes?page=${paginaActual}`);
-                    setUsers(responses.data.clientes);
-                    setTotalPaginas(responses.data.totalPages);
+                    }
 
+                    if (pendiente !== 0) {
+                        const clienteResponse = await AxiosInstance.get(`/pasadia-clientes-identificacion/${selectedClienteId}`);
+                        const clienteData = clienteResponse.data;
+
+                        const nuevoValorTotal = clienteData.valorTotal - formDatas.pagoPendiente;
+
+                        const response = await AxiosInstance.put(`/pasadia-clientes/${selectedClienteId}/actualizar`, {
+                            valorTotal: nuevoValorTotal,
+                            pagoPendiente: formDatas.pagoPendiente,
+                            mediosDePagoPendiente: formDatas.mediosDePagoPendiente
+                        });
+
+                        setFormDatas({
+                            pagoPendiente: '',
+                            mediosDePagoPendiente: ''
+                        });
+
+                        toast.success('Datos actualizados exitosamente');
+
+                        const responses = await AxiosInstance.get(`/pasadia-clientes?page=${paginaActual}`);
+                        setUsers(responses.data.clientes);
+                        setTotalPaginas(responses.data.totalPages);
+
+                    }
+
+                    closeModal();
+
+                } catch (error) {
+                    console.error('Hubo un problema con la petición Axios:', error);
                 }
-
-                if (pendiente !== 0) {
-                    const clienteResponse = await AxiosInstance.get(`/pasadia-clientes-identificacion/${selectedClienteId}`);
-                    const clienteData = clienteResponse.data;
-
-                    const nuevoValorTotal = clienteData.valorTotal - formDatas.pagoPendiente;
-
-                    const response = await AxiosInstance.put(`/pasadia-clientes/${selectedClienteId}/actualizar`, {
-                        valorTotal: nuevoValorTotal,
-                        pagoPendiente: formDatas.pagoPendiente,
-                        mediosDePagoPendiente: formDatas.mediosDePagoPendiente
-                    });
-
-                    setFormDatas({
-                        pagoPendiente: '',
-                        mediosDePagoPendiente: ''
-                    });
-
-                    toast.success('Datos actualizados exitosamente');
-
-                    const responses = await AxiosInstance.get(`/pasadia-clientes?page=${paginaActual}`);
-                    setUsers(responses.data.clientes);
-                    setTotalPaginas(responses.data.totalPages);
-
-                }
-
-                closeModal();
-
-            } catch (error) {
-                console.error('Hubo un problema con la petición Axios:', error);
+            } else {
+                console.error('No hay un cliente seleccionado para actualizar');
             }
-        } else {
-            console.error('No hay un cliente seleccionado para actualizar');
+        } catch (error) {
+            console.log(error)
         }
+
     };
 
     //#endregion
@@ -2751,7 +2751,7 @@ export default function review() {
                                                         </section>
                                                     </div>
                                                 </Typography>
-                                                {/* <div className="flex flex-col">
+                                                <div className="flex flex-col">
                                                     <hr className="bg-gray-400 mb-2 mt-2" style={{ height: "4px" }} />
                                                     {selectedUser.reserva === "Si" ? (
                                                         <div>
@@ -2799,7 +2799,7 @@ export default function review() {
                                                         </div>
                                                     )}
 
-                                                </div> */}
+                                                </div>
 
                                                 <div className="flex justify-between mt-5">
                                                     <Typography component="div" >
@@ -3961,8 +3961,8 @@ export default function review() {
                                         {cliente.estado}
                                     </div>
                                 </td>
-                                <td className="html-table-tbody">
-                                    <Dropdown>
+                                <td className="html-table-tbody pr-5 pl-5">
+                                    {/* <Dropdown>
                                         <DropdownTrigger>
                                             <Button className="bg-inherent" onClick={() => seleccionarCliente(cliente.identificacion)}>
                                                 <VerticalDotsIcon />
@@ -3976,7 +3976,7 @@ export default function review() {
                                                     key="new"
                                                     className="font-semibold"
                                                     style={{ fontWeight: "700" }}
-                                                    onClick={() => adicionalCabania(cliente._id)}
+                                                    onClick={() => adicional(cliente._id)}
                                                 >
                                                     Agregar algo mas
                                                 </DropdownItem>
@@ -3996,14 +3996,59 @@ export default function review() {
                                                     key="new"
                                                     className="font-semibold"
                                                     style={{ fontWeight: "700" }}
-                                                    onClick={() => adicionalCabania(cliente._id)}
+                                                    onClick={() => adicional(cliente._id)}
                                                 >
                                                     Agregar algo mas
                                                 </DropdownItem>
-                                                <DropdownItem  color="primary" onClick={() => handleOpenModal(cliente)}>Ver compras</DropdownItem>
+                                                <DropdownItem color="primary" onClick={() => handleOpenModal(cliente)}>Ver compras</DropdownItem>
                                             </DropdownMenu>
                                         )}
-                                        {/* No se muestra ningún menú desplegable para los estados 'cancelado' y 'finalizado' */}
+                                    </Dropdown> */}
+                                    <Dropdown onClick={() => seleccionarCliente(cliente.identificacion)} className="flex flex-col">
+                                        <Dropdown.Toggle variant="success" id="dropdown-basic" style={{ width: "100px" }} >
+                                            <VerticalDotsIcon/>
+                                        </Dropdown.Toggle>
+
+                                        {cliente.estado === 'activo' && (
+                                            <Dropdown.Menu aria-label="Static Actions"  style={{display:"flex", flexDirection:"column", transition:"none", width:"170px", padding:"10px 0px"}}>
+                                                <Dropdown.Item key="finalizado" color="primary" onClick={() => handleOpenModal(cliente)}>Finalizado
+                                                </Dropdown.Item>
+                                                <hr className="bg-red-500" style={{height:"3px", }}/>
+                                                <Dropdown.Item
+                                                    key="new"
+                                                    className="font-semibold"
+                                                    style={{ fontWeight: "700" }}
+                                                    onClick={() => adicional(cliente._id)}
+                                                >
+                                                    Agregar algo mas
+                                                </Dropdown.Item>
+
+                                            </Dropdown.Menu>
+                                        )}
+
+                                        {cliente.estado === 'pendiente' && (
+                                            <Dropdown.Menu aria-label="Static Actions" style={{display:"flex", flexDirection:"column", transition:"none", width:"170px", padding:"10px 0px"}}>
+                                                <Dropdown.Item key="activo" color="primary" onClick={() => handleStatus("activo", cliente._id)}>Activo</Dropdown.Item>
+                                                <hr className="bg-red-500" style={{height:"3px", }}/>
+                                                <Dropdown.Item key="cancelado" color="danger" onClick={() => handleStatus("cancelado", cliente._id)}>Cancelado</Dropdown.Item>
+                                            </Dropdown.Menu>
+                                        )}
+
+                                        {cliente.estado === "finalizado" && (
+                                            <Dropdown.Menu style={{display:"flex", flexDirection:"column", transition:"none", width:"170px", padding:"10px 0px", borderRadius:"12px"}}>
+                                                <Dropdown.Item
+                                                    key="new"
+                                                    className="font-semibold"
+                                                    style={{ fontWeight: "700" }}
+                                                    onClick={() => adicional(cliente._id)}
+                                                >
+                                                    Agregar algo mas
+                                                </Dropdown.Item>
+                                                <hr className="bg-red-500" style={{height:"3px", }}/>
+                                                <Dropdown.Item color="primary" onClick={() => handleOpenModal(cliente)}>Ver compras</Dropdown.Item>
+                                            </Dropdown.Menu>
+                                        )}
+
                                     </Dropdown>
                                 </td>
                             </tr>
