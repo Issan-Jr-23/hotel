@@ -57,3 +57,20 @@
 .custom-dropdown-toggle::after {
     display: none;
 }
+
+
+.container-dropdown{
+    border: 2px solid red;
+    height: auto;
+    width: 100px;
+    position: relative;
+}
+
+.dropdown-container{
+    border: 2px solid red;
+    border-radius: 12px ;
+    width: 100px;
+    position: absolute;
+    z-index: 100;
+    left: 0px;
+}

@@ -50,6 +50,8 @@ export default function review() {
     const [resetKey3, setResetKey3] = useState(0);
     const [resetKey4, setResetKey4] = useState(0);
 
+    const [menuAbierto, setMenuAbierto] = useState(false);
+
     //#region
 
     const { user } = useAuth();
@@ -4004,51 +4006,61 @@ export default function review() {
                                             </DropdownMenu>
                                         )}
                                     </Dropdown> */}
-                                    <Dropdown onClick={() => seleccionarCliente(cliente.identificacion)} className="flex flex-col">
-                                        <Dropdown.Toggle variant="success" id="dropdown-basic" style={{ width: "100px" }} >
-                                            <VerticalDotsIcon/>
+                                    <Dropdown
+                                        show={menuAbierto} // Utiliza la propiedad "show" en lugar de controlar la visibilidad manualmente
+                                        onClick={() => seleccionarCliente(cliente.identificacion)}
+                                        className="flex flex-col"
+                                    >
+                                        <Dropdown.Toggle
+                                            variant="success"
+                                            id="dropdown-basic"
+                                            style={{ width: "100px" }}
+                                            onClick={() => setMenuAbierto(!menuAbierto)}
+                                        >
+                                            <VerticalDotsIcon />
                                         </Dropdown.Toggle>
 
-                                        {cliente.estado === 'activo' && (
-                                            <Dropdown.Menu aria-label="Static Actions"  style={{display:"flex", flexDirection:"column", transition:"none", width:"170px", padding:"10px 0px"}}>
-                                                <Dropdown.Item key="finalizado" color="primary" onClick={() => handleOpenModal(cliente)}>Finalizado
-                                                </Dropdown.Item>
-                                                <hr className="bg-red-500" style={{height:"3px", }}/>
-                                                <Dropdown.Item
-                                                    key="new"
-                                                    className="font-semibold"
-                                                    style={{ fontWeight: "700" }}
-                                                    onClick={() => adicional(cliente._id)}
-                                                >
-                                                    Agregar algo mas
-                                                </Dropdown.Item>
+                                        <Dropdown.Menu>
+                                            {cliente.estado === "activo" && (
+                                                <>
+                                                    <Dropdown.Item key="finalizado" onClick={() => handleOpenModal(cliente)}>
+                                                        Finalizado
+                                                    </Dropdown.Item>
+                                                    <Dropdown.Divider />
+                                                    <Dropdown.Item
+                                                        key="new"
+                                                        className="font-semibold"
+                                                        onClick={() => adicional(cliente._id)}
+                                                    >
+                                                        Agregar algo más
+                                                    </Dropdown.Item>
+                                                </>
+                                            )}
 
-                                            </Dropdown.Menu>
-                                        )}
+                                            {cliente.estado === "pendiente" && (
+                                                <>
+                                                    <Dropdown.Item key="activo" onClick={() => handleStatus("activo", cliente._id)}>
+                                                        Activo
+                                                    </Dropdown.Item>
+                                                    <Dropdown.Divider />
+                                                    <Dropdown.Item key="cancelado" onClick={() => handleStatus("cancelado", cliente._id)}>
+                                                        Cancelado
+                                                    </Dropdown.Item>
+                                                </>
+                                            )}
 
-                                        {cliente.estado === 'pendiente' && (
-                                            <Dropdown.Menu aria-label="Static Actions" style={{display:"flex", flexDirection:"column", transition:"none", width:"170px", padding:"10px 0px"}}>
-                                                <Dropdown.Item key="activo" color="primary" onClick={() => handleStatus("activo", cliente._id)}>Activo</Dropdown.Item>
-                                                <hr className="bg-red-500" style={{height:"3px", }}/>
-                                                <Dropdown.Item key="cancelado" color="danger" onClick={() => handleStatus("cancelado", cliente._id)}>Cancelado</Dropdown.Item>
-                                            </Dropdown.Menu>
-                                        )}
-
-                                        {cliente.estado === "finalizado" && (
-                                            <Dropdown.Menu style={{display:"flex", flexDirection:"column", transition:"none", width:"170px", padding:"10px 0px", borderRadius:"12px"}}>
-                                                <Dropdown.Item
-                                                    key="new"
-                                                    className="font-semibold"
-                                                    style={{ fontWeight: "700" }}
-                                                    onClick={() => adicional(cliente._id)}
-                                                >
-                                                    Agregar algo mas
-                                                </Dropdown.Item>
-                                                <hr className="bg-red-500" style={{height:"3px", }}/>
-                                                <Dropdown.Item color="primary" onClick={() => handleOpenModal(cliente)}>Ver compras</Dropdown.Item>
-                                            </Dropdown.Menu>
-                                        )}
-
+                                            {cliente.estado === "finalizado" && (
+                                                <>
+                                                    <Dropdown.Item key="new" className="font-semibold" onClick={() => adicional(cliente._id)}>
+                                                        Agregar algo más
+                                                    </Dropdown.Item>
+                                                    <Dropdown.Divider />
+                                                    <Dropdown.Item key="ver-compras" onClick={() => handleOpenModal(cliente)}>
+                                                        Ver compras
+                                                    </Dropdown.Item>
+                                                </>
+                                            )}
+                                        </Dropdown.Menu>
                                     </Dropdown>
                                 </td>
                             </tr>
