@@ -5,7 +5,7 @@ import fd from "../../images/flechas-dobles.png"
 import { Table } from "@mui/material"
 import AxiosInstance from "../../api/axios.js"
 import { Pagination, Modal, Box, Typography } from "@mui/material"
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Popover, PopoverContent, PopoverTrigger, Input, useDisclosure, Checkbox, Select, SelectItem, Tabs, Tab } from "@nextui-org/react"
+import { Button, DropdownItem, DropdownMenu, DropdownTrigger, Popover, PopoverContent, PopoverTrigger, Input, useDisclosure, Checkbox, Select, SelectItem, Tabs, Tab } from "@nextui-org/react"
 import { green, purple, blue, red } from '@mui/material/colors';
 import chevron from "../../images/right.png";
 import { VerticalDotsIcon } from "../iconos/VerticalDotsIcon.jsx"
@@ -19,6 +19,7 @@ import { SearchIcon } from "../tablePasadia/SearchIcon.jsx";
 import stats from "../../images/stats.svg"
 import toast, { Toaster } from 'react-hot-toast';
 import "./pasadiaTable.css"
+import Dropdown from 'react-bootstrap/Dropdown';
 
 export default function habitacionesTable() {
 
@@ -304,52 +305,52 @@ export default function habitacionesTable() {
   };
 
 
-const handleInputChange = (event, fieldName) => {
-  let { name, value } = event.target;
-  if (name === 'identificacion') {
-    setErrorIdentificacion(!value);
-  } else if (name === 'nombre') {
-    setErrorNombre(!value);
-  } else if (name === 'fechaPasadia') {
-    setErrorFechaPasadia(!value);
-  } else if (name === 'reserva') {
-    setErrorReserva(!value);
-  } else if (name === 'adultos') {
-    setErrorAdultos(!value)
-  } else if (name === 'habitaciones') {
+  const handleInputChange = (event, fieldName) => {
+    let { name, value } = event.target;
+    if (name === 'identificacion') {
+      setErrorIdentificacion(!value);
+    } else if (name === 'nombre') {
+      setErrorNombre(!value);
+    } else if (name === 'fechaPasadia') {
+      setErrorFechaPasadia(!value);
+    } else if (name === 'reserva') {
+      setErrorReserva(!value);
+    } else if (name === 'adultos') {
+      setErrorAdultos(!value)
+    } else if (name === 'habitaciones') {
 
-  }
+    }
 
-if (formData.pagoAnticipado < 1000) {
-  formData.pagoAnticipado = 0
-}else {
-  formData.pagoPendiente = 0
-}
-  console.log("data 1: ",formData.pagoAnticipado)
-  console.log("data 2: ",formData.pagoPendiente)
+    if (formData.pagoAnticipado < 1000) {
+      formData.pagoAnticipado = 0
+    } else {
+      formData.pagoPendiente = 0
+    }
+    console.log("data 1: ", formData.pagoAnticipado)
+    console.log("data 2: ", formData.pagoPendiente)
 
-  let adjustedValue;
-  if (value === '') {
-    adjustedValue = '0';
-  } else {
-    adjustedValue = value.startsWith('0') && value.length > 1 ? value.substring(1) : value;
-  }
-  const numericValue = fieldName ? parseInt(adjustedValue, 10) : adjustedValue;
-  const totalCosto = valorHabitaciones;
-  const data = parseFloat(formData.pagoAnticipado || '0') + parseFloat(formData.pagoPendiente || '0');
-  const result = totalCosto - data;
-  if ((name === 'pagoPendiente' && parseFloat(adjustedValue) > totalCosto) ||
-    (name === 'pagoAnticipado' && parseFloat(adjustedValue) > totalCosto)) {
-    alert('El monto no puede ser mayor que el costo total o el monto pendiente.');
-  } else {
-    setFormData({
-      ...formData,
-      [name]: numericValue,
-      nuevoTotal: result,
-      ...(fieldName ? { cantidadPersonas: { ...formData.cantidadPersonas, [fieldName]: numericValue } } : {})
-    });
-  }
-};
+    let adjustedValue;
+    if (value === '') {
+      adjustedValue = '0';
+    } else {
+      adjustedValue = value.startsWith('0') && value.length > 1 ? value.substring(1) : value;
+    }
+    const numericValue = fieldName ? parseInt(adjustedValue, 10) : adjustedValue;
+    const totalCosto = valorHabitaciones;
+    const data = parseFloat(formData.pagoAnticipado || '0') + parseFloat(formData.pagoPendiente || '0');
+    const result = totalCosto - data;
+    if ((name === 'pagoPendiente' && parseFloat(adjustedValue) > totalCosto) ||
+      (name === 'pagoAnticipado' && parseFloat(adjustedValue) > totalCosto)) {
+      alert('El monto no puede ser mayor que el costo total o el monto pendiente.');
+    } else {
+      setFormData({
+        ...formData,
+        [name]: numericValue,
+        nuevoTotal: result,
+        ...(fieldName ? { cantidadPersonas: { ...formData.cantidadPersonas, [fieldName]: numericValue } } : {})
+      });
+    }
+  };
 
 
 
@@ -2577,7 +2578,7 @@ if (formData.pagoAnticipado < 1000) {
         <table className=" bg-white snaop-x" style={{ paddingTop: "40px", width: "100%" }}>
           <thead className="html-table-thead">
             <tr className="html-table-tr border-b-2 border-red-100" >
-              <th className="html-table-tr-th"><span className="html-table-thead-span pl-5"><p></p> + <img className="cursor-pointer mr-5 ml-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th>
+              <th className="html-table-tr-th"></th>
               <th className="html-table-tr-th"> <span className="html-table-thead-span"> <p></p>  Id<img className="cursor-pointer mr-2 ml-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th>
               <th className="html-table-tr-th"> <span className="html-table-thead-span pr-5 pl-5"> <p></p>  Nombre <img className="cursor-pointer mr-2 ml-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th>
               <th className="html-table-tr-th"> <span className="html-table-thead-span pl-5"> <p></p> Fecha Inicio <img className="cursor-pointer mr-5 ml-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th>
@@ -2593,9 +2594,9 @@ if (formData.pagoAnticipado < 1000) {
               <th className="html-table-tr-th"> <span className="html-table-thead-span-fn"> <p></p><img className="cursor-pointer mr-2 ml-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> <p></p> </span></th>
             </tr>
           </thead>
-          <tbody>
+          <tbody key="body-h">
             {users.map((cliente) => (
-              <tr>
+              <tr key={cliente._id}>
                 <td className="text-left html-table-tbody">
                   {/* <Button className="bg-white" onClick={() => handleOpenModal(cliente)}>
                     <img className="w-4" src={chevron} alt="" />
@@ -2889,10 +2890,10 @@ if (formData.pagoAnticipado < 1000) {
                                   setCantidadBebida(isNaN(value) ? "" : value);
                                 }}
                                 onKeyDown={(event) => {
-                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
-                                      event.preventDefault();
-                                    }
-                                  }}
+                                  if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                    event.preventDefault();
+                                  }
+                                }}
                               />
                               <Input
                                 disabled
@@ -2943,10 +2944,10 @@ if (formData.pagoAnticipado < 1000) {
                                   setCantidadBebida1(isNaN(value) ? "" : value);
                                 }}
                                 onKeyDown={(event) => {
-                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
-                                      event.preventDefault();
-                                    }
-                                  }}
+                                  if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                    event.preventDefault();
+                                  }
+                                }}
                               />
                               <Input
                                 disabled
@@ -2997,10 +2998,10 @@ if (formData.pagoAnticipado < 1000) {
                                   setCantidadBebida2(isNaN(value) ? "" : value);
                                 }}
                                 onKeyDown={(event) => {
-                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
-                                      event.preventDefault();
-                                    }
-                                  }}
+                                  if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                    event.preventDefault();
+                                  }
+                                }}
                               />
                               <Input
                                 disabled
@@ -3051,10 +3052,10 @@ if (formData.pagoAnticipado < 1000) {
                                   setCantidadBebida3(isNaN(value) ? "" : value);
                                 }}
                                 onKeyDown={(event) => {
-                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
-                                      event.preventDefault();
-                                    }
-                                  }}
+                                  if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                    event.preventDefault();
+                                  }
+                                }}
                               />
                               <Input
                                 disabled
@@ -3105,10 +3106,10 @@ if (formData.pagoAnticipado < 1000) {
                                   setCantidadBebida4(isNaN(value) ? "" : value);
                                 }}
                                 onKeyDown={(event) => {
-                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
-                                      event.preventDefault();
-                                    }
-                                  }}
+                                  if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                    event.preventDefault();
+                                  }
+                                }}
                               />
                               <Input
                                 disabled
@@ -3527,10 +3528,10 @@ if (formData.pagoAnticipado < 1000) {
                                   setCantidadItem(isNaN(value) ? '' : value);
                                 }}
                                 onKeyDown={(event) => {
-                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
-                                      event.preventDefault();
-                                    }
-                                  }}
+                                  if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                    event.preventDefault();
+                                  }
+                                }}
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                               />
                               <input
@@ -3586,10 +3587,10 @@ if (formData.pagoAnticipado < 1000) {
                                   setCantidadItem1(isNaN(value) ? '' : value);
                                 }}
                                 onKeyDown={(event) => {
-                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
-                                      event.preventDefault();
-                                    }
-                                  }}
+                                  if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                    event.preventDefault();
+                                  }
+                                }}
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                               />
                               <input
@@ -3646,10 +3647,10 @@ if (formData.pagoAnticipado < 1000) {
                                   setCantidadItem2(isNaN(value) ? '' : value);
                                 }}
                                 onKeyDown={(event) => {
-                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
-                                      event.preventDefault();
-                                    }
-                                  }}
+                                  if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                    event.preventDefault();
+                                  }
+                                }}
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                               />
                               <input
@@ -3706,10 +3707,10 @@ if (formData.pagoAnticipado < 1000) {
                                   setCantidadItem3(isNaN(value) ? '' : value);
                                 }}
                                 onKeyDown={(event) => {
-                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
-                                      event.preventDefault();
-                                    }
-                                  }}
+                                  if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                    event.preventDefault();
+                                  }
+                                }}
                                 style={{ height: "40px", backgroundColor: "#f4f4f5" }}
                               />
                               <input
@@ -3839,48 +3840,47 @@ if (formData.pagoAnticipado < 1000) {
                   </div>
                 </td>
                 <td className="html-table-tbody">
-                  <Dropdown>
-                    <DropdownTrigger>
-                      <Button className="bg-inherent" onClick={() => seleccionarCliente(cliente.identificacion)}>
-                        <VerticalDotsIcon />
-                      </Button>
-                    </DropdownTrigger>
-                    {cliente.estado === 'activo' && (
-                      <DropdownMenu aria-label="Static Actions">
-                        <DropdownItem key="finalizado" color="primary" onClick={() => handleOpenModal(cliente)}>Finalizado</DropdownItem>
-                        <DropdownItem
-                          key="new"
-                          className="font-semibold"
-                          style={{ fontWeight: "700" }}
-                          onClick={() => adicionalCabania(cliente._id)}
-                        >
-                          Agregar algo mas
-                        </DropdownItem>
-                        <DropdownItem key="compras" color="primary" onClick={() => handleOpenModal(cliente)}>Ver compras</DropdownItem>
+                  <Dropdown onClick={() => seleccionarCliente(cliente.identificacion)} className="desing-cont-dropdown" drop="up">
+                    <Dropdown.Toggle variant="light" id="dropdown-basic" className="desing-btn-dropdown">
+                      <VerticalDotsIcon />
+                    </Dropdown.Toggle>
 
-                      </DropdownMenu>
-                    )}
-                    {cliente.estado === 'pendiente' && (
-                      <DropdownMenu aria-label="Static Actions">
-                        <DropdownItem key="activo" color="success" onClick={() => handleStatus("activo", cliente._id)}>Activo</DropdownItem>
-                        <DropdownItem key="cancelado" color="danger" onClick={() => handleStatus("cancelado", cliente._id)}>Cancelado</DropdownItem>
-                      </DropdownMenu>
-                    )}
+                    <Dropdown.Menu align="start" drop="up">
+                      {cliente.estado === 'activo' && (
+                        <div className="desing-dropdown">
+                          <Dropdown.Item eventKey="finalizado" onClick={() => handleOpenModal(cliente)} className="desing-condicional-dropdown">
+                            Finalizado
+                          </Dropdown.Item>
+                          <hr />
+                          <Dropdown.Item eventKey="new" onClick={() => adicional(cliente._id)} className="desing-condicional-dropdown">
+                            Agregar algo más
+                          </Dropdown.Item>
+                        </div>
+                      )}
 
-                    {cliente.estado === "finalizado" && (
-                      <DropdownMenu>
-                        <DropdownItem
-                          key="new"
-                          className="font-semibold"
-                          style={{ fontWeight: "700" }}
-                          onClick={() => adicionalCabania(cliente._id)}
-                        >
-                          Agregar algo mas
-                        </DropdownItem>
-                        <DropdownItem key="verCompras" color="primary" onClick={() => handleOpenModal(cliente)}>Ver compras</DropdownItem>
-                      </DropdownMenu>
-                    )}
-                    {/* No se muestra ningún menú desplegable para los estados 'cancelado' y 'finalizado' */}
+                      {cliente.estado === 'pendiente' && (
+                        <div className="desing-dropdown">
+                          <Dropdown.Item eventKey="activo" onClick={() => handleStatus("activo", cliente._id)}>
+                            Activo
+                          </Dropdown.Item>
+                          <Dropdown.Item eventKey="cancelado" onClick={() => handleStatus("cancelado", cliente._id)}>
+                            Cancelado
+                          </Dropdown.Item>
+                        </div>
+                      )}
+
+                      {cliente.estado === "finalizado" && (
+                        <div className="desing-dropdown">
+                          <Dropdown.Item eventKey="new" onClick={() => adicional(cliente._id)} className="desing-condicional-dropdown">
+                            Agregar algo más
+                          </Dropdown.Item>
+                          <hr />
+                          <Dropdown.Item eventKey="ver-compras" onClick={() => handleOpenModal(cliente)} className="desing-condicional-dropdown">
+                            Ver compras
+                          </Dropdown.Item>
+                        </div>
+                      )}
+                    </Dropdown.Menu>
                   </Dropdown>
                 </td>
               </tr>

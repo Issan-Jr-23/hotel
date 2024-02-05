@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Table, Modal, Box, Typography, Pagination } from "@mui/material";
-import { Button, Input, Select, SelectItem, useDisclosure, Popover, PopoverTrigger, PopoverContent, Checkbox, Tabs, Tab, Dropdown, DropdownItem, DropdownTrigger, DropdownMenu } from "@nextui-org/react";
+import { Button, Input, Select, SelectItem, useDisclosure, Popover, PopoverTrigger, PopoverContent, Checkbox, Tabs, Tab, DropdownItem, DropdownTrigger, DropdownMenu } from "@nextui-org/react";
 import fd from "../../images/flechas-dobles.png"
 import toast, { Toaster } from "react-hot-toast";
 import Lottie from "react-lottie"
@@ -16,6 +16,7 @@ import { green, purple, blue, red } from '@mui/material/colors';
 import Brightness1Icon from '@mui/icons-material/Brightness1';
 import { VerticalDotsIcon } from "../iconos/VerticalDotsIcon.jsx";
 import stats from "../../images/stats.svg"
+import Dropdown from 'react-bootstrap/Dropdown';
 
 
 
@@ -236,7 +237,7 @@ export default function cabaniaTable() {
     const options = ["Si", "No"];
     const navigate = useNavigate();
 
-    const adicionalCabania = (id) => {
+    const adicional = (id) => {
         console.log(" id de cabañas: ", id)
         navigate(`/cabanias-adicional/${id}`);
         console.log("id del usuario para ver el historial del usuario: " + id)
@@ -2511,7 +2512,7 @@ const handleInputChange = (event, fieldName) => {
                     <span className="flex h-2"></span>
                     <tbody>
                         {users.map((cliente) => (
-                            <tr>
+                            <tr key={cliente._id}>
                                 <td className="text-left html-table-tbody flex flex-col">
                                     {/* <Button className="bg-white" onClick={() => handleOpenModal(cliente)}>
                                         <img className="w-4" src={chevron} alt="" />
@@ -3774,45 +3775,47 @@ const handleInputChange = (event, fieldName) => {
                                     </div>
                                 </td>
                                 <td className="html-table-tbody">
-                                    <Dropdown>
-                                        <DropdownTrigger>
-                                            <Button className="bg-inherent" onClick={() => seleccionarCliente(cliente.identificacion)}>
-                                                <VerticalDotsIcon />
-                                            </Button>
-                                        </DropdownTrigger>
-                                        {cliente.estado === 'activo' && (
-                                            <DropdownMenu aria-label="Static Actions">
-                                                <DropdownItem key="finalizado" color="primary" onClick={() => handleOpenModal(cliente)}>Finalizado</DropdownItem>
-                                                <DropdownItem
-                                                    key="new"
-                                                    className="font-semibold"
-                                                    style={{ fontWeight: "700" }}
-                                                    onClick={() => adicionalCabania(cliente._id)}
-                                                >
-                                                    Agregar algo mas
-                                                </DropdownItem>
+                                    <Dropdown onClick={() => seleccionarCliente(cliente.identificacion)} className="desing-cont-dropdown" drop="up">
+                                        <Dropdown.Toggle variant="light" id="dropdown-basic" className="desing-btn-dropdown">
+                                            <VerticalDotsIcon />
+                                        </Dropdown.Toggle>
 
-                                            </DropdownMenu>
-                                        )}
-                                        {cliente.estado === 'pendiente' && (
-                                            <DropdownMenu aria-label="Static Actions">
-                                                <DropdownItem key="activo" color="success" onClick={() => handleStatus("activo", cliente._id)}>Activo</DropdownItem>
-                                                <DropdownItem key="cancelado" color="danger" onClick={() => handleStatus("cancelado", cliente._id)}>Cancelado</DropdownItem>
-                                            </DropdownMenu>
-                                        )}
-                                        {cliente.estado === "finalizado" && (
-                                            <DropdownMenu>
-                                                <DropdownItem
-                                                    key="new"
-                                                    className="font-semibold"
-                                                    style={{ fontWeight: "700" }}
-                                                    onClick={() => adicionalCabania(cliente._id)}
-                                                >
-                                                    Agregar algo mas
-                                                </DropdownItem>
-                                                <DropdownItem key="verCompras" color="primary" onClick={() => handleOpenModal(cliente)}>Ver compras</DropdownItem>
-                                            </DropdownMenu>
-                                        )}
+                                        <Dropdown.Menu align="start" drop="up">
+                                            {cliente.estado === 'activo' && (
+                                                <div className="desing-dropdown">
+                                                    <Dropdown.Item eventKey="finalizado" onClick={() => handleOpenModal(cliente)} className="desing-condicional-dropdown">
+                                                        Finalizado
+                                                    </Dropdown.Item>
+                                                    <hr  />
+                                                    <Dropdown.Item eventKey="new" onClick={() => adicional(cliente._id)} className="desing-condicional-dropdown">
+                                                        Agregar algo más
+                                                    </Dropdown.Item>
+                                                </div>
+                                            )}
+
+                                            {cliente.estado === 'pendiente' && (
+                                                <div className="desing-dropdown">
+                                                    <Dropdown.Item eventKey="activo" onClick={() => handleStatus("activo", cliente._id)}>
+                                                        Activo
+                                                    </Dropdown.Item>
+                                                    <Dropdown.Item eventKey="cancelado" onClick={() => handleStatus("cancelado", cliente._id)}>
+                                                        Cancelado
+                                                    </Dropdown.Item>
+                                                </div>
+                                            )}
+
+                                            {cliente.estado === "finalizado" && (
+                                                <div className="desing-dropdown">
+                                                    <Dropdown.Item eventKey="new" onClick={() => adicional(cliente._id)} className="desing-condicional-dropdown">
+                                                        Agregar algo más
+                                                    </Dropdown.Item>
+                                                    <hr />
+                                                    <Dropdown.Item eventKey="ver-compras" onClick={() => handleOpenModal(cliente)} className="desing-condicional-dropdown">
+                                                        Ver compras
+                                                    </Dropdown.Item>
+                                                </div>
+                                            )}
+                                        </Dropdown.Menu>
                                     </Dropdown>
                                 </td>
                             </tr>

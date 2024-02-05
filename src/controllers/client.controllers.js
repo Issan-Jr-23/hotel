@@ -34,6 +34,23 @@ export const obtenerClientes = async (req, res) => {
   }
 };
 
+export const filtrarClientePorIdentificacion = async (req, res) => {
+  const { identificacion } = req.query;
+
+  try {
+    const cliente = await Cliente.findOne({ identificacion });
+
+    if (cliente) {
+      res.status(200).json(cliente);
+      console.log("data:",cliente)
+    } else {
+      res.status(404).json({ mensaje: "Cliente no encontrado" });
+    }
+  } catch (error) {
+    res.status(500).json({ mensaje: "Error al filtrar el cliente por identificación", error });
+  }
+};
+
 export const crearCliente = async (req, res) => {
   try {
     const nuevoCliente = new Cliente(req.body);

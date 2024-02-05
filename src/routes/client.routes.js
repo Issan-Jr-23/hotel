@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {actualizarFacturacion, actualizarValor, addBebidaAdicional, addDescorche, addFood, addFoodAdicional, addFoodAdicionalSubproducto, addItemRecepcion, fechaActivacion, fechaFinalizacion, getClienteByIdentificacion, obtenerCPI, obtenerClienteId, obtenerClientes, obtenerFechasCompras, obtenerProductosCop, obtenerResumenCompras, postPago, productosCategoria, productosMasCompradosPasadia,  resTotal,  totalPructosVendidosCortesias, updateClientCts, updatePP, updateUserStatus} from "../controllers/client.controllers.js";
+import {actualizarFacturacion, actualizarValor, addBebidaAdicional, addDescorche, addFood, addFoodAdicional, addFoodAdicionalSubproducto, addItemRecepcion, fechaActivacion, fechaFinalizacion, filtrarClientePorIdentificacion, getClienteByIdentificacion, obtenerCPI, obtenerClienteId, obtenerClientes, obtenerFechasCompras, obtenerProductosCop, obtenerResumenCompras, postPago, productosCategoria, productosMasCompradosPasadia,  resTotal,  totalPructosVendidosCortesias, updateClientCts, updatePP, updateUserStatus} from "../controllers/client.controllers.js";
 import {crearCliente} from "../controllers/client.controllers.js";
 import {deleteClient} from "../controllers/client.controllers.js";
 import {updateClient} from "../controllers/client.controllers.js";
@@ -40,6 +40,8 @@ router.get("/pasadia-productos-categoria", productosCategoria)
 router.get("/pasadia-totalidad-pago/:id", resTotal)
 router.get("/pasadia-totalidad-reserva-pago/:id", postPago)
 router.put("/pasadia-actualizar-valor", actualizarValor)
+
+router.get("/clientes/filtrar", filtrarClientePorIdentificacion);
 
 
 export default router;

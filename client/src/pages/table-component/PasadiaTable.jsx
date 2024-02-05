@@ -336,13 +336,29 @@ export default function review() {
 
 
 
+    const [debounceTimeout, setDebounceTimeout] = useState(null);
 
-    const handleInputChange = (event, fieldName) => {
+    const handleInputChange = async (event, fieldName) => {
         const { name, value } = event.target;
 
+        setErrorIdentificacion(name === 'identificacion' && !value);
+
+        if (debounceTimeout) {
+            clearTimeout(debounceTimeout);
+        }
+
         if (name === 'identificacion') {
-            setErrorIdentificacion(!value);
-        } else if (name === 'nombre') {
+            const prevIdentificacionLength = formData.identificacion.length; // Almacena la longitud anterior
+
+            const newTimeout = setTimeout(() => {
+                fetchData(name, value, fieldName, prevIdentificacionLength); // Pasa la longitud anterior a fetchData
+            }, 500);
+
+            setDebounceTimeout(newTimeout);
+        }
+
+
+        if (name === 'nombre') {
             setErrorNombre(!value);
         } else if (name === 'fechaPasadia') {
             setErrorFechaPasadia(!value);
@@ -354,26 +370,20 @@ export default function review() {
             setErrorNinios(!value)
         }
 
+        if (name === 'identificacion' && value.length < formData.identificacion.length) {
+            setFormData((prevData) => ({ ...prevData, nombre: '' }));
+            formData.nombre = ""
+        }
+
         let newValue = parseInt(value, 10);
         if (isNaN(newValue)) {
             newValue = 0;
         }
 
-        const totalCosto = (formData.cantidadPersonas.ninios * pasadiaNinios) +
-            (formData.cantidadPersonas.adultos * pasadiaAdultos);
-
-        const valueInputs = (formData.pagoAnticipado + formData.pagoPendiente);
-        const totalValueInputs = valueInputs;
-
-        const totalPendiente = totalCosto;
-
-        const ppc = totalPendiente - totalValueInputs;
-        console.log("valor de los inputs: " + ppc)
-        formData.nuevoTotal = ppc;
-
         const cantidadDeClientes = formData.cantidadPersonas.ninios + formData.cantidadPersonas.adultos;
-        if ((name === 'pagoPendiente' && parseFloat(value) > totalPendiente) ||
-            (name === 'pagoAnticipado' && parseFloat(value) > totalCosto)) {
+
+        if ((name === 'pagoPendiente' && parseFloat(value) > formData.nuevoTotal) ||
+            (name === 'pagoAnticipado' && parseFloat(value) > formData.nuevoTotal)) {
             alert('El monto no puede ser mayor que el costo total o el monto pendiente.');
         } else {
             if ((name === 'ninios' || name === 'adultos')) {
@@ -395,6 +405,27 @@ export default function review() {
             });
         }
     };
+
+    const fetchData = async (name, value, fieldName, prevIdentificacionLength) => {
+        try {
+            const response = await AxiosInstance.get(`/clientes/filtrar?identificacion=${value}&prevIdentificacionLength=${prevIdentificacionLength}`);
+            const data = response.data;
+
+            if (response.status === 200) {
+                setFormData((prevData) => ({ ...prevData, nombre: data.nombre }));
+                console.log("nombre filtrado", data.nombre);
+            } else {
+                setFormData((prevData) => ({ ...prevData, nombre: '' }));
+                console.error('Error al obtener la información desde el backend:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error al obtener la información desde el backend:', error);
+        }
+    };
+
+
+
+
 
     //#region 
     const handleReservaChange = (selectedSize) => {
@@ -1593,6 +1624,7 @@ export default function review() {
     };
 
     const seleccionarCliente = async (identificacion) => {
+        console.log("data : ", identificacion)
         const response = await AxiosInstance.get(`/pasadia-totalidad-pago/${identificacion}`)
         const { restaurante, bar, recepcion, descorche } = response.data
         setResTotal(restaurante)
@@ -2477,18 +2509,19 @@ export default function review() {
                                             id="identificacion"
                                             name="identificacion"
                                             type="text"
-
                                             variant="flat"
                                             label="IDENTIFICACIÓN DE USUARIO"
                                             value={formData.identificacion}
-                                            onChange={handleInputChange}
+                                            onChange={(event) => handleInputChange(event, 'identificacion')}
                                             className={`rounded-xl h-12 border-2 mr-2 ${errorIdentificacion ? 'border-red-500' : 'border-blue-400'}`}
                                             onKeyDown={(event) => {
-                                                if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                const allowedKeys = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"];
+                                                if (!/[0-9]/.test(event.key) && !allowedKeys.includes(event.key)) {
                                                     event.preventDefault();
                                                 }
                                             }}
                                         />
+
 
                                         <Input
                                             isRequired
@@ -2498,11 +2531,12 @@ export default function review() {
                                             variant="flat"
                                             label="NOMBRE DE USUARIO"
                                             value={formData.nombre}
-                                            onChange={handleInputChange}
+                                            onChange={(event) => handleInputChange(event, 'nombre')}
                                             className={`rounded-xl h-12 border-2 ml-2 ${errorNombre ? 'border-red-500' : 'border-blue-400'}`}
                                             style={{ textTransform: 'capitalize' }}
                                         />
                                     </div>
+
 
 
 
@@ -2667,7 +2701,7 @@ export default function review() {
                 <Table className="  bg-white p-5" style={{ paddingTop: "40px", width: "90vw" }}>
                     <thead className="html-table-thead ">
                         <tr className="html-table-tr border-b-2 border-red-100" >
-                            <th className="html-table-tr-th"> <span className="html-table-thead-span pl-5"><p></p> +  <img className="cursor-pointer mr-2 ml-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th>
+                            <th className="html-table-tr-th"></th>
                             <th className="html-table-tr-th"> <span className="html-table-thead-span pl-5"> <p></p>  Id<img className="cursor-pointer mr-5 ml-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th>
                             <th className="html-table-tr-th pl-5"> <span className="html-table-thead-span"> <p></p>  Nombre <img className="cursor-pointer mr-5 ml-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th>
                             <th className="html-table-tr-th pl-5"> <span className="html-table-thead-span"> <p></p>Fecha de Inicio<img className="cursor-pointer mr-5 ml-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th>
@@ -2703,7 +2737,6 @@ export default function review() {
                                                         <section className="flex justify-between w-full flex-wrap">
 
                                                             <div className="mx-5 my-1  w-full">
-                                                                <div className="mt-2 mb-2" style={{ fontWeight: "600" }}> Pago pendiente cabaña {selectedUser.tipo_cabania} : {selectedUser.nuevoTotal}</div>
                                                                 <h4 className="text-green-600">Productos (Bebidas y Comidas)</h4>
 
                                                                 {/* Combina ambos arrays (bebidas y comidas) y verifica si tiene elementos */}
@@ -2757,7 +2790,7 @@ export default function review() {
                                                     <hr className="bg-gray-400 mb-2 mt-2" style={{ height: "4px" }} />
                                                     {selectedUser.reserva === "Si" ? (
                                                         <div>
-                                                            <span className=" flex w-full  pr-20">Pago pendiente cabania {selectedUser.tipo_cabania}: {selectedUser.nuevoTotal || 0}</span>
+                                                            <span className=" flex w-full  pr-20">Pago pendiente {selectedUser.nuevoTotal || 0}</span>
                                                             <span className=" flex w-full  pr-20">Pago adelantado:<span className="text-red-500"> {selectedUser.pagoAnticipado || 0}</span></span>
                                                             <span className=" flex w-full  pr-20">Pago posterior: {selectedUser.pagoPendiente || 0}</span>
                                                             <span className=" flex w-full  pr-20">Bar: {barTotal || 0}</span>
@@ -4006,59 +4039,45 @@ export default function review() {
                                             </DropdownMenu>
                                         )}
                                     </Dropdown> */}
-                                    <Dropdown
-                                        show={menuAbierto} // Utiliza la propiedad "show" en lugar de controlar la visibilidad manualmente
-                                        onClick={() => seleccionarCliente(cliente.identificacion)}
-                                        className="flex flex-col"
-                                    >
-                                        <Dropdown.Toggle
-                                            variant="success"
-                                            id="dropdown-basic"
-                                            style={{ width: "100px" }}
-                                            onClick={() => setMenuAbierto(!menuAbierto)}
-                                        >
+                                    <Dropdown onClick={() => seleccionarCliente(cliente.identificacion)} className="desing-cont-dropdown" drop="up">
+                                        <Dropdown.Toggle variant="light" id="dropdown-basic" className="desing-btn-dropdown">
                                             <VerticalDotsIcon />
                                         </Dropdown.Toggle>
 
-                                        <Dropdown.Menu>
-                                            {cliente.estado === "activo" && (
-                                                <>
-                                                    <Dropdown.Item key="finalizado" onClick={() => handleOpenModal(cliente)}>
+                                        <Dropdown.Menu align="start" drop="up">
+                                            {cliente.estado === 'activo' && (
+                                                <div className="desing-dropdown">
+                                                    <Dropdown.Item eventKey="finalizado" onClick={() => handleOpenModal(cliente)} className="desing-condicional-dropdown">
                                                         Finalizado
                                                     </Dropdown.Item>
-                                                    <Dropdown.Divider />
-                                                    <Dropdown.Item
-                                                        key="new"
-                                                        className="font-semibold"
-                                                        onClick={() => adicional(cliente._id)}
-                                                    >
+                                                    <hr />
+                                                    <Dropdown.Item eventKey="new" onClick={() => adicional(cliente._id)} className="desing-condicional-dropdown">
                                                         Agregar algo más
                                                     </Dropdown.Item>
-                                                </>
+                                                </div>
                                             )}
 
-                                            {cliente.estado === "pendiente" && (
-                                                <>
-                                                    <Dropdown.Item key="activo" onClick={() => handleStatus("activo", cliente._id)}>
+                                            {cliente.estado === 'pendiente' && (
+                                                <div className="desing-dropdown">
+                                                    <Dropdown.Item eventKey="activo" onClick={() => handleStatus("activo", cliente._id)}>
                                                         Activo
                                                     </Dropdown.Item>
-                                                    <Dropdown.Divider />
-                                                    <Dropdown.Item key="cancelado" onClick={() => handleStatus("cancelado", cliente._id)}>
+                                                    <Dropdown.Item eventKey="cancelado" onClick={() => handleStatus("cancelado", cliente._id)}>
                                                         Cancelado
                                                     </Dropdown.Item>
-                                                </>
+                                                </div>
                                             )}
 
                                             {cliente.estado === "finalizado" && (
-                                                <>
-                                                    <Dropdown.Item key="new" className="font-semibold" onClick={() => adicional(cliente._id)}>
+                                                <div className="desing-dropdown">
+                                                    <Dropdown.Item eventKey="new" onClick={() => adicional(cliente._id)} className="desing-condicional-dropdown">
                                                         Agregar algo más
                                                     </Dropdown.Item>
-                                                    <Dropdown.Divider />
-                                                    <Dropdown.Item key="ver-compras" onClick={() => handleOpenModal(cliente)}>
+                                                    <hr />
+                                                    <Dropdown.Item eventKey="ver-compras" onClick={() => handleOpenModal(cliente)} className="desing-condicional-dropdown">
                                                         Ver compras
                                                     </Dropdown.Item>
-                                                </>
+                                                </div>
                                             )}
                                         </Dropdown.Menu>
                                     </Dropdown>
