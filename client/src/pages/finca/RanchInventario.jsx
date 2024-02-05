@@ -670,8 +670,8 @@ function Row(props) {
                                                                                     Cancelar
                                                                                 </Button>
                                                                                 <Button variant="contained" className='ml-2' endIcon={<SendIcon />} style={{ backgroundColor: "rgb(7, 182, 213)", color: "white", fontWeight: "600", marginLeft: "10px" }} onClick={() => hadleUpdateSubProducto(
-                                                                                    row._id, 
-                                                                                    subProductoSeleccionado._id, 
+                                                                                    row._id,
+                                                                                    subProductoSeleccionado._id,
                                                                                     subProductoSeleccionado.Descripcion,
                                                                                     subProductoSeleccionado.ValorUnitario, subProductoSeleccionado.ProductosVendidos,
                                                                                     subProductoSeleccionado.Cortesias,)}>
@@ -696,6 +696,48 @@ function Row(props) {
         </React.Fragment>
     );
 }
+
+   export const fetchProducts = async () => {
+        try {
+            const productsResponse = await AxiosInstance.get('/obtener-inventario');
+            const productsData = productsResponse.data;
+
+            const updatedRows = await Promise.all(
+                productsData.map(async (product) => {
+                    const subproductsResponse = await AxiosInstance.get(`/obtener-sub-productos/${product._id}`);
+                    const subproductsData = subproductsResponse.data;
+
+                    const historyArray = Array.isArray(product.history) ? product.history : [];
+                    if (subproductsData.length > 0) {
+                        const subproductsHistory = subproductsData.map((subproduct) => ({
+                            date: 'Subproduct Date',
+                            customerId: subproduct.id,
+                            amount: 1,
+                        }));
+
+                        historyArray.push(...subproductsHistory);
+                    }
+
+                    return createData(
+                        product._id,
+                        product.Descripcion,
+                        product.tipo,
+                        product.Caducidad,
+                        product.CantidadInicial,
+                        product.ValorUnitario,
+                        product.ProductosVendidos,
+                        product.Cortesias,
+                        historyArray,
+                        subproductsData
+                    );
+                })
+            );
+
+            setRows(updatedRows);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
 
 export default function CollapsibleTable() {
 

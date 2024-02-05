@@ -19,6 +19,7 @@ import * as XLSX from 'xlsx';
 import { useAuth } from "../../context/authContext.jsx";
 import "./table.css"
 import AxiosInstance from "../../api/axios.js";
+import {fetchProducts} from "../finca/RanchInventario.jsx"
 
 export default function App() {
   const { user } = useAuth();
@@ -88,8 +89,7 @@ export default function App() {
 
   const [users, setUsers] = useState([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
+  const obtenerInventarioStock = async() => {
       try {
         const response = await AxiosInstance.get("/obtener-inventario");
         setUsers(response.data);
@@ -97,16 +97,22 @@ export default function App() {
       } catch (error) {
         console.error("Error al obtener datos del servidor:", error);
       }
-    };
 
-    fetchData();
-  }, []);
+  }
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //   };
+
+  //   fetchData();
+  // }, []);
 
 
 
   const handleFormSubmit = async () => {
     try {
       await AxiosInstance.post("/inventario", formData);
+      fetchProducts();
 
       onClose();
       const response = await AxiosInstance.get("/obtener-inventario");

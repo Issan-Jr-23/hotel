@@ -111,3 +111,12 @@
     align-items: center;
 }
 
+
+.error-message {
+    transition: opacity 0.5s ease-in-out;
+    opacity: 0; /* Inicia invisible */
+    color: red;
+    margin-top: 4px;
+    height: 0; /* Evita ocupar espacio cuando esté oculto */
+    overflow: hidden;
+}

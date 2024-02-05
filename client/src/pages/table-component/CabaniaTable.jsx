@@ -309,64 +309,113 @@ export default function cabaniaTable() {
         setBusqueda(event.target.value);
     };
 
-const handleInputChange = (event, fieldName) => {
-    const { name, value } = event.target;
+    const [debounceTimeout, setDebounceTimeout] = useState(null);
+    const [errorMensajeIdentificacion, setErrorMensajeIdentificacion] = useState('');
 
-    let nuevoTotal, totalCosto;
+    const handleInputChange = (event, fieldName) => {
+        const { name, value } = event.target;
 
-    // Lógica para manejar campos de texto simples como 'identificacion', 'nombre', etc.
-    if (name === 'identificacion') {
-        setErrorIdentificacion(!value);
-    } else if (name === 'nombre') {
-        setErrorNombre(!value);
-    } else if (name === 'fechaPasadia') {
-        setErrorFechaPasadia(!value);
-    } else if (name === 'reserva') {
-        setErrorReserva(!value);
-    } else if (name === 'tipo_cabania') {
-        setErrorCabania(!value);
-    }
+        let nuevoTotal, totalCosto;
 
-    // Cálculo de totalCosto basado en el tipo de cabaña seleccionado
-    if (name === "tipo_cabania") {
-        totalCosto = value === "Mayapo" ? valorCabaniaM : valorCabania;
-    } else {
-        totalCosto = formData.tipo_cabania === "Mayapo" ? valorCabaniaM : valorCabania;
-    }
+        setErrorIdentificacion(name === 'identificacion' && !value);
 
-    // Lógica para calcular totalCosto basado en el número de 'ninios' y 'adultos'
-    const cantidadDeClientes = (name === 'ninios' || name === 'adultos') ? parseInt(value, 10) || 0 : formData.cantidadPersonas.ninios + formData.cantidadPersonas.adultos;
-    if (cantidadDeClientes > 4) {
-        totalCosto += ((cantidadDeClientes - 4) * valorPorPersonaAdicional);
-    }
-
-    // Lógica para 'pagoPendiente' y 'pagoAnticipado'
-    if (name === 'pagoPendiente' || name === 'pagoAnticipado') {
-        const pagoPendiente = name === 'pagoPendiente' ? parseFloat(value || "0") : parseFloat(formData.pagoPendiente || "0");
-        const pagoAnticipado = name === 'pagoAnticipado' ? parseFloat(value || "0") : parseFloat(formData.pagoAnticipado || "0");
-        const totalPagos = pagoPendiente + pagoAnticipado;
-
-        if (totalPagos > totalCosto) {
-            alert('La suma de los montos no puede ser mayor que el costo total.');
-            return; // Detiene la ejecución si la validación falla
-        } else {
-            nuevoTotal = totalCosto - totalPagos;
-            formData.nuevoTotal = nuevoTotal;
-
-            console.log("el total que debe pagar la persona: " + nuevoTotal);
+        if (debounceTimeout) {
+            clearTimeout(debounceTimeout);
         }
-    }
+        if (name === 'identificacion') {
+            const prevIdentificacionLength = formData.identificacion.length;
+            const newTimeout = setTimeout(() => {
+                fetchData(name, value, fieldName, prevIdentificacionLength);
+            }, 500);
+            setDebounceTimeout(newTimeout);
+        }
 
-    // Actualización de formData para reflejar cambios en cualquier campo, similar a 'pagoPendiente' y 'pagoAnticipado'
-    setFormData({
-        ...formData,
-        [name]: value, // Permite valores vacíos para todos los campos.
-        totalCosto,
-        nuevoTotal: formData.nuevoTotal,
-        ...(name === 'ninios' || name === 'adultos' ? { cantidadPersonas: { ...formData.cantidadPersonas, [name]: parseInt(value, 10) || 0 } } : {}),
-        ...(name === "tipo_cabania" && { [name]: value })
-    });
-};
+        if (name === 'nombre') {
+            setErrorNombre(!value);
+        } else if (name === 'fechaPasadia') {
+            setErrorFechaPasadia(!value);
+        } else if (name === 'reserva') {
+            setErrorReserva(!value);
+        } else if (name === 'tipo_cabania') {
+            setErrorCabania(!value);
+        }
+
+        if (name === 'identificacion' && value.length < formData.identificacion.length) {
+            setFormData((prevData) => ({ ...prevData, nombre: '' }));
+            formData.nombre = ""
+        }
+
+        // Cálculo de totalCosto basado en el tipo de cabaña seleccionado
+        if (name === "tipo_cabania") {
+            totalCosto = value === "Mayapo" ? valorCabaniaM : valorCabania;
+        } else {
+            totalCosto = formData.tipo_cabania === "Mayapo" ? valorCabaniaM : valorCabania;
+        }
+
+        // Lógica para calcular totalCosto basado en el número de 'ninios' y 'adultos'
+        const cantidadDeClientes = (name === 'ninios' || name === 'adultos') ? parseInt(value, 10) || 0 : formData.cantidadPersonas.ninios + formData.cantidadPersonas.adultos;
+        if (cantidadDeClientes > 4) {
+            totalCosto += ((cantidadDeClientes - 4) * valorPorPersonaAdicional);
+        }
+
+        // Lógica para 'pagoPendiente' y 'pagoAnticipado'
+        if (name === 'pagoPendiente' || name === 'pagoAnticipado') {
+            const pagoPendiente = name === 'pagoPendiente' ? parseFloat(value || "0") : parseFloat(formData.pagoPendiente || "0");
+            const pagoAnticipado = name === 'pagoAnticipado' ? parseFloat(value || "0") : parseFloat(formData.pagoAnticipado || "0");
+            const totalPagos = pagoPendiente + pagoAnticipado;
+
+            if (totalPagos > totalCosto) {
+                alert('La suma de los montos no puede ser mayor que el costo total.');
+                return; // Detiene la ejecución si la validación falla
+            } else {
+                nuevoTotal = totalCosto - totalPagos;
+                formData.nuevoTotal = nuevoTotal;
+
+                console.log("el total que debe pagar la persona: " + nuevoTotal);
+            }
+        }
+
+        // Actualización de formData para reflejar cambios en cualquier campo, similar a 'pagoPendiente' y 'pagoAnticipado'
+        setFormData({
+            ...formData,
+            [name]: value, // Permite valores vacíos para todos los campos.
+            totalCosto,
+            nuevoTotal: formData.nuevoTotal,
+            ...(name === 'ninios' || name === 'adultos' ? { cantidadPersonas: { ...formData.cantidadPersonas, [name]: parseInt(value, 10) || 0 } } : {}),
+            ...(name === "tipo_cabania" && { [name]: value })
+        });
+    };
+
+    const fetchData = async (name, value, fieldName, prevIdentificacionLength) => {
+        try {
+            const response = await AxiosInstance.get(`/clientes/filtrar?identificacion=${value}&prevIdentificacionLength=${prevIdentificacionLength}`);
+            const data = response.data;
+
+            if (response.status === 200 && data.nombre) {
+                setFormData((prevData) => ({ ...prevData, nombre: data.nombre }));
+                setErrorMensajeIdentificacion('usuario encontrado');
+                // console.log("nombre filtrado", data.nombre);
+            } else {
+                setFormData((prevData) => ({ ...prevData, nombre: '' }));
+                setErrorMensajeIdentificacion('Usuario no encontrado.');
+                // console.error('Usuario no encontrado.');
+            }
+        } catch (error) {
+            setErrorMensajeIdentificacion('Usuario no encontrado');
+            setFormData((prevData) => ({ ...prevData, nombre: '' }));
+            // console.log('Error al obtener la información desde el backend');
+        }
+    };
+
+    useEffect(() => {
+        let timer;
+        if (errorMensajeIdentificacion) {
+            timer = setTimeout(() => {
+                setErrorMensajeIdentificacion('');
+            }, 1600);
+        }
+        return () => clearTimeout(timer);
+    }, [errorMensajeIdentificacion]);
 
 
 
@@ -1531,7 +1580,7 @@ const handleInputChange = (event, fieldName) => {
 
                 }
 
-                
+
 
             } catch (error) {
                 console.error('Hubo un problema con la petición Axios:', error);
@@ -2281,36 +2330,42 @@ const handleInputChange = (event, fieldName) => {
                                 </Typography>
                                 <Typography component="h2" ><h2 className="text-2xl pt-5 pl-2 pb-4" >REGISTRAR USUARIO</h2></Typography>
                                 <Typography component="div" >
-                                    <div className="flex pt-1 pb-2">
-                                        <Input
-                                            isRequired
-                                            id="identificacion"
-                                            name="identificacion"
-                                            type="text"
-                                            variant="flat"
-                                            label="IDENTIFICACIÓN DE USUARIO"
-                                            value={formData.identificacion}
-                                            onChange={handleInputChange}
-                                            className={`rounded-xl border-2 h-12 mr-2 ${errorIdentificacion ? 'border-red-500' : 'border-blue-400'}`}
-                                            onKeyDown={(event) => {
-                                                if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
-                                                    event.preventDefault();
-                                                }
-                                            }}
-                                        />
-                                        <Input
-                                            isRequired
-                                            id="nombre"
-                                            name="nombre"
-                                            type="text"
+                                    <div className="flex pt-1 pb-2 flex-col">
+                                        {errorMensajeIdentificacion && <div style={{ color: 'red', marginTop: '4px' }}>{errorMensajeIdentificacion}</div>}
+                                        <div className="flex pt-1 pb-2 w-full">
+                                            <Input
+                                                isRequired
+                                                id="identificacion"
+                                                name="identificacion"
+                                                type="text"
+                                                variant="flat"
+                                                label="IDENTIFICACIÓN DE USUARIO"
+                                                value={formData.identificacion}
+                                                onChange={(event) => handleInputChange(event, 'identificacion')}
+                                                className={`rounded-xl h-12 border-2 mr-2 ${errorIdentificacion ? 'border-red-500' : 'border-blue-400'}`}
+                                                onKeyDown={(event) => {
+                                                    const allowedKeys = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"];
+                                                    if (!/[0-9]/.test(event.key) && !allowedKeys.includes(event.key)) {
+                                                        event.preventDefault();
+                                                    }
+                                                }}
+                                            />
+                                            <Input
+                                                isRequired
+                                                id="nombre"
+                                                name="nombre"
+                                                type="text"
+                                                variant="flat"
+                                                label="NOMBRE DE USUARIO"
+                                                value={formData.nombre}
+                                                onChange={(event) => handleInputChange(event, 'nombre')}
+                                                className={`rounded-xl h-12 border-2 ml-2 ${errorNombre ? 'border-red-500' : 'border-blue-400'}`}
+                                                style={{ textTransform: 'capitalize' }}
+                                            />
+                                        </div>
 
-                                            variant="flat"
-                                            label="NOMBRE DE USUARIO"
-                                            value={formData.nombre}
-                                            onChange={handleInputChange}
-                                            className={`rounded-xl border-2 h-12 ml-2 capitalize ${errorNombre ? 'border-red-500' : 'border-blue-400'}`}
 
-                                        />
+
                                     </div>
 
                                     <div className="flex pt-1 pb-2">
@@ -3786,7 +3841,7 @@ const handleInputChange = (event, fieldName) => {
                                                     <Dropdown.Item eventKey="finalizado" onClick={() => handleOpenModal(cliente)} className="desing-condicional-dropdown">
                                                         Finalizado
                                                     </Dropdown.Item>
-                                                    <hr  />
+                                                    <hr />
                                                     <Dropdown.Item eventKey="new" onClick={() => adicional(cliente._id)} className="desing-condicional-dropdown">
                                                         Agregar algo más
                                                     </Dropdown.Item>

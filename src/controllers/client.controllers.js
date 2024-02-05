@@ -38,11 +38,14 @@ export const filtrarClientePorIdentificacion = async (req, res) => {
   const { identificacion } = req.query;
 
   try {
-    const cliente = await Cliente.findOne({ identificacion });
+    const cliente = await Usuario.findOne({ identificacion });
+
+    
 
     if (cliente) {
-      res.status(200).json(cliente);
-      console.log("data:",cliente)
+      cliente.historial.forEach((data) => {
+      res.status(200).json({cliente: cliente.identificacion , nombre: data.nombre});
+      })
     } else {
       res.status(404).json({ mensaje: "Cliente no encontrado" });
     }
@@ -57,7 +60,7 @@ export const crearCliente = async (req, res) => {
     const clienteGuardado = await nuevoCliente.save();
     res.status(201).json(clienteGuardado);
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     res.status(500).send("Error al guardar el cliente en la base de datos");
   }
 };

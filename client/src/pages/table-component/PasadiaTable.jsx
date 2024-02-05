@@ -39,7 +39,28 @@ export default function review() {
     const [openMd, setOpenMd] = React.useState(false);
     const [openFz, setOpenFz] = React.useState(false);
     const [openTd, setOpenTd] = React.useState(false);
-    const handleOpen = () => setOpen(true);
+    const handleOpen = () => {
+        setOpen(true);
+
+        // Llamar a setFormData con el nuevo estado que contiene valores vacíos.
+        setFormData({
+            identificacion: "",
+            nombre: "",
+            reserva: "",
+            cantidadPersonas: {
+                adultos: "",
+                ninios: "",
+            },
+            mediosDePago: "",
+            pagoAnticipado: "",
+            mediosDePagoPendiente: "",
+            pagoPendiente: "",
+            fechaPasadia: "",
+            nuevoTotal: ""
+        });
+    };
+
+
     const handleCloseMd = () => setOpenMd(false);
     const handleCloseFz = () => setOpenFz(false);
     const handleCloseTd = () => setOpenTd(false);
@@ -337,6 +358,8 @@ export default function review() {
 
 
     const [debounceTimeout, setDebounceTimeout] = useState(null);
+    const [errorMensajeIdentificacion, setErrorMensajeIdentificacion] = useState('');
+
 
     const handleInputChange = async (event, fieldName) => {
         const { name, value } = event.target;
@@ -348,10 +371,10 @@ export default function review() {
         }
 
         if (name === 'identificacion') {
-            const prevIdentificacionLength = formData.identificacion.length; // Almacena la longitud anterior
+            const prevIdentificacionLength = formData.identificacion.length;
 
             const newTimeout = setTimeout(() => {
-                fetchData(name, value, fieldName, prevIdentificacionLength); // Pasa la longitud anterior a fetchData
+                fetchData(name, value, fieldName, prevIdentificacionLength);
             }, 500);
 
             setDebounceTimeout(newTimeout);
@@ -380,10 +403,21 @@ export default function review() {
             newValue = 0;
         }
 
-        const cantidadDeClientes = formData.cantidadPersonas.ninios + formData.cantidadPersonas.adultos;
+        const totalCosto = (formData.cantidadPersonas.ninios * pasadiaNinios) +
+            (formData.cantidadPersonas.adultos * pasadiaAdultos);
 
-        if ((name === 'pagoPendiente' && parseFloat(value) > formData.nuevoTotal) ||
-            (name === 'pagoAnticipado' && parseFloat(value) > formData.nuevoTotal)) {
+        const valueInputs = (formData.pagoAnticipado + formData.pagoPendiente);
+        const totalValueInputs = valueInputs;
+
+        const totalPendiente = totalCosto;
+
+        const ppc = totalPendiente - totalValueInputs;
+        // console.log("valor de los inputs: " + ppc)
+        formData.nuevoTotal = ppc;
+
+        const cantidadDeClientes = formData.cantidadPersonas.ninios + formData.cantidadPersonas.adultos;
+        if ((name === 'pagoPendiente' && parseFloat(value) > totalPendiente) ||
+            (name === 'pagoAnticipado' && parseFloat(value) > totalCosto)) {
             alert('El monto no puede ser mayor que el costo total o el monto pendiente.');
         } else {
             if ((name === 'ninios' || name === 'adultos')) {
@@ -406,28 +440,45 @@ export default function review() {
         }
     };
 
-    const fetchData = async (name, value, fieldName, prevIdentificacionLength) => {
+
+    const fetchData = async (name, value, fieldName, prevIdentificacionLength,res) => {
         try {
             const response = await AxiosInstance.get(`/clientes/filtrar?identificacion=${value}&prevIdentificacionLength=${prevIdentificacionLength}`);
             const data = response.data;
 
-            if (response.status === 200) {
+            if (response.status === 200 && data.nombre) {
                 setFormData((prevData) => ({ ...prevData, nombre: data.nombre }));
-                console.log("nombre filtrado", data.nombre);
+                setErrorMensajeIdentificacion('');
+                // console.log("nombre filtrado", data.nombre);
             } else {
                 setFormData((prevData) => ({ ...prevData, nombre: '' }));
-                console.error('Error al obtener la información desde el backend:', response.statusText);
+                setErrorMensajeIdentificacion('Usuario no encontrado.');
+                // console.error('Usuario no encontrado.');
             }
         } catch (error) {
-            console.error('Error al obtener la información desde el backend:', error);
+            setErrorMensajeIdentificacion('Usuario no encontrado 2');
+            setFormData((prevData) => ({ ...prevData, nombre: '' }));
+            // console.log('Error al obtener la información desde el backend');
         }
     };
 
+    useEffect(() => {
+        let timer;
+        if (errorMensajeIdentificacion) {
+            timer = setTimeout(() => {
+                setErrorMensajeIdentificacion('');
+            }, 1600);
+        }
+        return () => clearTimeout(timer);
+    }, [errorMensajeIdentificacion]);
 
 
 
 
-    //#region 
+
+
+
+    //#region
     const handleReservaChange = (selectedSize) => {
         setFormData({
             ...formData,
@@ -846,7 +897,7 @@ export default function review() {
             throw error;
         }
     };
-    //#endregion 
+    //#endregion
 
     const resetInpurGuardarFood = () => {
         setCantidadFood("");
@@ -1361,7 +1412,7 @@ export default function review() {
             if (formIsValid) {
 
                 await AxiosInstance.post("/pasadia-registrar-cliente", formData);
-                onClose();
+                handleClose();
                 toast.success('Cliente agregado exitosamente!');
                 setFormData({
                     identificacion: "",
@@ -1757,11 +1808,8 @@ export default function review() {
 
 
     let fecha = new Date();
-
     fecha.setHours(fecha.getHours());
-
     const fechaAjustada = fecha.toLocaleString();
-
     const generarPDF = async () => {
         const pdf = new jsPDF();
 
@@ -2503,38 +2551,42 @@ export default function review() {
                                 </Typography>
                                 <Typography component="h2" ><h2 className="text-2xl pt-5 pl-2 pb-4" >REGISTRAR USUARIO</h2></Typography>
                                 <Typography componet="div" >
-                                    <div className="flex pt-1 pb-2">
-                                        <Input
-                                            isRequired
-                                            id="identificacion"
-                                            name="identificacion"
-                                            type="text"
-                                            variant="flat"
-                                            label="IDENTIFICACIÓN DE USUARIO"
-                                            value={formData.identificacion}
-                                            onChange={(event) => handleInputChange(event, 'identificacion')}
-                                            className={`rounded-xl h-12 border-2 mr-2 ${errorIdentificacion ? 'border-red-500' : 'border-blue-400'}`}
-                                            onKeyDown={(event) => {
-                                                const allowedKeys = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"];
-                                                if (!/[0-9]/.test(event.key) && !allowedKeys.includes(event.key)) {
-                                                    event.preventDefault();
-                                                }
-                                            }}
-                                        />
+                                    <div className="flex pt-1 pb-2 flex-col">
+                                        {errorMensajeIdentificacion && <div style={{ color: 'red', marginTop: '4px' }}>{errorMensajeIdentificacion}</div>}
+                                        <div className="flex pt-1 pb-2 w-full">
+                                            <Input
+                                                isRequired
+                                                id="identificacion"
+                                                name="identificacion"
+                                                type="text"
+                                                variant="flat"
+                                                label="IDENTIFICACIÓN DE USUARIO"
+                                                value={formData.identificacion}
+                                                onChange={(event) => handleInputChange(event, 'identificacion')}
+                                                className={`rounded-xl h-12 border-2 mr-2 ${errorIdentificacion ? 'border-red-500' : 'border-blue-400'}`}
+                                                onKeyDown={(event) => {
+                                                    const allowedKeys = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"];
+                                                    if (!/[0-9]/.test(event.key) && !allowedKeys.includes(event.key)) {
+                                                        event.preventDefault();
+                                                    }
+                                                }}
+                                            />
+                                            <Input
+                                                isRequired
+                                                id="nombre"
+                                                name="nombre"
+                                                type="text"
+                                                variant="flat"
+                                                label="NOMBRE DE USUARIO"
+                                                value={formData.nombre}
+                                                onChange={(event) => handleInputChange(event, 'nombre')}
+                                                className={`rounded-xl h-12 border-2 ml-2 ${errorNombre ? 'border-red-500' : 'border-blue-400'}`}
+                                                style={{ textTransform: 'capitalize' }}
+                                            />
+                                        </div>
 
 
-                                        <Input
-                                            isRequired
-                                            id="nombre"
-                                            name="nombre"
-                                            type="text"
-                                            variant="flat"
-                                            label="NOMBRE DE USUARIO"
-                                            value={formData.nombre}
-                                            onChange={(event) => handleInputChange(event, 'nombre')}
-                                            className={`rounded-xl h-12 border-2 ml-2 ${errorNombre ? 'border-red-500' : 'border-blue-400'}`}
-                                            style={{ textTransform: 'capitalize' }}
-                                        />
+
                                     </div>
 
 
@@ -2674,7 +2726,7 @@ export default function review() {
 
                                 </Typography>
                                 <Typography component="div" className="pt-5">
-                                    <Button color="danger" variant="light" onClick={onClose}>
+                                    <Button color="danger" variant="light" onClick={handleClose}>
                                         Cerrar
                                     </Button>
                                     <Button color="primary" onClick={handleFormSubmit}>
@@ -2809,7 +2861,7 @@ export default function review() {
                                                                     selectedUser.pagoAnticipado
                                                                 ) - (selectedUser.pagoAnticipado)}</span>
                                                             <hr className="bg-gray-400 mt-2 mb-5" style={{ height: "3px" }} />
-                                                            <td>Cancelado: {selectedUser.pago}</td>
+                                                            <span>Cancelado: {selectedUser.pago}</span>
 
                                                         </div>
                                                     ) : (
@@ -2869,7 +2921,7 @@ export default function review() {
                                                         </Button>
                                                     </Typography>
 
-                                                    <Typography>
+                                                    <Typography component="div">
                                                         {/* {selectedUser.nuevoTotal > 0 && selectedUser.pago <= 0 ? ( */}
                                                         <Button color="secondary" variant="shadow" onClick={() => actualizarDatosCliente(selectedUser.nuevoTotal, selectedUser.identificacion, "finalizado", selectedUser._id)}>
                                                             Guardar
@@ -3067,7 +3119,7 @@ export default function review() {
                                             }}>
                                             <Box sx={style} >
                                                 <>
-                                                    <Typography className="flex flex-col gap-1" variant="h6" component="h2" >
+                                                    <Typography className="flex flex-col gap-1" component="h2" >
                                                         <h2>BEBIDAS</h2>
 
 
@@ -3079,19 +3131,24 @@ export default function review() {
                                                             name="esCortesia"
                                                             color="primary"
                                                         >Cortesia pasadia</Checkbox>
-                                                        <div className="flex " style={{ height: "68px" }}>
+                                                        <div className="flex flex-row-reverse" style={{ height: "68px" }}>
                                                             <input
                                                                 placeholder="Ingrese la cantidad"
-                                                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 ml-2"
                                                                 name="bebidas"
                                                                 label="Ingrese la cantidad"
-                                                                type="number"
+                                                                type="text"
                                                                 value={isNaN(cantidadBebida) ? '' : cantidadBebida}
                                                                 onChange={(e) => {
                                                                     const value = parseInt(e.target.value);
                                                                     setCantidadBebida(isNaN(value) ? "" : value);
                                                                 }}
                                                                 style={{ height: "54px" }}
+                                                                onKeyDown={(event) => {
+                                                                            if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                                                event.preventDefault();
+                                                                            }
+                                                                        }}
                                                             />
 
                                                             <input
@@ -3104,7 +3161,7 @@ export default function review() {
 
                                                             <Select
                                                                 key={resetKey}
-                                                                className="ml-2 mt-1 h-32"
+                                                                className="mr-2 mt-1 h-32"
                                                                 name="bebidas"
                                                                 label="Seleccionar bebida"
                                                                 value={bebidaSeleccionada}
@@ -3134,19 +3191,24 @@ export default function review() {
                                                                 ))}
                                                             </Select>
                                                         </div>
-                                                        <div className="flex">
+                                                        <div className="flex flex-row-reverse">
                                                             <input
-                                                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 ml-2"
                                                                 name="bebidas"
                                                                 placeholder="Ingrese la cantidad"
 
-                                                                type="number"
+                                                                type="text"
                                                                 value={isNaN(cantidadBebida1) ? '' : cantidadBebida1}
                                                                 onChange={(e) => {
                                                                     const value = parseInt(e.target.value);
                                                                     setCantidadBebida1(isNaN(value) ? "" : value);
                                                                 }}
                                                                 style={{ height: "54px" }}
+                                                                onKeyDown={(event) => {
+                                                                            if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                                                event.preventDefault();
+                                                                            }
+                                                                        }}
                                                             />
                                                             <input
                                                                 disabled
@@ -3157,7 +3219,7 @@ export default function review() {
                                                             />
                                                             <Select
                                                                 key={resetKey1}
-                                                                className="ml-2 mt-1"
+                                                                className="mr-2 mt-1"
                                                                 name="bebidas"
                                                                 label="Seleccionar bebida"
                                                                 value={bebida1Seleccionada}
@@ -3188,18 +3250,23 @@ export default function review() {
 
 
                                                         </div>
-                                                        <div className="flex">
+                                                        <div className="flex flex-row-reverse">
                                                             <input
-                                                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 ml-2"
                                                                 name="bebidas"
                                                                 placeholder="Ingrese la cantidad"
-                                                                type="number"
+                                                                type="text"
                                                                 value={isNaN(cantidadBebida2) ? '' : cantidadBebida2}
                                                                 onChange={(e) => {
                                                                     const value = parseInt(e.target.value);
                                                                     setCantidadBebida2(isNaN(value) ? "" : value);
                                                                 }}
                                                                 style={{ height: "54px" }}
+                                                                onKeyDown={(event) => {
+                                                                            if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                                                event.preventDefault();
+                                                                            }
+                                                                        }}
                                                             />
                                                             <input
                                                                 disabled
@@ -3210,7 +3277,7 @@ export default function review() {
                                                             />
                                                             <Select
                                                                 key={resetKey2}
-                                                                className="ml-2 mt-1"
+                                                                className="mr-2 mt-1"
                                                                 name="bebidas"
                                                                 label="Seleccionar bebida"
                                                                 value={bebida2Seleccionada}
@@ -3240,18 +3307,23 @@ export default function review() {
                                                                 ))}
                                                             </Select>
                                                         </div>
-                                                        <div className="flex">
+                                                        <div className="flex flex-row-reverse">
                                                             <input
-                                                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 ml-2"
                                                                 name="bebidas"
                                                                 placeholder="Ingrese la cantidad"
-                                                                type="number"
+                                                                type="text"
                                                                 value={isNaN(cantidadBebida3) ? '' : cantidadBebida3}
                                                                 onChange={(e) => {
                                                                     const value = parseInt(e.target.value);
                                                                     setCantidadBebida3(isNaN(value) ? "" : value);
                                                                 }}
                                                                 style={{ height: "54px" }}
+                                                                onKeyDown={(event) => {
+                                                                            if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                                                event.preventDefault();
+                                                                            }
+                                                                        }}
                                                             />
                                                             <input
                                                                 disabled
@@ -3262,7 +3334,7 @@ export default function review() {
                                                             />
                                                             <Select
                                                                 key={resetKey3}
-                                                                className="ml-2 mt-1"
+                                                                className="mr-2 mt-1"
                                                                 name="bebidas"
                                                                 label="Seleccionar bebida"
                                                                 value={bebida3Seleccionada}
@@ -3291,18 +3363,23 @@ export default function review() {
                                                                 ))}
                                                             </Select>
                                                         </div>
-                                                        <div className="flex">
+                                                        <div className="flex flex-row-reverse">
                                                             <input
-                                                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 ml-2"
                                                                 name="bebidas"
                                                                 placeholder="Ingrese la cantidad"
-                                                                type="number"
+                                                                type="text"
                                                                 value={isNaN(cantidadBebida4) ? '' : cantidadBebida4}
                                                                 onChange={(e) => {
                                                                     const value = parseInt(e.target.value);
                                                                     setCantidadBebida4(isNaN(value) ? "" : value);
                                                                 }}
                                                                 style={{ height: "54px" }}
+                                                                onKeyDown={(event) => {
+                                                                            if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                                                event.preventDefault();
+                                                                            }
+                                                                        }}
                                                             />
                                                             <input
                                                                 disabled
@@ -3314,7 +3391,7 @@ export default function review() {
 
                                                             <Select
                                                                 key={resetKey4}
-                                                                className="ml-2 mt-1"
+                                                                className="mr-2 mt-1"
                                                                 name="bebidas"
                                                                 label="Seleccionar bebida"
                                                                 value={bebida4Seleccionada}
@@ -3385,7 +3462,7 @@ export default function review() {
                                                     <Tabs className="">
                                                         <Tab key="productos" title="Productos">
 
-                                                            <Typography className="flex flex-col gap-1" component="h2">COMIDAS  </Typography>
+                                                            <Typography className="flex flex-col gap-1" component="div">COMIDAS</Typography>
                                                             <Typography component="div">
                                                                 <Checkbox
                                                                     checked={esCortesia}
@@ -3393,18 +3470,23 @@ export default function review() {
                                                                 >
                                                                     Cortesía pasadia
                                                                 </Checkbox>
-                                                                <div className="flex">
+                                                                <div className="flex flex-row-reverse">
                                                                     <input
-                                                                        className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                                                        className="inventario-box-option-input-01 outline-none pl-2 mb-2 ml-2"
                                                                         name="restaurante"
                                                                         placeholder="Ingrese la cantidad"
-                                                                        type="number"
+                                                                        type="text"
                                                                         value={isNaN(cantidadFood) ? '' : cantidadFood}
                                                                         onChange={(e) => {
                                                                             const value = parseInt(e.target.value);
                                                                             setCantidadFood(isNaN(value) ? '' : value);
                                                                         }}
                                                                         style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                                                                        onKeyDown={(event) => {
+                                                                            if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                                                event.preventDefault();
+                                                                            }
+                                                                        }}
 
                                                                     />
                                                                     <input
@@ -3415,7 +3497,7 @@ export default function review() {
                                                                     />
                                                                     <Select
                                                                         key={resetKey}
-                                                                        className="ml-2 mt-1 "
+                                                                        className="mr-2 mt-1 "
                                                                         name="restaurante"
                                                                         label="Seleccionar comida"
                                                                         value={foodSeleccionada}
@@ -3453,19 +3535,24 @@ export default function review() {
                                                                     </Select>
                                                                 </div>
 
-                                                                <div className="flex">
+                                                                <div className="flex flex-row-reverse">
 
                                                                     <input
-                                                                        className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                                                        className="inventario-box-option-input-01 outline-none pl-2 mb-2 ml-2"
                                                                         name="restaurante"
                                                                         placeholder="Ingrese la cantidad"
-                                                                        type="number"
+                                                                        type="text"
                                                                         value={isNaN(cantidadFood1) ? '' : cantidadFood1}
                                                                         onChange={(e) => {
                                                                             const value = parseInt(e.target.value);
                                                                             setCantidadFood1(isNaN(value) ? '' : value);
                                                                         }}
                                                                         style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                                                                        onKeyDown={(event) => {
+                                                                            if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                                                event.preventDefault();
+                                                                            }
+                                                                        }}
                                                                     />
                                                                     <input
                                                                         disabled
@@ -3476,7 +3563,7 @@ export default function review() {
                                                                     />
                                                                     <Select
                                                                         key={resetKey1}
-                                                                        className="ml-2 mt-1"
+                                                                        className="mr-2 mt-1"
                                                                         name="restaurante"
                                                                         label="Seleccionar comida"
                                                                         value={food1Seleccionada}
@@ -3508,19 +3595,25 @@ export default function review() {
                                                                         ))}
                                                                     </Select>
                                                                 </div>
-                                                                <div className="flex">
+
+                                                                <div className="flex flex-row-reverse">
 
                                                                     <input
-                                                                        className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                                                        className="inventario-box-option-input-01 outline-none pl-2 mb-2 ml-2"
                                                                         name="restaurante"
                                                                         placeholder="Ingrese la cantidad"
-                                                                        type="number"
+                                                                        type="text"
                                                                         value={isNaN(cantidadFood2) ? '' : cantidadFood2}
                                                                         onChange={(e) => {
                                                                             const value = parseInt(e.target.value);
                                                                             setCantidadFood2(isNaN(value) ? '' : value);
                                                                         }}
                                                                         style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                                                                        onKeyDown={(event) => {
+                                                                            if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                                                event.preventDefault();
+                                                                            }
+                                                                        }}
                                                                     />
                                                                     <input
                                                                         disabled
@@ -3531,7 +3624,7 @@ export default function review() {
                                                                     />
                                                                     <Select
                                                                         key={resetKey2}
-                                                                        className="ml-2 mt-1"
+                                                                        className="mr-2 mt-1"
                                                                         name="restaurante"
                                                                         label="Seleccionar comida"
                                                                         value={food2Seleccionada}
@@ -3562,19 +3655,25 @@ export default function review() {
                                                                         ))}
                                                                     </Select>
                                                                 </div>
-                                                                <div className="flex">
+
+                                                                <div className="flex flex-row-reverse">
 
                                                                     <input
-                                                                        className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                                                        className="inventario-box-option-input-01 outline-none pl-2 mb-2 ml-2"
                                                                         name="restaurante"
                                                                         placeholder="Ingrese la cantidad"
-                                                                        type="number"
+                                                                        type="text"
                                                                         value={isNaN(cantidadFood3) ? '' : cantidadFood3}
                                                                         onChange={(e) => {
                                                                             const value = parseInt(e.target.value);
                                                                             setCantidadFood3(isNaN(value) ? '' : value);
                                                                         }}
                                                                         style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                                                                        onKeyDown={(event) => {
+                                                                            if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                                                event.preventDefault();
+                                                                            }
+                                                                        }}
                                                                     />
                                                                     <input
                                                                         disabled
@@ -3585,7 +3684,7 @@ export default function review() {
                                                                     />
                                                                     <Select
                                                                         key={resetKey3}
-                                                                        className="ml-2 mt-1"
+                                                                        className="mr-2 mt-1"
                                                                         name="restaurante"
                                                                         label="Seleccionar comida"
                                                                         value={food3Seleccionada}
@@ -3616,19 +3715,25 @@ export default function review() {
                                                                         ))}
                                                                     </Select>
                                                                 </div>
-                                                                <div className="flex">
+
+                                                                <div className="flex flex-row-reverse">
 
                                                                     <input
-                                                                        className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                                                        className="inventario-box-option-input-01 outline-none pl-2 mb-2 ml-2"
                                                                         name="restaurante"
                                                                         placeholder="Ingrese la cantidad"
-                                                                        type="number"
+                                                                        type="text"
                                                                         value={isNaN(cantidadFood4) ? '' : cantidadFood4}
                                                                         onChange={(e) => {
                                                                             const value = parseInt(e.target.value);
                                                                             setCantidadFood4(isNaN(value) ? '' : value);
                                                                         }}
                                                                         style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                                                                        onKeyDown={(event) => {
+                                                                            if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                                                event.preventDefault();
+                                                                            }
+                                                                        }}
                                                                     />
                                                                     <input
                                                                         disabled
@@ -3639,7 +3744,7 @@ export default function review() {
                                                                     />
                                                                     <Select
                                                                         key={resetKey4}
-                                                                        className="ml-2 mt-1"
+                                                                        className="mr-2 mt-1"
                                                                         name="restaurante"
                                                                         label="Seleccionar comida"
                                                                         value={food4Seleccionada}
@@ -3692,18 +3797,23 @@ export default function review() {
                                                             </Checkbox>
 
 
-                                                            <div className="flex mb-1">
+                                                            <div className="flex mb-1 flex-row-reverse">
                                                                 <input
-                                                                    className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                                                    className="inventario-box-option-input-01 outline-none pl-2 mb-2 ml-2"
                                                                     name="restaurante"
                                                                     placeholder="Ingrese la cantidad"
-                                                                    type="number"
+                                                                    type="text"
                                                                     value={isNaN(cantidadItem) ? '' : cantidadItem}
                                                                     onChange={(e) => {
                                                                         const value = parseInt(e.target.value);
                                                                         setCantidadItem(isNaN(value) ? '' : value);
                                                                     }}
                                                                     style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                                                                    onKeyDown={(event) => {
+                                                                        if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                                            event.preventDefault();
+                                                                        }
+                                                                    }}
                                                                 />
                                                                 <input
                                                                     disabled
@@ -3714,7 +3824,7 @@ export default function review() {
                                                                 />
                                                                 <Select
                                                                     key={resetKey}
-                                                                    className="ml-2 mt-1"
+                                                                    className="mr-2 mt-1"
                                                                     name="restaurante"
                                                                     label="Seleccionar comida"
                                                                     value={itemSeleccionado}
@@ -3748,18 +3858,23 @@ export default function review() {
                                                                 </Select>
                                                             </div>
 
-                                                            <div className="flex mb-1">
+                                                            <div className="flex mb-1 flex-row-reverse">
                                                                 <input
-                                                                    className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                                                    className="inventario-box-option-input-01 outline-none pl-2 mb-2 ml-2"
                                                                     name="restaurante"
                                                                     placeholder="Ingrese la cantidad"
-                                                                    type="number"
+                                                                    type="text"
                                                                     value={isNaN(cantidadItem1) ? '' : cantidadItem1}
                                                                     onChange={(e) => {
                                                                         const value = parseInt(e.target.value);
                                                                         setCantidadItem1(isNaN(value) ? '' : value);
                                                                     }}
                                                                     style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                                                                    onKeyDown={(event) => {
+                                                                        if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                                            event.preventDefault();
+                                                                        }
+                                                                    }}
                                                                 />
                                                                 <input
                                                                     disabled
@@ -3770,7 +3885,7 @@ export default function review() {
                                                                 />
                                                                 <Select
                                                                     key={resetKey1}
-                                                                    className="ml-2 mt-1"
+                                                                    className="mr-2 mt-1"
                                                                     name="restaurante"
                                                                     label="Seleccionar comida"
                                                                     value={itemSeleccionado1}
@@ -3802,18 +3917,23 @@ export default function review() {
                                                                 </Select>
                                                             </div>
 
-                                                            <div className="flex mb-1">
+                                                            <div className="flex mb-1 flex-row-reverse">
                                                                 <input
-                                                                    className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                                                    className="inventario-box-option-input-01 outline-none pl-2 mb-2 ml-2"
                                                                     name="restaurante"
                                                                     placeholder="Ingrese la cantidad"
-                                                                    type="number"
+                                                                    type="text"
                                                                     value={isNaN(cantidadItem2) ? '' : cantidadItem2}
                                                                     onChange={(e) => {
                                                                         const value = parseInt(e.target.value);
                                                                         setCantidadItem2(isNaN(value) ? '' : value);
                                                                     }}
                                                                     style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                                                                    onKeyDown={(event) => {
+                                                                        if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                                            event.preventDefault();
+                                                                        }
+                                                                    }}
                                                                 />
                                                                 <input
                                                                     disabled
@@ -3824,7 +3944,7 @@ export default function review() {
                                                                 />
                                                                 <Select
                                                                     key={resetKey2}
-                                                                    className="ml-2 mt-1"
+                                                                    className="mr-2 mt-1"
                                                                     name="restaurante"
                                                                     label="Seleccionar comida"
                                                                     value={itemSeleccionado2}
@@ -3857,18 +3977,23 @@ export default function review() {
                                                                 </Select>
                                                             </div>
 
-                                                            <div className="flex mb-1">
+                                                            <div className="flex mb-1 flex-row-reverse">
                                                                 <input
-                                                                    className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                                                    className="inventario-box-option-input-01 outline-none pl-2 mb-2 ml-2"
                                                                     name="restaurante"
                                                                     placeholder="Ingrese la cantidad"
-                                                                    type="number"
+                                                                    type="text"
                                                                     value={isNaN(cantidadItem3) ? '' : cantidadItem3}
                                                                     onChange={(e) => {
                                                                         const value = parseInt(e.target.value);
                                                                         setCantidadItem3(isNaN(value) ? '' : value);
                                                                     }}
                                                                     style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                                                                    onKeyDown={(event) => {
+                                                                        if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                                            event.preventDefault();
+                                                                        }
+                                                                    }}
                                                                 />
                                                                 <input
                                                                     disabled
@@ -3879,7 +4004,7 @@ export default function review() {
                                                                 />
                                                                 <Select
                                                                     key={resetKey3}
-                                                                    className="ml-2 mt-1"
+                                                                    className="mr-2 mt-1"
                                                                     name="restaurante"
                                                                     label="Seleccionar comida"
                                                                     value={itemSeleccionado3}
@@ -3912,18 +4037,23 @@ export default function review() {
                                                                 </Select>
                                                             </div>
 
-                                                            <div className="flex mb-1">
+                                                            <div className="flex mb-1 flex-row-reverse">
                                                                 <input
-                                                                    className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                                                    className="inventario-box-option-input-01 outline-none pl-2 mb-2 ml-2"
                                                                     name="restaurante"
                                                                     placeholder="Ingrese la cantidad"
-                                                                    type="number"
+                                                                    type="text"
                                                                     value={isNaN(cantidadItem4) ? '' : cantidadItem4}
                                                                     onChange={(e) => {
                                                                         const value = parseInt(e.target.value);
                                                                         setCantidadItem4(isNaN(value) ? '' : value);
                                                                     }}
                                                                     style={{ height: "40px", backgroundColor: "#f4f4f5" }}
+                                                                    onKeyDown={(event) => {
+                                                                        if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                                            event.preventDefault();
+                                                                        }
+                                                                    }}
                                                                 />
                                                                 <input
                                                                     disabled
@@ -3934,7 +4064,7 @@ export default function review() {
                                                                 />
                                                                 <Select
                                                                     key={resetKey4}
-                                                                    className="ml-2 mt-1"
+                                                                    className="mr-2 mt-1"
                                                                     name="restaurante"
                                                                     label="Seleccionar comida"
                                                                     value={itemSeleccionado4}

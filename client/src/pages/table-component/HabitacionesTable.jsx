@@ -305,11 +305,27 @@ export default function habitacionesTable() {
   };
 
 
+  const [debounceTimeout, setDebounceTimeout] = useState(null);
+  const [errorMensajeIdentificacion, setErrorMensajeIdentificacion] = useState('');
+
   const handleInputChange = (event, fieldName) => {
     let { name, value } = event.target;
+
+
+    setErrorIdentificacion(name === 'identificacion' && !value);
+
+    if (debounceTimeout) {
+      clearTimeout(debounceTimeout);
+    }
     if (name === 'identificacion') {
-      setErrorIdentificacion(!value);
-    } else if (name === 'nombre') {
+      const prevIdentificacionLength = formData.identificacion.length;
+      const newTimeout = setTimeout(() => {
+        fetchData(name, value, fieldName, prevIdentificacionLength);
+      }, 500);
+      setDebounceTimeout(newTimeout);
+    }
+
+    if (name === 'nombre') {
       setErrorNombre(!value);
     } else if (name === 'fechaPasadia') {
       setErrorFechaPasadia(!value);
@@ -318,7 +334,12 @@ export default function habitacionesTable() {
     } else if (name === 'adultos') {
       setErrorAdultos(!value)
     } else if (name === 'habitaciones') {
+      setErrorHabitacion(!value);
+    }
 
+    if (name === 'identificacion' && value.length < formData.identificacion.length) {
+      setFormData((prevData) => ({ ...prevData, nombre: '' }));
+      formData.nombre = ""
     }
 
     if (formData.pagoAnticipado < 1000) {
@@ -351,6 +372,38 @@ export default function habitacionesTable() {
       });
     }
   };
+
+
+  const fetchData = async (name, value, fieldName, prevIdentificacionLength) => {
+    try {
+      const response = await AxiosInstance.get(`/clientes/filtrar?identificacion=${value}&prevIdentificacionLength=${prevIdentificacionLength}`);
+      const data = response.data;
+
+      if (response.status === 200 && data.nombre) {
+        setFormData((prevData) => ({ ...prevData, nombre: data.nombre }));
+        setErrorMensajeIdentificacion('');
+        // console.log("nombre filtrado", data.nombre);
+      } else {
+        setFormData((prevData) => ({ ...prevData, nombre: '' }));
+        setErrorMensajeIdentificacion('Usuario no encontrado.');
+        // console.error('Usuario no encontrado.');
+      }
+    } catch (error) {
+      setErrorMensajeIdentificacion('Usuario no encontrado');
+      setFormData((prevData) => ({ ...prevData, nombre: '' }));
+      // console.log('Error al obtener la información desde el backend');
+    }
+  };
+
+  useEffect(() => {
+    let timer;
+    if (errorMensajeIdentificacion) {
+      timer = setTimeout(() => {
+        setErrorMensajeIdentificacion('');
+      }, 1600);
+    }
+    return () => clearTimeout(timer);
+  }, [errorMensajeIdentificacion]);
 
 
 
@@ -2369,36 +2422,42 @@ export default function habitacionesTable() {
               </Typography>
               <Typography component="h2" ><h2 className="text-2xl pt-5 pl-2 pb-4" >REGISTRAR USUARIO</h2></Typography>
               <Typography component="div">
-                <div className="flex pt-1 pb-2">
-                  <Input
-                    isRequired
-                    id="identificacion"
-                    name="identificacion"
-                    type="text"
+                <div className="flex pt-1 pb-2 flex-col">
+                  {errorMensajeIdentificacion && <div style={{ color: 'red', marginTop: '4px' }}>{errorMensajeIdentificacion}</div>}
+                  <div className="flex pt-1 pb-2 w-full">
+                    <Input
+                      isRequired
+                      id="identificacion"
+                      name="identificacion"
+                      type="text"
+                      variant="flat"
+                      label="IDENTIFICACIÓN DE USUARIO"
+                      value={formData.identificacion}
+                      onChange={(event) => handleInputChange(event, 'identificacion')}
+                      className={`rounded-xl h-12 border-2 mr-2 ${errorIdentificacion ? 'border-red-500' : 'border-blue-400'}`}
+                      onKeyDown={(event) => {
+                        const allowedKeys = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"];
+                        if (!/[0-9]/.test(event.key) && !allowedKeys.includes(event.key)) {
+                          event.preventDefault();
+                        }
+                      }}
+                    />
+                    <Input
+                      isRequired
+                      id="nombre"
+                      name="nombre"
+                      type="text"
+                      variant="flat"
+                      label="NOMBRE DE USUARIO"
+                      value={formData.nombre}
+                      onChange={(event) => handleInputChange(event, 'nombre')}
+                      className={`rounded-xl h-12 border-2 ml-2 ${errorNombre ? 'border-red-500' : 'border-blue-400'}`}
+                      style={{ textTransform: 'capitalize' }}
+                    />
+                  </div>
 
-                    variant="flat"
-                    label="IDENTIFICACIÓN DE USUARIO"
-                    value={formData.identificacion}
-                    onChange={handleInputChange}
-                    className={`rounded-xl h-12 border-2 mr-2 ${errorIdentificacion ? 'border-red-500' : 'border-blue-400'}`}
-                    onKeyDown={(event) => {
-                      if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
-                        event.preventDefault();
-                      }
-                    }}
-                  />
-                  <Input
-                    isRequired
-                    id="nombre"
-                    name="nombre"
-                    type="text"
 
-                    variant="flat"
-                    label="NOMBRE DE USUARIO"
-                    value={formData.nombre}
-                    onChange={handleInputChange}
-                    className={`rounded-xl h-12 border-2 ml-2 ${errorNombre ? 'border-red-500' : 'border-blue-400'}`}
-                  />
+
                 </div>
 
 
@@ -2858,17 +2917,21 @@ export default function habitacionesTable() {
                     <div className="flex flex-wrap gap-3">
 
                       <Button className="bg-white-100" onClick={() => handleOpenm(cliente._id)} disabled={cliente.estado !== "activo"}  >
-                        <img className="w-7 h-7" src={plus} alt="plus" />
+                        <img className="w-5 h-5" src={plus} alt="plus" />
                       </Button>
 
                     </div>
 
-                    <Modal open={openAb} onClose={handleCloseAb}>
+                    <Modal open={openAb} onClose={handleCloseAb} BackdropProps={{
+                      style: { backgroundColor: 'rgba(0, 0, 0, 0.1)' }
+                    }}>
                       <Box sx={style} style={{
                         maxHeight: "90vh",
                         minHeight: "min-content",
                         overflowY: "auto"
-                      }}>
+                      }}
+
+                      >
                         <>
                           <Typography className="flex flex-col gap-1" component="div">BEBIDAS</Typography>
                           <Typography component="div" >
@@ -2878,9 +2941,9 @@ export default function habitacionesTable() {
                             >
                               Cortesía cabañas
                             </Checkbox>
-                            <div className="flex">
+                            <div className="flex flex-row-reverse mb-2">
                               <Input
-                                className="mr-2"
+                                className="ml-2"
                                 name="bebidas"
                                 label="Ingrese la cantidad"
                                 type="text"
@@ -2903,7 +2966,7 @@ export default function habitacionesTable() {
                               />
                               <Select
                                 key={resetKey}
-                                className="ml-2"
+                                className="mr-2"
                                 name="bebidas"
                                 label="Seleccionar bebida"
                                 value={bebidaSeleccionada}
@@ -2932,9 +2995,10 @@ export default function habitacionesTable() {
                                 ))}
                               </Select>
                             </div>
-                            <div className="flex">
+
+                            <div className="flex flex-row-reverse mb-2">
                               <Input
-                                className="mr-2"
+                                className="ml-2"
                                 name="bebidas"
                                 label="Ingrese la cantidad"
                                 type="text"
@@ -2957,7 +3021,7 @@ export default function habitacionesTable() {
                               />
                               <Select
                                 key={resetKey}
-                                className="ml-2"
+                                className="mr-2"
                                 name="bebidas"
                                 label="Seleccionar bebida"
                                 value={bebida1Seleccionada}
@@ -2986,9 +3050,10 @@ export default function habitacionesTable() {
                                 ))}
                               </Select>
                             </div>
-                            <div className="flex">
+
+                            <div className="flex flex-row-reverse mb-2">
                               <Input
-                                className="mr-2"
+                                className="ml-2"
                                 name="bebidas"
                                 label="Ingrese la cantidad"
                                 type="text"
@@ -3011,7 +3076,7 @@ export default function habitacionesTable() {
                               />
                               <Select
                                 key={resetKey}
-                                className="ml-2"
+                                className="mr-2"
                                 name="bebidas"
                                 label="Seleccionar bebida"
                                 value={bebida2Seleccionada}
@@ -3040,9 +3105,10 @@ export default function habitacionesTable() {
                                 ))}
                               </Select>
                             </div>
-                            <div className="flex">
+
+                            <div className="flex flex-row-reverse mb-2">
                               <Input
-                                className="mr-2"
+                                className="ml-2"
                                 name="bebidas"
                                 label="Ingrese la cantidad"
                                 type="text"
@@ -3065,7 +3131,7 @@ export default function habitacionesTable() {
                               />
                               <Select
                                 key={resetKey}
-                                className="ml-2"
+                                className="mr-2"
                                 name="bebidas"
                                 label="Seleccionar bebida"
                                 value={bebida3Seleccionada}
@@ -3094,9 +3160,10 @@ export default function habitacionesTable() {
                                 ))}
                               </Select>
                             </div>
-                            <div className="flex">
+
+                            <div className="flex flex-row-reverse mb-2">
                               <Input
-                                className="mr-2"
+                                className="ml-2"
                                 name="bebidas"
                                 label="Ingrese la cantidad"
                                 type="text"
@@ -3119,7 +3186,7 @@ export default function habitacionesTable() {
                               />
                               <Select
                                 key={resetKey}
-                                className="ml-2"
+                                className="mr-2"
                                 name="bebidas"
                                 label="Seleccionar bebida"
                                 value={bebida4Seleccionada}
@@ -3169,7 +3236,7 @@ export default function habitacionesTable() {
                     <div className="flex flex-wrap gap-3">
 
                       <Button className="bg-white-100" onClick={() => handleOpenmf(cliente._id)} disabled={cliente.estado !== "activo"}>
-                        <img className="w-7 h-7" src={plusb} alt="plus" />
+                        <img className="w-5 h-5" src={plusb} alt="plus" />
                       </Button>
 
                     </div>
@@ -3198,9 +3265,9 @@ export default function habitacionesTable() {
                               >
                                 Cortesía pasadia
                               </Checkbox>
-                              <div className="flex">
+                              <div className="flex flex-row-reverse mb-2">
                                 <input
-                                  className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                  className="inventario-box-option-input-01 outline-none pl-2 mb-2 ml-2"
                                   name="restaurante"
                                   placeholder="Ingrese la cantidad"
                                   type="text"
@@ -3225,7 +3292,7 @@ export default function habitacionesTable() {
                                 />
                                 <Select
                                   key={resetKey}
-                                  className="ml-2 mt-1"
+                                  className="mr-2 mt-1"
                                   name="restaurante"
                                   label="Seleccionar comida"
                                   value={foodSeleccionada}
@@ -3260,10 +3327,10 @@ export default function habitacionesTable() {
                                 </Select>
                               </div>
 
-                              <div className="flex">
+                              <div className="flex flex-row-reverse mb-2">
 
                                 <input
-                                  className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                  className="inventario-box-option-input-01 outline-none pl-2 mb-2 ml-2"
                                   name="restaurante"
                                   placeholder="Ingrese la cantidad"
                                   type="text"
@@ -3288,7 +3355,7 @@ export default function habitacionesTable() {
                                 />
                                 <Select
                                   key={resetKey1}
-                                  className="ml-2 mt-1"
+                                  className="mr-2 mt-1"
                                   name="restaurante"
                                   label="Seleccionar comida"
                                   value={food1Seleccionada}
@@ -3319,10 +3386,11 @@ export default function habitacionesTable() {
                                   ))}
                                 </Select>
                               </div>
-                              <div className="flex">
+
+                              <div className="flex flex-row-reverse mb-2">
 
                                 <input
-                                  className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                  className="inventario-box-option-input-01 outline-none pl-2 mb-2 ml-2"
                                   name="restaurante"
                                   placeholder="Ingrese la cantidad"
                                   type="text"
@@ -3347,7 +3415,7 @@ export default function habitacionesTable() {
                                 />
                                 <Select
                                   key={resetKey2}
-                                  className="ml-2 mt-1"
+                                  className="mr-2 mt-1"
                                   name="restaurante"
                                   label="Seleccionar comida"
                                   value={food2Seleccionada}
@@ -3377,10 +3445,11 @@ export default function habitacionesTable() {
                                   ))}
                                 </Select>
                               </div>
-                              <div className="flex">
+
+                              <div className="flex flex-row-reverse mb-2">
 
                                 <input
-                                  className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                  className="inventario-box-option-input-01 outline-none pl-2 mb-2 ml-2"
                                   name="restaurante"
                                   placeholder="Ingrese la cantidad"
                                   type="text"
@@ -3405,7 +3474,7 @@ export default function habitacionesTable() {
                                 />
                                 <Select
                                   key={resetKey3}
-                                  className="ml-2 mt-1"
+                                  className="mr-2 mt-1"
                                   name="restaurante"
                                   label="Seleccionar comida"
                                   value={food3Seleccionada}
@@ -3435,10 +3504,11 @@ export default function habitacionesTable() {
                                   ))}
                                 </Select>
                               </div>
-                              <div className="flex">
+
+                              <div className="flex flex-row-reverse mb-2">
 
                                 <input
-                                  className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                  className="inventario-box-option-input-01 outline-none pl-2 mb-2 ml-2"
                                   name="restaurante"
                                   placeholder="Ingrese la cantidad"
                                   type="number"
@@ -3463,7 +3533,7 @@ export default function habitacionesTable() {
                                 />
                                 <Select
                                   key={resetKey4}
-                                  className="ml-2 mt-1"
+                                  className="mr-2 mt-1"
                                   name="restaurante"
                                   label="Seleccionar comida"
                                   value={food4Seleccionada}
@@ -3493,6 +3563,7 @@ export default function habitacionesTable() {
                                   ))}
                                 </Select>
                               </div>
+
                             </Typography>
                             <Typography component="div" >
                               <Button color="danger" variant="light" onPress={handleCloseAf}>
@@ -3506,8 +3577,8 @@ export default function habitacionesTable() {
 
 
                           </Tab>
-                          <Tab key="menu2" title="subProductos" className=" flex flex-col p-1">
-                            <Typography component="div" className="flex flex-col gap-1">COMIDAS  </Typography>
+                          <Tab key="menu2" title="subProductos" className=" flex flex-col p-1 mb-2">
+                            <Typography component="div" className="flex flex-col gap-1 pt-2">COMIDAS  </Typography>
                             <Checkbox
                               checked={esCortesia}
                               onChange={handleCortesiaChange}
@@ -3516,9 +3587,9 @@ export default function habitacionesTable() {
                             </Checkbox>
 
 
-                            <div className="flex mb-1">
+                            <div className="flex flex-row-reverse mb-2">
                               <input
-                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 ml-2"
                                 name="restaurante"
                                 placeholder="Ingrese la cantidad"
                                 type="text"
@@ -3543,7 +3614,7 @@ export default function habitacionesTable() {
                               />
                               <Select
                                 key={resetKey}
-                                className="ml-2 mt-1"
+                                className="mr-2 mt-1"
                                 name="restaurante"
                                 label="Seleccionar comida"
                                 value={itemSeleccionado}
@@ -3575,9 +3646,9 @@ export default function habitacionesTable() {
                               </Select>
                             </div>
 
-                            <div className="flex mb-1">
+                            <div className="flex flex-row-reverse mb-2">
                               <input
-                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 ml-2"
                                 name="restaurante"
                                 placeholder="Ingrese la cantidad"
                                 type="text"
@@ -3602,7 +3673,7 @@ export default function habitacionesTable() {
                               />
                               <Select
                                 key={resetKey1}
-                                className="ml-2 mt-1"
+                                className="mr-2 mt-1"
                                 name="restaurante"
                                 label="Seleccionar comida"
                                 value={itemSeleccionado1}
@@ -3635,9 +3706,9 @@ export default function habitacionesTable() {
                               </Select>
                             </div>
 
-                            <div className="flex mb-1">
+                            <div className="flex flex-row-reverse mb-2">
                               <input
-                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 ml-2"
                                 name="restaurante"
                                 placeholder="Ingrese la cantidad"
                                 type="text"
@@ -3662,7 +3733,7 @@ export default function habitacionesTable() {
                               />
                               <Select
                                 key={resetKey2}
-                                className="ml-2 mt-1"
+                                className="mr-2 mt-1"
                                 name="restaurante"
                                 label="Seleccionar comida"
                                 value={itemSeleccionado2}
@@ -3695,9 +3766,9 @@ export default function habitacionesTable() {
                               </Select>
                             </div>
 
-                            <div className="flex mb-1">
+                            <div className="flex flex-row-reverse mb-2">
                               <input
-                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 ml-2"
                                 name="restaurante"
                                 placeholder="Ingrese la cantidad"
                                 type="text"
@@ -3722,7 +3793,7 @@ export default function habitacionesTable() {
                               />
                               <Select
                                 key={resetKey3}
-                                className="ml-2 mt-1"
+                                className="mr-2 mt-1"
                                 name="restaurante"
                                 label="Seleccionar comida"
                                 value={itemSeleccionado3}
@@ -3755,9 +3826,9 @@ export default function habitacionesTable() {
                               </Select>
                             </div>
 
-                            <div className="flex mb-1">
+                            <div className="flex flex-row-reverse mb-2">
                               <input
-                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 mr-2"
+                                className="inventario-box-option-input-01 outline-none pl-2 mb-2 ml-2"
                                 name="restaurante"
                                 placeholder="Ingrese la cantidad"
                                 type="number"
@@ -3777,7 +3848,7 @@ export default function habitacionesTable() {
                               />
                               <Select
                                 key={resetKey4}
-                                className="ml-2 mt-1"
+                                className="mr-2 mt-1"
                                 name="restaurante"
                                 label="Seleccionar comida"
                                 value={itemSeleccionado4}
