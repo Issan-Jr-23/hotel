@@ -691,6 +691,7 @@ export default function review() {
                             fecha: obtenerFechaConAjuste()
                         };
                         await guardarBebida(bebidaCortesia2);
+                        await guardarCortesiaBebidaInventory(bebida2SeleccionadaId, cantidadBebida2)
                         setCantidadBebida2("");
                         setBebida2Seleccionada('');
                         setPrecioBebida2Seleccionada("");
@@ -714,6 +715,7 @@ export default function review() {
                             fecha: obtenerFechaConAjuste()
                         };
                         await guardarBebida(bebidaCortesia3);
+                        await guardarCortesiaBebidaInventory(bebida3SeleccionadaId, cantidadBebida3)
                         setCantidadBebida3("");
                         setBebida3Seleccionada('');
                         setPrecioBebida3Seleccionada("");
@@ -737,6 +739,7 @@ export default function review() {
                             fecha: obtenerFechaConAjuste()
                         };
                         await guardarBebida(bebidaCortesia4);
+                        await guardarCortesiaBebidaInventory(bebida4SeleccionadaId, cantidadBebida4)
                         setCantidadBebida4("");
                         setBebida4Seleccionada('');
                         setPrecioBebida4Seleccionada("");
@@ -1061,8 +1064,6 @@ export default function review() {
                 }
             }
 
-
-
             if (cantidad > disponibleInventario) {
                 alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
                 return;
@@ -1073,6 +1074,7 @@ export default function review() {
                 alert(`Ya no quedan ${food1Seleccionada} disponibles en el inventario `);
                 return;
             }
+
             console.log("id de la comida seleccionada : " + foodSeleccionadaId)
 
             await actualizarInventarioFood(foodId, cantidad);
@@ -1102,8 +1104,8 @@ export default function review() {
                             fechaDeMarca: "",
                             fecha: obtenerFechaConAjuste()
                         };
-                        await guardarCortesiaFoodInventory(foodSeleccionadaId, cantidadFood)
                         await guardarFood(foodCortesia);
+                        await guardarCortesiaFoodInventory(foodSeleccionadaId, cantidadFood)
                         setCantidadFood("");
                         setFoodSeleccionada('');
                         setPrecioFoodSeleccionada("");
@@ -1126,8 +1128,8 @@ export default function review() {
                             fechaDeMarca: "",
                             fecha: obtenerFechaConAjuste()
                         };
-                        await guardarCortesiaFoodInventory(food1SeleccionadaId, cantidadFood1)
                         await guardarFood(foodCortesia1);
+                        await guardarCortesiaFoodInventory(food1SeleccionadaId, cantidadFood1)
                         setCantidadFood1("");
                         setFood1Seleccionada('');
                         setPrecioFood1Seleccionada("");
@@ -1198,7 +1200,7 @@ export default function review() {
                         setFood4Seleccionada('');
                         setPrecioFood4Seleccionada("");
                         setFood4SeleccionadaId('');
-                        setCantidadFood4Disponible(0)
+                        setCantidadFood4Disponible(0);
                         setResetKey4(prevKey => prevKey + 1);
                         atLeastOneCortesiaSaved = true;
                     }

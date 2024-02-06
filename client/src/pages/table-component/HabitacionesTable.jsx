@@ -451,6 +451,23 @@ export default function habitacionesTable() {
     setResetKey(prevKey => prevKey + 1);
   }
 
+  const guardarCortesiaBebidaInventory = async (foodId, cantidad) => {
+    try {
+      const response = await AxiosInstance.post('/guardar-cortesias-inventario', {
+        foodId,
+        cantidad
+      });
+
+      if (response.status === 200) {
+        console.log('Cortesías guardadas correctamente:', response.data);
+      } else {
+        console.error('Error en la respuesta del servidor:', response.status);
+      }
+    } catch (error) {
+      console.error('Error al enviar la petición:', error.message);
+    }
+  };
+
   const actualizarInventarioBebida = async (bebidaId, cantidad) => {
     try {
       const response = await AxiosInstance.post('/actualizar-inventario-bebida', {
@@ -513,36 +530,38 @@ export default function habitacionesTable() {
 
         const nuevaCantidadTotalCortesia = cantidadTotalCortesia;
         const cantidadRestante = totalPersonas - cantidadTotalCortesia;
-        console.log("cantidad restante: " + cantidadRestante)
-        console.log("supuesta nueva cantidad: " + nuevaCantidadTotalCortesia)
 
         if (cantidad > disponibleInventario) {
           alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
+          setIsSaving(false);
           return false;
         }
 
         if (cantidad > cantidadRestante) {
           alert(`el usuario tiene ${cantidadRestante} cortesias disponibles`)
+          setIsSaving(false);
           return;
         }
 
         if (nuevaCantidadTotalCortesia > totalPersonas) {
           alert(`La cantidad de cortesías (${nuevaCantidadTotalCortesia}) no puede exceder la cantidad de personas (${totalPersonas}).`);
+          setIsSaving(false);
           return false;
         }
 
         if (cantidad > cantidadRestante) {
           alert(`Solo puedes agregar hasta ${cantidadRestante} cortesías adicionales.`);
+          setIsSaving(false);
           return false;
         }
-      } else {
-        if (cantidad > disponibleInventario) {
-          alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
-          return false;
-        }
+      } else if (cantidad > disponibleInventario) {
+        alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
+        setIsSaving(false);
+        return false;
       }
       if (cantidad > disponibleInventario) {
         alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
+        setIsSaving(false);
         return false;
       }
 
@@ -572,6 +591,13 @@ export default function habitacionesTable() {
               fecha: obtenerFechaConAjuste()
             };
             await guardarBebida(bebidaCortesia);
+            await guardarCortesiaBebidaInventory(bebidaSeleccionadaId, cantidadBebida);
+            setCantidadBebida("");
+            setBebidaSeleccionada('');
+            setPrecioBebidaSeleccionada("");
+            setBebidaSeleccionadaId('');
+            setCantidadBebidaDisponible(0);
+            setResetKey(prevKey => prevKey + 1);
             atLeastOneCortesiaSaved = true;
           }
         }
@@ -588,6 +614,13 @@ export default function habitacionesTable() {
               fecha: obtenerFechaConAjuste()
             };
             await guardarBebida(bebidaCortesia1);
+            await guardarCortesiaBebidaInventory(bebida1SeleccionadaId, cantidadBebida1)
+            setCantidadBebida1("");
+            setBebida1Seleccionada('');
+            setPrecioBebida1Seleccionada("");
+            setBebida1SeleccionadaId('');
+            setCantidadBebida1Disponible(0);
+            setResetKey1(prevKey => prevKey + 1);
             atLeastOneCortesiaSaved = true;
           }
         }
@@ -604,6 +637,13 @@ export default function habitacionesTable() {
               fecha: obtenerFechaConAjuste()
             };
             await guardarBebida(bebidaCortesia2);
+            await guardarCortesiaBebidaInventory(bebida2SeleccionadaId, cantidadBebida2)
+            setCantidadBebida2("");
+            setBebida2Seleccionada('');
+            setPrecioBebida2Seleccionada("");
+            setBebida2SeleccionadaId('');
+            setCantidadBebida2Disponible(0)
+            setResetKey2(prevKey => prevKey + 1);
             atLeastOneCortesiaSaved = true;
           }
         }
@@ -620,6 +660,13 @@ export default function habitacionesTable() {
               fecha: obtenerFechaConAjuste()
             };
             await guardarBebida(bebidaCortesia3);
+            await guardarCortesiaBebidaInventory(bebida3SeleccionadaId, cantidadBebida3)
+            setCantidadBebida3("");
+            setBebida3Seleccionada('');
+            setPrecioBebida3Seleccionada("");
+            setBebida3SeleccionadaId('');
+            setCantidadBebida3Disponible(0)
+            setResetKey3(prevKey => prevKey + 1);
             atLeastOneCortesiaSaved = true;
           }
         }
@@ -636,6 +683,14 @@ export default function habitacionesTable() {
               fecha: obtenerFechaConAjuste()
             };
             await guardarBebida(bebidaCortesia4);
+            await guardarCortesiaBebidaInventory(bebida4SeleccionadaId, cantidadBebida4)
+            setCantidadBebida4("");
+            setBebida4Seleccionada('');
+            setPrecioBebida4Seleccionada("");
+            setBebida4SeleccionadaId('');
+            setCantidadBebida4Disponible(0)
+
+            setResetKey4(prevKey => prevKey + 1);
             atLeastOneCortesiaSaved = true;
           }
         }
@@ -660,6 +715,7 @@ export default function habitacionesTable() {
 
         if (await checkStockAndUpdateInventory(bebidaSeleccionadaId, cantidadBebida)) {
           await guardarBebida(bebidaAdultos);
+
           isBebidaAdded = true;
         }
       }
@@ -759,6 +815,24 @@ export default function habitacionesTable() {
       console.error('Error al guardar la bebida en el cliente:', error.message);
       setIsSaving(false);
       throw error;
+    }
+  };
+
+  const guardarCortesiaFoodInventory = async (foodId, cantidad) => {
+    console.log("datos de las cortesias que se guardaran: ", foodId, cantidad)
+    try {
+      const response = await AxiosInstance.post('/guardar-cortesias-inventario', {
+        foodId,
+        cantidad
+      });
+
+      if (response.status === 200) {
+        console.log('Cortesías guardadas correctamente:', response.data);
+      } else {
+        console.error('Error en la respuesta del servidor:', response.status);
+      }
+    } catch (error) {
+      console.error('Error al enviar la petición:', error.message);
     }
   };
 
@@ -905,6 +979,7 @@ export default function habitacionesTable() {
               fecha: obtenerFechaConAjuste()
             };
             await guardarFood(foodCortesia);
+            await guardarCortesiaFoodInventory(foodSeleccionadaId, cantidadFood)
             setCantidadFood("");
             setFoodSeleccionada('');
             setPrecioFoodSeleccionada("");
@@ -927,6 +1002,7 @@ export default function habitacionesTable() {
               fecha: obtenerFechaConAjuste()
             };
             await guardarFood(foodCortesia1);
+            await guardarCortesiaFoodInventory(food1SeleccionadaId, cantidadFood1)
             setCantidadFood1("");
             setFood1Seleccionada('');
             setPrecioFood1Seleccionada("");
@@ -949,6 +1025,7 @@ export default function habitacionesTable() {
               fecha: obtenerFechaConAjuste()
             };
             await guardarFood(foodCortesia2);
+            await guardarCortesiaFoodInventory(food2SeleccionadaId, cantidadFood2)
             setCantidadFood2("");
             setFood2Seleccionada('')
             setPrecioFood2Seleccionada("");
@@ -971,6 +1048,7 @@ export default function habitacionesTable() {
               fecha: obtenerFechaConAjuste()
             };
             await guardarFood(foodCortesia3);
+            await guardarCortesiaFoodInventory(food3SeleccionadaId, cantidadFood3)
             setCantidadFood3("");
             setFood3Seleccionada('')
             setPrecioFood3Seleccionada("");
@@ -993,6 +1071,7 @@ export default function habitacionesTable() {
               fecha: obtenerFechaConAjuste()
             };
             await guardarFood(foodCortesia4);
+            await guardarCortesiaFoodInventory(food4SeleccionadaId, cantidadFood4)
             setCantidadFood4("");
             setFood4Seleccionada('');
             setPrecioFood4Seleccionada("");
@@ -1385,10 +1464,11 @@ export default function habitacionesTable() {
     fetchData();
   }, []);
 
-
+  //#region 
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
+  //#endregion
 
   const { isOpen: isFirstModalOpen, onOpen: openFirstModal, onClose: closeFirstModal } = useDisclosure();
   const sizes = ['4xl'];
