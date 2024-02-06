@@ -417,14 +417,28 @@ export default function cabaniaTable() {
         return () => clearTimeout(timer);
     }, [errorMensajeIdentificacion]);
 
-
-
-
     const handleReservaChange = (selectedSize) => {
         setFormData({
             ...formData,
             reserva: selectedSize,
         });
+    };
+
+    const guardarCortesiaBebidaInventory = async (foodId, cantidad) => {
+        try {
+            const response = await AxiosInstance.post('/guardar-cortesias-inventario', {
+                foodId,
+                cantidad
+            });
+
+            if (response.status === 200) {
+                console.log('Cortesías guardadas correctamente:', response.data);
+            } else {
+                console.error('Error en la respuesta del servidor:', response.status);
+            }
+        } catch (error) {
+            console.error('Error al enviar la petición:', error.message);
+        }
     };
 
     const actualizarInventarioBebida = async (bebidaId, cantidad) => {
@@ -494,31 +508,35 @@ export default function cabaniaTable() {
 
                 if (cantidad > disponibleInventario) {
                     alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
+                    setIsSaving(false);
                     return false;
                 }
 
                 if (cantidad > cantidadRestante) {
                     alert(`el usuario tiene ${cantidadRestante} cortesias disponibles`)
+                    setIsSaving(false);
                     return;
                 }
 
                 if (nuevaCantidadTotalCortesia > totalPersonas) {
                     alert(`La cantidad de cortesías (${nuevaCantidadTotalCortesia}) no puede exceder la cantidad de personas (${totalPersonas}).`);
+                    setIsSaving(false);
                     return false;
                 }
 
                 if (cantidad > cantidadRestante) {
                     alert(`Solo puedes agregar hasta ${cantidadRestante} cortesías adicionales.`);
+                    setIsSaving(false);
                     return false;
                 }
-            } else {
-                if (cantidad > disponibleInventario) {
-                    alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
-                    return false;
-                }
+            } else if (cantidad > disponibleInventario) {
+                alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
+                setIsSaving(false);
+                return false;
             }
             if (cantidad > disponibleInventario) {
                 alert(`Solo quedan ${cantidadRestante} unidades disponibles en el inventario.`);
+                setIsSaving(false);
                 return false;
             }
 
@@ -547,8 +565,8 @@ export default function cabaniaTable() {
                             fechaDeMarca: "",
                             fecha: obtenerFechaConAjuste()
                         };
-                        await guardarCortesiaBebidaInventory(bebidaSeleccionadaId, cantidadBebida)
                         await guardarBebida(bebidaCortesia);
+                        await guardarCortesiaBebidaInventory(bebidaSeleccionadaId, cantidadBebida)
                         setCantidadBebida("");
                         setBebidaSeleccionada('');
                         setPrecioBebidaSeleccionada("");
@@ -570,8 +588,8 @@ export default function cabaniaTable() {
                             fechaDeMarca: "",
                             fecha: obtenerFechaConAjuste()
                         };
-                        await guardarCortesiaBebidaInventory(bebida1SeleccionadaId, cantidadBebida1)
                         await guardarBebida(bebidaCortesia1);
+                        await guardarCortesiaBebidaInventory(bebida1SeleccionadaId, cantidadBebida1)
                         setCantidadBebida1("");
                         setBebida1Seleccionada('');
                         setPrecioBebida1Seleccionada("");
@@ -594,8 +612,8 @@ export default function cabaniaTable() {
                             fechaDeMarca: "",
                             fecha: obtenerFechaConAjuste()
                         };
-                        await guardarCortesiaBebidaInventory(bebida2SeleccionadaId, cantidadBebida2)
                         await guardarBebida(bebidaCortesia2);
+                        await guardarCortesiaBebidaInventory(bebida2SeleccionadaId, cantidadBebida2)
                         setCantidadBebida2("");
                         setBebida2Seleccionada('');
                         setPrecioBebida2Seleccionada("");
@@ -618,8 +636,8 @@ export default function cabaniaTable() {
                             fechaDeMarca: "",
                             fecha: obtenerFechaConAjuste()
                         };
-                        await guardarCortesiaBebidaInventory(bebida3SeleccionadaId, cantidadBebida3)
                         await guardarBebida(bebidaCortesia3);
+                        await guardarCortesiaBebidaInventory(bebida3SeleccionadaId, cantidadBebida3)
                         setCantidadBebida3("");
                         setBebida3Seleccionada('');
                         setPrecioBebida3Seleccionada("");
@@ -642,8 +660,8 @@ export default function cabaniaTable() {
                             fechaDeMarca: "",
                             fecha: obtenerFechaConAjuste()
                         };
-                        await guardarCortesiaBebidaInventory(bebida4SeleccionadaId, cantidadBebida4)
                         await guardarBebida(bebidaCortesia4);
+                        await guardarCortesiaBebidaInventory(bebida4SeleccionadaId, cantidadBebida4)
                         setCantidadBebida4("");
                         setBebida4Seleccionada('');
                         setPrecioBebida4Seleccionada("");
@@ -896,42 +914,47 @@ export default function cabaniaTable() {
 
                 const nuevaCantidadTotalCortesia = cantidadTotalCortesia;
                 const cantidadRestante = totalPersonas - cantidadTotalCortesia;
-                console.log("cantidad restante: " + cantidadRestante)
-                console.log("supuesta nueva cantidad: " + nuevaCantidadTotalCortesia)
 
                 if (cantidad > totalPersonas) {
                     alert(`La cantidad de cortesias ${cantidad} no debe superar a la cantidad de personas ${totalPersonas} `)
+                    setIsSaving(false);
                     return;
                 }
 
                 if (cantidad > disponibleInventario) {
                     alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
+                    setIsSaving(false);
                     return false;
                 }
 
 
                 if (cantidad > cantidadRestante) {
                     alert(`el usuario tiene ${cantidadRestante} cortesias disponibles`)
+                    setIsSaving(false);
                     return;
                 }
 
                 if (nuevaCantidadTotalCortesia > totalPersonas) {
                     alert(`La cantidad de cortesías (${nuevaCantidadTotalCortesia}) no puede exceder la cantidad de personas (${totalPersonas}).`);
+                    setIsSaving(false);
                     return false;
                 }
 
                 if (cantidad > cantidadRestante) {
                     alert(`Solo puedes agregar hasta ${cantidadRestante} cortesías adicionales.`);
+                    setIsSaving(false);
                     return false;
                 }
             } else {
                 if (cantidad > disponibleInventario) {
                     alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
+                    setIsSaving(false);
                     return false;
                 }
             }
             if (cantidad > disponibleInventario) {
                 alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
+                setIsSaving(false);
                 return false;
             }
 
@@ -1415,15 +1438,9 @@ export default function cabaniaTable() {
         setCantidadBebida4Disponible("")
 
 
-        const response = await AxiosInstance.get("/food");
-        const snacksWithoutSubproducts = response.data.filter(product =>
-            (!product.subproductos || product.subproductos.length === 0) &&
-            product.CantidadInicial > 0
-        );
-
-        setSnacks(snacksWithoutSubproducts);
-        const responses = await AxiosInstance.get("/drinks");
-        setDrinks(responses.data);
+        const response = await AxiosInstance.get("/drinks");
+        const filteredDrinks = response.data.filter(drink => drink.CantidadInicial > 0);
+        setDrinks(filteredDrinks);
 
 
 
@@ -1481,8 +1498,23 @@ export default function cabaniaTable() {
         );
 
         setSnacks(snacksWithoutSubproducts);
-        const responses = await AxiosInstance.get("/drinks");
-        setDrinks(responses.data);
+
+        // const response = await AxiosInstance.get("/food");
+        const allProducts = response.data;
+
+        let subProducts = [];
+        allProducts.forEach(product => {
+            if (product.CantidadInicial > 0) {
+                if (product.subproductos) {
+                    const subProductosConCantidadPadre = product.subproductos.map(sub => {
+                        return { ...sub, cantidadPadre: product.CantidadInicial, idPadre: product._id };
+                    });
+                    subProducts = subProducts.concat(subProductosConCantidadPadre);
+                }
+            }
+        });
+
+        setComidas(subProducts);
 
     };
 
@@ -1818,32 +1850,35 @@ export default function cabaniaTable() {
 
                 const nuevaCantidadTotalCortesia = cantidadTotalCortesia;
                 const cantidadRestante = totalPersonas - cantidadTotalCortesia;
-                console.log("cantidad restante: " + cantidadRestante)
-                console.log("supuesta nueva cantidad: " + nuevaCantidadTotalCortesia)
 
                 if (cantidad > totalPersonas) {
                     alert(`La cantidad de cortesias ${cantidad} no debe superar a la cantidad de personas ${totalPersonas} `)
+                    setIsSaving(false);
                     return;
                 }
 
                 if (cantidad > disponibleInventario) {
                     alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
+                    setIsSaving(false);
                     return false;
                 }
 
 
                 if (cantidad > cantidadRestante) {
                     alert(`el usuario tiene ${cantidadRestante} cortesias disponibles`)
+                    setIsSaving(false);
                     return;
                 }
 
                 if (nuevaCantidadTotalCortesia > totalPersonas) {
                     alert(`La cantidad de cortesías (${nuevaCantidadTotalCortesia}) no puede exceder la cantidad de personas (${totalPersonas}).`);
+                    setIsSaving(false);
                     return false;
                 }
 
                 if (cantidad > cantidadRestante) {
                     alert(`Solo puedes agregar hasta ${cantidadRestante} cortesías adicionales.`);
+                    setIsSaving(false);
                     return false;
                 }
             }
@@ -1852,12 +1887,15 @@ export default function cabaniaTable() {
 
             if (cantidad > disponibleInventario) {
                 alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
+                setIsSaving(false);
                 return;
             } else if (disponibleInventario === 0 && !foodSeleccionada) {
                 alert(`Ya no quedan ${foodSeleccionada} disponibles en el inventario `);
+                setIsSaving(false);
                 return;
             } else if (disponibleInventario === 0 && !food1Seleccionada) {
                 alert(`Ya no quedan ${food1Seleccionada} disponibles en el inventario `);
+                setIsSaving(false);
                 return;
             }
             console.log("id de la comida seleccionada : " + foodSeleccionadaId)
