@@ -6,8 +6,6 @@ const router = Router();
 
 
 
-
-
 router.get('/mayor-compra',usuariosQueMasCompraron);
 router.get('/obtener-historial-usuarios', obtenerTotal);
 router.get('/productos-mas-comprados', productosMasComprados);
@@ -19,18 +17,22 @@ router.get("/grafic-usuarios-mas-compras", comprasUsers)
 
 
 //dashboard pasadia
-router.get("/pasadia-productos-vendidos-dashboard", totalProductosVendidosDashboard)
-router.get('/productos-vendidos-pasadia-dashboard',totalPructosVendidosHistorialDashboard);
-router.get('/productos-cortesias-pasadia-dashboard',totalPructosCortesiasDashboard);
-router.get('/obtener-cantidad-usuarios',obtenerTotalesNiniosYAdultosEnPasadia);
-router.get('/total-generado-pasadia',totalgeneradoDashboard);
+router.get("/pasadia-productos-vendidos-dashboard", totalProductosVendidosDashboard) //CHECK
+router.get('/productos-vendidos-pasadia-dashboard',totalPructosVendidosHistorialDashboard); //CHECK
+router.get('/productos-cortesias-pasadia-dashboard',totalPructosCortesiasDashboard); //CHECK
+router.get('/obtener-cantidad-usuarios',obtenerTotalesNiniosYAdultosEnPasadia); //CHECK
+router.get('/total-generado-pasadia',totalgeneradoDashboard); //check
+
+
 
 //dashboar cabaña
-router.get("/cabania-productos-vendidos-dashboard", totalPructosVendidosCabaniaDashboard)
+router.get("/cabania-productos-vendidos-dashboard", totalPructosVendidosCabaniaDashboard) //CHECK
 router.get('/productos-vendidos-cabania-dashboard',totalProductosVendidosHistorialCabaniaDashboard);
 router.get('/productos-cortesias-cabania-dashboard',totalProductosCortesiasCabaniaHistorialDashboard);
 router.get('/obtener-cantidad-usuarios-cabania-dashboard',obtenerTotalesNiniosYAdultosEnCabaniaDashboard);
 router.get('/cabania-total-generado',totalgeneradoCabaniaDashboard);
+
+
 
 //dashboard habitaciones
 router.get("/habitaciones-productos-vendidos-dashboard", totalPructosVendidosHabitacionesDashboard)

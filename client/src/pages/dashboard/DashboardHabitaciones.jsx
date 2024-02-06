@@ -62,8 +62,6 @@ const dashboardPasadia = () => {
         const { totalPago, cantidadVendidos } = response.data;
         setValorVenta(totalPago)
         setCantidadVendida(cantidadVendidos)
-        console.log("Total niños: ", totalPago);
-        console.log("Total adultos: ", cantidadVendidos);
 
       } catch (error) {
         console.error('Error al obtener los datos: ', error);
@@ -109,10 +107,8 @@ const dashboardPasadia = () => {
         const response = await AxiosInstance.get('/obtener-cantidad-usuarios-habitaciones-dashboard');
         console.log(response);
 
-        const { totalNinios, totalAdultos } = response.data;
-        console.log("Total niños: ", totalNinios);
-        console.log("Total adultos: ", totalAdultos);
-        setTotalUsers(totalNinios + totalAdultos)
+        const { totalPasadias } = response.data;
+        setTotalUsers(totalPasadias)
 
       } catch (error) {
         console.error('Error al obtener los datos: ', error);
@@ -128,10 +124,8 @@ const dashboardPasadia = () => {
         const response = await AxiosInstance.get('/habitaciones-total-generado');
         console.log(response);
 
-        const { totalPago, totalPagoPendiente } = response.data;
-        console.log("Total generados: ", totalPago);
-        console.log("Total generado: ", totalPagoPendiente);
-        setTotalVentaPasadia(totalPago + totalPagoPendiente);
+        const { totalPago} = response.data;
+        setTotalVentaPasadia(totalPago);
 
       } catch (error) {
         console.error('Error al obtener los datos: ', error);
