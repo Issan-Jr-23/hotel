@@ -371,7 +371,7 @@ export default function review() {
         }
 
         if (name === 'identificacion') {
-            const prevIdentificacionLength = formData.identificacion.length;
+            const prevIdentificacionLength = formData.identificacion.length; 
 
             const newTimeout = setTimeout(() => {
                 fetchData(name, value, fieldName, prevIdentificacionLength);

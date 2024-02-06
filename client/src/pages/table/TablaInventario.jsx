@@ -19,7 +19,7 @@ import * as XLSX from 'xlsx';
 import { useAuth } from "../../context/authContext.jsx";
 import "./table.css"
 import AxiosInstance from "../../api/axios.js";
-import {fetchProducts} from "../finca/RanchInventario.jsx"
+// import {fetchProducts} from "../finca/RanchInventario.jsx"
 
 export default function App() {
   const { user } = useAuth();
@@ -75,9 +75,7 @@ export default function App() {
 
 
   const handleInputChange = (event) => {
-    const { name, value } = event.target; 
-
-
+    const { name, value } = event.target;
     setFormData({
       ...formData,
       [name]: value,

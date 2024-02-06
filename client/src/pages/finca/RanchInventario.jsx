@@ -29,6 +29,11 @@ import pi from "../../images/personajes-ilustrados.png"
 import "../css/inventario.css"
 import { MenuItem, Menu } from '@mui/material';
 import Button from '@mui/material/Button';
+import { SearchIcon } from "../tablePasadia/SearchIcon.jsx";
+import { PlusIcon } from "../finca/PlusIcon.jsx";
+import { Tabs, Tab, useDisclosure, Input } from "@nextui-org/react";
+
+
 
 function createData(_id, Descripcion, tipo, Caducidad, CantidadInicial, ValorUnitario, ProductosVendidos, Cortesias, history, subproductsData) {
     return {
@@ -697,51 +702,36 @@ function Row(props) {
     );
 }
 
-   export const fetchProducts = async () => {
-        try {
-            const productsResponse = await AxiosInstance.get('/obtener-inventario');
-            const productsData = productsResponse.data;
 
-            const updatedRows = await Promise.all(
-                productsData.map(async (product) => {
-                    const subproductsResponse = await AxiosInstance.get(`/obtener-sub-productos/${product._id}`);
-                    const subproductsData = subproductsResponse.data;
-
-                    const historyArray = Array.isArray(product.history) ? product.history : [];
-                    if (subproductsData.length > 0) {
-                        const subproductsHistory = subproductsData.map((subproduct) => ({
-                            date: 'Subproduct Date',
-                            customerId: subproduct.id,
-                            amount: 1,
-                        }));
-
-                        historyArray.push(...subproductsHistory);
-                    }
-
-                    return createData(
-                        product._id,
-                        product.Descripcion,
-                        product.tipo,
-                        product.Caducidad,
-                        product.CantidadInicial,
-                        product.ValorUnitario,
-                        product.ProductosVendidos,
-                        product.Cortesias,
-                        historyArray,
-                        subproductsData
-                    );
-                })
-            );
-
-            setRows(updatedRows);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    };
 
 export default function CollapsibleTable() {
 
     const [rows, setRows] = useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [selectedType, setSelectedType] = useState("");
+    const [backdrop, setBackdrop] = useState("blur");
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const [openFz, setOpenFz] = React.useState(false);
+    const handleCloseFz = () => setOpenFz(false);
+    const [formData, setFormData] = useState({
+        Descripcion: "",
+        tipo: "",
+        CantidadInicial: "",
+        Caducidad: "",
+        ValorUnitario: ""
+
+    });
+
+    const [formDatas, setFormDatas] = useState({
+        Descripcion: '',
+        tipo: '',
+        CantidadInicial: '',
+        Caducidad: '',
+        subproductos: [
+            { Descripcion: '', ValorUnitario: '' },
+            { Descripcion: '', ValorUnitario: '' },
+        ],
+    });
 
     const fetchProducts = async () => {
         try {
@@ -808,8 +798,325 @@ export default function CollapsibleTable() {
         }
     };
 
+    const handleSubproductoChange = (index, field, value) => {
+        setFormDatas((prevFormData) => {
+            const subproductos = [...prevFormData.subproductos];
+            subproductos[index][field] = value;
+            return { ...prevFormData, subproductos };
+        });
+    };
+
+    const handleInputChange = (event) => {
+        const { name, value } = event.target;
+        setFormData({
+            ...formData,
+            [name]: value,
+        });
+    };
+
+    const handleFormSubmit = async () => {
+        try {
+            await AxiosInstance.post("/inventario", formData);
+            fetchProducts();
+            setOpenFz(false)
+            // const response = await AxiosInstance.get("/obtener-inventario");
+            // setUsers(response.data);
+        } catch (error) {
+            console.error("Error al agregar el producto: ", error);
+        }
+    };
+
+    const handleInputChanges = (event) => {
+        const { name, value } = event.target;
+        setFormDatas((prevFormData) => ({
+            ...prevFormData,
+            [name]: value,
+        }));
+    };
+
+    const handleFormSubmite = async () => {
+        try {
+            await AxiosInstance.post("/inventario", formDatas);
+            setOpenFz(false)
+            fetchProducts();
+
+        } catch (error) {
+            console.error("Error al agregar el producto: ", error);
+        }
+    };
+
+    const handleOpemModalMui = () => {
+        setOpenFz(true)
+    }
+
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 600,
+        height: "min-height-90vh",
+        bgcolor: 'background.paper',
+        overflow: "scroll",
+        boxShadow: 0,
+        p: 4,
+        borderRadius: 5
+    };
+
     return (
-        <div className='pl-5 pr-5 mt-10'>
+        <div className='pl-5 pr-5 mt-10 border-2 border-red-500 flex flex-col'>
+            <div>
+                <>
+                    <div className=" flex justify-between w-12/12 gap-3 flex-col">
+                        <div className="btnAdd flex flex-wrap"  >
+
+                            <div className="inputSearch">
+                                <Input
+                                    label="Search"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    isClearable
+                                    radius="lg"
+                                    className="w-72 h-12"
+                                    classNames={{
+                                        label: "text-black/50 dark:text-white/90",
+                                        input: [
+                                            "bg-transparent",
+                                            "text-black/90 dark:text-black/90",
+                                            "placeholder:text-black/60 dark:placeholder:text-black/60",
+                                        ],
+                                        innerWrapper: "bg-transparent",
+                                        inputWrapper: [
+                                            "shadow-xl",
+                                            "bg-default-200/50",
+                                            "dark:bg-default/60",
+                                            "backdrop-blur-xl",
+                                            "backdrop-saturate-200",
+                                            "hover:bg-default-200/70",
+                                            "dark:hover:bg-default/70",
+                                            "group-data-[focused=true]:bg-default-200/50",
+                                            "dark:group-data-[focused=true]:bg-default/60",
+                                            "!cursor-text",
+                                        ],
+                                    }}
+                                    placeholder="Type to search..."
+                                    startContent={
+                                        <SearchIcon className="text-black/50 mb-0.5 dark:text-black/90 text-black pointer-events-none flex-shrink-0" />
+                                    }
+                                />
+                            </div>
+
+                            <div className="btns flex ">
+                                <Button className="bg-blue-500 w-28 text-white" onClick={() => exportToExcel(filteredProducts)}>
+                                    Exportar
+                                </Button>
+                                <Button
+                                    variant="flat"
+                                    onClick={() => handleOpemModalMui()}
+                                    className="capitalize ml-5 text-white bg-black"
+                                >
+                                    <PlusIcon />  Agregar
+                                </Button>
+                            </div>
+
+
+
+                        </div>
+
+
+
+                        <div className=" flex justify-end mr-5 ml-5">
+                            <select className="outline-0 h-8 w-32 px-2 rounded-2xl mr-5  text-white bg-white/0" value={selectedType} onChange={(e) => setSelectedType(e.target.value)}>
+                                <option id="p" className="w-52 text-black" value="">Todos</option>
+                                <option className="w-52 text-black" value="bebida">Bebidas</option>
+                                <option className="w-52 text-black" value="comida">Comidas</option>
+                                <option className="w-52 text-black" value="utensilios">Utensilios</option>
+                                <option className="w-52 text-black" value="despensa">Despensa</option>
+                            </select>
+
+                        </div>
+
+
+
+
+                    </div>
+
+                    <Modal
+                        open={openFz}
+                        onClose={handleCloseFz}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description"
+                        BackdropProps={{
+                            style: { backgroundColor: 'rgba(0, 0, 0, 0.1)' }
+                        }}>
+                        <Box className="h-5/6 overflow-y-auto" sx={style}>
+                            <Tabs>
+                                <Tab key="productos" title="Productos">
+                                    <Typography className="flex flex-col gap-1" component="h2">
+                                        Registrar Producto
+                                    </Typography>
+                                    <Typography className='flex flex-col' component="div">
+                                        <Input
+                                            name="Descripcion"
+                                            className="input_form mb-3"
+                                            type="text"
+                                            variant="flat"
+                                            label="Descripción del producto"
+                                            onChange={handleInputChange}
+                                        />
+
+
+                                        <select
+                                            className="outline-none h-16 border-3 rounded-xl border-blue-500 mb-3"
+                                            name="tipo"
+                                            value={formData.tipo}
+                                            onChange={(event) => handleInputChange(event)}
+                                        >
+                                            <option value="">Seleccione un tipo</option>
+                                            <option value="bebida">Bebidas</option>
+                                            <option value="comida">Comidas</option>
+                                            <option value="recepcion">Recepción</option>
+                                            <option value="utensilios">Utensilios</option>
+                                            <option value="despensa">Despensa</option>
+                                        </select>
+
+
+                                        <Input
+                                            name="Caducidad"
+                                            className="input_form mb-3"
+                                            type="Date"
+                                            variant="flat"
+                                            label="Fecha de caducidad"
+                                            placeholder="date"
+                                            onChange={handleInputChange}
+                                        />
+
+
+                                        <Input
+                                            name="CantidadInicial"
+                                            className="input_form mb-3"
+                                            type="number"
+                                            variant="flat"
+                                            label="Cantidad inicial"
+                                            onChange={handleInputChange}
+                                        />
+
+
+                                        <Input
+                                            name="ValorUnitario"
+                                            className="input_form mb-3"
+                                            type="number"
+                                            variant="flat"
+                                            label="Precio de venta"
+                                            onChange={handleInputChange}
+                                        />
+
+
+                                    </Typography>
+                                    <Typography component="div">
+                                        <Button color="danger" variant="light" onClick={onClose}>
+                                            Cerrar
+                                        </Button>
+                                        <Button color="primary" onClick={handleFormSubmit}>
+                                            Guardar
+                                        </Button>
+                                    </Typography>
+
+
+                                </Tab>
+                                <Tab key="subProductos" title="SubProductos">
+                                    <Typography component="div" className="flex flex-col gap-1">
+                                        Registrar Producto
+                                        <Input
+                                            label="Descripcion del producto base"
+                                            type="Text"
+                                            className="mb-2"
+                                            name="Descripcion"
+                                            value={formDatas.Descripcion}
+                                            onChange={handleInputChanges}
+                                        />
+                                        <Input
+                                            label="Cantidad inicial"
+                                            className="mb-2"
+                                            name="CantidadInicial"
+                                            type='text'
+                                            value={formDatas.CantidadInicial}
+                                            onChange={handleInputChanges}
+                                            onKeyDown={(event) => {
+                                                if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                    event.preventDefault();
+                                                }
+                                            }}
+                                        />
+                                        <select
+                                            className="outline-none h-16 border-3 rounded-xl border-blue-500 mb-2"
+                                            name="tipo"
+                                            value={formDatas.tipo}
+                                            onChange={handleInputChanges}
+                                        >
+                                            <option value="">Seleccione un tipo</option>
+                                            <option value="bebida">Bebidas</option>
+                                            <option value="comida">Comidas</option>
+                                            <option value="recepcion">Recepción</option>
+                                            <option value="utensilios">Utensilios</option>
+                                            <option value="despensa">Despensa</option>
+                                        </select>
+                                        <Input
+                                            name="Caducidad"
+                                            className="input_form mb-2"
+                                            type="Date"
+                                            variant="flat"
+                                            label="Fecha de caducidad"
+                                            placeholder="date"
+                                            onChange={handleInputChanges}
+                                        />
+
+                                        {/* Campos para subproductos */}
+                                        {formDatas.subproductos.map((subproducto, index) => (
+                                            <div key={index} className='flex border-b-3'>
+                                                <span className=' mr-2 flex justify-center items-center'>
+                                                    <p className='h-5 w-5 bg-blue-500 text-white rounded-full flex justify-center items-center'>
+                                                        {index + 1}
+
+                                                    </p>
+                                                </span>
+                                                <Input
+                                                    label={`Nombre del subproducto ${index + 1}`}
+                                                    className="mb-2 mr-2"
+                                                    name="Descripcion"
+                                                    type="text"
+                                                    value={subproducto.Descripcion}
+                                                    onChange={(e) => handleSubproductoChange(index, 'Descripcion', e.target.value)}
+                                                />
+                                                <Input
+                                                    label={`Precio del subproducto ${index + 1}`}
+                                                    className="mb-2 ml-2"
+                                                    type="text"
+                                                    name="ValorInitario"
+                                                    value={subproducto.ValorUnitario}
+                                                    onChange={(e) => handleSubproductoChange(index, 'ValorUnitario', e.target.value)}
+                                                    onKeyDown={(event) => {
+                                                        if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                            event.preventDefault();
+                                                        }
+                                                    }}
+                                                />
+                                                <hr style={{ height: "3px" }} className='bg-gray-300' />
+                                            </div>
+                                        ))}
+                                        <Button color="primary" onClick={handleFormSubmite}>Guardar</Button>
+                                    </Typography>
+                                </Tab>
+
+                            </Tabs>
+                        </Box>
+                    </Modal>
+
+                </>
+            </div>
+            <div className='w-full h-20 mt-5 mb-5 flex justify-center items-center text-4xl'>
+                <h1>PRODUCTOS Y SUBPRODUCTOS</h1>
+            </div>
             <TableContainer component={Paper} style={{ borderRadius: "15px", overflow: "x" }}>
                 <Table aria-label="collapsible table" >
                     <TableHead style={{ height: "20px", marginLeft: "10px" }} >

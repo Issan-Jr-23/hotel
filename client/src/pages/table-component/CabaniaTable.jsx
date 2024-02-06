@@ -792,7 +792,7 @@ export default function cabaniaTable() {
             toast.success('Bebida guardada exitosamente!');
             setEsCortesia(false);
             setIsSaving(false);
-
+            setOpenAb(false);
             const responses = await AxiosInstance.get(`/cabania-clientes?page=${paginaActual}`);
             setUsers(responses.data.clientes);
         } catch (error) {
@@ -1203,7 +1203,7 @@ export default function cabaniaTable() {
             toast.success('Comida guardada exitosamente!');
             setEsCortesia(false);
             setIsSaving(false);
-            closeModalF();
+            setOpenAf(false);
             const responses = await AxiosInstance.get(`/cabania-clientes?page=${paginaActual}`);
             setUsers(responses.data.clientes);
             setTotalPaginas(responses.data.totalPages);
@@ -1305,6 +1305,7 @@ export default function cabaniaTable() {
             try {
                 const response = await AxiosInstance.get("/drinks");
                 const filteredDrinks = response.data.filter(drink => drink.CantidadInicial > 0);
+                console.log("filtrar data: ", filteredDrinks)
                 setDrinks(filteredDrinks);
             } catch (error) {
                 console.error("Error al obtener datos del servidor:", error);
@@ -2140,7 +2141,6 @@ export default function cabaniaTable() {
             if (!isBebidaAdded) {
                 toast.promise("No se ha agregado ninguna comida");
                 setIsSaving(false);
-            } else {
             }
 
         } catch (error) {
@@ -2158,7 +2158,7 @@ export default function cabaniaTable() {
             });
             toast.success('Comida guardada exitosamente!');
             setEsCortesia(false);
-            closeModalF()
+            setOpenAf(false);
             setIsSaving(false);
             const responses = await AxiosInstance.get(`/cabania-clientes?page=${paginaActual}`);
             setUsers(responses.data.clientes);

@@ -4,11 +4,9 @@ import moment from "moment-timezone";
 const subproductoSchema = new mongoose.Schema({
   Descripcion: {
     type: String,
-    required: true,
   },
   ValorUnitario: {
     type: Number,
-    required: true,
   },
   ProductosVendidos:{
     type: Number,
