@@ -46,7 +46,15 @@ router.get('/habitaciones-total-generado',totalgeneradoHabitaciones);
 
 router.get("/obtain-pasadia-ventas", obtainVentasPasadia )
 router.get("/obtain-pasadia-products", obtainVentasPasadiaProducts)
+
+//pasadia
 router.get("/obtain-clientes", obtainClients)
 router.get("/obtain-clientes-historial", obtainUsers)
+//cabañas
+router.get("/obtain-clientes-cabanias", obtainClientsCabanias)
+router.get("/obtain-clientes-historial-cabanias", obtainUsersCabanias)
+
+
+
 
 export default router;

@@ -3,7 +3,7 @@ import ApexSpline from "../apexCharts/apexSpline.jsx"
 import ApexLine from "../apexCharts/apexLine.jsx"
 import ApexLine2 from "../apexCharts/apexLine2.jsx"
 import ApexLine3 from "../apexCharts/apexLine3.jsx"
-import ApexPie from "../apexCharts/apexChartSpline.jsx" 
+import ApexPie from "../apexCharts/apexChartSpline.jsx"
 import TableUsers from "./tableUsersPasadia.jsx"
 import Box from "./box.jsx"
 import TableProductos from "./tableUsers.jsx"
@@ -124,7 +124,7 @@ const dashboardPasadia = () => {
         const response = await AxiosInstance.get('/habitaciones-total-generado');
         console.log(response);
 
-        const { totalPago} = response.data;
+        const { totalPago } = response.data;
         setTotalVentaPasadia(totalPago);
 
       } catch (error) {
@@ -148,14 +148,14 @@ const dashboardPasadia = () => {
   return (
     <div className=' fondo pt-20 pl-5 pr-5 pb-20'>
       <div className='cont-icon-json'>
-      <article className='cont-title-json'>
-      <h1 className='text-4xl mb-5 uppercase border-b-3'>Dashboard Habitaciones</h1>
+        <article className='cont-title-json'>
+          <h1 className='text-4xl mb-5 uppercase border-b-3'>Dashboard Habitaciones</h1>
 
-      </article>
-      <article className='animation-lottie-json'>
-      <Lottie options={defaultOption} width="100%" height="100%"
-                           />
-      </article>
+        </article>
+        <article className='animation-lottie-json'>
+          <Lottie options={defaultOption} width="100%" height="100%"
+          />
+        </article>
 
       </div>
       <div className='flex justify-between flex-wrap'>
@@ -172,7 +172,7 @@ const dashboardPasadia = () => {
 
           </span>
 
-              <img className='img-cubo-dasboard' src={cubo} alt="" />
+          <img className='img-cubo-dasboard' src={cubo} alt="" />
         </div>
         <div className='box-style  flex rounded-2xl '>
           <span className='box-grafic justify-between flex flex-col p-4'>

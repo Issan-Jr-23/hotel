@@ -809,12 +809,6 @@ const Adicionales = () => {
     }
 
     const handleGuardarDescorche = async () => {
-        // if ((descripcionDescorche === "" && valorDescorche === 0) || (descripcionDescorche1 === "" && valorDescorche1 === 0)) {
-        //     console.log("Successfully");
-        // } else {
-        //     toast.error("Por favor, completa tanto la descripción como el valor antes de guardar.");
-        //     return;
-        // }
         try {
 
             if (valorDescorche > 0 && descripcionDescorche !== "") {
@@ -1355,7 +1349,6 @@ const Adicionales = () => {
             if (!isBebidaAdded) {
                 toast.promise("No se ha agregado ninguna comida");
                 setIsSaving(false);
-            } else {
             }
         } catch (error) {
             toast.error('Error al guardar las bebidas en el cliente:', error.message);
@@ -2563,9 +2556,14 @@ const Adicionales = () => {
                                     <input
                                         value={valorDescorche}
                                         onChange={handleChange}
-                                        type="number"
+                                        type="text"
                                         placeholder='Valor del descorche'
                                         className='mb-5 w-6/12 h-14 mr-2 pl-2 outline-none border-b-2 border-gray-300'
+                                        onKeyDown={(event) => {
+                                            if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                event.preventDefault();
+                                            }
+                                        }}
                                     />
                                     <textarea
                                         value={descripcionDescorche}
@@ -2586,8 +2584,14 @@ const Adicionales = () => {
                                     <input
                                         value={valorDescorche1}
                                         onChange={handleChanges}
-                                        type="number"
-                                        placeholder='Valor del descorche' className='mb-2 w-6/12 h-14 mr-2 pl-2 outline-none border-b-2 border-gray-300' />
+                                        type="text"
+                                        placeholder='Valor del descorche' className='mb-2 w-6/12 h-14 mr-2 pl-2 outline-none border-b-2 border-gray-300'
+                                        onKeyDown={(event) => {
+                                            if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                event.preventDefault();
+                                            }
+                                        }}
+                                    />
                                     <textarea
                                         value={descripcionDescorche1}
                                         onChange={(e) => setDescripcionDescorche1(e.target.value)}

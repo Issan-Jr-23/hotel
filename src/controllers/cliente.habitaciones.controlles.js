@@ -380,18 +380,26 @@ export const addItemRecepcion = async (req, res) => {
 };
 
 export const addDescorche = async (req, res) => {
-  const {id} = req.params;
+  const { id } = req.params;
   const { descorche } = req.body;
 
   try {
     const cliente = await Habitaciones.findById(id);
 
     if (cliente) {
+      const descorcheModificado = {
+        ...descorche,
+        precio: Number(descorche.precio)
+      };
 
-        cliente.descorche.push(descorche);
+      if (!isNaN(descorcheModificado.precio)) {
+        cliente.descorche.push(descorcheModificado);
 
-      await cliente.save();
-      res.status(200).json(cliente);
+        await cliente.save();
+        res.status(200).json(cliente);
+      } else {
+        res.status(400).json({ message: "El precio del descorche debe ser un número válido." });
+      }
     } else {
       res.status(404).json({ message: "Cliente no encontrado" });
     }

@@ -18,22 +18,51 @@ import fa1 from "../../images/triangular2.png"
 import animationDb from "../../images/Animation-cabania.json"
 import loading_progress from "../../images/Animation-loading.json"
 
+
 const dashboardPasadia = () => {
 
   const [totalUsers, setTotalUsers] = useState()
   const [totalVentaPasadia, setTotalVentaPasadia] = useState()
 
-  const [cantidadVendida, setCantidadVendida] = useState()
-  const [valorVenta, setValorVenta] = useState()
+  const [cantidadComprada, setCantidadComprada] = useState()
+  const [totalVentaProducts, setTotalVentaProducts] = useState()
+  const [cantidadCortesias, setCantidadCortesias] = useState();
 
-  const [cantidadVendidaPasadia, setCantidadVendidaPasadia] = useState()
-  const [valorVentaPasadia, setValorVentaPasadia] = useState()
 
-  const [cantidadVendidaCortesias, setCantidadVendidaCortesias] = useState()
-  const [valorVentaCortesias, setValorVentaCortesias] = useState()
+  useEffect(() => {
+    const fetchData = async () => { 
+      try {
+        const response = await AxiosInstance.get('/obtain-pasadia-products');
+        console.log(response);
+        const { cantidadComprada, money, cortesias } = response.data;
+        setCantidadComprada(cantidadComprada);
+        setTotalVentaProducts(money);
+        setCantidadCortesias(cortesias);
 
-  const [sumaDeValores, setSumaDeValores] = useState();
-  const [loading, setLoading] = useState(true);
+      } catch (error) {
+        console.error('Error al obtener los datos: ', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await AxiosInstance.get('/obtain-pasadia-ventas');
+        console.log(response);
+        const { totalCompras, numeroCompras } = response.data;
+        setTotalUsers(numeroCompras);
+        setTotalVentaPasadia(totalCompras)
+
+      } catch (error) {
+        console.error('Error al obtener los datos: ', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const defaultOptionLoading = {
     loop: true,
@@ -44,114 +73,11 @@ const dashboardPasadia = () => {
     }
   }
 
-  useEffect(() => {
-    const fetchData = async () => {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      setLoading(false);
-    };
-
-    fetchData();
-  }, []);
 
   // if (loading) {
   //   return <div> <Lottie options={defaultOptionLoading} width={100} height={100}/><p>Cargando recursos</p></div>;
   // }
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await AxiosInstance.get('/cabania-productos-vendidos-dashboard');
-        console.log("datos del front-end", response.data);
-
-        const { totalPago, cantidadVendidos } = response.data;
-        setValorVentaPasadia(totalPago)
-        setCantidadVendidaPasadia(cantidadVendidos)
-
-      } catch (error) {
-        console.error('Error al obtener los datos: ', error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await AxiosInstance.get('/productos-vendidos-cabania-dashboard');
-        console.log(response);
-        const { totalPago, cantidadVendidos } = response.data;
-        setValorVenta(totalPago)
-        setCantidadVendida(cantidadVendidos)
-        console.log("Total niños: ", totalPago);
-        console.log("Total adultos: ", cantidadVendidos);
-
-      } catch (error) {
-        console.error('Error al obtener los datos: ', error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    const total = valorVenta + valorVentaPasadia;
-    setSumaDeValores(total);
-  }, [valorVenta, valorVentaPasadia])
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await AxiosInstance.get('/productos-cortesias-cabania-dashboard');
-        console.log(response);
-
-        const { totalPago, cantidadVendidos } = response.data;
-        setValorVentaCortesias(totalPago)
-        setCantidadVendidaCortesias(cantidadVendidos)
-
-      } catch (error) {
-        console.error('Error al obtener los datos: ', error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-
-  // const tv = valorVentaPasadia + valorVenta;
-  // setSumaDeValores(tv)
-  // console.log("suma de valores: ",sumaDeValores)
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await AxiosInstance.get('/obtener-cantidad-usuarios-cabania-dashboard');
-        const { totalPasadias } = response.data;
-        setTotalUsers(totalPasadias)
-
-      } catch (error) {
-        console.error('Error al obtener los datos: ', error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await AxiosInstance.get('/cabania-total-generado');
-        const { totalPago} = response.data;
-        setTotalVentaPasadia(totalPago);
-
-      } catch (error) {
-        console.error('Error al obtener los datos: ', error);
-      }
-    };
-
-    fetchData();
-  }, []);
 
   const defaultOption = {
     loop: true,
@@ -165,13 +91,13 @@ const dashboardPasadia = () => {
 
   return (
 
-    <div className={`app ${loading ? 'loading' : ''}`}>
+    <div>
 
-      <div className={`loading-overlay ${loading ? 'visible' : ''}`}>
+      {/* <div className={`loading-overlay ${loading ? 'visible' : ''}`}>
         <Lottie options={defaultOptionLoading} width={100} height={100} />
         <p>Cargando recursos</p>
-      </div>
-      {!loading && (
+      </div> */}
+      
         <div className=' fondo pt-20 pl-5 pr-5 pb-20'>
 
           <div className='cont-icon-json'>
@@ -204,13 +130,13 @@ const dashboardPasadia = () => {
               <span className='box-grafic justify-between flex flex-col p-4'>
                 <h3 className='fondo-text' style={{ fontWeight: "600", fontSize: "20px" }} >Productos Comprados</h3>
                 <p className='fondo-text flex' style={{ fontWeight: "600" }}>
-                  ${typeof sumaDeValores === 'number' ? sumaDeValores.toLocaleString('es-CO') : '0'}
+                  ${typeof cantidadComprada === 'number' ? cantidadComprada.toLocaleString('es-CO') : '0'}
                   {<span className='fondo-text alza flex items-center ml-2 text-red-600'>
                     {/* <span className='alza'>
               <img className='down' src={down} alt="" /> </span>   */}
                   </span>}
                 </p>
-                <p className=' fondo-text text-3xl flex' style={{ fontWeight: "600" }}>   {cantidadVendida + cantidadVendidaPasadia}</p>
+                <p className=' fondo-text text-3xl flex' style={{ fontWeight: "600" }}>   {totalVentaProducts}</p>
               </span>
               <img className='img-cubo-dasboard-cabania' src={fa} alt="" />
             </div>
@@ -218,10 +144,10 @@ const dashboardPasadia = () => {
               <span className='box-grafic justify-between flex flex-col p-4'>
                 <h3 className='fondo-text' style={{ fontWeight: "600", fontSize: "20px" }} >Cortesias</h3>
                 <p className='fondo-text' style={{ fontWeight: "600" }}>
-                  ${typeof valorVentaCortesias === 'number' ? valorVentaCortesias.toLocaleString('es-CO') : '0'}
+                  ${0}
                 </p>
                 <p className=' fondo-text text-3xl flex' style={{ fontWeight: "600" }}>
-                  {cantidadVendidaCortesias}</p>
+                  {cantidadCortesias}</p>
 
               </span>
               <img className='img-cubo-dasboard-cabania' src={fa1} alt="" />
@@ -229,6 +155,7 @@ const dashboardPasadia = () => {
 
           </div>
           <div className=' flex mt-10 cont-table-apexg '>
+
             <div className='box-table'>
               <TableUsers />
             </div>
@@ -252,7 +179,7 @@ const dashboardPasadia = () => {
             </div>
           </div>
         </div>
-      )}
+      
     </div>
 
   )

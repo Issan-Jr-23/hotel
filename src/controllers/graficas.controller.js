@@ -938,7 +938,6 @@ export const obtainVentasPasadiaProducts = async(req, res) => {
   }
 }
 
-
 export const obtainClients = async (req, res) => {
   try {
     const clients = await Cliente.find();
@@ -992,15 +991,13 @@ export const obtainClients = async (req, res) => {
 
 export const obtainUsers = async (req, res) => {
   try {
-    // Obtener datos de la colección Usuario
     const users = await Usuario.find();
 
-    // Crear un nuevo array con los datos requeridos de cada usuario
     const userData = [];
 
-    // Iterar sobre los usuarios obtenidos
     for (const usuario of users) {
-      // Calcular el total consumido en bebidas
+      const nombre = usuario.historial[0]?.nombre || 'Nombre no disponible';
+
       const totalBebidas = usuario.historial.reduce((total, registro) => {
         if (registro.bebidas) {
           return total + calcularTotal(registro.bebidas);
@@ -1008,7 +1005,6 @@ export const obtainUsers = async (req, res) => {
         return total;
       }, 0);
 
-      // Calcular el total consumido en restaurante
       const totalRestaurante = usuario.historial.reduce((total, registro) => {
         if (registro.restaurante) {
           return total + calcularTotal(registro.restaurante);
@@ -1016,7 +1012,6 @@ export const obtainUsers = async (req, res) => {
         return total;
       }, 0);
 
-      // Calcular el total consumido en descorche
       const totalDescorche = usuario.historial.reduce((total, registro) => {
         if (registro.descorche) {
           return total + calcularTotal(registro.descorche);
@@ -1024,7 +1019,6 @@ export const obtainUsers = async (req, res) => {
         return total;
       }, 0);
 
-      // Calcular el total consumido en recepción
       const totalRecepcion = usuario.historial.reduce((total, registro) => {
         if (registro.recepcion) {
           return total + calcularTotal(registro.recepcion);
@@ -1032,15 +1026,13 @@ export const obtainUsers = async (req, res) => {
         return total;
       }, 0);
 
-      // Calcular el total de pago pendiente y anticipado
       const totalPago = usuario.historial.reduce((total, registro) => {
         return total + (registro.pago || 0) + (registro.pagoPendiente || 0);
       }, 0);
 
-      // Agregar los datos del usuario al array userData
       userData.push({
         identificacion: usuario.identificacion,
-        nombre: usuario.nombre,
+        nombre,
         totalBebidas: totalBebidas,
         totalRestaurante: totalRestaurante,
         totalDescorche: totalDescorche,
@@ -1049,7 +1041,6 @@ export const obtainUsers = async (req, res) => {
       });
     }
 
-    // Enviar la respuesta con los datos de los usuarios
     res.json(userData);
   } catch (error) {
     console.error(error);
@@ -1057,7 +1048,7 @@ export const obtainUsers = async (req, res) => {
   }
 };
 
-// Función para calcular el total de un array de registros
+
 const calcularTotal = (registros) => {
   return registros.reduce((total, registro) => {
     if (registro.precio > 0) {
@@ -1066,3 +1057,119 @@ const calcularTotal = (registros) => {
     return total;
   }, 0);
 };
+
+export const obtainClientsCabanias = async (req, res) => {
+  try {
+    const clients = await Cabania.find();
+
+    const clientData = clients.map(cliente => {
+      const totalBebidas = cliente.bebidas.reduce((total, bebida) => {
+        if (bebida.mensaje !== 'Cortesía' && bebida.precio > 0) {
+          return total + bebida.cantidad * bebida.precio;
+        }
+        return total;
+      }, 0);
+
+      const totalRestaurante = cliente.restaurante.reduce((total, item) => {
+        if (item.precio > 0) {
+          return total + item.cantidad * item.precio;
+        }
+        return total;
+      }, 0);
+
+      const totalDescorche = cliente.descorche.reduce((total, item) => {
+        if (item.precio > 0) {
+          return total + item.cantidad * item.precio;
+        }
+        return total;
+      }, 0);
+
+      const totalRecepcion = cliente.recepcion.reduce((total, item) => {
+        if (item.precio > 0) {
+          return total + item.cantidad * item.precio;
+        }
+        return total;
+      }, 0);
+
+      return {
+        identificacion: cliente.identificacion,
+        nombre: cliente.nombre,
+        totalBebidas: totalBebidas,
+        totalRestaurante: totalRestaurante,
+        totalDescorche: totalDescorche,
+        totalRecepcion: totalRecepcion,
+        totalPago: cliente.pagoPendiente + cliente.pagoAnticipado
+      };
+    });
+
+    res.json(clientData);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error al obtener los clientes desde la base de datos");
+  }
+};
+
+export const obtainUsersCabanias = async (req, res) => {
+  try {
+    const users = await Usuario.find();
+
+    const userData = [];
+
+    for (const usuario of users) {
+      // Se asume que el nombre se obtiene del primer registro de historial que cumpla con ser un servicio de cabaña.
+      const primerRegistroCabaña = usuario.historial.find(registro => registro.servicio === 'cabaña');
+      const nombre = primerRegistroCabaña?.nombre || 'Nombre no disponible';
+
+      const totalBebidas = usuario.historial.reduce((total, registro) => {
+        if (registro.servicio === 'cabaña' && registro.bebidas) {
+          return total + calcularTotal(registro.bebidas);
+        }
+        return total;
+      }, 0);
+
+      const totalRestaurante = usuario.historial.reduce((total, registro) => {
+        if (registro.servicio === 'cabaña' && registro.restaurante) {
+          return total + calcularTotal(registro.restaurante);
+        }
+        return total;
+      }, 0);
+
+      const totalDescorche = usuario.historial.reduce((total, registro) => {
+        if (registro.servicio === 'cabaña' && registro.descorche) {
+          return total + calcularTotal(registro.descorche);
+        }
+        return total;
+      }, 0);
+
+      const totalRecepcion = usuario.historial.reduce((total, registro) => {
+        if (registro.servicio === 'cabaña' && registro.recepcion) {
+          return total + calcularTotal(registro.recepcion);
+        }
+        return total;
+      }, 0);
+
+      const totalPago = usuario.historial.reduce((total, registro) => {
+        if (registro.servicio === 'cabaña') {
+          return total + (registro.pago || 0) + (registro.pagoPendiente || 0);
+        }
+        return total;
+      }, 0);
+
+      userData.push({
+        identificacion: usuario.identificacion,
+        nombre,
+        totalBebidas: totalBebidas,
+        totalRestaurante: totalRestaurante,
+        totalDescorche: totalDescorche,
+        totalRecepcion: totalRecepcion,
+        totalPago: totalPago
+      });
+    }
+
+    res.json(userData);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error al obtener los usuarios desde la base de datos");
+  }
+};
+

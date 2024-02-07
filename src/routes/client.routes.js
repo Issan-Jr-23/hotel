@@ -28,6 +28,7 @@ router.get("/pasadia-fecha-activacion", fechaActivacion)
 router.get("/pasadia-fecha-finalizacion", fechaFinalizacion)
 router.get("/pasadia-fecha-compra", obtenerFechasCompras)
 
+
 router.get('/pasadia-cliente-info/:id', obtenerClienteId)
 router.post("/pasadia-agregar-bebida/:id",auth, addBebidaAdicional);
 router.post("/pasadia-agregar-item-recepcion/:id",auth, addItemRecepcion);
@@ -36,6 +37,7 @@ router.post("/pasadia-agregar-food/:id",auth, addFoodAdicional);
 router.post("/pasadia-agregar-food-subproducto/:id",auth, addFoodAdicionalSubproducto);
 router.get("/pasadia-productos-comprados", productosMasCompradosPasadia)
 router.get("/pasadia-productos-categoria", productosCategoria)
+
 
 router.get("/pasadia-totalidad-pago/:id", resTotal)
 router.get("/pasadia-totalidad-reserva-pago/:id", postPago)

@@ -1341,7 +1341,7 @@ const Adicionales = () => {
                                     onChange={handleInputChange}
                                 />
 
-                            </span> 
+                            </span>
                         </span>
                     </article>
 
@@ -2486,9 +2486,15 @@ const Adicionales = () => {
                                     <input
                                         value={valorDescorche}
                                         onChange={(e) => setValorDescorche(e.target.value)}
-                                        type="number"
+                                        type="text"
                                         placeholder='Valor del descorche'
-                                        className='mb-5 w-6/12 h-14 mr-2 pl-2 outline-none border-b-2 border-gray-300' />
+                                        className='mb-5 w-6/12 h-14 mr-2 pl-2 outline-none border-b-2 border-gray-300'
+                                        onKeyDown={(event) => {
+                                            if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                event.preventDefault();
+                                            }
+                                        }}
+                                    />
                                     <textarea
                                         value={descripcionDescorche}
                                         onChange={(e) => setDescripcionDescorche(e.target.value)}
@@ -2508,8 +2514,14 @@ const Adicionales = () => {
                                     <input
                                         value={valorDescorche1}
                                         onChange={(e) => setValorDescorche1(e.target.value)}
-                                        type="number"
-                                        placeholder='Valor del descorche' className='mb-2 w-6/12 h-14 mr-2 pl-2 outline-none border-b-2 border-gray-300' />
+                                        type="text"
+                                        placeholder='Valor del descorche' className='mb-2 w-6/12 h-14 mr-2 pl-2 outline-none border-b-2 border-gray-300'
+                                        onKeyDown={(event) => {
+                                            if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                event.preventDefault();
+                                            }
+                                        }}
+                                    />
                                     <textarea
                                         value={descripcionDescorche1}
                                         onChange={(e) => setDescripcionDescorche1(e.target.value)}

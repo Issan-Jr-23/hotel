@@ -573,18 +573,32 @@ export const addItemRecepcion = async (req, res) => {
 };
 
 export const addDescorche = async (req, res) => {
-  const {id} = req.params;
+  const { id } = req.params;
   const { descorche } = req.body;
 
   try {
+    // Encuentra el cliente por ID
     const cliente = await Cabania.findById(id);
 
     if (cliente) {
+      // Convierte el precio a número antes de insertarlo
+      const descorcheModificado = {
+        ...descorche,
+        precio: Number(descorche.precio) // Convierte el precio a número
+      };
 
-        cliente.descorche.push(descorche);
+      // Asegura que la conversión no resulte en NaN (No es un Número)
+      if (!isNaN(descorcheModificado.precio)) {
+        // Agrega el descorche al cliente
+        cliente.descorche.push(descorcheModificado);
 
-      await cliente.save();
-      res.status(200).json(cliente);
+        // Guarda el cliente modificado
+        await cliente.save();
+        res.status(200).json(cliente);
+      } else {
+        // Manejo de error si el precio no es un número válido
+        res.status(400).json({ message: "El precio del descorche debe ser un número válido." });
+      }
     } else {
       res.status(404).json({ message: "Cliente no encontrado" });
     }
