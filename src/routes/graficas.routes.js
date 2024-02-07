@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { comprasUsers, obtenerTotal, obtenerTotalesNiniosYAdultosEnCabaniaDashboard, obtenerTotalesNiniosYAdultosEnHabitaciones, obtenerTotalesNiniosYAdultosEnPasadia, productosMasComprados, productosMasCompradosPass, totalProductosCortesiasCabaniaHistorialDashboard, totalPructosCortesiasDashboard, totalPructosVendidosCabaniaDashboard, totalProductosVendidosDashboard, totalProductosVendidosHistorialCabaniaDashboard, totalPructosVendidosHistorialDashboard, totalgeneradoDashboard, totalgeneradoCabaniaDashboard, totalgeneradoHabitaciones, usuariosQueMasCompraron, totalProductosCortesiasHabitacionesHistorialDashboard, totalProductosVendidosHistorialHabitacionesDashboard, totalPructosVendidosHabitacionesDashboard } from "../controllers/graficas.controller.js";
+import { comprasUsers, obtenerTotal, obtenerTotalesNiniosYAdultosEnCabaniaDashboard, obtenerTotalesNiniosYAdultosEnHabitaciones, obtenerTotalesNiniosYAdultosEnPasadia, productosMasComprados, productosMasCompradosPass, totalProductosCortesiasCabaniaHistorialDashboard, totalPructosCortesiasDashboard, totalPructosVendidosCabaniaDashboard, totalProductosVendidosDashboard, totalProductosVendidosHistorialCabaniaDashboard, totalPructosVendidosHistorialDashboard, totalgeneradoDashboard, totalgeneradoCabaniaDashboard, totalgeneradoHabitaciones, usuariosQueMasCompraron, totalProductosCortesiasHabitacionesHistorialDashboard, totalProductosVendidosHistorialHabitacionesDashboard, totalPructosVendidosHabitacionesDashboard, obtainVentasPasadia, obtainVentasPasadiaProducts, obtainClients, obtainUsers } from "../controllers/graficas.controller.js";
 import { totalGeneradoBar, totalGeneradoCabaniaBard, totalGeneradoHabitacionesBard } from "../controllers/transferencia.controllers.js";
 
 const router = Router();
@@ -17,11 +17,11 @@ router.get("/grafic-usuarios-mas-compras", comprasUsers)
 
 
 //dashboard pasadia
-router.get("/pasadia-productos-vendidos-dashboard", totalProductosVendidosDashboard) //CHECK
-router.get('/productos-vendidos-pasadia-dashboard',totalPructosVendidosHistorialDashboard); //CHECK
-router.get('/productos-cortesias-pasadia-dashboard',totalPructosCortesiasDashboard); //CHECK
-router.get('/obtener-cantidad-usuarios',obtenerTotalesNiniosYAdultosEnPasadia); //CHECK
-router.get('/total-generado-pasadia',totalgeneradoDashboard); //check
+// router.get("/pasadia-productos-vendidos-dashboard", totalProductosVendidosDashboard)
+// router.get('/productos-vendidos-pasadia-dashboard',totalPructosVendidosHistorialDashboard); 
+// router.get('/productos-cortesias-pasadia-dashboard',totalPructosCortesiasDashboard)
+// router.get('/obtener-cantidad-usuarios',obtenerTotalesNiniosYAdultosEnPasadia); 
+// router.get('/total-generado-pasadia',totalgeneradoDashboard);
 
 
 
@@ -40,5 +40,13 @@ router.get('/productos-vendidos-habitaciones-dashboard',totalProductosVendidosHi
 router.get('/productos-cortesias-habitaciones-dashboard',totalProductosCortesiasHabitacionesHistorialDashboard);
 router.get('/obtener-cantidad-usuarios-habitaciones-dashboard',obtenerTotalesNiniosYAdultosEnHabitaciones);
 router.get('/habitaciones-total-generado',totalgeneradoHabitaciones);
+
+
+//controlador distinto
+
+router.get("/obtain-pasadia-ventas", obtainVentasPasadia )
+router.get("/obtain-pasadia-products", obtainVentasPasadiaProducts)
+router.get("/obtain-clientes", obtainClients)
+router.get("/obtain-clientes-historial", obtainUsers)
 
 export default router;

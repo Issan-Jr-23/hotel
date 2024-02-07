@@ -22,26 +22,20 @@ const dashboardPasadia = () => {
   const [totalUsers, setTotalUsers] = useState()
   const [totalVentaPasadia, setTotalVentaPasadia] = useState()
 
-  const [cantidadVendida, setCantidadVendida] = useState()
-  const [valorVenta, setValorVenta] = useState()
+  const [cantidadComprada, setCantidadComprada] = useState()
+  const [totalVentaProducts, setTotalVentaProducts] = useState()
+  const [cantidadCortesias, setCantidadCortesias] = useState();
 
-  const [cantidadVendidaPasadia, setCantidadVendidaPasadia] = useState()
-  const [valorVentaPasadia, setValorVentaPasadia] = useState()
-
-  const [cantidadVendidaCortesias, setCantidadVendidaCortesias] = useState()
-  const [valorVentaCortesias, setValorVentaCortesias] = useState()
-
-  const [sumaDeValores, setSumaDeValores] = useState();
 
   useEffect(() => {
     const fetchData = async () => { 
       try {
-        const response = await AxiosInstance.get('/pasadia-productos-vendidos-dashboard');
+        const response = await AxiosInstance.get('/obtain-pasadia-products');
         console.log(response);
-
-        const { totalPago, cantidadVendidos } = response.data;
-        setValorVentaPasadia(totalPago)
-        setCantidadVendidaPasadia(cantidadVendidos)
+        const { cantidadComprada, money, cortesias } = response.data;
+        setCantidadComprada(cantidadComprada);
+        setTotalVentaProducts(money);
+        setCantidadCortesias(cortesias);
 
       } catch (error) {
         console.error('Error al obtener los datos: ', error);
@@ -50,43 +44,15 @@ const dashboardPasadia = () => {
 
     fetchData();
   }, []);
-  // CHECK
-
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstance.get('/productos-vendidos-pasadia-dashboard');
+        const response = await AxiosInstance.get('/obtain-pasadia-ventas');
         console.log(response);
-        const { totalPago, cantidadVendidos } = response.data;
-        setValorVenta(totalPago)
-        setCantidadVendida(cantidadVendidos)
-        console.log("Total niños: ", totalPago);
-        console.log("Total adultos: ", cantidadVendidos);
-
-      } catch (error) {
-        console.error('Error al obtener los datos: ', error);
-      }
-    };
-
-    fetchData();
-  }, []);
-  //CHECK
-
-  useEffect(() => {
-    const total = valorVenta + valorVentaPasadia;
-    setSumaDeValores(total);
-  }, [valorVenta, valorVentaPasadia])
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await AxiosInstance.get('/productos-cortesias-pasadia-dashboard');
-        console.log(response);
-
-        const { totalPago, cantidadVendidos } = response.data;
-        setValorVentaCortesias(totalPago)
-        setCantidadVendidaCortesias(cantidadVendidos)
+        const { totalCompras, numeroCompras } = response.data;
+        setTotalUsers(numeroCompras);
+        setTotalVentaPasadia(totalCompras)
 
       } catch (error) {
         console.error('Error al obtener los datos: ', error);
@@ -96,47 +62,8 @@ const dashboardPasadia = () => {
     fetchData();
   }, []);
 
-  //CHECK
 
 
-  // const tv = valorVentaPasadia + valorVenta;
-  // setSumaDeValores(tv)
-  // console.log("suma de valores: ",sumaDeValores)
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await AxiosInstance.get('/obtener-cantidad-usuarios');
-        const {totalPasadias} = response.data;
-        setTotalUsers(totalPasadias);
-        console.log("data................: ", response.data);
-      } catch (error) {
-        console.error('Error al obtener los datos: ', error);
-      }
-    };
-    fetchData();
-  }, []);
-
-  //CHECK
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await AxiosInstance.get('/total-generado-pasadia');
-        console.log(response);
-
-        const { totalPago} = response.data;
-        setTotalVentaPasadia(totalPago);
-
-      } catch (error) {
-        console.error('Error al obtener los datos: ', error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  //CHECK
 
   const defaultOption = {
     loop: true,
@@ -181,13 +108,13 @@ const dashboardPasadia = () => {
           <span className='box-grafic justify-between flex flex-col p-4'>
             <h3 className='fondo-text' style={{ fontWeight: "600", fontSize: "20px" }} >Units Sold</h3>
             <p className='fondo-text flex' style={{ fontWeight: "600" }}>
-              ${typeof sumaDeValores === 'number' ? sumaDeValores.toLocaleString('es-CO') : '0'}
+              ${typeof totalVentaProducts === 'number' ? totalVentaProducts.toLocaleString('es-CO') : '0'}
               {<span className='fondo-text alza flex items-center ml-2 text-red-600'>
                 {/* <span className='alza'> 
               <img className='down' src={down} alt="" /> </span>   */}
               </span>}
             </p>
-            <p className=' fondo-text text-3xl flex' style={{ fontWeight: "600" }}>   {cantidadVendida + cantidadVendidaPasadia}</p>
+            <p className=' fondo-text text-3xl flex' style={{ fontWeight: "600" }}>   {cantidadComprada}</p>
 
           </span>
           <img className='img-cubo-dasboard' src={fa} alt="" />
@@ -196,10 +123,10 @@ const dashboardPasadia = () => {
           <span className='box-grafic justify-between flex flex-col p-4'>
             <h3 className='fondo-text' style={{ fontWeight: "600", fontSize: "20px" }} >courtesies for clients</h3>
             <p className='fondo-text' style={{ fontWeight: "600" }}>
-              ${typeof valorVentaCortesias === 'number' ? valorVentaCortesias.toLocaleString('es-CO') : '0'}
+              ${0}
             </p>
             <p className=' fondo-text text-3xl flex' style={{ fontWeight: "600" }}>
-              {cantidadVendidaCortesias}</p>
+              {cantidadCortesias}</p>
 
           </span>
           <img className='img-cubo-dasboard' src={fa1} alt="" />

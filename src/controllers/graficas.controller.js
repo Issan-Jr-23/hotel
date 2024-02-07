@@ -844,3 +844,225 @@ export const totalPructosVendidosHabitacionesDashboard = async (req, res) => {
       res.status(500).send('Error al procesar la solicitud');
   }
 };
+
+
+
+export const obtainVentasPasadia = async(req, res) => {
+  try {
+  const pasadia = await Cliente.find();
+  const historial = await Usuario.find();
+  let cantidad = 0;
+  let totalVentas = 0;
+    pasadia.forEach((data) => {
+      if (data.servicio === "pasadia") {
+        cantidad ++
+        totalVentas += data.pagoAnticipado + data.pagoPendiente;
+      }
+    })
+
+    historial.forEach((data) =>{
+      data.historial.forEach((response) => {
+        if (response.servicio === "pasadia") {
+          cantidad++
+          totalVentas += response.pago + response.pagoPendiente;
+        }
+      })
+    })
+
+    res.status(200).json({ totalCompras: totalVentas || 0, numeroCompras: cantidad || 0 })
+
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const obtainVentasPasadiaProducts = async(req, res) => {
+  try {
+    const pasadia = await Cliente.find();
+    const historial = await Usuario.find();
+    let compras = 0;
+    let cantidadComprada = 0;
+    let cortesias = 0;
+
+    pasadia.forEach((res) => {
+
+
+      res.restaurante?.forEach((data) =>{
+      if (data.mensaje === "Cortesía" && data.precio === 0) {
+        cortesias += data.cantidad
+      }else{
+      cantidadComprada += data.cantidad
+      compras += data.cantidad * data.precio
+      }
+      })
+
+
+      res.bebidas?.forEach((data) =>{
+      if (data.mensaje === "Cortesía" && data.precio === 0) {
+        cortesias += data.cantidad
+      }else{
+      cantidadComprada += data.cantidad
+      compras += data.cantidad * data.precio
+      }
+      })
+    })
+
+    historial.forEach((response) => {
+      response.historial.forEach((res) =>{
+        res.restaurante?.forEach((data) =>{
+      if (data.mensaje === "Cortesía" && data.precio === 0) {
+        cortesias += data.cantidad
+      }else {
+      cantidadComprada += data.cantidad
+      compras += data.cantidad * data.precio
+      }
+      })
+
+
+
+      res.bebidas?.forEach((data) =>{
+      if (data.mensaje === "Cortesía" && data.precio === 0) {
+        cortesias += data.cantidad
+      }else{
+      cantidadComprada += data.cantidad
+      compras += data.cantidad * data.precio
+      }
+      })
+      })
+    })
+
+    res.status(200).json({cantidadComprada: cantidadComprada, money:compras, cortesias: cortesias})
+
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+
+export const obtainClients = async (req, res) => {
+  try {
+    const clients = await Cliente.find();
+
+    const clientData = clients.map(cliente => {
+      const totalBebidas = cliente.bebidas.reduce((total, bebida) => {
+        if (bebida.mensaje !== 'Cortesía' && bebida.precio > 0) {
+          return total + bebida.cantidad * bebida.precio;
+        }
+        return total;
+      }, 0);
+
+      const totalRestaurante = cliente.restaurante.reduce((total, item) => {
+        if (item.precio > 0) {
+          return total + item.cantidad * item.precio;
+        }
+        return total;
+      }, 0);
+
+      const totalDescorche = cliente.descorche.reduce((total, item) => {
+        if (item.precio > 0) {
+          return total + item.cantidad * item.precio;
+        }
+        return total;
+      }, 0);
+
+      const totalRecepcion = cliente.recepcion.reduce((total, item) => {
+        if (item.precio > 0) {
+          return total + item.cantidad * item.precio;
+        }
+        return total;
+      }, 0);
+
+      return {
+        identificacion: cliente.identificacion,
+        nombre: cliente.nombre,
+        totalBebidas: totalBebidas,
+        totalRestaurante: totalRestaurante,
+        totalDescorche: totalDescorche,
+        totalRecepcion: totalRecepcion,
+        totalPago: cliente.pagoPendiente + cliente.pagoAnticipado
+      };
+    });
+
+    res.json(clientData);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error al obtener los clientes desde la base de datos");
+  }
+};
+
+export const obtainUsers = async (req, res) => {
+  try {
+    // Obtener datos de la colección Usuario
+    const users = await Usuario.find();
+
+    // Crear un nuevo array con los datos requeridos de cada usuario
+    const userData = [];
+
+    // Iterar sobre los usuarios obtenidos
+    for (const usuario of users) {
+      // Calcular el total consumido en bebidas
+      const totalBebidas = usuario.historial.reduce((total, registro) => {
+        if (registro.bebidas) {
+          return total + calcularTotal(registro.bebidas);
+        }
+        return total;
+      }, 0);
+
+      // Calcular el total consumido en restaurante
+      const totalRestaurante = usuario.historial.reduce((total, registro) => {
+        if (registro.restaurante) {
+          return total + calcularTotal(registro.restaurante);
+        }
+        return total;
+      }, 0);
+
+      // Calcular el total consumido en descorche
+      const totalDescorche = usuario.historial.reduce((total, registro) => {
+        if (registro.descorche) {
+          return total + calcularTotal(registro.descorche);
+        }
+        return total;
+      }, 0);
+
+      // Calcular el total consumido en recepción
+      const totalRecepcion = usuario.historial.reduce((total, registro) => {
+        if (registro.recepcion) {
+          return total + calcularTotal(registro.recepcion);
+        }
+        return total;
+      }, 0);
+
+      // Calcular el total de pago pendiente y anticipado
+      const totalPago = usuario.historial.reduce((total, registro) => {
+        return total + (registro.pago || 0) + (registro.pagoPendiente || 0);
+      }, 0);
+
+      // Agregar los datos del usuario al array userData
+      userData.push({
+        identificacion: usuario.identificacion,
+        nombre: usuario.nombre,
+        totalBebidas: totalBebidas,
+        totalRestaurante: totalRestaurante,
+        totalDescorche: totalDescorche,
+        totalRecepcion: totalRecepcion,
+        totalPago: totalPago
+      });
+    }
+
+    // Enviar la respuesta con los datos de los usuarios
+    res.json(userData);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error al obtener los usuarios desde la base de datos");
+  }
+};
+
+// Función para calcular el total de un array de registros
+const calcularTotal = (registros) => {
+  return registros.reduce((total, registro) => {
+    if (registro.precio > 0) {
+      return total + registro.cantidad * registro.precio;
+    }
+    return total;
+  }, 0);
+};
