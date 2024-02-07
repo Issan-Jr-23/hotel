@@ -845,7 +845,7 @@ export const totalPructosVendidosHabitacionesDashboard = async (req, res) => {
   }
 };
 
-
+//pasadia controlador
 
 export const obtainVentasPasadia = async(req, res) => {
   try {
@@ -908,7 +908,9 @@ export const obtainVentasPasadiaProducts = async(req, res) => {
     })
 
     historial.forEach((response) => {
+   
       response.historial.forEach((res) =>{
+        if (res.servicio === "pasadia") {
         res.restaurante?.forEach((data) =>{
       if (data.mensaje === "Cortesía" && data.precio === 0) {
         cortesias += data.cantidad
@@ -918,6 +920,75 @@ export const obtainVentasPasadiaProducts = async(req, res) => {
       }
       })
 
+      res.bebidas?.forEach((data) =>{
+      if (data.mensaje === "Cortesía" && data.precio === 0) {
+        cortesias += data.cantidad
+      }else{
+      cantidadComprada += data.cantidad
+      compras += data.cantidad * data.precio
+      }
+      })
+        }
+      })
+    })
+
+    res.status(200).json({cantidadComprada: cantidadComprada, money:compras, cortesias: cortesias})
+
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+//cabania controlador
+
+export const obtainVentasCabania = async(req, res) => {
+  try {
+  const pasadia = await Cabania.find();
+  const historial = await Usuario.find();
+  let cantidad = 0;
+  let totalVentas = 0;
+    pasadia.forEach((data) => {
+      if (data.servicio === "cabania") {
+        cantidad ++
+        totalVentas += data.pagoAnticipado + data.pagoPendiente;
+      }
+    })
+
+    historial.forEach((data) =>{
+      data.historial.forEach((response) => {
+        if (response.servicio === "cabania") {
+          cantidad++
+          totalVentas += response.pago + response.pagoPendiente;
+        }
+      })
+    })
+
+    res.status(200).json({ totalCompras: totalVentas || 0, numeroCompras: cantidad || 0 })
+
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const obtainVentasCabaniaProducts = async(req, res) => {
+  try {
+    const pasadia = await Cabania.find();
+    const historial = await Usuario.find();
+    let compras = 0;
+    let cantidadComprada = 0;
+    let cortesias = 0;
+
+    pasadia.forEach((res) => {
+
+
+      res.restaurante?.forEach((data) =>{
+      if (data.mensaje === "Cortesía" && data.precio === 0) {
+        cortesias += data.cantidad
+      }else{
+      cantidadComprada += data.cantidad
+      compras += data.cantidad * data.precio
+      }
+      })
 
 
       res.bebidas?.forEach((data) =>{
@@ -928,6 +999,32 @@ export const obtainVentasPasadiaProducts = async(req, res) => {
       compras += data.cantidad * data.precio
       }
       })
+    })
+
+    historial.forEach((response) => {
+      response.historial.forEach((res) =>{
+        if (res.servicio === "cabania") {
+        res.restaurante?.forEach((data) =>{
+      if (data.mensaje === "Cortesía" && data.precio === 0) {
+        cortesias += data.cantidad
+      }else {
+      cantidadComprada += data.cantidad
+      compras += data.cantidad * data.precio
+      }
+      })
+
+      res.bebidas?.forEach((data) =>{
+      if (data.mensaje === "Cortesía" && data.precio === 0) {
+        cortesias += data.cantidad
+      }else{
+      cantidadComprada += data.cantidad
+      compras += data.cantidad * data.precio
+      }
+      })
+        }
+
+
+
       })
     })
 
@@ -996,49 +1093,55 @@ export const obtainUsers = async (req, res) => {
     const userData = [];
 
     for (const usuario of users) {
-      const nombre = usuario.historial[0]?.nombre || 'Nombre no disponible';
+      const primerRegistroCabaña = usuario.historial.find(registro => registro.servicio === 'pasadia');
+      const nombre = primerRegistroCabaña?.nombre || 'Nombre no disponible';
 
       const totalBebidas = usuario.historial.reduce((total, registro) => {
-        if (registro.bebidas) {
+        if (registro.servicio === 'pasadia' && registro.bebidas) {
           return total + calcularTotal(registro.bebidas);
         }
         return total;
       }, 0);
 
       const totalRestaurante = usuario.historial.reduce((total, registro) => {
-        if (registro.restaurante) {
+        if (registro.servicio === 'pasadia' && registro.restaurante) {
           return total + calcularTotal(registro.restaurante);
         }
         return total;
       }, 0);
 
       const totalDescorche = usuario.historial.reduce((total, registro) => {
-        if (registro.descorche) {
+        if (registro.servicio === 'pasadia' && registro.descorche) {
           return total + calcularTotal(registro.descorche);
         }
         return total;
       }, 0);
 
       const totalRecepcion = usuario.historial.reduce((total, registro) => {
-        if (registro.recepcion) {
+        if (registro.servicio === 'pasadia' && registro.recepcion) {
           return total + calcularTotal(registro.recepcion);
         }
         return total;
       }, 0);
 
       const totalPago = usuario.historial.reduce((total, registro) => {
-        return total + (registro.pago || 0) + (registro.pagoPendiente || 0);
+        if (registro.servicio === 'pasadia') {
+          return total + (registro.pago || 0) + (registro.pagoPendiente || 0);
+        }
+        return total;
       }, 0);
 
-      userData.push({
-        identificacion: usuario.identificacion,
-        nombre,
-        totalBebidas: totalBebidas,
-        totalRestaurante: totalRestaurante,
-        totalDescorche: totalDescorche,
-        totalRecepcion: totalRecepcion,
-        totalPago: totalPago
-      });
+      if (totalBebidas > 0 || totalRestaurante > 0 || totalDescorche > 0 || totalRecepcion > 0 || totalPago > 0) {
+        userData.push({
+          identificacion: usuario.identificacion,
+          nombre,
+          totalBebidas: totalBebidas,
+          totalRestaurante: totalRestaurante,
+          totalDescorche: totalDescorche,
+          totalRecepcion: totalRecepcion,
+          totalPago: totalPago
+        });
+      }
     }
 
     res.json(userData);
@@ -1047,7 +1150,6 @@ export const obtainUsers = async (req, res) => {
     res.status(500).send("Error al obtener los usuarios desde la base de datos");
   }
 };
-
 
 const calcularTotal = (registros) => {
   return registros.reduce((total, registro) => {
@@ -1116,54 +1218,55 @@ export const obtainUsersCabanias = async (req, res) => {
     const userData = [];
 
     for (const usuario of users) {
-      // Se asume que el nombre se obtiene del primer registro de historial que cumpla con ser un servicio de cabaña.
-      const primerRegistroCabaña = usuario.historial.find(registro => registro.servicio === 'cabaña');
+      const primerRegistroCabaña = usuario.historial.find(registro => registro.servicio === 'cabania');
       const nombre = primerRegistroCabaña?.nombre || 'Nombre no disponible';
 
       const totalBebidas = usuario.historial.reduce((total, registro) => {
-        if (registro.servicio === 'cabaña' && registro.bebidas) {
+        if (registro.servicio === 'cabania' && registro.bebidas) {
           return total + calcularTotal(registro.bebidas);
         }
         return total;
       }, 0);
 
       const totalRestaurante = usuario.historial.reduce((total, registro) => {
-        if (registro.servicio === 'cabaña' && registro.restaurante) {
+        if (registro.servicio === 'cabania' && registro.restaurante) {
           return total + calcularTotal(registro.restaurante);
         }
         return total;
       }, 0);
 
       const totalDescorche = usuario.historial.reduce((total, registro) => {
-        if (registro.servicio === 'cabaña' && registro.descorche) {
+        if (registro.servicio === 'cabania' && registro.descorche) {
           return total + calcularTotal(registro.descorche);
         }
         return total;
       }, 0);
 
       const totalRecepcion = usuario.historial.reduce((total, registro) => {
-        if (registro.servicio === 'cabaña' && registro.recepcion) {
+        if (registro.servicio === 'cabania' && registro.recepcion) {
           return total + calcularTotal(registro.recepcion);
         }
         return total;
       }, 0);
 
       const totalPago = usuario.historial.reduce((total, registro) => {
-        if (registro.servicio === 'cabaña') {
+        if (registro.servicio === 'cabania') {
           return total + (registro.pago || 0) + (registro.pagoPendiente || 0);
         }
         return total;
       }, 0);
 
-      userData.push({
-        identificacion: usuario.identificacion,
-        nombre,
-        totalBebidas: totalBebidas,
-        totalRestaurante: totalRestaurante,
-        totalDescorche: totalDescorche,
-        totalRecepcion: totalRecepcion,
-        totalPago: totalPago
-      });
+      if (totalBebidas > 0 || totalRestaurante > 0 || totalDescorche > 0 || totalRecepcion > 0 || totalPago > 0) {
+        userData.push({
+          identificacion: usuario.identificacion,
+          nombre,
+          totalBebidas: totalBebidas,
+          totalRestaurante: totalRestaurante,
+          totalDescorche: totalDescorche,
+          totalRecepcion: totalRecepcion,
+          totalPago: totalPago
+        });
+      }
     }
 
     res.json(userData);
@@ -1173,3 +1276,99 @@ export const obtainUsersCabanias = async (req, res) => {
   }
 };
 
+
+
+
+//mas comprados 
+
+export const productosMasCompradosCab = async (req, res) => {
+  try {
+    const pasadia = await Cabania.find();
+    const historial = await Usuario.find();
+    const productosInfo = [];
+    const findProductById = (array, id, itemId) => {
+      return array.find((item) => item.id === id && item.itemId === itemId);
+    };
+
+
+    pasadia.forEach((data) => {
+      data.restaurante.forEach((producto) => {
+        const existingProduct = findProductById(productosInfo, producto.id , producto.itemId);
+  
+        if (existingProduct) {
+          existingProduct.total += producto.cantidad * producto.precio;
+        } else {
+          productosInfo.push({
+            id: producto.id || producto.itemId,
+            nombre: producto.nombre,
+            total: producto.cantidad * producto.precio,
+          });
+        }
+      } )
+    });
+
+    pasadia.forEach((data) => {
+      data.bebidas.forEach((producto) => {
+        const existingProduct = findProductById(productosInfo, producto.id, producto.itemId);
+        if (existingProduct) {
+          existingProduct.cantidad += producto.cantidad;
+          existingProduct.total += producto.cantidad * producto.precio;
+        } else {
+          productosInfo.push({
+            id: producto.id || producto.itemId,
+            nombre: producto.nombre,
+            cantidad: producto.cantidad,
+            total: producto.cantidad * producto.precio,
+          });
+        }
+      } )
+    });
+
+
+
+
+    historial.forEach((producto) => {
+      producto.historial.forEach((response) => {
+        if (response.servicio === "cabania") {
+          response.restaurante.forEach((data) => {
+            const existingProduct = findProductById(productosInfo, data.id, data.itemId);
+            if (existingProduct) {
+              existingProduct.total += data.cantidad * data.precio;
+            } else {
+              productosInfo.push({
+                id: data.id || data.itemId,
+                nombre: data.nombre,
+                total: data.cantidad * data.precio,
+              });
+            }
+          });
+        }
+      });
+    });
+    historial.forEach((producto) => {
+      producto.historial.forEach((response) => {
+        if (response.servicio === "cabania") {
+          response.bebidas.forEach((data) => {
+            const existingProduct = findProductById(productosInfo, data.id, data.itemId);
+            if (existingProduct) {
+              existingProduct.total += data.cantidad * data.precio;
+            } else {
+              productosInfo.push({
+                id: data.id || data.itemId ,
+                nombre: data.nombre,
+                total: data.cantidad * data.precio,
+              });
+            }
+          });
+        }
+      });
+    });
+
+
+
+    res.status(200).json({ productosInfo });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Error en el servidor' });
+  }
+};

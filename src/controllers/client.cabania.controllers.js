@@ -1,4 +1,5 @@
 import Cabania from "../models/client.cabania.model.js";
+import Usuario from '../models/transferencia.model.js';
 import moment from 'moment';
 import { mongoose } from "mongoose";
 
@@ -680,5 +681,148 @@ export const addFoodAdicionalSubproducto = async (req, res) => {
     res.status(500).json({ message: "Error al agregar la comida al cliente" });
   }
 };
+
+export const productosCategoria = async (req, res) => {
+  try {
+    const pasadia = await Cabania.find()
+    const historial = await Usuario.find()
+    let total = 0;
+    let totalBar = 0;
+    let totalRec = 0;
+    let totalDes = 0;
+    let totalAd = 0;
+    pasadia.forEach((data) => {
+        data.restaurante?.forEach((response) => {
+          if (response.adicional === "adicional") {
+          totalAd += response.cantidad * response.precio;
+          }else {
+            total += response.cantidad * response.precio;
+          }
+        })
+
+      data.bebidas?.forEach((response) => {
+        if (response.adicional === "adicional") {
+          totalAd += response.cantidad * response.precio;
+        } else {
+          totalBar += response.cantidad * response.precio;
+        }
+      })
+
+      data.recepcion?.forEach((response) => {
+          totalRec += response.cantidad * response.precio;
+      })
+
+      data.descorche?.forEach((response) => {
+        totalDes += response.cantidad * response.precio;
+      })
+
+    })
+    historial.forEach((data) => {
+      data.historial.forEach((response) => {
+        if (response.servicio === "cabania") {
+        response.restaurante?.forEach((dataRes) => {
+          total += dataRes.cantidad * dataRes.precio;
+        })
+        }
+
+      })
+
+      historial.forEach((data) => {
+        data.historial.forEach((response) => {
+          if (response.servicio === "cabania") {
+          response.bebidas?.forEach((dataRes) => {
+            totalBar += dataRes.cantidad * dataRes.precio;
+          })
+          }
+        })
+      })
+
+      historial.forEach((data) => {
+        data.historial.forEach((response) => {
+          if (response.servicio === "cabania") {
+          response.recepcion?.forEach((dataRes) => {
+            totalRec += dataRes.cantidad * dataRes.Precio;
+          })
+          }
+        })
+      })
+
+      historial.forEach((data) => {
+        data.historial.forEach((response) => {
+          if (response.servicio === "cabania") {
+          response.descorche?.forEach((dataRes) => {
+            totalDes += dataRes.cantidad * dataRes.precio
+          })
+          }
+        })
+      })
+
+    })
+
+    res.status(200).json({
+      restaurante: total || 0,
+      bar: totalBar || 0,
+      recepcion: totalRec || 0,
+      descorche: totalDes || 0,
+      adicional: totalAd || 0
+    })
+
+  } catch (error) {
+    console.log(error)
+  }
+}
  
+
+
+
+ // activacion y finalizacion 
+ 
+ export const fechaActivacion = async (req, res) => {
+  try {
+    const pasadia = await Cliente.find();
+
+    const fechasContadas = {};
+    pasadia.forEach((response) => {
+      if (response.servicio === "cabania" && response.estado === "activo" || response.estado === "finalizado") {
+        const fechaActivacion = new Date(response.fechaActivacion);
+       
+        const fechaFormateada = fechaActivacion.toISOString();
+
+        fechasContadas[fechaFormateada] = (fechasContadas[fechaFormateada] || 0) + 1;
+      }
+    });
+
+    const resultado = Object.entries(fechasContadas).map(([fecha, cantidad]) => ({ fecha, cantidad }));
+
+    res.status(200).json(resultado);
+  } catch (error) {
+    console.error("Error al obtener las fechas:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+};
+
+export const fechaFinalizacion = async (req, res) => {
+  const fechasContadas = {};
+
+  try {
+    const historial = await Usuario.find();
+
+    historial.forEach((data) => {
+      data.historial.forEach((response) => {
+        if (response.servicio === "cabania" && response.estado === "finalizado") {
+          const fechaActivacion = response.fechaActivacion;
+          
+          fechasContadas[fechaActivacion] = (fechasContadas[fechaActivacion] || 0) + 1;
+        }
+      });
+    });
+
+    const resultado = Object.entries(fechasContadas).map(([fecha, cantidad]) => ({ fecha, cantidad }));
+
+    res.status(200).json(resultado);
+  } catch (error) {
+    console.error("Error al obtener las fechas:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+};
 

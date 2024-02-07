@@ -617,16 +617,27 @@ export const fechaFinalizacion = async (req, res) => {
   const fechasContadas = {};
 
   try {
-    const historial = await Usuario.find();
+    // Obtener datos de la colección Usuario
+    const historialUsuario = await Usuario.find();
+    // Obtener datos de la colección Cliente
+    const clientes = await Cliente.find();
 
-    historial.forEach((data) => {
+    historialUsuario.forEach((data) => {
       data.historial.forEach((response) => {
         if (response.servicio === "pasadia" && response.estado === "finalizado") {
           const fechaActivacion = response.fechaActivacion;
-          
           fechasContadas[fechaActivacion] = (fechasContadas[fechaActivacion] || 0) + 1;
         }
       });
+    });
+
+    // Procesar los datos de Cliente
+    clientes.forEach((cliente) => {
+      if (cliente.servicio === "pasadia" && cliente.estado === "finalizado") {
+        // Asumiendo que cada documento de Cliente tiene una 'fechaFinalizacion'
+        const fechaFinalizacion = cliente.fechaActivacion;
+        fechasContadas[fechaFinalizacion] = (fechasContadas[fechaFinalizacion] || 0) + 1;
+      }
     });
 
     const resultado = Object.entries(fechasContadas).map(([fecha, cantidad]) => ({ fecha, cantidad }));
@@ -637,6 +648,7 @@ export const fechaFinalizacion = async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 };
+
 
 export const obtenerFechasCompras = async (req, res) => {
   try {

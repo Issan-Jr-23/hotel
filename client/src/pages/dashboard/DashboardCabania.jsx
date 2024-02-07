@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import ApexSpline from "../apexCharts/apexSpline.jsx"
+import ApexSpline from "../apexCharts/apexSplineCabania.jsx"
 import ApexLine from "../apexCharts/apexLine.jsx"
 import ApexLine2 from "../apexCharts/apexLine2.jsx"
 import ApexLine3 from "../apexCharts/apexLine3.jsx"
 import ApexPie from "../apexCharts/apexChartSpline.jsx"
 import TableUsers from "./tableUsersPasadia.jsx"
 import Box from "./box.jsx"
-import TableProductos from "./tableUsers.jsx"
+import TableProductos from "./tableProductsMc.jsx"
 import AxiosInstance from '../../api/axios.js'
 import Lottie from "react-lottie"
 import users from "../../images/iconly-glass-tick.svg"
@@ -17,6 +17,7 @@ import fa from "../../images/triangular1.png"
 import fa1 from "../../images/triangular2.png"
 import animationDb from "../../images/Animation-cabania.json"
 import loading_progress from "../../images/Animation-loading.json"
+import Mc from "../adicionales/MostrarClientesCabania.jsx"
 
 
 const dashboardPasadia = () => {
@@ -32,7 +33,7 @@ const dashboardPasadia = () => {
   useEffect(() => {
     const fetchData = async () => { 
       try {
-        const response = await AxiosInstance.get('/obtain-pasadia-products');
+        const response = await AxiosInstance.get('/obtain-cabania-products');
         console.log(response);
         const { cantidadComprada, money, cortesias } = response.data;
         setCantidadComprada(cantidadComprada);
@@ -50,7 +51,7 @@ const dashboardPasadia = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstance.get('/obtain-pasadia-ventas');
+        const response = await AxiosInstance.get('/obtain-cabania-ventas');
         console.log(response);
         const { totalCompras, numeroCompras } = response.data;
         setTotalUsers(numeroCompras);
@@ -130,13 +131,13 @@ const dashboardPasadia = () => {
               <span className='box-grafic justify-between flex flex-col p-4'>
                 <h3 className='fondo-text' style={{ fontWeight: "600", fontSize: "20px" }} >Productos Comprados</h3>
                 <p className='fondo-text flex' style={{ fontWeight: "600" }}>
-                  ${typeof cantidadComprada === 'number' ? cantidadComprada.toLocaleString('es-CO') : '0'}
+                  ${typeof  totalVentaProducts === 'number' ? totalVentaProducts.toLocaleString('es-CO') : '0'}
                   {<span className='fondo-text alza flex items-center ml-2 text-red-600'>
                     {/* <span className='alza'>
               <img className='down' src={down} alt="" /> </span>   */}
                   </span>}
                 </p>
-                <p className=' fondo-text text-3xl flex' style={{ fontWeight: "600" }}>   {totalVentaProducts}</p>
+                <p className=' fondo-text text-3xl flex' style={{ fontWeight: "600" }}>   {cantidadComprada}</p>
               </span>
               <img className='img-cubo-dasboard-cabania' src={fa} alt="" />
             </div>
@@ -157,7 +158,7 @@ const dashboardPasadia = () => {
           <div className=' flex mt-10 cont-table-apexg '>
 
             <div className='box-table'>
-              <TableUsers />
+              <Mc />
             </div>
 
           </div>

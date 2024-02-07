@@ -20,7 +20,48 @@ import Mc from "../adicionales/MostrarClientes.jsx"
 
 const dashboardPasadia = () => {
 
+  const [totalUsers, setTotalUsers] = useState()
+  const [totalVentaPasadia, setTotalVentaPasadia] = useState()
 
+  const [cantidadComprada, setCantidadComprada] = useState()
+  const [totalVentaProducts, setTotalVentaProducts] = useState()
+  const [cantidadCortesias, setCantidadCortesias] = useState();
+
+
+  useEffect(() => {
+    const fetchData = async () => { 
+      try {
+        const response = await AxiosInstance.get('/obtain-pasadia-products');
+        console.log(response);
+        const { cantidadComprada, money, cortesias } = response.data;
+        setCantidadComprada(cantidadComprada);
+        setTotalVentaProducts(money);
+        setCantidadCortesias(cortesias);
+
+      } catch (error) {
+        console.error('Error al obtener los datos: ', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await AxiosInstance.get('/obtain-pasadia-ventas');
+        console.log(response);
+        const { totalCompras, numeroCompras } = response.data;
+        setTotalUsers(numeroCompras);
+        setTotalVentaPasadia(totalCompras)
+
+      } catch (error) {
+        console.error('Error al obtener los datos: ', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
 
 
