@@ -111,7 +111,7 @@ const dashboardPasadia = () => {
             <p className='fondo-text flex' style={{ fontWeight: "600" }}>
               ${typeof totalVentaProducts === 'number' ? totalVentaProducts.toLocaleString('es-CO') : '0'}
               {<span className='fondo-text alza flex items-center ml-2 text-red-600'>
-                {/* <span className='alza'> 
+                {/* <span className='alza'>
               <img className='down' src={down} alt="" /> </span>   */}
               </span>}
             </p>

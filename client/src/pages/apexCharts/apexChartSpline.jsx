@@ -54,7 +54,7 @@ const App = () => {
 
   const [error, setError] = useState('');
   const [filtroTipo, setFiltroTipo] = useState('dia');
-  const [fechaInicio, setFechaInicio] = useState(subDays(new Date(), 6));
+  const [fechaInicio, setFechaInicio] = useState(new Date());
   const [fechaFin, setFechaFin] = useState(new Date());
 
   useEffect(() => {
@@ -126,8 +126,15 @@ const App = () => {
       if (index !== -1) {
         if (filtroTipo === 'mes') {
           datosFinalizacion[index] += d.cantidad || 0;
-        } else {
-          datosFinalizacion[index] = d.cantidad || 0;
+        }
+      }
+    });
+    dataFinalizacion.forEach((d) => {
+      const fechaFormateada = filtroTipo === 'mes' ? format(new Date(d.fecha), 'yyyy-MM') : format(new Date(d.fecha), 'yyyy-MM-dd');
+      const index = labels.indexOf(fechaFormateada);
+      if (index !== -1) {
+        if (filtroTipo === 'dia') {
+          datosFinalizacion[index] += d.cantidad || 0;
         }
       }
     });
@@ -172,6 +179,22 @@ const App = () => {
     setFiltroTipo(e.target.value);
   };
 
+  const handleChangeFechaInicio = (date) => {
+    if (date <= fechaFin || !fechaFin) {
+      setFechaInicio(date);
+    } else {
+      alert('La fecha de inicio no puede ser mayor que la fecha de fin.');
+    }
+  };
+
+    const handleChangeFechaFin = (date) => {
+    if (date >= fechaInicio || !fechaInicio) {
+      setFechaFin(date);
+    } else {
+      alert('La fecha de fin no puede ser menor que la fecha de inicio.');
+    }
+  };
+
   return (
     <div style={{ height: '100%', width: '100%' }}>
       <div>
@@ -187,10 +210,9 @@ const App = () => {
           <option value="mes">Mes</option>
         </select>
 
-        {/* DatePicker de Fecha de Inicio */}
         <DatePicker
           selected={fechaInicio}
-          onChange={(date) => setFechaInicio(date)}
+          onChange={handleChangeFechaInicio}
           dateFormat="yyyy-MM-dd"
           className="rounded-xl h-6 outline-none w-24 text-center cursor-pointer bg-teal-50 mr-2 text-gray-700"
           style={{
@@ -204,10 +226,9 @@ const App = () => {
           }}
         />
 
-        {/* DatePicker de Fecha de Fin */}
         <DatePicker
           selected={fechaFin}
-          onChange={(date) => setFechaFin(date)}
+          onChange={handleChangeFechaFin}
           dateFormat="yyyy-MM-dd"
           className="rounded-xl h-6 outline-none w-24 text-center  cursor-pointer bg-teal-50 mr-2 text-gray-700"
           style={{

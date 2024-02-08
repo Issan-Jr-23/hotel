@@ -1372,3 +1372,110 @@ export const productosMasCompradosCab = async (req, res) => {
     res.status(500).json({ error: 'Error en el servidor' });
   }
 };
+
+
+
+
+
+
+
+
+
+//
+
+
+
+export const obtainClientsAndUsers = async (req, res) => {
+  try {
+    const page = req.query.page || 1;
+    const pageSize = 2; // Tamaño de página ajustado a 1
+
+    const startIndex = (page - 1) * pageSize;
+
+    const clients = await Cliente.find().sort({ fechaActivacion: -1 }).skip(startIndex).limit(pageSize);
+    const users = await Usuario.find().sort({ 'historial.fechaActivacion': -1 }).skip(startIndex).limit(pageSize);
+
+    // Función para calcular el total de un array de elementos
+    const calcularTotal = (items) => {
+      return items.reduce((total, item) => {
+        if (item.precio > 0) {
+          return total + item.cantidad * item.precio;
+        }
+        return total;
+      }, 0);
+    };
+
+    // Procesa los clientes
+    const clientData = clients.map(cliente => {
+      const totalBebidas = cliente.bebidas.reduce((total, bebida) => {
+        if (bebida.mensaje !== 'Cortesía' && bebida.precio > 0) {
+          return total + bebida.cantidad * bebida.precio;
+        }
+        return total;
+      }, 0);
+
+      const totalRestaurante = calcularTotal(cliente.restaurante);
+      const totalDescorche = calcularTotal(cliente.descorche);
+      const totalRecepcion = calcularTotal(cliente.recepcion);
+
+      return {
+        identificacion: cliente.identificacion,
+        nombre: cliente.nombre,
+        totalBebidas: totalBebidas,
+        totalRestaurante: totalRestaurante,
+        totalDescorche: totalDescorche,
+        totalRecepcion: totalRecepcion,
+        fechaActivacion: cliente.fechaActivacion,
+        totalPago: cliente.pagoPendiente + cliente.pagoAnticipado
+      };
+    });
+
+    // Procesa los usuarios
+    const userData = users.map(usuario => {
+      const userRecords = usuario.historial.map(registro => {
+        const totalBebidas = calcularTotal(registro.bebidas || []);
+        const totalRestaurante = calcularTotal(registro.restaurante || []);
+        const totalDescorche = calcularTotal(registro.descorche || []);
+        const totalRecepcion = calcularTotal(registro.recepcion || []);
+
+        return {
+          identificacion: usuario.identificacion,
+          nombre: registro.nombre || 'Nombre no disponible',
+          totalBebidas,
+          totalRestaurante,
+          totalDescorche,
+          totalRecepcion,
+          fechaActivacion: registro.fechaActivacion,
+          totalPago: (registro.pago || 0) + (registro.pagoPendiente || 0)
+        };
+      });
+
+      return userRecords;
+    });
+
+    // Combina los datos de clientes y usuarios en un solo array
+    const allData = [...clientData, ...userData.flat()];
+
+    // Ordena el array combinado por fecha de activación de manera descendente
+    allData.sort((a, b) => new Date(b.fechaActivacion) - new Date(a.fechaActivacion));
+
+    // Toma solo el número de elementos especificado por pageSize
+    const paginatedData = allData.slice(startIndex, startIndex + pageSize);
+
+    res.json(paginatedData);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error al obtener los clientes y usuarios desde la base de datos");
+  }
+};
+
+
+
+
+
+
+
+
+
+
+

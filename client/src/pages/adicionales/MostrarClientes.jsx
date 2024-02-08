@@ -4,77 +4,56 @@ import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 
 const MiComponente = () => {
-  const [datosCombinados, setDatosCombinados] = useState([]);
   const [opcionesGrafica, setOpcionesGrafica] = useState({});
+  const [pagina, setPagina] = useState(1);
+  const [datosClientes, setDatosClientes] = useState([]);
+  const [datosUsuarios, setDatosUsuarios] = useState([]);
 
   useEffect(() => {
     const obtenerDatos = async () => {
       try {
-        const [resClientes, resUsuarios] = await Promise.all([
-          AxiosInstance.get('/obtain-clientes'),
-          AxiosInstance.get('/obtain-clientes-historial')
-        ]);
-
-        const clientData = resClientes.data;
-        const userData = resUsuarios.data;
-
-        let datosCombinados = combinarRegistros(clientData, userData);
-
-        datosCombinados = datosCombinados.slice(0, 17);
-
-        setDatosCombinados(datosCombinados);
-
-        configurarGrafica(datosCombinados);
-
+        const response = await AxiosInstance.get(`/data?page=${pagina}`);
+        const datos = response.data;
+        setDatosClientes(datos.clients);
+        setDatosUsuarios(datos.users);
+        configurarGrafica(datos.clients, datos.users);
       } catch (error) {
         console.error('Error al obtener los datos:', error);
       }
     };
 
     obtenerDatos();
-  }, []);
+  }, [pagina]);
 
+  const configurarGrafica = (clientes, usuarios) => {
+    const categorias = [...clientes.map(cliente => cliente.nombre), ...usuarios.map(usuario => usuario.nombre)];
 
-  const combinarRegistros = (clients, users) => {
-    const combinedData = [];
-    const identificacionesCombinadas = new Map();
+    const series = [{
+      name: 'Bebidas',
+      data: [...clientes.map(cliente => cliente.totalBebidas), ...usuarios.map(usuario => usuario.totalBebidas)]
+    }, {
+      name: 'Restaurante',
+      data: [...clientes.map(cliente => cliente.totalRestaurante), ...usuarios.map(usuario => usuario.totalRestaurante)]
+    }, {
+      name: 'Descorche',
+      data: [...clientes.map(cliente => cliente.totalDescorche), ...usuarios.map(usuario => usuario.totalDescorche)]
+    }, {
+      name: 'Recepción',
+      data: [...clientes.map(cliente => cliente.totalRecepcion), ...usuarios.map(usuario => usuario.totalRecepcion)]
+    }, {
+      name: 'Pago Total',
+      data: [...clientes.map(cliente => cliente.totalPago), ...usuarios.map(usuario => usuario.totalPago)]
+    }];
 
-    clients.forEach(client => {
-      const { identificacion } = client;
-      identificacionesCombinadas.set(identificacion, { ...client });
-    });
-
-    users.forEach(user => {
-      const { identificacion } = user;
-      if (identificacionesCombinadas.has(identificacion)) {
-        const existingRecord = identificacionesCombinadas.get(identificacion);
-        identificacionesCombinadas.set(identificacion, {
-          ...existingRecord,
-          totalBebidas: existingRecord.totalBebidas + user.totalBebidas,
-          totalRestaurante: existingRecord.totalRestaurante + user.totalRestaurante,
-          totalDescorche: existingRecord.totalDescorche + user.totalDescorche,
-          totalRecepcion: existingRecord.totalRecepcion + user.totalRecepcion,
-          totalPago: existingRecord.totalPago + user.totalPago,
-        });
-      } else {
-        identificacionesCombinadas.set(identificacion, user);
-      }
-    });
-
-    identificacionesCombinadas.forEach((value) => combinedData.push(value));
-    return combinedData;
-  };
-
-  const configurarGrafica = (datos) => {
-    const opciones = {
+    setOpcionesGrafica({
       chart: {
         type: 'column'
       },
       title: {
-        text: 'Desglose de Pagos por Cliente'
+        text: 'Desglose de Pagos por Cliente y Usuario'
       },
       xAxis: {
-        categories: datos.map(dato => dato.nombre),
+        categories: categorias,
       },
       yAxis: {
         min: 0,
@@ -103,27 +82,19 @@ const MiComponente = () => {
           }
         }
       },
-      series: [{
-        name: 'Bebidas',
-        data: datos.map(dato => dato.totalBebidas)
-      }, {
-        name: 'Restaurante',
-        data: datos.map(dato => dato.totalRestaurante)
-      }, {
-        name: 'Descorche',
-        data: datos.map(dato => dato.totalDescorche)
-      }, {
-        name: 'Recepción',
-        data: datos.map(dato => dato.totalRecepcion)
-      }, {
-        name: 'Pago Total',
-        data: datos.map(dato => dato.totalPago)
-      }]
-    };
-
-    setOpcionesGrafica(opciones);
+      series: series
+    });
   };
 
+  const handlePaginaAnterior = () => {
+    if (pagina > 1) {
+      setPagina(pagina - 1);
+    }
+  };
+
+  const handlePaginaSiguiente = () => {
+    setPagina(pagina + 1);
+  };
 
   return (
     <div>
@@ -131,6 +102,10 @@ const MiComponente = () => {
         highcharts={Highcharts}
         options={opcionesGrafica}
       />
+      <div>
+        <button onClick={handlePaginaAnterior} disabled={pagina === 1}>Página Anterior</button>
+        <button onClick={handlePaginaSiguiente}>Página Siguiente</button>
+      </div>
     </div>
   );
 };

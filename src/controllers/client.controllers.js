@@ -617,24 +617,20 @@ export const fechaFinalizacion = async (req, res) => {
   const fechasContadas = {};
 
   try {
-    // Obtener datos de la colección Usuario
     const historialUsuario = await Usuario.find();
-    // Obtener datos de la colección Cliente
     const clientes = await Cliente.find();
 
     historialUsuario.forEach((data) => {
       data.historial.forEach((response) => {
         if (response.servicio === "pasadia" && response.estado === "finalizado") {
-          const fechaActivacion = response.fechaActivacion;
-          fechasContadas[fechaActivacion] = (fechasContadas[fechaActivacion] || 0) + 1;
-        }
+        const fechaFinalizacion = response.fechaActivacion;
+        fechasContadas[fechaFinalizacion] = (fechasContadas[fechaFinalizacion] || 0) + 1;
+      }
       });
     });
 
-    // Procesar los datos de Cliente
     clientes.forEach((cliente) => {
       if (cliente.servicio === "pasadia" && cliente.estado === "finalizado") {
-        // Asumiendo que cada documento de Cliente tiene una 'fechaFinalizacion'
         const fechaFinalizacion = cliente.fechaActivacion;
         fechasContadas[fechaFinalizacion] = (fechasContadas[fechaFinalizacion] || 0) + 1;
       }

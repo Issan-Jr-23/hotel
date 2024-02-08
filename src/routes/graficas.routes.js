@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { comprasUsers, obtenerTotal, obtenerTotalesNiniosYAdultosEnCabaniaDashboard, obtenerTotalesNiniosYAdultosEnHabitaciones, obtenerTotalesNiniosYAdultosEnPasadia, productosMasComprados, productosMasCompradosPass, totalProductosCortesiasCabaniaHistorialDashboard, totalPructosCortesiasDashboard, totalPructosVendidosCabaniaDashboard, totalProductosVendidosDashboard, totalProductosVendidosHistorialCabaniaDashboard, totalPructosVendidosHistorialDashboard, totalgeneradoDashboard, totalgeneradoCabaniaDashboard, totalgeneradoHabitaciones, usuariosQueMasCompraron, totalProductosCortesiasHabitacionesHistorialDashboard, totalProductosVendidosHistorialHabitacionesDashboard, totalPructosVendidosHabitacionesDashboard, obtainVentasPasadia, obtainVentasPasadiaProducts, obtainClients, obtainUsers, obtainClientsCabanias, obtainUsersCabanias, obtainVentasCabania, obtainVentasCabaniaProducts, productosMasCompradosCab } from "../controllers/graficas.controller.js";
+import { comprasUsers, obtenerTotal, obtenerTotalesNiniosYAdultosEnCabaniaDashboard, obtenerTotalesNiniosYAdultosEnHabitaciones, obtenerTotalesNiniosYAdultosEnPasadia, productosMasComprados, productosMasCompradosPass, totalProductosCortesiasCabaniaHistorialDashboard, totalPructosCortesiasDashboard, totalPructosVendidosCabaniaDashboard, totalProductosVendidosDashboard, totalProductosVendidosHistorialCabaniaDashboard, totalPructosVendidosHistorialDashboard, totalgeneradoDashboard, totalgeneradoCabaniaDashboard, totalgeneradoHabitaciones, usuariosQueMasCompraron, totalProductosCortesiasHabitacionesHistorialDashboard, totalProductosVendidosHistorialHabitacionesDashboard, totalPructosVendidosHabitacionesDashboard, obtainVentasPasadia, obtainVentasPasadiaProducts, obtainClients, obtainUsers, obtainClientsCabanias, obtainUsersCabanias, obtainVentasCabania, obtainVentasCabaniaProducts, productosMasCompradosCab, obtainClientsAndUsers } from "../controllers/graficas.controller.js";
 import { totalGeneradoBar, totalGeneradoCabaniaBard, totalGeneradoHabitacionesBard } from "../controllers/transferencia.controllers.js";
 
 const router = Router();
@@ -66,6 +66,9 @@ router.get("/obtain-clientes-historial", obtainUsers)
 //cabañas
 router.get("/obtain-clientes-cabanias", obtainClientsCabanias)
 router.get("/obtain-clientes-historial-cabanias", obtainUsersCabanias)
+
+
+router.get("/data", obtainClientsAndUsers)
 
 
 
