@@ -777,15 +777,69 @@ export const productosCategoria = async (req, res) => {
 
  // activacion y finalizacion 
  
- export const fechaActivacion = async (req, res) => {
+//  export const fechaActivacion = async (req, res) => {
+//   try {
+//     const pasadia = await Cabania.find();
+
+//     const fechasContadas = {};
+//     pasadia.forEach((response) => {
+//       if (response.servicio === "cabania" && response.estado === "activo" || response.estado === "finalizado") {
+//         const fechaActivacion = new Date(response.fechaActivacion);
+       
+//         const fechaFormateada = fechaActivacion.toISOString();
+
+//         fechasContadas[fechaFormateada] = (fechasContadas[fechaFormateada] || 0) + 1;
+//       }
+//     });
+
+//     const resultado = Object.entries(fechasContadas).map(([fecha, cantidad]) => ({ fecha, cantidad }));
+
+//     res.status(200).json(resultado);
+//   } catch (error) {
+//     console.error("Error al obtener las fechas:", error);
+//     res.status(500).json({ error: "Error interno del servidor" });
+//   }
+// };
+
+// export const fechaFinalizacion = async (req, res) => {
+//   const fechasContadas = {};
+
+//   try {
+//     const historial = await Usuario.find();
+
+//     historial.forEach((data) => {
+//       data.historial.forEach((response) => {
+//         if (response.servicio === "cabania" && response.estado === "finalizado") {
+//           const fechaActivacion = response.fechaActivacion;
+          
+//           fechasContadas[fechaActivacion] = (fechasContadas[fechaActivacion] || 0) + 1;
+//         }
+//       });
+//     });
+
+//     const resultado = Object.entries(fechasContadas).map(([fecha, cantidad]) => ({ fecha, cantidad }));
+
+//     res.status(200).json(resultado);
+//   } catch (error) {
+//     console.error("Error al obtener las fechas:", error);
+//     res.status(500).json({ error: "Error interno del servidor" });
+//   }
+// };
+
+
+
+// fecha de finalizacion y de activacion filtro
+
+export const fechaActivacion = async (req, res) => {
   try {
-    const pasadia = await Cliente.find();
+    const pasadia = await Cabania.find();
 
     const fechasContadas = {};
     pasadia.forEach((response) => {
-      if (response.servicio === "cabania" && response.estado === "activo" || response.estado === "finalizado") {
+      if (response.servicio === "cabania" && response.estado === "activo") {
         const fechaActivacion = new Date(response.fechaActivacion);
-       
+
+        // Formatear la fecha como "2024-01-19T14:38:14.749Z"
         const fechaFormateada = fechaActivacion.toISOString();
 
         fechasContadas[fechaFormateada] = (fechasContadas[fechaFormateada] || 0) + 1;
@@ -805,16 +859,23 @@ export const fechaFinalizacion = async (req, res) => {
   const fechasContadas = {};
 
   try {
-    const historial = await Usuario.find();
+    const historialUsuario = await Usuario.find();
+    const clientes = await Cabania.find();
 
-    historial.forEach((data) => {
+    historialUsuario.forEach((data) => {
       data.historial.forEach((response) => {
         if (response.servicio === "cabania" && response.estado === "finalizado") {
-          const fechaActivacion = response.fechaActivacion;
-          
-          fechasContadas[fechaActivacion] = (fechasContadas[fechaActivacion] || 0) + 1;
-        }
+        const fechaFinalizacion = response.fechaActivacion;
+        fechasContadas[fechaFinalizacion] = (fechasContadas[fechaFinalizacion] || 0) + 1;
+      }
       });
+    });
+
+    clientes.forEach((cliente) => {
+      if (cliente.servicio === "cabania" && cliente.estado === "finalizado") {
+        const fechaFinalizacion = cliente.fechaActivacion;
+        fechasContadas[fechaFinalizacion] = (fechasContadas[fechaFinalizacion] || 0) + 1;
+      }
     });
 
     const resultado = Object.entries(fechasContadas).map(([fecha, cantidad]) => ({ fecha, cantidad }));
@@ -825,4 +886,3 @@ export const fechaFinalizacion = async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 };
-

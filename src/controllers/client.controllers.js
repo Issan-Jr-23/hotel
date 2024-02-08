@@ -1029,34 +1029,45 @@ export const productosCategoria = async (req, res) => {
       })
 
     })
+
+
+
     historial.forEach((data) => {
       data.historial.forEach((response) => {
+        if (response.servicio === "pasadia") {
         response.restaurante?.forEach((dataRes) => {
           total += dataRes.cantidad * dataRes.precio;
         })
+        }
       })
 
       historial.forEach((data) => {
         data.historial.forEach((response) => {
+          if (response.servicio === "pasadia") {
           response.bebidas?.forEach((dataRes) => {
             totalBar += dataRes.cantidad * dataRes.precio;
           })
+          }
         })
       })
 
       historial.forEach((data) => {
         data.historial.forEach((response) => {
+          if (response.servicio === "pasadia") {
           response.recepcion?.forEach((dataRes) => {
             totalRec += dataRes.cantidad * dataRes.Precio;
           })
+          }
         })
       })
 
       historial.forEach((data) => {
         data.historial.forEach((response) => {
+          if (response.servicio === "pasadia") {
           response.descorche?.forEach((dataRes) => {
             totalDes += dataRes.cantidad * dataRes.precio
           })
+          }
         })
       })
 

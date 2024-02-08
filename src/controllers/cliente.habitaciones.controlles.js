@@ -1,6 +1,7 @@
 import { mongoose } from "mongoose";
 import moment from 'moment';
 import Habitaciones from "../models/cliente.habitaciones.model.js";
+import Usuario from "../models/transferencia.model.js"
 
 export const obtenerClientes = async (req, res) => {
   try {
@@ -672,5 +673,155 @@ export const getClienteByIdentificacion = async (req, res) => {
   } catch (error) {
     console.error('Error al obtener el cliente:', error);
     res.status(500).send('Error interno del servidor');
+  }
+};
+
+
+
+export const productosCategoria = async (req, res) => {
+  try {
+    const pasadia = await Habitaciones.find()
+    const historial = await Usuario.find()
+    let total = 0;
+    let totalBar = 0;
+    let totalRec = 0;
+    let totalDes = 0;
+    let totalAd = 0;
+    pasadia.forEach((data) => {
+        data.restaurante?.forEach((response) => {
+          if (response.adicional === "adicional") {
+          totalAd += response.cantidad * response.precio;
+          }else {
+            total += response.cantidad * response.precio;
+          }
+        })
+
+      data.bebidas?.forEach((response) => {
+        if (response.adicional === "adicional") {
+          totalAd += response.cantidad * response.precio;
+        } else {
+          totalBar += response.cantidad * response.precio;
+        }
+      })
+
+      data.recepcion?.forEach((response) => {
+          totalRec += response.cantidad * response.precio;
+      })
+
+      data.descorche?.forEach((response) => {
+        totalDes += response.cantidad * response.precio;
+      })
+
+    })
+    historial.forEach((data) => {
+      data.historial.forEach((response) => {
+        if (response.servicio === "habitaciones") {
+        response.restaurante?.forEach((dataRes) => {
+          total += dataRes.cantidad * dataRes.precio;
+        })
+        }
+
+      })
+
+      historial.forEach((data) => {
+        data.historial.forEach((response) => {
+          if (response.servicio === "habitaciones") {
+          response.bebidas?.forEach((dataRes) => {
+            totalBar += dataRes.cantidad * dataRes.precio;
+          })
+          }
+        })
+      })
+
+      historial.forEach((data) => {
+        data.historial.forEach((response) => {
+          if (response.servicio === "habitaciones") {
+          response.recepcion?.forEach((dataRes) => {
+            totalRec += dataRes.cantidad * dataRes.Precio;
+          })
+          }
+        })
+      })
+
+      historial.forEach((data) => {
+        data.historial.forEach((response) => {
+          if (response.servicio === "habitaciones") {
+          response.descorche?.forEach((dataRes) => {
+            totalDes += dataRes.cantidad * dataRes.precio
+          })
+          }
+        })
+      })
+
+    })
+
+    res.status(200).json({
+      restaurante: total || 0,
+      bar: totalBar || 0,
+      recepcion: totalRec || 0,
+      descorche: totalDes || 0,
+      adicional: totalAd || 0
+    })
+
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+// fecha activacion y fecha de finalizacion
+
+export const fechaActivacion = async (req, res) => {
+  try {
+    const pasadia = await Habitaciones.find();
+
+    const fechasContadas = {};
+    pasadia.forEach((response) => {
+      if (response.servicio === "habitaciones" && response.estado === "activo") {
+        const fechaActivacion = new Date(response.fechaActivacion);
+
+        const fechaFormateada = fechaActivacion.toISOString();
+
+        fechasContadas[fechaFormateada] = (fechasContadas[fechaFormateada] || 0) + 1;
+      }
+    });
+
+    const resultado = Object.entries(fechasContadas).map(([fecha, cantidad]) => ({ fecha, cantidad }));
+
+    res.status(200).json(resultado);
+  } catch (error) {
+    console.error("Error al obtener las fechas:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+};
+
+export const fechaFinalizacion = async (req, res) => {
+  const fechasContadas = {};
+
+  try {
+    const historialUsuario = await Usuario.find();
+    const clientes = await Habitaciones.find();
+
+    historialUsuario.forEach((data) => {
+      data.historial.forEach((response) => {
+        if (response.servicio === "habitaciones" && response.estado === "finalizado") {
+        const fechaFinalizacion = response.fechaActivacion;
+        fechasContadas[fechaFinalizacion] = (fechasContadas[fechaFinalizacion] || 0) + 1;
+      }
+      });
+    });
+
+    clientes.forEach((cliente) => {
+      if (cliente.servicio === "habitaciones" && cliente.estado === "finalizado") {
+        const fechaFinalizacion = cliente.fechaActivacion;
+        fechasContadas[fechaFinalizacion] = (fechasContadas[fechaFinalizacion] || 0) + 1;
+      }
+    });
+
+    const resultado = Object.entries(fechasContadas).map(([fecha, cantidad]) => ({ fecha, cantidad }));
+
+    res.status(200).json(resultado);
+  } catch (error) {
+    console.error("Error al obtener las fechas:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 };

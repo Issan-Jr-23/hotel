@@ -312,18 +312,22 @@ export default function habitacionesTable() {
     let { name, value } = event.target;
 
 
-    setErrorIdentificacion(name === 'identificacion' && !value);
 
-    if (debounceTimeout) {
-      clearTimeout(debounceTimeout);
-    }
-    if (name === 'identificacion') {
-      const prevIdentificacionLength = formData.identificacion.length;
-      const newTimeout = setTimeout(() => {
-        fetchData(name, value, fieldName, prevIdentificacionLength);
-      }, 500);
-      setDebounceTimeout(newTimeout);
-    }
+        setErrorIdentificacion(name === 'identificacion' && !value);
+
+        if (debounceTimeout) {
+            clearTimeout(debounceTimeout);
+        }
+
+        if (name === 'identificacion') {
+            const prevIdentificacionLength = formData.identificacion.length; 
+
+            const newTimeout = setTimeout(() => {
+                fetchData(name, value, fieldName, prevIdentificacionLength);
+            }, 500);
+
+            setDebounceTimeout(newTimeout);
+        }
 
     if (name === 'nombre') {
       setErrorNombre(!value);
@@ -351,7 +355,7 @@ export default function habitacionesTable() {
     console.log("data 2: ", formData.pagoPendiente)
 
     let adjustedValue;
-    if (value === '') {
+    if (value === '' && name !== "nombre") {
       adjustedValue = '0';
     } else {
       adjustedValue = value.startsWith('0') && value.length > 1 ? value.substring(1) : value;
@@ -366,7 +370,7 @@ export default function habitacionesTable() {
     } else {
       setFormData({
         ...formData,
-        [name]: numericValue,
+        [name]: value,
         nuevoTotal: result,
         ...(fieldName ? { cantidadPersonas: { ...formData.cantidadPersonas, [fieldName]: numericValue } } : {})
       });

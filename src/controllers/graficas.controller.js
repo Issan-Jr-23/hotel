@@ -1035,6 +1035,102 @@ export const obtainVentasCabaniaProducts = async(req, res) => {
   }
 }
 
+// habitaciones controolador 
+
+
+export const obtainVentasHabitaciones = async(req, res) => {
+  try {
+  const pasadia = await Habitaciones.find();
+  const historial = await Usuario.find();
+  let cantidad = 0;
+  let totalVentas = 0;
+    pasadia.forEach((data) => {
+      if (data.servicio === "habitaciones") {
+        cantidad ++
+        totalVentas += data.pagoAnticipado + data.pagoPendiente;
+      }
+    })
+
+    historial.forEach((data) =>{
+      data.historial.forEach((response) => {
+        if (response.servicio === "cabania") {
+          cantidad++
+          totalVentas += response.pago + response.pagoPendiente;
+        }
+      })
+    })
+
+    res.status(200).json({ totalCompras: totalVentas || 0, numeroCompras: cantidad || 0 })
+
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const obtainVentasHabitacionesProducts = async(req, res) => {
+  try {
+    const pasadia = await Habitaciones.find();
+    const historial = await Usuario.find();
+    let compras = 0;
+    let cantidadComprada = 0;
+    let cortesias = 0;
+
+    pasadia.forEach((res) => {
+
+
+      res.restaurante?.forEach((data) =>{
+      if (data.mensaje === "Cortesía" && data.precio === 0) {
+        cortesias += data.cantidad
+      }else{
+      cantidadComprada += data.cantidad
+      compras += data.cantidad * data.precio
+      }
+      })
+
+
+      res.bebidas?.forEach((data) =>{
+      if (data.mensaje === "Cortesía" && data.precio === 0) {
+        cortesias += data.cantidad
+      }else{
+      cantidadComprada += data.cantidad
+      compras += data.cantidad * data.precio
+      }
+      })
+    })
+
+    historial.forEach((response) => {
+      response.historial.forEach((res) =>{
+        if (res.servicio === "habitaciones") {
+        res.restaurante?.forEach((data) =>{
+      if (data.mensaje === "Cortesía" && data.precio === 0) {
+        cortesias += data.cantidad
+      }else {
+      cantidadComprada += data.cantidad
+      compras += data.cantidad * data.precio
+      }
+      })
+
+      res.bebidas?.forEach((data) =>{
+      if (data.mensaje === "Cortesía" && data.precio === 0) {
+        cortesias += data.cantidad
+      }else{
+      cantidadComprada += data.cantidad
+      compras += data.cantidad * data.precio
+      }
+      })
+        }
+
+      })
+    })
+
+    res.status(200).json({cantidadComprada: cantidadComprada, money:compras, cortesias: cortesias})
+
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+
 export const obtainClients = async (req, res) => {
   try {
     const clients = await Cliente.find();
@@ -1375,6 +1471,101 @@ export const productosMasCompradosCab = async (req, res) => {
 
 
 
+export const productosMasCompradosHab = async (req, res) => {
+  try {
+    const pasadia = await Habitaciones.find();
+    const historial = await Usuario.find();
+    const productosInfo = [];
+    const findProductById = (array, id, itemId) => {
+      return array.find((item) => item.id === id && item.itemId === itemId);
+    };
+
+
+    pasadia.forEach((data) => {
+      data.restaurante.forEach((producto) => {
+        const existingProduct = findProductById(productosInfo, producto.id , producto.itemId);
+  
+        if (existingProduct) {
+          existingProduct.total += producto.cantidad * producto.precio;
+        } else {
+          productosInfo.push({
+            id: producto.id || producto.itemId,
+            nombre: producto.nombre,
+            total: producto.cantidad * producto.precio,
+          });
+        }
+      } )
+    });
+
+    pasadia.forEach((data) => {
+      data.bebidas.forEach((producto) => {
+        const existingProduct = findProductById(productosInfo, producto.id, producto.itemId);
+        if (existingProduct) {
+          existingProduct.cantidad += producto.cantidad;
+          existingProduct.total += producto.cantidad * producto.precio;
+        } else {
+          productosInfo.push({
+            id: producto.id || producto.itemId,
+            nombre: producto.nombre,
+            cantidad: producto.cantidad,
+            total: producto.cantidad * producto.precio,
+          });
+        }
+      } )
+    });
+
+
+
+
+    historial.forEach((producto) => {
+      producto.historial.forEach((response) => {
+        if (response.servicio === "habitaciones") {
+          response.restaurante.forEach((data) => {
+            const existingProduct = findProductById(productosInfo, data.id, data.itemId);
+            if (existingProduct) {
+              existingProduct.total += data.cantidad * data.precio;
+            } else {
+              productosInfo.push({
+                id: data.id || data.itemId,
+                nombre: data.nombre,
+                total: data.cantidad * data.precio,
+              });
+            }
+          });
+        }
+      });
+    });
+    historial.forEach((producto) => {
+      producto.historial.forEach((response) => {
+        if (response.servicio === "habitaciones") {
+          response.bebidas.forEach((data) => {
+            const existingProduct = findProductById(productosInfo, data.id, data.itemId);
+            if (existingProduct) {
+              existingProduct.total += data.cantidad * data.precio;
+            } else {
+              productosInfo.push({
+                id: data.id || data.itemId,
+                nombre: data.nombre,
+                total: data.cantidad * data.precio,
+              });
+            }
+          });
+        }
+      });
+    });
+
+
+
+    res.status(200).json({ productosInfo });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Error en el servidor' });
+  }
+};
+
+
+
+
 
 
 
@@ -1387,33 +1578,14 @@ export const productosMasCompradosCab = async (req, res) => {
 
 export const obtainClientsAndUsers = async (req, res) => {
   try {
-    const page = req.query.page || 1;
-    const pageSize = 2; // Tamaño de página ajustado a 1
+    const page = parseInt(req.query.page || '1', 10);
+    const pageSize = 1;
+ 
+    const clients = await Cliente.find().sort({ fechaActivacion: -1 });
+    const users = await Usuario.find();
 
-    const startIndex = (page - 1) * pageSize;
-
-    const clients = await Cliente.find().sort({ fechaActivacion: -1 }).skip(startIndex).limit(pageSize);
-    const users = await Usuario.find().sort({ 'historial.fechaActivacion': -1 }).skip(startIndex).limit(pageSize);
-
-    // Función para calcular el total de un array de elementos
-    const calcularTotal = (items) => {
-      return items.reduce((total, item) => {
-        if (item.precio > 0) {
-          return total + item.cantidad * item.precio;
-        }
-        return total;
-      }, 0);
-    };
-
-    // Procesa los clientes
     const clientData = clients.map(cliente => {
-      const totalBebidas = cliente.bebidas.reduce((total, bebida) => {
-        if (bebida.mensaje !== 'Cortesía' && bebida.precio > 0) {
-          return total + bebida.cantidad * bebida.precio;
-        }
-        return total;
-      }, 0);
-
+      const totalBebidas = cliente.bebidas.reduce((total, bebida) => bebida.mensaje !== 'Cortesía' && bebida.precio > 0 ? total + bebida.cantidad * bebida.precio : total, 0);
       const totalRestaurante = calcularTotal(cliente.restaurante);
       const totalDescorche = calcularTotal(cliente.descorche);
       const totalRecepcion = calcularTotal(cliente.recepcion);
@@ -1421,53 +1593,192 @@ export const obtainClientsAndUsers = async (req, res) => {
       return {
         identificacion: cliente.identificacion,
         nombre: cliente.nombre,
-        totalBebidas: totalBebidas,
-        totalRestaurante: totalRestaurante,
-        totalDescorche: totalDescorche,
-        totalRecepcion: totalRecepcion,
+        totalBebidas,
+        totalRestaurante,
+        totalDescorche,
+        totalRecepcion,
         fechaActivacion: cliente.fechaActivacion,
         totalPago: cliente.pagoPendiente + cliente.pagoAnticipado
       };
     });
 
-    // Procesa los usuarios
-    const userData = users.map(usuario => {
-      const userRecords = usuario.historial.map(registro => {
-        const totalBebidas = calcularTotal(registro.bebidas || []);
-        const totalRestaurante = calcularTotal(registro.restaurante || []);
-        const totalDescorche = calcularTotal(registro.descorche || []);
-        const totalRecepcion = calcularTotal(registro.recepcion || []);
+    const userData = users.flatMap(usuario => 
+  usuario.historial
+    .filter(registro => registro.servicio === 'pasadia')
+    .map(registro => {
+      const totalBebidas = calcularTotal(registro.bebidas || []);
+      const totalRestaurante = calcularTotal(registro.restaurante || []);
+      const totalDescorche = calcularTotal(registro.descorche || []);
+      const totalRecepcion = calcularTotal(registro.recepcion || []);
 
-        return {
-          identificacion: usuario.identificacion,
-          nombre: registro.nombre || 'Nombre no disponible',
-          totalBebidas,
-          totalRestaurante,
-          totalDescorche,
-          totalRecepcion,
-          fechaActivacion: registro.fechaActivacion,
-          totalPago: (registro.pago || 0) + (registro.pagoPendiente || 0)
-        };
-      });
+      return {
+        identificacion: usuario.identificacion,
+        nombre: registro.nombre || 'Nombre no disponible',
+        totalBebidas,
+        totalRestaurante,
+        totalDescorche,
+        totalRecepcion,
+        fechaActivacion: registro.fechaActivacion,
+        totalPago: (registro.pago || 0) + (registro.pagoPendiente || 0)
+      };
+    })
+);
 
-      return userRecords;
-    });
 
-    // Combina los datos de clientes y usuarios en un solo array
-    const allData = [...clientData, ...userData.flat()];
+    const allData = [...clientData, ...userData].sort((a, b) => new Date(b.fechaActivacion) - new Date(a.fechaActivacion));
 
-    // Ordena el array combinado por fecha de activación de manera descendente
-    allData.sort((a, b) => new Date(b.fechaActivacion) - new Date(a.fechaActivacion));
-
-    // Toma solo el número de elementos especificado por pageSize
+    
+    const startIndex = (page - 1) * pageSize;
     const paginatedData = allData.slice(startIndex, startIndex + pageSize);
 
-    res.json(paginatedData);
+    res.json({
+      data: paginatedData,
+      page,
+      pageSize,
+      totalCount: allData.length
+    });
   } catch (error) {
     console.error(error);
     res.status(500).send("Error al obtener los clientes y usuarios desde la base de datos");
   }
 };
+
+
+export const obtainClientsAndUsersCabania = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page || '1', 10);
+    const pageSize = 1;
+ 
+    const clients = await Cabania.find().sort({ fechaActivacion: -1 });
+    const users = await Usuario.find();
+
+    const clientData = clients.map(cliente => {
+      const totalBebidas = cliente.bebidas.reduce((total, bebida) => bebida.mensaje !== 'Cortesía' && bebida.precio > 0 ? total + bebida.cantidad * bebida.precio : total, 0);
+      const totalRestaurante = calcularTotal(cliente.restaurante);
+      const totalDescorche = calcularTotal(cliente.descorche);
+      const totalRecepcion = calcularTotal(cliente.recepcion);
+
+      return {
+        identificacion: cliente.identificacion,
+        nombre: cliente.nombre,
+        totalBebidas,
+        totalRestaurante,
+        totalDescorche,
+        totalRecepcion,
+        fechaActivacion: cliente.fechaActivacion,
+        totalPago: cliente.pagoPendiente + cliente.pagoAnticipado
+      };
+    });
+
+    const userData = users.flatMap(usuario =>
+  usuario.historial
+    .filter(registro => registro.servicio === 'cabania')
+    .map(registro => {
+      const totalBebidas = calcularTotal(registro.bebidas || []);
+      const totalRestaurante = calcularTotal(registro.restaurante || []);
+      const totalDescorche = calcularTotal(registro.descorche || []);
+      const totalRecepcion = calcularTotal(registro.recepcion || []);
+
+      return {
+        identificacion: usuario.identificacion,
+        nombre: registro.nombre || 'Nombre no disponible',
+        totalBebidas,
+        totalRestaurante,
+        totalDescorche,
+        totalRecepcion,
+        fechaActivacion: registro.fechaActivacion,
+        totalPago: (registro.pago || 0) + (registro.pagoPendiente || 0)
+      };
+    })
+);
+
+
+    const allData = [...clientData, ...userData].sort((a, b) => new Date(b.fechaActivacion) - new Date(a.fechaActivacion));
+
+    
+    const startIndex = (page - 1) * pageSize;
+    const paginatedData = allData.slice(startIndex, startIndex + pageSize);
+
+    res.json({
+      data: paginatedData,
+      page,
+      pageSize,
+      totalCount: allData.length
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error al obtener los clientes y usuarios desde la base de datos");
+  }
+};
+
+
+export const obtainClientsAndUsersHabitaciones = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page || '1', 10);
+    const pageSize = 1;
+ 
+    const clients = await Habitaciones.find().sort({ fechaActivacion: -1 });
+    const users = await Usuario.find();
+
+    const clientData = clients.map(cliente => {
+      const totalBebidas = cliente.bebidas.reduce((total, bebida) => bebida.mensaje !== 'Cortesía' && bebida.precio > 0 ? total + bebida.cantidad * bebida.precio : total, 0);
+      const totalRestaurante = calcularTotal(cliente.restaurante);
+      const totalDescorche = calcularTotal(cliente.descorche);
+      const totalRecepcion = calcularTotal(cliente.recepcion);
+
+      return {
+        identificacion: cliente.identificacion,
+        nombre: cliente.nombre,
+        totalBebidas,
+        totalRestaurante,
+        totalDescorche,
+        totalRecepcion,
+        fechaActivacion: cliente.fechaActivacion,
+        totalPago: cliente.pagoPendiente + cliente.pagoAnticipado
+      };
+    });
+
+    const userData = users.flatMap(usuario => 
+  usuario.historial
+    .filter(registro => registro.servicio === 'habitaciones')
+    .map(registro => {
+      const totalBebidas = calcularTotal(registro.bebidas || []);
+      const totalRestaurante = calcularTotal(registro.restaurante || []);
+      const totalDescorche = calcularTotal(registro.descorche || []);
+      const totalRecepcion = calcularTotal(registro.recepcion || []);
+
+      return {
+        identificacion: usuario.identificacion,
+        nombre: registro.nombre || 'Nombre no disponible',
+        totalBebidas,
+        totalRestaurante,
+        totalDescorche,
+        totalRecepcion,
+        fechaActivacion: registro.fechaActivacion,
+        totalPago: (registro.pago || 0) + (registro.pagoPendiente || 0)
+      };
+    })
+);
+
+
+    const allData = [...clientData, ...userData].sort((a, b) => new Date(b.fechaActivacion) - new Date(a.fechaActivacion));
+
+    
+    const startIndex = (page - 1) * pageSize;
+    const paginatedData = allData.slice(startIndex, startIndex + pageSize);
+
+    res.json({
+      data: paginatedData,
+      page,
+      pageSize,
+      totalCount: allData.length
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error al obtener los clientes y usuarios desde la base de datos");
+  }
+};
+
 
 
 

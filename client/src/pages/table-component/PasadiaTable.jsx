@@ -371,7 +371,7 @@ export default function review() {
         }
 
         if (name === 'identificacion') {
-            const prevIdentificacionLength = formData.identificacion.length; 
+            const prevIdentificacionLength = formData.identificacion.length;
 
             const newTimeout = setTimeout(() => {
                 fetchData(name, value, fieldName, prevIdentificacionLength);
@@ -392,12 +392,10 @@ export default function review() {
         } else if (name === 'ninios') {
             setErrorNinios(!value)
         }
-
         if (name === 'identificacion' && value.length < formData.identificacion.length) {
             setFormData((prevData) => ({ ...prevData, nombre: '' }));
             formData.nombre = ""
         }
-
         let newValue = parseInt(value, 10);
         if (isNaN(newValue)) {
             newValue = 0;
@@ -412,7 +410,6 @@ export default function review() {
         const totalPendiente = totalCosto;
 
         const ppc = totalPendiente - totalValueInputs;
-        // console.log("valor de los inputs: " + ppc)
         formData.nuevoTotal = ppc;
 
         const cantidadDeClientes = formData.cantidadPersonas.ninios + formData.cantidadPersonas.adultos;
@@ -441,7 +438,7 @@ export default function review() {
     };
 
 
-    const fetchData = async (name, value, fieldName, prevIdentificacionLength,res) => {
+    const fetchData = async (name, value, fieldName, prevIdentificacionLength, res) => {
         try {
             const response = await AxiosInstance.get(`/clientes/filtrar?identificacion=${value}&prevIdentificacionLength=${prevIdentificacionLength}`);
             const data = response.data;
@@ -449,16 +446,13 @@ export default function review() {
             if (response.status === 200 && data.nombre) {
                 setFormData((prevData) => ({ ...prevData, nombre: data.nombre }));
                 setErrorMensajeIdentificacion('');
-                // console.log("nombre filtrado", data.nombre);
             } else {
                 setFormData((prevData) => ({ ...prevData, nombre: '' }));
                 setErrorMensajeIdentificacion('Usuario no encontrado.');
-                // console.error('Usuario no encontrado.');
             }
         } catch (error) {
             setErrorMensajeIdentificacion('Usuario no encontrado 2');
             setFormData((prevData) => ({ ...prevData, nombre: '' }));
-            // console.log('Error al obtener la información desde el backend');
         }
     };
 
@@ -3147,10 +3141,10 @@ export default function review() {
                                                                 }}
                                                                 style={{ height: "54px" }}
                                                                 onKeyDown={(event) => {
-                                                                            if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
-                                                                                event.preventDefault();
-                                                                            }
-                                                                        }}
+                                                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                                        event.preventDefault();
+                                                                    }
+                                                                }}
                                                             />
 
                                                             <input
@@ -3207,10 +3201,10 @@ export default function review() {
                                                                 }}
                                                                 style={{ height: "54px" }}
                                                                 onKeyDown={(event) => {
-                                                                            if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
-                                                                                event.preventDefault();
-                                                                            }
-                                                                        }}
+                                                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                                        event.preventDefault();
+                                                                    }
+                                                                }}
                                                             />
                                                             <input
                                                                 disabled
@@ -3265,10 +3259,10 @@ export default function review() {
                                                                 }}
                                                                 style={{ height: "54px" }}
                                                                 onKeyDown={(event) => {
-                                                                            if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
-                                                                                event.preventDefault();
-                                                                            }
-                                                                        }}
+                                                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                                        event.preventDefault();
+                                                                    }
+                                                                }}
                                                             />
                                                             <input
                                                                 disabled
@@ -3322,10 +3316,10 @@ export default function review() {
                                                                 }}
                                                                 style={{ height: "54px" }}
                                                                 onKeyDown={(event) => {
-                                                                            if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
-                                                                                event.preventDefault();
-                                                                            }
-                                                                        }}
+                                                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                                        event.preventDefault();
+                                                                    }
+                                                                }}
                                                             />
                                                             <input
                                                                 disabled
@@ -3378,10 +3372,10 @@ export default function review() {
                                                                 }}
                                                                 style={{ height: "54px" }}
                                                                 onKeyDown={(event) => {
-                                                                            if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
-                                                                                event.preventDefault();
-                                                                            }
-                                                                        }}
+                                                                    if (!/[0-9]/.test(event.key) && event.key !== "Backspace" && event.key !== "Delete" && event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Tab") {
+                                                                        event.preventDefault();
+                                                                    }
+                                                                }}
                                                             />
                                                             <input
                                                                 disabled

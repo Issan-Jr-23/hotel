@@ -31,7 +31,6 @@ export const obtenerClientesHabitaciones = async (req, res) => {
     res.status(500).send("Error al obtener los clientes desde la base de datos");
   }
 };
-
 export const agregarOActualizarUsuario = async (req, res) => {
   const { identificacion, datosHistorial } = req.body;
 
@@ -66,7 +65,6 @@ export const agregarOActualizarUsuario = async (req, res) => {
     console.log(error);
   }
 };
-
 export const obtenerHistorial = async (req, res) => {
   try {
     const clientesObtenidos = await Usuario.find();
@@ -79,7 +77,6 @@ export const obtenerHistorial = async (req, res) => {
       .send("Error al obtener los clientes desde la base de datos");
   }
 };
-
 export const obtenerHistorialDeUsuario = async (req, res) => {
   const { id } = req.params;
 
@@ -96,7 +93,6 @@ export const obtenerHistorialDeUsuario = async (req, res) => {
     res.status(500).send("Error interno del servidor");
   }
 };
-
 export const obtenerHistorialReservasNo = async (req, res) => {
   try {
     const usuarios = await Usuario.find();
@@ -118,7 +114,6 @@ export const obtenerHistorialReservasNo = async (req, res) => {
     res.status(500).send("Error al procesar la solicitud");
   }
 };
-
 export const obtenerCantidadGeneralResrvas = async (req, res) => {
   try {
     const historial = await Usuario.find();
@@ -188,6 +183,126 @@ export const obtenerCantidadGeneralResrvas = async (req, res) => {
     res.status(500).send("Error al procesar la solicitud");
   }
 };
+
+
+export const afp = async (req, res) => {
+    const pasadia = await Cliente.find();
+    const historial = await Usuario.find();
+  try {
+    let activos = 0;
+    let finalizados = 0;
+    let pendientes = 0;
+    let cancelados = 0;
+    pasadia.forEach((data) => {
+      if (data.estado === "activo") {
+        activos++
+      }else if(data.estado === "finalizado"){
+        finalizados++
+      }else if(data.estado === "pendiente"){
+        pendientes++
+      }else {
+        cancelados++
+      }
+    })
+
+    historial.forEach((response) => {
+      response.historial.forEach((data) => {
+        if (data.servicio === "pasadia"){
+       if(data.estado === "finalizado"){
+        finalizados++
+      }
+        }else{
+          console.log("No hay datos")
+        }
+      })
+    })
+    res.json({pendientes: pendientes,activos : activos,finalizados : finalizados,cancelados : cancelados
+    })
+  } catch (error) {
+    console.log("Error")
+    
+  }
+}
+
+export const afpc = async (req, res) => {
+    const cabania = await Cabania.find();
+    const historial = await Usuario.find();
+  try {
+    let activos = 0;
+    let finalizados = 0;
+    let pendientes = 0;
+    let cancelados = 0;
+    cabania.forEach((data) => {
+      if (data.estado === "activo") {
+        activos++
+      }else if(data.estado === "finalizado"){
+        finalizados++
+      }else if(data.estado === "pendiente"){
+        pendientes++
+      }else{
+        cancelados++
+      }
+    })
+
+    historial.forEach((response) => {
+      response.historial.forEach((data) => {
+        if (data.servicio === "cabania"){
+       if(data.estado === "finalizado"){
+        finalizados++
+      }else if(data.estado === "cancelado"){
+        cancelados++
+      }
+        }else{
+          console.log("No hay datos")
+        }
+      })
+    })
+    res.json({pendientes: pendientes,activos : activos,finalizados : finalizados,cancelados : cancelados
+    })
+  } catch (error) {
+    console.log("Error")
+    
+  }
+}
+
+export const afph = async (req, res) => {
+    const habitaciones = await Habitaciones.find();
+    const historial = await Usuario.find();
+  try {
+    let activos = 0;
+    let finalizados = 0;
+    let pendientes = 0;
+    let cancelados = 0;
+    habitaciones.forEach((data) => {
+      if (data.estado === "activo") {
+        activos++
+      }else if(data.estado === "finalizado"){
+        finalizados++
+      }else if(data.estado === "pendiente"){
+        pendientes++
+      }else {
+        cancelados++
+      }
+    })
+
+    historial.forEach((response) => {
+      response.historial.forEach((data) => {
+        if (data.servicio === "habitaciones"){
+       if(data.estado === "finalizado"){
+        finalizados++
+      }
+        }else{
+          console.log("No hay datos")
+        }
+      })
+    })
+    res.json({pendientes: pendientes,activos : activos,finalizados : finalizados,cancelados : cancelados
+    })
+  } catch (error) {
+    console.log("Error")
+    
+  }
+}
 
 
 

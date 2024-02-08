@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {actualizarValor, addBebidaAdicional, addDescorche, addFood, addFoodAdicional, addFoodAdicionalSubproducto, addItemRecepcion, getClienteByIdentificacion, obtenerCPI, obtenerClienteId, obtenerClientes, postPago, productosCategoria, resTotal, updateClientCts, updatePP, updateUserStatus} from "../controllers/client.cabania.controllers.js";
+import {actualizarValor, addBebidaAdicional, addDescorche, addFood, addFoodAdicional, addFoodAdicionalSubproducto, addItemRecepcion, fechaActivacion, fechaFinalizacion, getClienteByIdentificacion, obtenerCPI, obtenerClienteId, obtenerClientes, postPago, productosCategoria, resTotal, updateClientCts, updatePP, updateUserStatus} from "../controllers/client.cabania.controllers.js";
 import {crearCliente} from "../controllers/client.cabania.controllers.js";
 import {deleteClient} from "../controllers/client.cabania.controllers.js";
 import {updateClient} from "../controllers/client.cabania.controllers.js";
@@ -28,6 +28,8 @@ router.post("/cabania-agregar-descorche/:id",auth, addDescorche);
 router.post("/cabania-agregar-food/:id",auth, addFoodAdicional);
 router.post("/cabania-agregar-food-subproducto/:id",auth, addFoodAdicionalSubproducto);
 router.get("/cabania-productos-categoria", productosCategoria)
+router.get("/cabania-fecha-activacion", fechaActivacion)
+router.get("/cabania-fecha-finalizacion", fechaFinalizacion)
 
 router.get("/cabania-totalidad-pago/:id", resTotal)
 router.get("/cabania-totalidad-reserva-pago/:id", postPago)

@@ -24,11 +24,11 @@ const MyComponent = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstance.get('/total-generado-pasadia');
+        const response = await AxiosInstance.get('/obtain-pasadia-ventas');
         console.log(response);
 
-        const { totalPago, totalPagoPendiente } = response.data;
-        setTotalVentaPasadia(totalPago + totalPagoPendiente);
+        const { totalCompras } = response.data;
+        setTotalVentaPasadia(totalCompras);
 
       } catch (error) {
         console.error('Error al obtener los datos: ', error);
@@ -41,11 +41,11 @@ const MyComponent = () => {
     const fetchData = async () => {
       try {
         //resuelto
-        const response = await AxiosInstance.get('/cabania-total-generado');
+        const response = await AxiosInstance.get('/obtain-cabania-ventas');
         console.log(response);
 
-        const { totalPago, totalPagoPendiente } = response.data;
-        setTotalVentaCabania(totalPago + totalPagoPendiente);
+        const { totalCompras } = response.data;
+        setTotalVentaCabania(totalCompras);
 
       } catch (error) {
         console.error('Error al obtener los datos: ', error);
@@ -54,14 +54,15 @@ const MyComponent = () => {
 
     fetchData();
   }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstance.get('/habitaciones-total-generado');
+        const response = await AxiosInstance.get('/obtain-habitaciones-ventas');
         console.log(response);
 
-        const { totalPago, totalPagoPendiente } = response.data;
-        setTotalVentaHabitaciones(totalPago + totalPagoPendiente);
+        const { totalCompras } = response.data;
+        setTotalVentaHabitaciones(totalCompras);
 
       } catch (error) {
         console.error('Error al obtener los datos: ', error);
@@ -106,16 +107,24 @@ const MyComponent = () => {
     fetchData();
   }, [])
 
-  useEffect(() =>{
-    const fetchData = async() =>{
-      const response = AxiosInstance.get(`/total-generado-ventas-habitaciones-brad`);
-      const {bar, restaurante, recepcion, descorche} = response.data;
-      barH(bar);
-      restauranteH(restaurante);
-      recepcionH(recepcion);
-      descorcheH(descorche) 
-    }
-  })
+  useEffect(() => {
+    const fetchData = async() => {
+      try {
+        const response = await AxiosInstance.get('/total-generado-ventas-habitaciones-brad')
+        const {bar, restaurante, recepcion, descorche} = response.data
+        setBarH(bar)
+        setRestauranteH(restaurante)
+        setRecepcionH(recepcion)
+        setDescorcheH(descorche)
+      } catch (error) {
+        console.log(error)
+      }
+    };
+    fetchData();
+  }, [])
+
+
+
 
 
   useEffect(() => {

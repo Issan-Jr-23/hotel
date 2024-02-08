@@ -22,69 +22,26 @@ const HomeSu = () => {
   const { user } = useAuth();
   const [totalUsers, setTotalUsers] = useState([])
   const [totalVentaPasadia, setTotalVentaPasadia] = useState([])
-  const [totalUsersC, setTotalUsersC] = useState([])
+  const [totalUsersCab, setTotalUsersCab] = useState([])
   const [totalVentaCabania, setTotalVentaCabania] = useState([])
-  const [totalUsersH, setTotalUsersH] = useState([])
+  const [totalUsersHab, setTotalUsersHab] = useState([])
   const [totalVentaHabitaciones, setTotalVentaHabitaciones] = useState([])
-  const [productos, setProductos] = useState([]);
-  const [datos, setDatos] = useState([]);
 
 
 
-  useEffect(() => {
-    const cargarDatos = async () => {
-      try {
-        const respuestaMayorCompra = await AxiosInstance.get('/mayor-compra');
-        const datosMayorCompra = respuestaMayorCompra.data;
 
-        const respuestaTotal = await AxiosInstance.get('/obtener-historial-usuarios');
-        const datosTotal = respuestaTotal.data;
 
-        const datosCombinados = combinarYProcesarDatos(datosMayorCompra, datosTotal);
 
-        const datosOrdenados = datosCombinados.sort((a, b) => b.valorTotal - a.valorTotal).slice(0, 10);
-
-        setDatos(datosOrdenados);
-
-      } catch (error) {
-        console.error('Error al cargar datos:', error);
-      }
-    };
-
-    cargarDatos();
-  }, []);
-
-  const combinarYProcesarDatos = (datosMayorCompra, datosTotal) => {
-    const mapaUsuarios = new Map();
-
-    datosMayorCompra.forEach(usuario => {
-      mapaUsuarios.set(usuario.identificacion, usuario);
-    });
-
-    datosTotal.forEach(usuario => {
-      if (mapaUsuarios.has(usuario.identificacion)) {
-        const usuarioExistente = mapaUsuarios.get(usuario.identificacion);
-        usuarioExistente.valorTotal += usuario.valorTotal;
-        mapaUsuarios.set(usuario.identificacion, usuarioExistente);
-      } else {
-        mapaUsuarios.set(usuario.identificacion, usuario);
-      }
-    });
-
-    return Array.from(mapaUsuarios.values());
-  };
 
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstance.get('/obtener-cantidad-usuarios');
+        const response = await AxiosInstance.get('/obtain-pasadia-ventas');
         console.log(response);
-
-        const { totalNinios, totalAdultos } = response.data;
-        console.log("Total niños: ", totalNinios);
-        console.log("Total adultos: ", totalAdultos);
-        setTotalUsers(totalNinios + totalAdultos)
+        const { totalCompras, numeroCompras } = response.data;
+        setTotalUsers(numeroCompras);
+        setTotalVentaPasadia(totalCompras)
 
       } catch (error) {
         console.error('Error al obtener los datos: ', error);
@@ -97,13 +54,11 @@ const HomeSu = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstance.get('/total-generado-pasadia');
+        const response = await AxiosInstance.get('/obtain-cabania-ventas');
         console.log(response);
-
-        const { totalPago, totalPagoPendiente } = response.data;
-        console.log("Total generados: ", totalPago);
-        console.log("Total generado: ", totalPagoPendiente);
-        setTotalVentaPasadia(totalPago + totalPagoPendiente);
+        const { totalCompras, numeroCompras } = response.data;
+        setTotalUsersCab(numeroCompras);
+        setTotalVentaCabania(totalCompras)
 
       } catch (error) {
         console.error('Error al obtener los datos: ', error);
@@ -116,13 +71,11 @@ const HomeSu = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstance.get('/obtener-cantidad-usuarios-cabania-dashboard');
+        const response = await AxiosInstance.get('/obtain-habitaciones-ventas');
         console.log(response);
-
-        const { totalNinios, totalAdultos } = response.data;
-        console.log("Total niños: ", totalNinios);
-        console.log("Total adultos: ", totalAdultos);
-        setTotalUsersC(totalNinios + totalAdultos)
+        const { totalCompras, numeroCompras } = response.data;
+        setTotalUsersHab(numeroCompras);
+        setTotalVentaHabitaciones(totalCompras)
 
       } catch (error) {
         console.error('Error al obtener los datos: ', error);
@@ -132,62 +85,7 @@ const HomeSu = () => {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await AxiosInstance.get('/cabania-total-generado');
-        console.log(response);
 
-        const { totalPago, totalPagoPendiente } = response.data;
-        console.log("Total generados: ", totalPago);
-        console.log("Total generado: ", totalPagoPendiente);
-        setTotalVentaCabania(totalPago + totalPagoPendiente);
-
-      } catch (error) {
-        console.error('Error al obtener los datos: ', error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await AxiosInstance.get('/obtener-cantidad-usuarios-habitaciones-dashboard');
-        console.log(response);
-
-        const { totalNinios, totalAdultos } = response.data;
-        console.log("Total niños: ", totalNinios);
-        console.log("Total adultos: ", totalAdultos);
-        setTotalUsersH(totalNinios + totalAdultos)
-
-      } catch (error) {
-        console.error('Error al obtener los datos: ', error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await AxiosInstance.get('/habitaciones-total-generado');
-        console.log(response);
-
-        const { totalPago, totalPagoPendiente } = response.data;
-        console.log("Total generados: ", totalPago);
-        console.log("Total generado: ", totalPagoPendiente);
-        setTotalVentaHabitaciones(totalPago + totalPagoPendiente);
-
-      } catch (error) {
-        console.error('Error al obtener los datos: ', error);
-      }
-    };
-
-    fetchData();
-  }, []);
 
 
   return (
@@ -223,7 +121,7 @@ const HomeSu = () => {
               </p>
               <p className=' fondo-text-hs text-3xl flex' style={{ fontWeight: "600" }}>  {totalUsers}</p>
             </span>
-            <img className='imagen-de-user-decoration' src={userimg} alt=""/>
+            <img className='imagen-de-user-decoration' src={userimg} alt="" />
 
           </article>
           <article className=' vista-cantidades bd-vc1  flex'>
@@ -232,10 +130,10 @@ const HomeSu = () => {
               <p className='fondo-text-hs' style={{ fontWeight: "600" }}>
                 ${typeof totalVentaCabania === 'number' ? totalVentaCabania.toLocaleString('es-CO') : '0'} COP
               </p>
-              <p className=' fondo-text-hs text-3xl flex' style={{ fontWeight: "600" }}> {totalUsersC}</p>
+              <p className=' fondo-text-hs text-3xl flex' style={{ fontWeight: "600" }}> {totalUsersCab}</p>
 
             </span>
-            <img className='imagen-de-user-decoration' src={userimg2} alt=""/>
+            <img className='imagen-de-user-decoration' src={userimg2} alt="" />
           </article>
           <article className=' vista-cantidades bd-vc2     flex'>
             <span className='box-style-hs justify-around flex flex-col'>
@@ -243,9 +141,9 @@ const HomeSu = () => {
               <p className='fondo-text-hs' style={{ fontWeight: "600" }}>
                 ${typeof totalVentaHabitaciones === 'number' ? totalVentaHabitaciones.toLocaleString('es-CO') : '0'} COP
               </p>
-              <p className='  fondo-text-hs text-3xl flex' style={{ fontWeight: "600" }}>{totalUsersH}</p>
+              <p className='  fondo-text-hs text-3xl flex' style={{ fontWeight: "600" }}>{totalUsersHab}</p>
             </span>
-            <img className='imagen-de-user-decoration' src={userimg3} alt=""/>
+            <img className='imagen-de-user-decoration' src={userimg3} alt="" />
           </article>
         </section>
 
@@ -271,7 +169,7 @@ const HomeSu = () => {
                   ))}
                 </TableBody>
               </Table> */}
-              <Umc/>
+              <Umc />
             </article>
           </div>
           <div className='div-graf'>
@@ -301,7 +199,7 @@ const HomeSu = () => {
                     ))}
                   </TableBody>
                 </Table> */}
-                <Pmc/>
+                <Pmc />
               </article>
 
             </div>

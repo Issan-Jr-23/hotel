@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import ApexSpline from "../apexCharts/apexSpline.jsx"
+import ApexSpline from "../apexCharts/apexSplineHabitaciones.jsx"
 import ApexLine from "../apexCharts/apexLine.jsx"
 import ApexLine2 from "../apexCharts/apexLine2.jsx"
 import ApexLine3 from "../apexCharts/apexLine3.jsx"
-import ApexPie from "../apexCharts/apexChartSpline.jsx"
+import ApexPie from "../apexCharts/apexChartSplineHab.jsx"
 import TableUsers from "./tableUsersPasadia.jsx"
-import Box from "./box.jsx"
-import TableProductos from "./tableUsers.jsx"
+import Box from "./boxH.jsx"
+import TableProductos from "./tableProductsMcH.jsx"
 import AxiosInstance from '../../api/axios.js'
 import Lottie from "react-lottie"
 import users from "../../images/iconly-glass-tick.svg"
@@ -16,116 +16,42 @@ import cubo from "../../images/cubo.png"
 import fa from "../../images/cubo1.png"
 import fa1 from "../../images/3d.png"
 import animationDb from "../../images/Animation-habitaciones.json"
+import Mc from "../adicionales/MostrarClientesHabitaciones.jsx"
 
 const dashboardPasadia = () => {
 
   const [totalUsers, setTotalUsers] = useState()
   const [totalVentaPasadia, setTotalVentaPasadia] = useState()
 
-  const [cantidadVendida, setCantidadVendida] = useState()
-  const [valorVenta, setValorVenta] = useState()
-
-  const [cantidadVendidaPasadia, setCantidadVendidaPasadia] = useState()
-  const [valorVentaPasadia, setValorVentaPasadia] = useState()
-
-  const [cantidadVendidaCortesias, setCantidadVendidaCortesias] = useState()
-  const [valorVentaCortesias, setValorVentaCortesias] = useState()
-
-  const [sumaDeValores, setSumaDeValores] = useState();
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await AxiosInstance.get('/habitaciones-productos-vendidos-dashboard');
-        console.log(response);
-
-        const { totalPago, cantidadVendidos } = response.data;
-        setValorVentaPasadia(totalPago)
-        setCantidadVendidaPasadia(cantidadVendidos)
-        console.log("Total niños: ", totalPago);
-        console.log("Total adultos: ", cantidadVendidos);
-
-      } catch (error) {
-        console.error('Error al obtener los datos: ', error);
-      }
-    };
-
-    fetchData();
-  }, []);
+  const [cantidadComprada, setCantidadComprada] = useState()
+  const [totalVentaProducts, setTotalVentaProducts] = useState()
+  const [cantidadCortesias, setCantidadCortesias] = useState();
 
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstance.get('/productos-vendidos-habitaciones-dashboard');
+        const response = await AxiosInstance.get('/obtain-habitaciones-products');
         console.log(response);
-        const { totalPago, cantidadVendidos } = response.data;
-        setValorVenta(totalPago)
-        setCantidadVendida(cantidadVendidos)
-
+        const { cantidadComprada, money, cortesias } = response.data;
+        setCantidadComprada(cantidadComprada);
+        setTotalVentaProducts(money);
+        setCantidadCortesias(cortesias);
       } catch (error) {
         console.error('Error al obtener los datos: ', error);
       }
     };
-
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    const total = valorVenta + valorVentaPasadia;
-    setSumaDeValores(total);
-  }, [valorVenta, valorVentaPasadia])
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await AxiosInstance.get('/productos-cortesias-habitaciones-dashboard');
-        console.log(response);
-
-        const { totalPago, cantidadVendidos } = response.data;
-        setValorVentaCortesias(totalPago)
-        setCantidadVendidaCortesias(cantidadVendidos)
-        console.log("Total niños: ", totalPago);
-        console.log("Total adultos: ", cantidadVendidos);
-
-      } catch (error) {
-        console.error('Error al obtener los datos: ', error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-
-  // const tv = valorVentaPasadia + valorVenta;
-  // setSumaDeValores(tv)
-  // console.log("suma de valores: ",sumaDeValores)
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await AxiosInstance.get('/obtener-cantidad-usuarios-habitaciones-dashboard');
-        console.log(response);
-
-        const { totalPasadias } = response.data;
-        setTotalUsers(totalPasadias)
-
-      } catch (error) {
-        console.error('Error al obtener los datos: ', error);
-      }
-    };
-
     fetchData();
   }, []);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await AxiosInstance.get('/habitaciones-total-generado');
+        const response = await AxiosInstance.get('/obtain-habitaciones-ventas');
         console.log(response);
-
-        const { totalPago } = response.data;
-        setTotalVentaPasadia(totalPago);
+        const { totalCompras, numeroCompras } = response.data;
+        setTotalUsers(numeroCompras);
+        setTotalVentaPasadia(totalCompras)
 
       } catch (error) {
         console.error('Error al obtener los datos: ', error);
@@ -178,13 +104,13 @@ const dashboardPasadia = () => {
           <span className='box-grafic justify-between flex flex-col p-4'>
             <h3 className='fondo-text' style={{ fontWeight: "600", fontSize: "20px" }} >Productos comprados</h3>
             <p className='fondo-text flex' style={{ fontWeight: "600" }}>
-              ${typeof sumaDeValores === 'number' ? sumaDeValores.toLocaleString('es-CO') : '0'}
+              ${typeof totalVentaProducts === 'number' ? totalVentaProducts.toLocaleString('es-CO') : '0'}
               {<span className='fondo-text alza flex items-center ml-2 text-red-600'>
                 {/* <span className='alza'> 
               <img className='down' src={down} alt="" /> </span>   */}
               </span>}
             </p>
-            <p className=' fondo-text text-3xl flex' style={{ fontWeight: "600" }}>   {cantidadVendida + cantidadVendidaPasadia}</p>
+            <p className=' fondo-text text-3xl flex' style={{ fontWeight: "600" }}>   {cantidadComprada}</p>
 
           </span>
           <img className='img-cubo-dasboard' src={fa} alt="" />
@@ -193,10 +119,10 @@ const dashboardPasadia = () => {
           <span className='box-grafic justify-between flex flex-col p-4'>
             <h3 className='fondo-text' style={{ fontWeight: "600", fontSize: "20px" }} >Cortesias</h3>
             <p className='fondo-text' style={{ fontWeight: "600" }}>
-              ${typeof valorVentaCortesias === 'number' ? valorVentaCortesias.toLocaleString('es-CO') : '0'}
+              ${0}
             </p>
             <p className=' fondo-text text-3xl flex' style={{ fontWeight: "600" }}>
-              {cantidadVendidaCortesias}</p>
+              {cantidadCortesias}</p>
 
           </span>
           <img className='img-cubo-dasboard' src={fa1} alt="" />
@@ -204,7 +130,7 @@ const dashboardPasadia = () => {
       </div>
       <div className=' flex mt-10 cont-table-apexg '>
         <div className='box-table'>
-          <TableUsers />
+          <Mc/>
         </div>
 
         {/* <div className='box-apex'>

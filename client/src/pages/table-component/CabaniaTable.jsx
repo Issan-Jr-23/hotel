@@ -674,7 +674,7 @@ export default function cabaniaTable() {
                 }
 
                 if (atLeastOneCortesiaSaved) {
-                    onClose();
+                    setOpenAb(false);
                 }
                 return;
             }

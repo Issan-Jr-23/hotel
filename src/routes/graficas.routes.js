@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { comprasUsers, obtenerTotal, obtenerTotalesNiniosYAdultosEnCabaniaDashboard, obtenerTotalesNiniosYAdultosEnHabitaciones, obtenerTotalesNiniosYAdultosEnPasadia, productosMasComprados, productosMasCompradosPass, totalProductosCortesiasCabaniaHistorialDashboard, totalPructosCortesiasDashboard, totalPructosVendidosCabaniaDashboard, totalProductosVendidosDashboard, totalProductosVendidosHistorialCabaniaDashboard, totalPructosVendidosHistorialDashboard, totalgeneradoDashboard, totalgeneradoCabaniaDashboard, totalgeneradoHabitaciones, usuariosQueMasCompraron, totalProductosCortesiasHabitacionesHistorialDashboard, totalProductosVendidosHistorialHabitacionesDashboard, totalPructosVendidosHabitacionesDashboard, obtainVentasPasadia, obtainVentasPasadiaProducts, obtainClients, obtainUsers, obtainClientsCabanias, obtainUsersCabanias, obtainVentasCabania, obtainVentasCabaniaProducts, productosMasCompradosCab, obtainClientsAndUsers } from "../controllers/graficas.controller.js";
+import { comprasUsers, obtenerTotal, obtenerTotalesNiniosYAdultosEnCabaniaDashboard, obtenerTotalesNiniosYAdultosEnHabitaciones, obtenerTotalesNiniosYAdultosEnPasadia, productosMasComprados, productosMasCompradosPass, totalProductosCortesiasCabaniaHistorialDashboard, totalPructosCortesiasDashboard, totalPructosVendidosCabaniaDashboard, totalProductosVendidosDashboard, totalProductosVendidosHistorialCabaniaDashboard, totalPructosVendidosHistorialDashboard, totalgeneradoDashboard, totalgeneradoCabaniaDashboard, totalgeneradoHabitaciones, usuariosQueMasCompraron, totalProductosCortesiasHabitacionesHistorialDashboard, totalProductosVendidosHistorialHabitacionesDashboard, totalPructosVendidosHabitacionesDashboard, obtainVentasPasadia, obtainVentasPasadiaProducts, obtainClients, obtainUsers, obtainClientsCabanias, obtainUsersCabanias, obtainVentasCabania, obtainVentasCabaniaProducts, productosMasCompradosCab, obtainClientsAndUsers, obtainClientsAndUsersCabania, obtainClientsAndUsersHabitaciones, obtainVentasHabitaciones, obtainVentasHabitacionesProducts, productosMasCompradosHab } from "../controllers/graficas.controller.js";
 import { totalGeneradoBar, totalGeneradoCabaniaBard, totalGeneradoHabitacionesBard } from "../controllers/transferencia.controllers.js";
 
 const router = Router();
@@ -11,6 +11,7 @@ router.get('/obtener-historial-usuarios', obtenerTotal);
 router.get('/productos-mas-comprados', productosMasComprados);
 router.get('/productos-mas-comprados-pass', productosMasCompradosPass);
 router.get('/productos-mas-comprados-cab', productosMasCompradosCab);
+router.get('/productos-mas-comprados-hab', productosMasCompradosHab);
 router.get("/total-generado-ventas-brad", totalGeneradoBar)
 router.get("/total-generado-ventas-cabania-brad", totalGeneradoCabaniaBard)
 router.get("/total-generado-ventas-habitaciones-brad", totalGeneradoHabitacionesBard)
@@ -55,6 +56,12 @@ router.get("/obtain-pasadia-products", obtainVentasPasadiaProducts)
 router.get("/obtain-cabania-ventas", obtainVentasCabania )
 router.get("/obtain-cabania-products", obtainVentasCabaniaProducts)
 
+//habitaciones
+
+router.get("/obtain-habitaciones-ventas", obtainVentasHabitaciones )
+router.get("/obtain-habitaciones-products", obtainVentasHabitacionesProducts)
+
+
 //Fin controlador distinto
 
 
@@ -69,6 +76,8 @@ router.get("/obtain-clientes-historial-cabanias", obtainUsersCabanias)
 
 
 router.get("/data", obtainClientsAndUsers)
+router.get("/data-cabania", obtainClientsAndUsersCabania)
+router.get("/data-habitaciones", obtainClientsAndUsersHabitaciones)
 
 
 

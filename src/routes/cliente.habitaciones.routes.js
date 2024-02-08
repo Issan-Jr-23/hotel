@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {actualizarFacturacion, actualizarValor, addBebidaAdicional, addDescorche, addFood, addFoodAdicional, addFoodAdicionalSubproducto, addItemRecepcion, getClienteByIdentificacion, obtenerCPI, obtenerClienteId, obtenerClientes, postPago, resTotal, updateClientCts, updatePP, updateUserStatus} from "../controllers/cliente.habitaciones.controlles.js";
+import {actualizarFacturacion, actualizarValor, addBebidaAdicional, addDescorche, addFood, addFoodAdicional, addFoodAdicionalSubproducto, addItemRecepcion, fechaActivacion, fechaFinalizacion, getClienteByIdentificacion, obtenerCPI, obtenerClienteId, obtenerClientes, postPago, productosCategoria, resTotal, updateClientCts, updatePP, updateUserStatus} from "../controllers/cliente.habitaciones.controlles.js";
 import {crearCliente} from "../controllers/cliente.habitaciones.controlles.js";
 import {deleteClient} from "../controllers/cliente.habitaciones.controlles.js";
 import {updateClient} from "../controllers/cliente.habitaciones.controlles.js";
@@ -20,6 +20,8 @@ router.put("/habitaciones-clientes/:id/cortesias",auth, updateClientCts);
 router.put("/habitaciones-facturacion",auth, actualizarFacturacion)
 router.get('/habitaciones-cliente-info/:id', obtenerClienteId)
 router.get('/habitaciones-clientes-identificacion/:identificacion', getClienteByIdentificacion);
+router.get("/hbaitaciones-fecha-activacion", fechaActivacion)
+router.get("/hbaitaciones-fecha-finalizacion", fechaFinalizacion)
 
 router.post("/habitaciones-agregar-bebida/:id",auth, addBebidaAdicional);
 router.post("/habitaciones-agregar-item-recepcion/:id",auth, addItemRecepcion);
@@ -27,6 +29,7 @@ router.post("/habitaciones-agregar-descorche/:id",auth, addDescorche);
 router.post("/habitaciones-agregar-food/:id",auth, addFoodAdicional);
 router.post("/habitaciones-agregar-food-subproducto/:id",auth, addFoodAdicionalSubproducto);
 router.put("/habitaciones-actualizar-estado", updateUserStatus)
+router.get("/habitaciones-productos-categoria", productosCategoria)
 
 router.get("/habitaciones-totalidad-pago/:id", resTotal)
 router.get("/habitaciones-totalidad-reserva-pago/:id", postPago)

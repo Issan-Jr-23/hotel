@@ -29,7 +29,7 @@ const dashboardPasadia = () => {
 
 
   useEffect(() => {
-    const fetchData = async () => { 
+    const fetchData = async () => {
       try {
         const response = await AxiosInstance.get('/obtain-pasadia-products');
         console.log(response);
@@ -79,14 +79,14 @@ const dashboardPasadia = () => {
   return (
     <div className=' fondo pt-20 pl-5 pr-5 pb-20'>
       <div className='cont-icon-json'>
-      <article className='cont-title-json'>
-      <h1 className='text-4xl mb-5 uppercase border-b-3'>Dashboard Pasadia </h1>
+        <article className='cont-title-json'>
+          <h1 className='text-4xl mb-5 uppercase border-b-3'>Dashboard Pasadia </h1>
 
-      </article>
-      <article className='animation-lottie-json'>
-      <Lottie options={defaultOption} width="100%" height="100%"
-                           />
-      </article>
+        </article>
+        <article className='animation-lottie-json'>
+          <Lottie options={defaultOption} width="100%" height="100%"
+          />
+        </article>
 
       </div>
       <div className='flex justify-between flex-wrap'>
@@ -103,7 +103,7 @@ const dashboardPasadia = () => {
 
           </span>
 
-              <img className='img-cubo-dasboard' src={cubo} alt="" />
+          <img className='img-cubo-dasboard' src={cubo} alt="" />
         </div>
         <div className='box-style  flex rounded-2xl '>
           <span className='box-grafic justify-between flex flex-col p-4'>
