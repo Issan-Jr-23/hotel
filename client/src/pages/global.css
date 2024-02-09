@@ -1,129 +1,126 @@
-.img_home_h{
-    height: 40%;
-    width: 40%;
+.img_home_h {
+  height: 40%;
+  width: 40%;
 }
 
-.article_cont_images{
-    height: 150px;
-    width: 180px;
-    margin-top: 50px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: rgba(255, 255, 255, 0.6);
-    margin: 0px 10px;
-    
+.article_cont_images {
+  height: 150px;
+  width: 180px;
+  margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.6);
+  margin: 0px 10px;
+
 }
 
-.movimiento{
-    overflow: auto;
+.movimiento {
+  overflow: auto;
 }
 
-.globales{
-    display: flex;
+.globales {
+  display: flex;
 }
 
-.globalesp1{
-    padding-left: 230px;
+.globalesp1 {
+  padding-left: 230px;
 }
 
 .trasladado {
-    transform: translateX(-230px);
+  transform: translateX(-230px);
 
-  }
+}
 
-  .globalesp1 {
-    padding-left: 230px;
-  }
-  
-  .globalesp1-cerrado {
-    padding-left: 0px;
-  }
-  
-  .mostrar {
-    width: 100vw;
-    height: 100vh;
-    position: absolute;
-    background-color: rgba(0, 0, 0, 0.646);
-    z-index: 10;
-    position: fixed;
-    transition: .5s;
-  }
+.globalesp1 {
+  padding-left: 230px;
+}
 
-  .active{
-    color: rgb(6, 175, 32);
-    font-weight: 700;
-  }
+.globalesp1-cerrado {
+  padding-left: 0px;
+}
 
-  .ostias{
-    backdrop-filter: blur(45px) saturate(40%) brightness(380%);
-  }
+.mostrar {
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.646);
+  z-index: 10;
+  position: fixed;
+  transition: .5s;
+}
 
-  .informacion-adicional {
-    max-height: 0;
-    overflow: hidden;
-    transition:  0.5s ease-out;
-  }
-  
-  .expandido {
-    max-height: none; 
-  }
+.active {
+  color: rgb(6, 175, 32);
+  font-weight: 700;
+}
 
-  .hdlu{
-    height: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 30px;
-    text-transform: uppercase;
-    font-weight: 500;
-    /* h-20 flex justify-center items-center text-4xl uppercase  */
-  }
+.ostias {
+  backdrop-filter: blur(45px) saturate(40%) brightness(380%);
+}
 
+.informacion-adicional {
+  max-height: 0;
+  overflow: hidden;
+  transition: 0.5s ease-out;
+}
 
-  .hdu{
-  }
+.expandido {
+  max-height: none;
+}
 
-  .mhdu-h1{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 50px;
-    font-size: 35px;
-    margin-bottom: 50px;
-    /* h-14 flex justify-center items-center text-4xl mb-10 */
-  }
-
-  .mhdu{
-    border: 2px solid rgb(89, 197, 0);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 6;
-    width: 300px;
-    height: 46vh;
-    margin-top: 12px;
-    padding-bottom: 12px;
-    padding-left: 12px;
-    padding-right: 12px;
-    border-radius: 20px;
-    margin-bottom: 20px;
-  }
+.hdlu {
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 30px;
+  text-transform: uppercase;
+  font-weight: 500;
+  /* h-20 flex justify-center items-center text-4xl uppercase  */
+}
 
 
-  /* historial styles */
 
-  @media only screen
-and (min-width: 320px)
-and (max-width: 736px)
-{ 
-  .hdu{
+
+.mhdu-h1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+  font-size: 35px;
+  margin-bottom: 50px;
+  /* h-14 flex justify-center items-center text-4xl mb-10 */
+}
+
+.mhdu {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 6;
+  width: 300px;
+  height: 46vh;
+  margin-top: 12px;
+  padding-bottom: 12px;
+  padding-left: 12px;
+  padding-right: 12px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+  padding-top: 10px;
+  background-color: white;
+}
+
+
+/* historial styles */
+
+@media only screen and (min-width: 320px) and (max-width: 736px) {
+  .hdu {
     display: flex;
     flex-direction: column;
   }
 
-  .mhdu{
+  .mhdu {
     border: 2px solid rgb(89, 197, 0);
     display: flex;
     flex-direction: column;
@@ -138,7 +135,7 @@ and (max-width: 736px)
     margin-bottom: 20px;
   }
 
-  .mhdu-h1{
+  .mhdu-h1 {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -147,7 +144,7 @@ and (max-width: 736px)
     /* h-14 flex justify-center items-center text-4xl mb-10 */
   }
 
-  .hdlu{
+  .hdlu {
     height: 50px;
     display: flex;
     justify-content: center;
@@ -161,4 +158,3 @@ and (max-width: 736px)
 
 
 }
-

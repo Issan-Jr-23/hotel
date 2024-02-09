@@ -5,6 +5,9 @@ import { AddNoteIcon } from "./iconos/AddNoteIcon.jsx";
 import { VerticalDotsIcon } from './iconos/VerticalDotsIcon.jsx';
 import check from "./iconos/check.png"
 import AxiosInstance from '../api/axios.js';
+import "./global.css"
+import Lottie from "react-lottie"
+import animationUser from "../images/Animation-user-form.json"
 
 const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
 
@@ -60,31 +63,28 @@ const TransferirData = () => {
   };
 
 
+    const options = {
+        loop: true,
+        autoPlay: true,
+        animationData: animationUser,
+        rendererSettings: {
+            preserveAspectRatio: "xMidYMid slice"
+        }
+    }
+
 
 
 
   return (
-    <div className='pt-20 flex flex-col'>
+    <div className='pt-20 flex flex-col w-full' style={{  background:"linear-gradient(to right, #4ca1af, #c4e0e5)", height:"100vh", backgroundAttachment:"fixed", backgroundSize:"cover", position:"fixed", overflowY:"auto"}}>
 
       <h1 className='mhdu-h1' >HISTORIAL DE USUARIO</h1>
       <div className=' hdu flex '>
         <div className=" flex flex-col ml-5 mr-5">
-          <form className=" mhdu " style={{ zIndex: "1" }}>
+          <form className=" mhdu" style={{ zIndex: "1" }}>
             <Input value={busqueda}
-              onChange={handleSearchChange} label="Identificación" placeholder="Enter your email" type="text" className='mb-2' />
-
-            <Input
-              label="Nombre"
-              placeholder="Enter your name"
-              type="password"
-
-            />
-            <Input
-              label="Apellidos"
-              placeholder="Enter your last name"
-              type="password"
-
-            />
+              onChange={handleSearchChange} label="Identificación" placeholder="Enter your email" type="text" className='mb-2'/>
+            <Lottie options={options}/>
             <p className="text-center text-small">
               busqueda de usuarios {" "}
               <Link to="/home" size="sm" className='font-medium text-blue-500'>
