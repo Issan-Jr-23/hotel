@@ -91,6 +91,7 @@
   height: 50px;
   font-size: 35px;
   margin-bottom: 50px;
+  color: white;
   /* h-14 flex justify-center items-center text-4xl mb-10 */
 }
 
@@ -100,7 +101,7 @@
   justify-content: space-between;
   gap: 6;
   width: 300px;
-  height: 46vh;
+  height: 300px;
   margin-top: 12px;
   padding-bottom: 12px;
   padding-left: 12px;

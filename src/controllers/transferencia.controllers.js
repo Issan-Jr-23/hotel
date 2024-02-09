@@ -67,16 +67,35 @@ export const agregarOActualizarUsuario = async (req, res) => {
 };
 export const obtenerHistorial = async (req, res) => {
   try {
-    const clientesObtenidos = await Usuario.find();
-    res.status(200).json(clientesObtenidos);
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 1;
+
+    const totalUsuarios = await Usuario.countDocuments();
+
+    const totalPages = Math.ceil(totalUsuarios / pageSize);
+
+    const skip = (page - 1) * pageSize;
+
+
+    const clientesObtenidos = await Usuario.find()
+                                            .skip(skip)
+                                            .limit(pageSize);
+
+    res.status(200).json({
+      clientes: clientesObtenidos,
+      page,
+      totalPages,
+      pageSize,
+      totalUsuarios
+    });
+
     console.log(clientesObtenidos);
   } catch (error) {
     console.error(error);
-    res
-      .status(500)
-      .send("Error al obtener los clientes desde la base de datos");
+    res.status(500).send("Error al obtener los clientes desde la base de datos");
   }
 };
+
 export const obtenerHistorialDeUsuario = async (req, res) => {
   const { id } = req.params;
 
@@ -530,3 +549,40 @@ export const totalGeneradoHabitacionesBard = async(req, res) => {
     console.log(error)
   }
 }
+
+
+
+
+
+
+
+
+
+
+export const buscarUsuario = async (req, res) => {
+  const { identificacion } = req.query;
+  try {
+    const usuarios = await Usuario.find({ identificacion }).select('identificacion historial.nombre'); // Seleccionar identificación e historial.nombre
+    if (usuarios.length > 0) {
+      const resultado = usuarios.map(usuario => {
+        // Encontrar el nombre más largo en el historial de cada usuario
+        const nombres = usuario.historial.map(item => item.nombre); // Extraer todos los nombres del historial
+        const nombre = nombres.reduce((nombreMasLargo, nombre) => {
+          return nombre.length > nombreMasLargo.length ? nombre : nombreMasLargo;
+        }, '');
+
+        return { identificacion: usuario.identificacion, nombre };
+      });
+
+      res.status(200).json({ resultado });
+      console.log("respuesta: ", resultado);
+    } else {
+      res.status(404).json({ message: 'No se encontraron usuarios' });
+    }
+  } catch (error) {
+    console.error("Error al buscar el usuario:", error);
+    res.status(500).json({ error: 'Hubo un error al procesar la solicitud' });
+  }
+};
+
+

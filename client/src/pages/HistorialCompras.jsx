@@ -1,150 +1,136 @@
-import React, { useState, useEffect, useMemo } from 'react'
-import { Dropdown, DropdownTrigger, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Tabs, Tab, Input, Card, CardBody, CardHeader, DropdownMenu, DropdownSection, DropdownItem, Button, cn } from "@nextui-org/react";
-import { Link, useNavigate } from "react-router-dom";
-import { AddNoteIcon } from "./iconos/AddNoteIcon.jsx";
-import { VerticalDotsIcon } from './iconos/VerticalDotsIcon.jsx';
-import check from "./iconos/check.png"
+import React, { useState, useEffect } from 'react';
+import { Input, Button, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Dropdown, DropdownTrigger, DropdownMenu, DropdownSection, DropdownItem} from "@nextui-org/react";
 import AxiosInstance from '../api/axios.js';
-import "./global.css"
-import Lottie from "react-lottie"
-import animationUser from "../images/Animation-user-form.json"
-
-const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
+import Lottie from "react-lottie";
+import animationUser from "../images/Animation-user-form.json";
+import { useNavigate } from "react-router-dom";
+import { AddNoteIcon } from './iconos/AddNoteIcon.jsx';
+import { VerticalDotsIcon } from './iconos/VerticalDotsIcon.jsx';
+import { Pagination } from '@mui/material'
+import check from "./iconos/check.png";
 
 const TransferirData = () => {
-
   const navigate = useNavigate();
+  const [busqueda, setBusqueda] = useState('');
+  const [users, setUsers] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [userNotFound, setUserNotFound] = useState(false); 
+
+  useEffect(() => {
+    if (!busqueda) {
+      const fetchData = async () => {
+        try {
+          const response = await AxiosInstance.get(`/obtener-historial?page=${currentPage}`);
+          setUsers(response.data.clientes);
+          setTotalPages(response.data.totalPages);
+          setUserNotFound(false); 
+        } catch (error) {
+          console.error("Error al obtener datos del servidor:", error);
+        }
+      };
+      fetchData();
+    }
+  }, [currentPage, busqueda]);
+
+  const buscarUsuario = async () => {
+    console.log(".....",busqueda)
+    try {
+      const response = await AxiosInstance.get(`/buscar-usuario?identificacion=${busqueda}`);
+      if (response.data && response.data.resultado.length > 0) {
+        setUsers(response.data.resultado);
+        setUserNotFound(false); 
+      } else {
+        setUsers([]);
+        setUserNotFound(true); 
+      }
+    } catch (error) {
+      console.error("Error al buscar el usuario:", error);
+      setUsers([]);
+      setUserNotFound(true); 
+    }
+  };
+
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
 
   const verHistorial = (id) => {
     navigate(`/historial/${id}`);
-    console.log("id del usuario para ver el historial del usuario: " + id)
   };
 
-
-  const [busqueda, setBusqueda] = useState('');
-  const [users, setUsers] = useState([])
-
-
-  const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null);
-  const onSelectUser = (userId) => {
-    const usuario = users.find(user => user._id === userId);
-    setUsuarioSeleccionado(usuario);
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [responseHistorial] = await Promise.all([
-          AxiosInstance.get("/obtener-historial")
-        ]);
-
-        const usuariosCombinados = [...responseHistorial.data]
-          .sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
-        setUsers(usuariosCombinados);
-      } catch (error) {
-        console.error("Error al obtener datos del servidor:", error);
-      }
-    };
-    fetchData();
-  }, []);
-
-
-
-  const datosFiltrados = useMemo(() => {
-    if (!busqueda) return users;
-
-    return users.filter((user) => {
-      return user && user.identificacion.toString().includes(busqueda.toString());
-    });
-  }, [busqueda, users]);
-
-  const handleSearchChange = (event) => {
-    setBusqueda(event.target.value);
-  };
-
-
-    const options = {
-        loop: true,
-        autoPlay: true,
-        animationData: animationUser,
-        rendererSettings: {
-            preserveAspectRatio: "xMidYMid slice"
-        }
+  const options = {
+    loop: false,
+    autoPlay: true,
+    animationData: animationUser,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice"
     }
-
-
-
+  };
 
   return (
-    <div className='pt-20 flex flex-col w-full' style={{  background:"linear-gradient(to right, #4ca1af, #c4e0e5)", height:"100vh", backgroundAttachment:"fixed", backgroundSize:"cover", position:"fixed", overflowY:"auto"}}>
-
-      <h1 className='mhdu-h1' >HISTORIAL DE USUARIO</h1>
-      <div className=' hdu flex '>
-        <div className=" flex flex-col ml-5 mr-5">
-          <form className=" mhdu" style={{ zIndex: "1" }}>
-            <Input value={busqueda}
-              onChange={handleSearchChange} label="Identificación" placeholder="Enter your email" type="text" className='mb-2'/>
-            <Lottie options={options}/>
-            <p className="text-center text-small">
-              busqueda de usuarios {" "}
-              <Link to="/home" size="sm" className='font-medium text-blue-500'>
-                Inicio
-              </Link>
-            </p>
+    <div className='pt-20 flex flex-col w-full' style={{ background: "linear-gradient(to right, #4ca1af, #c4e0e5)", height: "100vh", backgroundAttachment: "fixed", backgroundSize: "cover", position: "fixed", overflowY: "auto" }}>
+      <h1 className='mhdu-h1'>HISTORIAL DE USUARIO</h1>
+      <div className='hdu flex'>
+        <div className="flex flex-col ml-5 mr-5">
+          <form className="mhdu" style={{ zIndex: "1" }}>
+            <h2 className='w-full text-center pt-2 pb-2'>FILTRO DE USUARIOS</h2>
+            <Input
+              label="Identificación"
+              placeholder="Ingrese la identificación"
+              type="text"
+              className='mb-2 text-medium'
+              value={busqueda}
+              onChange={(e) => setBusqueda(e.target.value)}
+            />
+            <Button className='h-12 text-white text-medium' color='success' onClick={buscarUsuario}>Buscar</Button>
+            <Lottie options={options} height={100} width={100} />
           </form>
         </div>
-        <Table aria-label="Example static collection table" className='pt-3 pl-5 pr-5' >
-          <TableHeader className='text-center' >
-            <TableColumn className='' >IDENTIFICACIÓN</TableColumn>
-            <TableColumn className='text-center' >NOMBRE</TableColumn>
-            <TableColumn className='text-center' >HISTORIAL</TableColumn>
-            {/* <TableColumn className='text-center' >STATUS</TableColumn> */}
-          </TableHeader>
-          <TableBody emptyContent="No hay elementos por mostrar">
-            {users.map((data) => (
-              <TableRow key={data._id}>
-                <TableCell className='flex items-center'><img className='check-historial w-3 h-3 mr-1' src={check} alt="" />{data.identificacion}</TableCell>
-                <TableCell className='text-center uppercase'>
-                  {data.historial.length > 0 && data.historial[0].nombre}
-                </TableCell>
-                <TableCell key={data._id} className='text-center'  >
-                  <Dropdown >
-                    <DropdownTrigger>
-                      <Button
-                        className="bg-inherit "
-                      >
-                        <VerticalDotsIcon />
-                      </Button>
-                    </DropdownTrigger>
-                    <DropdownMenu variant="faded" aria-label="Dropdown menu with description">
-                      <DropdownSection title="Actions" showDivider>
-                        <DropdownItem
-                          key="new"
-                          shortcut="⌘N"
-                          description="View user history."
-                          startContent={<AddNoteIcon className={iconClasses} />}
-                          className="font-semibold"
-                          style={{ fontWeight: "700" }}
-                          onClick={() => verHistorial(data.identificacion)}
-                        >
-                          Ver historial
-                        </DropdownItem>
+        <div className='flex flex-col w-full'>
+          {userNotFound ? (
+            <div className='text-center mt-4 border-2 bg-css ' style={{height:"293px"}}>
 
-
-                      </DropdownSection>
-                    </DropdownMenu>
-                  </Dropdown>
-                </TableCell>
-              </TableRow>
-
-
-            ))}
-          </TableBody>
-        </Table>
+              No se encontró el usuario con esa identificación.
+              </div>
+          ) : (
+            <Table aria-label="Example static collection table" className='pt-3 pl-5 pr-5'>
+              <TableHeader className='text-center'>
+                <TableColumn>IDENTIFICACIÓN</TableColumn>
+                <TableColumn className='text-center'>NOMBRE</TableColumn>
+                <TableColumn className='text-center'>HISTORIAL</TableColumn>
+              </TableHeader>
+              <TableBody>
+                {users.map((user) => (
+                  <TableRow key={user.identificacion}>
+                    <TableCell>{user.identificacion}</TableCell>
+                    <TableCell className='text-center uppercase'>{user.nombre}</TableCell>
+                    <TableCell className='text-center'>
+                      <Dropdown>
+                        <DropdownTrigger>
+                          <Button auto flat>
+                            <VerticalDotsIcon />
+                          </Button>
+                        </DropdownTrigger>
+                        <DropdownMenu>
+                          <DropdownSection>
+                            <DropdownItem key="view" textValue="Ver historial" onClick={() => verHistorial(user.identificacion)}>
+                              <AddNoteIcon size="20" /> Ver Historial
+                            </DropdownItem>
+                          </DropdownSection>
+                        </DropdownMenu>
+                      </Dropdown>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+          {users.length > 0 && <Pagination count={totalPages} page={currentPage} onChange={handlePageChange} className='mt-2' color='primary' />}
+        </div>
       </div>
-
     </div>
-  )
-}
+  );
+};
 
-export default TransferirData
+export default TransferirData;
