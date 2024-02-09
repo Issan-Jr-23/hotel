@@ -55,18 +55,35 @@ const Historial = () => {
 
 
     return (
-        <div className='pt-20 pb-20' >
-            <h1 className='hdlu'>Historial del Usuario</h1>
+        <div className='pt-20 pb-20 w-full' style={{  background:"linear-gradient(to right, #4ca1af, #c4e0e5)", height:"100vh", backgroundAttachment:"fixed", backgroundSize:"cover", position:"fixed", overflowY:"auto"}}>
+            <h1 className='hdlu text-white'>Historial del Usuario</h1>
             <section className='mt-10'>
                 {historial && historial.length > 0 ? (
                     historial.map((item, index) => (
                         <div key={index} className=''>
-                            <div className='border-1 mr-5 ml-5 mb-10 rounded-xl p-5 uppercase bg-white '>
+                            <div className='border-1 mr-5 ml-5 mb-10 rounded-xl p-5 uppercase bg-white ' style={{overflowX:"auto"}}>
                                 <h3 className='text-3xl mb-5'>Historial {index + 1}</h3>
-                                <p className='ml-1' style={{ fontWeight: "600" }}> <span className='text-blue-500'>ID Historial:</span> {item.idHistorial}</p>
-                                <p className='uppercase  ml-1' style={{ fontWeight: "600" }}> <span className='text-blue-500'>Nombre:</span> {item.nombre}</p>
-                                <div className={`informacion-adicional ml-1  ${historialExpandido === index ? 'expandido' : 'contraido'}`} style={{ fontWeight: "600" }} >
-                                    <table className=' mb-2 mt-2 border-b-1 border-t-1' >
+                                <p className='ml-1' style={{ fontWeight: "600" }}> <span className='text-blue-500'>ID
+                                    Historial:</span> {item.idHistorial}</p>
+                                <p className='uppercase  ml-1' style={{ fontWeight: "600" }}> <span
+                                    className='text-blue- 500'>Nombre:</span> {item.nombre}</p>
+                                <div className={`informacion-adicional ml-1  ${historialExpandido === index ? 'expandido' :
+                                    'contraido'}`} style={{ fontWeight: "600" }} >
+
+                                        <div className='flex flex-col'>
+                                            <span className='text-left mb-2'>Reserva: {item.reserva}</span>
+                                            <span className='text-left mb-2'>Niños: {item.ninios}</span>
+                                            <span className='text-left mb-2'>Adultos: {item.adultos}</span>
+                                            <span className='text-left mb-2'>Servicio: {item.servicio}</span>
+                                            <span className='text-left mb-2'>Metodo de pago anticipado: {item.metodoPago}</span>
+                                            <span className='text-left mb-2'>PagoAnticipado: {item.pago}</span>
+                                            <span className='text-left mb-2'>Metodo de pago pendiente: {item.metodoPagoPendiente || "No aplica"}</span>
+                                            <span className='text-left mb-2'>Pago posterior: {item.pagoPendiente || 0}</span>
+                                            <span className='text-left mb-2'>Estado: {item.estado}</span>
+                                        </div>
+                                        <hr />
+
+                                    {/* <table className=' mb-2 mt-2 border-b-1 border-t-1' >
                                         <tr >
                                             <th className='pb-2'>Reserva</th>
                                             <th className='pl-2 pr-2 pb-2'>Niños</th>
@@ -90,7 +107,7 @@ const Historial = () => {
                                             <td className='text-center'>{item.pagoPendiente || 0}</td>
                                             <td className='text-center'>{item.finalizacion}</td>
                                         </tr>
-                                    </table>
+                                    </table> */}
                                     {item.bebidas && item.bebidas.length > 0 ? (
                                         <div style={{ fontWeight: "600" }} >
 
@@ -116,10 +133,11 @@ const Historial = () => {
                                                         <td className='text-right'>{bebidas.cantidad * bebidas.precio}</td>
                                                     </tr>
                                                 ))}
-                                               
+
                                             </table>
-                                            <p className='flex justify-end w-96 text-red-500' style={{width:"608px"}}>{
-                                                item.bebidas.reduce((total, bebida) => total + (bebida.cantidad * bebida.precio), 0)
+                                            <p className='flex justify-end w-96 text-red-500' style={{ width: "608px" }}>{
+                                                item.bebidas.reduce((total, bebida) => total + (bebida.cantidad *
+                                                    bebida.precio), 0)
                                             }</p>
                                         </div>
                                     ) : (
@@ -144,14 +162,16 @@ const Historial = () => {
                                                         <td className=' '>{restaurante.nombre}</td>
                                                         <td className=' text-center'>{restaurante.cantidad}</td>
                                                         <td className=' text-center'>{restaurante.precio}</td>
-                                                        <td className='text-right'>{restaurante.cantidad * restaurante.precio}</td>
+                                                        <td className='text-right'>{restaurante.cantidad *
+                                                            restaurante.precio}</td>
                                                     </tr>
                                                 ))}
-                                               
+
                                             </table>
 
-                                            <p className='flex justify-end w-96 text-red-500' style={{width:"608px"}}> {
-                                                item.restaurante.reduce((total, restaurante) => total + (restaurante.cantidad * restaurante.precio), 0)
+                                            <p className='flex justify-end w-96 text-red-500' style={{ width: "608px" }}> {
+                                                item.restaurante.reduce((total, restaurante) => total +
+                                                    (restaurante.cantidad * restaurante.precio), 0)
                                             }</p>
                                         </div>
                                     ) : (
@@ -159,7 +179,7 @@ const Historial = () => {
                                     )}
 
                                 </div>
-                                <Button className='bg-black text-white' onClick={() => toggleExpandido(index)}>
+                                <Button className='bg-blue-500 text-white' onClick={() => toggleExpandido(index)}>
                                     {historialExpandido === index ? 'Ver Menos' : 'Ver Más'}
                                 </Button>
                             </div>
