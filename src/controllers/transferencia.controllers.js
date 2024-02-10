@@ -544,7 +544,7 @@ export const totalGeneradoHabitacionesBard = async(req, res) => {
     historial.forEach((rec) => {
       rec.historial.forEach((data) => {
         data.recepcion.forEach((data) => {
-          totalRec += bbr.cantidad * data.precio;
+          totalRec += data.cantidad * data.precio;
         })
       })
     })
@@ -552,7 +552,7 @@ export const totalGeneradoHabitacionesBard = async(req, res) => {
     historial.forEach((des) => {
       des.historial.forEach((data) => {
         data.descorche.forEach((bbr) => {
-          totalDes += bbr.cantidad * bbr.precio; 
+          totalDes += data.cantidad * bbr.precio; 
         })
       })
     })

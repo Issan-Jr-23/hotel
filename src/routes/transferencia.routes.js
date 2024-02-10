@@ -18,11 +18,4 @@ router.get('/afpc', afpc)
 router.get('/afph', afph)
 // router.get('/obtener-cantidad-usuarios',obtenerTotalesNiniosYAdultosEnPasadia);
 
-
-
-
-
-
- 
-
 export default router;

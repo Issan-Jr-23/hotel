@@ -35,23 +35,23 @@ const TransferirData = () => {
   }, [currentPage, busqueda]);
 
   const buscarUsuario = async () => {
-    setCurrentPage(1); // Establecer currentPage a 1 al realizar una búsqueda
+    setCurrentPage(1);
     try {
       const response = await AxiosInstance.get(`/buscar-usuario?identificacion=${busqueda}`);
       if (response.data && response.data.resultado.length > 0) {
         setUsers(response.data.resultado);
         setUserNotFound(false);
-        setTotalPages(1); // Establecer totalPages a 1 cuando se encuentra un usuario
+        setTotalPages(1);
       } else {
         setUsers([]);
         setUserNotFound(true);
-        setTotalPages(0); // Restaurar totalPages a 0 si no se encuentra un usuario
+        setTotalPages(0);
       }
     } catch (error) {
       console.error("Error al buscar el usuario:", error);
       setUsers([]);
       setUserNotFound(true);
-      setTotalPages(0); // Restaurar totalPages a 0 en caso de error
+      setTotalPages(0);
     }
   };
 
@@ -129,7 +129,7 @@ const TransferirData = () => {
                     <TableCell className='text-center'>
                       <Dropdown>
                         <DropdownTrigger>
-                          <Button auto flat>
+                          <Button className='bg-inherent'>
                             <VerticalDotsIcon />
                           </Button>
                         </DropdownTrigger>
