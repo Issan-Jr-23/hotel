@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Input, Button, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Dropdown, DropdownTrigger, DropdownMenu, DropdownSection, DropdownItem} from "@nextui-org/react";
+import { Input, Button, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Dropdown, DropdownTrigger, DropdownMenu, DropdownSection, DropdownItem } from "@nextui-org/react";
 import AxiosInstance from '../api/axios.js';
 import Lottie from "react-lottie";
 import animationUser from "../images/Animation-user-form.json";
@@ -8,6 +8,7 @@ import { AddNoteIcon } from './iconos/AddNoteIcon.jsx';
 import { VerticalDotsIcon } from './iconos/VerticalDotsIcon.jsx';
 import { Pagination } from '@mui/material'
 import check from "./iconos/check.png";
+import NotResults from "../images/Animation-noresults.json"
 
 const TransferirData = () => {
   const navigate = useNavigate();
@@ -15,16 +16,16 @@ const TransferirData = () => {
   const [users, setUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const [userNotFound, setUserNotFound] = useState(false); 
+  const [userNotFound, setUserNotFound] = useState(false);
 
   useEffect(() => {
     if (!busqueda) {
       const fetchData = async () => {
         try {
           const response = await AxiosInstance.get(`/obtener-historial?page=${currentPage}`);
-          setUsers(response.data.clientes);
+          setUsers(response.data.resultado);
           setTotalPages(response.data.totalPages);
-          setUserNotFound(false); 
+          setUserNotFound(false);
         } catch (error) {
           console.error("Error al obtener datos del servidor:", error);
         }
@@ -34,22 +35,27 @@ const TransferirData = () => {
   }, [currentPage, busqueda]);
 
   const buscarUsuario = async () => {
-    console.log(".....",busqueda)
+    setCurrentPage(1); // Establecer currentPage a 1 al realizar una búsqueda
     try {
       const response = await AxiosInstance.get(`/buscar-usuario?identificacion=${busqueda}`);
       if (response.data && response.data.resultado.length > 0) {
         setUsers(response.data.resultado);
-        setUserNotFound(false); 
+        setUserNotFound(false);
+        setTotalPages(1); // Establecer totalPages a 1 cuando se encuentra un usuario
       } else {
         setUsers([]);
-        setUserNotFound(true); 
+        setUserNotFound(true);
+        setTotalPages(0); // Restaurar totalPages a 0 si no se encuentra un usuario
       }
     } catch (error) {
       console.error("Error al buscar el usuario:", error);
       setUsers([]);
-      setUserNotFound(true); 
+      setUserNotFound(true);
+      setTotalPages(0); // Restaurar totalPages a 0 en caso de error
     }
   };
+
+
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
@@ -67,6 +73,19 @@ const TransferirData = () => {
       preserveAspectRatio: "xMidYMid slice"
     }
   };
+
+
+  const optionsResults = {
+    loop: true,
+    autoPlay: true,
+    animationData: NotResults,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice"
+    }
+  };
+
+
+
 
   return (
     <div className='pt-20 flex flex-col w-full' style={{ background: "linear-gradient(to right, #4ca1af, #c4e0e5)", height: "100vh", backgroundAttachment: "fixed", backgroundSize: "cover", position: "fixed", overflowY: "auto" }}>
@@ -89,10 +108,12 @@ const TransferirData = () => {
         </div>
         <div className='flex flex-col w-full'>
           {userNotFound ? (
-            <div className='text-center mt-4 border-2 bg-css ' style={{height:"293px"}}>
+            <div className='text-center mt-4 border-2 bg-white mr-5 flex justify-center items-center ' style={{ height: "293px", borderRadius:"14px" }}>
 
-              No se encontró el usuario con esa identificación.
-              </div>
+              <span className='flex ' style={{width:"330px", height:"330px"}}>
+                <Lottie options={optionsResults} />
+              </span>
+            </div>
           ) : (
             <Table aria-label="Example static collection table" className='pt-3 pl-5 pr-5'>
               <TableHeader className='text-center'>

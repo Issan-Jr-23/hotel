@@ -69,7 +69,6 @@ const Historial = () => {
                                     className='text-blue- 500'>Nombre:</span> {item.nombre}</p>
                                 <div className={`informacion-adicional ml-1  ${historialExpandido === index ? 'expandido' :
                                     'contraido'}`} style={{ fontWeight: "600" }} >
-
                                         <div className='flex flex-col'>
                                             <span className='text-left mb-2'>Reserva: {item.reserva}</span>
                                             <span className='text-left mb-2'>Niños: {item.ninios}</span>

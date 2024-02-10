@@ -76,25 +76,44 @@ export const obtenerHistorial = async (req, res) => {
 
     const skip = (page - 1) * pageSize;
 
-
     const clientesObtenidos = await Usuario.find()
                                             .skip(skip)
                                             .limit(pageSize);
 
+    const nombresHistoriales = clientesObtenidos.map(usuario => usuario.historial.map(item => item.nombre));
+
+    // Obtener el nombre más largo
+    let nombreMasLargo = '';
+    nombresHistoriales.forEach(nombres => {
+      nombres.forEach(nombre => {
+        if (nombre.length > nombreMasLargo.length) {
+          nombreMasLargo = nombre;
+        }
+      });
+    });
+
+    // Crear un array de objetos con la identificación y el nombre más largo
+    const resultado = clientesObtenidos.map(usuario => ({
+      identificacion: usuario.identificacion,
+      nombre: nombreMasLargo
+    }));
+
     res.status(200).json({
-      clientes: clientesObtenidos,
+      resultado,
       page,
       totalPages,
       pageSize,
       totalUsuarios
     });
 
-    console.log(clientesObtenidos);
+    console.log(resultado);
   } catch (error) {
     console.error(error);
     res.status(500).send("Error al obtener los clientes desde la base de datos");
   }
 };
+
+
 
 export const obtenerHistorialDeUsuario = async (req, res) => {
   const { id } = req.params;
