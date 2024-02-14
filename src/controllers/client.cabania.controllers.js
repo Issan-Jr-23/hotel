@@ -701,7 +701,7 @@ export const productosCategoria = async (req, res) => {
         })
 
       data.bebidas?.forEach((response) => {
-        if (response.adicional === "adicional") {
+        if (response.adicional === "adicional"  ) {
           totalAd += response.cantidad * response.precio;
         } else {
           totalBar += response.cantidad * response.precio;
@@ -717,27 +717,31 @@ export const productosCategoria = async (req, res) => {
       })
 
     })
+
     historial.forEach((data) => {
       data.historial.forEach((response) => {
         if (response.servicio === "cabania") {
         response.restaurante?.forEach((dataRes) => {
+          if (dataRes.adicional === "adicional") {
+          totalAd += dataRes.cantidad * dataRes.precio;
+          }else{
           total += dataRes.cantidad * dataRes.precio;
-        })
-        }
-
-      })
-
-      historial.forEach((data) => {
-        data.historial.forEach((response) => {
-          if (response.servicio === "cabania") {
-          response.bebidas?.forEach((dataRes) => {
-            totalBar += dataRes.cantidad * dataRes.precio;
-          })
           }
         })
+        }
       })
 
-      historial.forEach((data) => {
+      data.historial.forEach((response) => {
+        if (response.servicio === "cabania") {
+        response.bebidas?.forEach((dataRes) => {
+          if (dataRes.adicional === "adicional") {
+          totalAd += dataRes.cantidad * dataRes.precio;
+          }else{
+          totalBar += dataRes.cantidad * dataRes.precio;
+          }
+        })
+        }
+      })
         data.historial.forEach((response) => {
           if (response.servicio === "cabania") {
           response.recepcion?.forEach((dataRes) => {
@@ -745,9 +749,7 @@ export const productosCategoria = async (req, res) => {
           })
           }
         })
-      })
 
-      historial.forEach((data) => {
         data.historial.forEach((response) => {
           if (response.servicio === "cabania") {
           response.descorche?.forEach((dataRes) => {
@@ -755,7 +757,6 @@ export const productosCategoria = async (req, res) => {
           })
           }
         })
-      })
 
     })
 

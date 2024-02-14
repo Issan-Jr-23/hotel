@@ -717,23 +717,26 @@ export const productosCategoria = async (req, res) => {
       data.historial.forEach((response) => {
         if (response.servicio === "habitaciones") {
         response.restaurante?.forEach((dataRes) => {
+          if (dataRes.adicional === "adicional") {
+          totalAd += dataRes.cantidad * dataRes.precio;
+          }else{
           total += dataRes.cantidad * dataRes.precio;
-        })
-        }
-
-      })
-
-      historial.forEach((data) => {
-        data.historial.forEach((response) => {
-          if (response.servicio === "habitaciones") {
-          response.bebidas?.forEach((dataRes) => {
-            totalBar += dataRes.cantidad * dataRes.precio;
-          })
           }
         })
+        }
       })
 
-      historial.forEach((data) => {
+      data.historial.forEach((response) => {
+        if (response.servicio === "habitaciones") {
+        response.bebidas?.forEach((dataRes) => {
+          if (dataRes.adicional === "adicional") {
+          totalAd += dataRes.cantidad * dataRes.precio;
+          }else{
+          totalBar += dataRes.cantidad * dataRes.precio;
+          }
+        })
+        }
+      })
         data.historial.forEach((response) => {
           if (response.servicio === "habitaciones") {
           response.recepcion?.forEach((dataRes) => {
@@ -741,9 +744,7 @@ export const productosCategoria = async (req, res) => {
           })
           }
         })
-      })
 
-      historial.forEach((data) => {
         data.historial.forEach((response) => {
           if (response.servicio === "habitaciones") {
           response.descorche?.forEach((dataRes) => {
@@ -751,7 +752,6 @@ export const productosCategoria = async (req, res) => {
           })
           }
         })
-      })
 
     })
 
