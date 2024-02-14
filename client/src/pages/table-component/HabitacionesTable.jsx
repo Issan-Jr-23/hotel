@@ -20,6 +20,11 @@ import stats from "../../images/stats.svg"
 import toast, { Toaster } from 'react-hot-toast';
 import "./pasadiaTable.css"
 import Dropdown from 'react-bootstrap/Dropdown';
+import jsPDF from "jspdf";
+import Swal from 'sweetalert2';
+import logo from "../../images/logo.png"
+import wave from "../../images/wave.png"
+import svg from "../../images/svg.png"
 
 export default function habitacionesTable() {
 
@@ -313,21 +318,21 @@ export default function habitacionesTable() {
 
 
 
-        setErrorIdentificacion(name === 'identificacion' && !value);
+    setErrorIdentificacion(name === 'identificacion' && !value);
 
-        if (debounceTimeout) {
-            clearTimeout(debounceTimeout);
-        }
+    if (debounceTimeout) {
+      clearTimeout(debounceTimeout);
+    }
 
-        if (name === 'identificacion') {
-            const prevIdentificacionLength = formData.identificacion.length; 
+    if (name === 'identificacion') {
+      const prevIdentificacionLength = formData.identificacion.length;
 
-            const newTimeout = setTimeout(() => {
-                fetchData(name, value, fieldName, prevIdentificacionLength);
-            }, 500);
+      const newTimeout = setTimeout(() => {
+        fetchData(name, value, fieldName, prevIdentificacionLength);
+      }, 500);
 
-            setDebounceTimeout(newTimeout);
-        }
+      setDebounceTimeout(newTimeout);
+    }
 
     if (name === 'nombre') {
       setErrorNombre(!value);
@@ -1763,104 +1768,136 @@ export default function habitacionesTable() {
   }
 
 
-  const generarPDF = async () => {
+const generarPDF = async () => {
     const pdf = new jsPDF();
 
     await actualizarFechaEnProductos(selectedUser._id);
 
-    try {
-      const svgBase64 = await toBase64(svg);
-      pdf.addImage(svgBase64, 'JPEG', 0, 0, 220, 80);
-    } catch (error) {
-      console.error("Error al cargar la imagen", error);
-    }
+    // Función para añadir el diseño base al PDF
+    const agregarDisenoBase = async () => {
+        try {
+            const svgBase64 = await toBase64(svg);
+            pdf.addImage(svgBase64, 'JPEG', 0, 0, 220, 80);
+        } catch (error) {
+            console.error("Error al cargar la imagen SVG", error);
+        }
 
-    try {
-      const waveBase64 = await toBase64(wave);
-      pdf.addImage(waveBase64, 'JPEG', 0, 240, 220, 80);
-    } catch (error) {
-      console.error("Error al cargar la imagen", error);
-    }
+        try {
+            const waveBase64 = await toBase64(wave);
+            pdf.addImage(waveBase64, 'JPEG', 0, 240, 220, 80);
+        } catch (error) {
+            console.error("Error al cargar la imagen Wave", error);
+        }
 
-    try {
-      const logoBase64 = await toBase64(logo);
-      pdf.addImage(logoBase64, 'JPEG', 85, 25, 40, 40);
-    } catch (error) {
-      console.error("Error al cargar la imagen", error);
-    }
+        try {
+            const logoBase64 = await toBase64(logo);
+            pdf.addImage(logoBase64, 'JPEG', 85, 25, 40, 40);
+        } catch (error) {
+            console.error("Error al cargar el logo", error);
+        }
 
-    pdf.setFont("helvetica", "bold");
-    pdf.setFontSize(20);
-    pdf.setTextColor("#FFFFFF");
-    pdf.text("HOTEL MEQO", 105, 20, null, null, 'center');
+        // Configuración inicial del PDF reutilizable
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(20);
+        pdf.setTextColor("#FFFFFF");
+        pdf.text("HOTEL MEQO", 105, 20, null, null, 'center');
 
-    pdf.setTextColor(0, 0, 0);
-    pdf.setFontSize(12);
-    pdf.text('Datos de la empresa', 157, 54);
+        // Resto de elementos comunes...
+        pdf.setTextColor(0, 0, 0);
+        pdf.setFontSize(12);
+        pdf.text('Datos de la empresa', 157, 54);
+        pdf.setFontSize(10);
+        pdf.text('Nombre: Hotel Meqo', 164, 63);
+        pdf.text('Numero: 3152390814', 164, 70);
+        pdf.setFontSize(12);
+        pdf.text('Datos del cliente', 10, 54);
+        pdf.setFontSize(10);
+        pdf.text(`Nombre: ${selectedUser.nombre}`, 10, 63);
+        pdf.text(`Identificación: ${selectedUser.identificacion}`, 10, 70);
+    };
 
-    pdf.setFontSize(10);
-    pdf.text('Nombre: Hotel Meqo', 164, 63)
-    pdf.text('Numero: 3152390814', 164, 70)
+    // Función para verificar el espacio y añadir nueva página si es necesario
+    const verificarEspacioYAgregarPaginaSiNecesario = async (espacioNecesario, reiniciarPosY = 20) => {
+        if (y + espacioNecesario > 272) {
+            pdf.addPage();
+            y = reiniciarPosY; // Reiniciar la posición Y en la nueva página
+            await agregarDisenoBase(); // Reconfigurar el diseño para la nueva página
+        }
+    };
 
-    pdf.setFontSize(12);
-    pdf.text('Datos del cliente', 10, 54);
-    pdf.setFontSize(10);
-    pdf.text(`Nombre: ${selectedUser.nombre}`, 10, 63);
-    pdf.text(`Identificación: ${selectedUser.identificacion}`, 10, 70);
+    // Función para formatear números con separador de miles y dos decimales
+    const formatearNumero = (numero) => {
+        return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(numero);
+    };
+
+    let y = 90; // Iniciar Y después de las imágenes y el título
+
+    await agregarDisenoBase(); // Aplicar diseño base a la primera página
 
     // Encabezados de la tabla de productos
     pdf.setFontSize(12);
-    pdf.text("Descripción", 10, 80);
-    pdf.text("Cantidad", 80, 80);
-    pdf.text("Precio", 150, 80);
-    pdf.text("Total", 180, 80); // Added column header for total
-    pdf.line(10, 82, 200, 82);
+    pdf.text("Descripción", 10, y);
+    pdf.text("Cantidad", 80, y);
+    pdf.text("Precio", 150, y);
+    pdf.text("Total", 180, y);
+    pdf.line(10, y + 2, 200, y + 2);
+    y += 12; // Ajustar Y después de los encabezados
 
-    // Lista de productos
-    let y = 90;
-    const cincoHorasEnMilisegundos = 3 * 60 * 60 * 1000;
-    const productos = [...selectedUser.bebidas, ...selectedUser.restaurante];
+    // Preparación de la lista de productos
+    const productos = [...selectedUser.bebidas, ...selectedUser.restaurante, ...selectedUser.descorche, ...selectedUser.recepcion];
 
-    const ahora = new Date();
-    const totalGeneral = productos.filter(producto => {
-      const fechaDeMarca = new Date(producto.fechaDeMarca);
-      const diferenciaEnHoras = (ahora - fechaDeMarca) / cincoHorasEnMilisegundos;
-      return producto.fechaDeMarca === "" || diferenciaEnHoras <= 3;
-    }).reduce((acc, producto) => acc + (producto.cantidad * producto.precio), 0);
-
-    // Lógica para dividir en múltiples páginas
-    const agregarProductoEnPagina = (producto) => {
-      const fechaDeMarca = new Date(producto.fechaDeMarca);
-      const diferenciaEnHoras = (ahora - fechaDeMarca) / cincoHorasEnMilisegundos;
-
-      if (producto.fechaDeMarca === "" || diferenciaEnHoras <= 3) {
-        const productoTotal = producto.cantidad * producto.precio;
+    // Iterar sobre los productos y agregarlos al PDF
+    productos.forEach(producto => {
+        verificarEspacioYAgregarPaginaSiNecesario(10); // Espacio por producto
         pdf.text(producto.nombre, 10, y);
         pdf.text(producto.cantidad.toString(), 88, y);
-        pdf.text(`$${producto.precio.toFixed(2)}`, 150, y);
-        pdf.text(`$${productoTotal.toFixed(2)}`, 180, y);
 
-        // Actualizar posición Y
-        y += 10;
+        const precioFormateado = `$${formatearNumero(producto.precio)}`;
+        pdf.text(precioFormateado, 150, y);
 
-        // Verificar si hay espacio suficiente para otro producto en la página actual
-        if (y > 282) { // 297 - Margen inferior
-          // Cambiar a una nueva página
-          pdf.addPage();
-          y = 10; // Reiniciar la posición Y
-        }
-      }
-    };
+        const productoTotal = producto.cantidad * producto.precio;
+        const productoTotalFormateado = `$${formatearNumero(productoTotal)}`;
+        pdf.text(productoTotalFormateado, 180, y);
 
-    // Iterar sobre los productos
-    productos.forEach(agregarProductoEnPagina);
+        y += 10; // Actualizar posición Y para el próximo producto
+    });
 
-    // Mostrar el total general en la última página
+    // Total General antes de añadir los desgloses
+    const totalGeneral = productos.reduce((acc, producto) => acc + (producto.cantidad * producto.precio), 0);
+    const totalGeneralFormateado = formatearNumero(totalGeneral);
+
+    verificarEspacioYAgregarPaginaSiNecesario(40); // Asegurarse de tener espacio para los totales
+
+    // Texto del Total General y líneas
     pdf.setFontSize(12);
-    pdf.text(`Total General: ${totalGeneral.toFixed(2)}`, 150, y);
+    pdf.text(`Total General: $${totalGeneralFormateado}`, 150, y);
+    y += 10; // Ajustar Y para la línea después del Total General
+    pdf.line(10, y, 200, y);
+    y += 5; // Ajustar Y para los siguientes elementos
+
+    // Aplicar formato y añadir texto al PDF para cada categoría
+    const categorias = [
+        { etiqueta: 'Pago Anticipado', valor: selectedUser.pagoAnticipado || 0 },
+        { etiqueta: 'Pago Posterior', valor: selectedUser.pagoPendiente || 0 },
+        // Asumiendo que barTotal, resTotal, recTotal, y desTotal están definidos en algún lugar de tu código
+        { etiqueta: 'Bar', valor: barTotal || 0 },
+        { etiqueta: 'Restaurante', valor: resTotal || 0 },
+        { etiqueta: 'Recepcion', valor: recTotal || 0 },
+        { etiqueta: 'Descorche', valor: desTotal || 0 }
+    ];
+
+    categorias.forEach(categoria => {
+        verificarEspacioYAgregarPaginaSiNecesario(7); // Asegurarse de tener espacio para cada categoría
+        pdf.text(`${categoria.etiqueta}: $${formatearNumero(categoria.valor)}`, 10, y);
+        y += 7;
+    });
+
+    const totalGeneralCalculado = categorias.reduce((acc, categoria) => acc + categoria.valor, 0);
+    verificarEspacioYAgregarPaginaSiNecesario(10); // Espacio para el total final
+    pdf.text(`Total: $${formatearNumero(totalGeneralCalculado)}`, 10, y);
 
     pdf.save("factura.pdf");
-  };
+};
 
   // const totalPages = Math.ceil(datosFiltrados.length / displayLimit + 1);
   // const start = (currentPage - 1) * displayLimit;

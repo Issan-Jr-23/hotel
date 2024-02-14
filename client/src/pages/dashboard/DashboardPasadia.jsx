@@ -136,12 +136,9 @@ const dashboardPasadia = () => {
       </div>
       <div className=' flex mt-10 cont-table-apexg '>
         <div className='box-table'>
-          <Mc />
+          <Mc/>
         </div>
 
-        {/* <div className='box-apex'>
- 
-</div> */}
       </div>
       <ApexSpline />
       <div className='box-table-ventas flex'>

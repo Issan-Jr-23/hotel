@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from "react"
 import { useAuth } from "../../context/authContext.jsx";
 import { useNavigate, useLocation } from "react-router-dom";
 import fd from "../../images/flechas-dobles.png"
+import jsPDF from "jspdf";
 import { Table } from "@mui/material"
 import AxiosInstance from "../../api/axios.js"
 import { Pagination, Modal, Box, Typography } from "@mui/material"
@@ -18,6 +19,10 @@ import { PlusIcon } from "../finca/PlusIcon.jsx";
 import { SearchIcon } from "../tablePasadia/SearchIcon.jsx";
 import stats from "../../images/stats.svg"
 import toast, { Toaster } from 'react-hot-toast';
+import Swal from 'sweetalert2';
+import logo from "../../images/logo.png"
+import wave from "../../images/wave.png"
+import svg from "../../images/svg.png"
 import "./pasadiaTable.css"
 // import { CDropdown, CDropdownItem,CDropdownMenu,CDropdownToggle } from '@coreui/react';
 import Dropdown from 'react-bootstrap/Dropdown';
@@ -1700,7 +1705,6 @@ export default function review() {
         setFormDatas({ ...formDatas, [name]: value });
     };
 
-
     const actualizarDatosCliente = async (data1, data2, estado, userId) => {
         try {
             await handleStatus(estado, userId)
@@ -1806,104 +1810,147 @@ export default function review() {
     let fecha = new Date();
     fecha.setHours(fecha.getHours());
     const fechaAjustada = fecha.toLocaleString();
-    const generarPDF = async () => {
-        const pdf = new jsPDF();
 
-        await actualizarFechaEnProductos(selectedUser._id);
 
+const generarPDF = async () => {
+    const pdf = new jsPDF();
+
+    await actualizarFechaEnProductos(selectedUser._id);
+
+    // Función para añadir el diseño base al PDF
+    const agregarDisenoBase = async () => {
         try {
             const svgBase64 = await toBase64(svg);
             pdf.addImage(svgBase64, 'JPEG', 0, 0, 220, 80);
         } catch (error) {
-            console.error("Error al cargar la imagen", error);
+            console.error("Error al cargar la imagen SVG", error);
         }
 
         try {
             const waveBase64 = await toBase64(wave);
             pdf.addImage(waveBase64, 'JPEG', 0, 240, 220, 80);
         } catch (error) {
-            console.error("Error al cargar la imagen", error);
+            console.error("Error al cargar la imagen Wave", error);
         }
 
         try {
             const logoBase64 = await toBase64(logo);
             pdf.addImage(logoBase64, 'JPEG', 85, 25, 40, 40);
         } catch (error) {
-            console.error("Error al cargar la imagen", error);
+            console.error("Error al cargar el logo", error);
         }
 
+        // Configuración inicial del PDF reutilizable
         pdf.setFont("helvetica", "bold");
         pdf.setFontSize(20);
         pdf.setTextColor("#FFFFFF");
         pdf.text("HOTEL MEQO", 105, 20, null, null, 'center');
 
+        // Resto de elementos comunes...
         pdf.setTextColor(0, 0, 0);
         pdf.setFontSize(12);
         pdf.text('Datos de la empresa', 157, 54);
-
         pdf.setFontSize(10);
-        pdf.text('Nombre: Hotel Meqo', 164, 63)
-        pdf.text('Numero: 3152390814', 164, 70)
-
+        pdf.text('Nombre: Hotel Meqo', 164, 63);
+        pdf.text('Numero: 3152390814', 164, 70);
         pdf.setFontSize(12);
         pdf.text('Datos del cliente', 10, 54);
         pdf.setFontSize(10);
         pdf.text(`Nombre: ${selectedUser.nombre}`, 10, 63);
         pdf.text(`Identificación: ${selectedUser.identificacion}`, 10, 70);
-
-        // Encabezados de la tabla de productos
-        pdf.setFontSize(12);
-        pdf.text("Descripción", 10, 80);
-        pdf.text("Cantidad", 80, 80);
-        pdf.text("Precio", 150, 80);
-        pdf.text("Total", 180, 80); // Added column header for total
-        pdf.line(10, 82, 200, 82);
-
-        // Lista de productos
-        let y = 90;
-        const cincoHorasEnMilisegundos = 3 * 60 * 60 * 1000;
-        const productos = [...selectedUser.bebidas, ...selectedUser.restaurante];
-
-        const ahora = new Date();
-        const totalGeneral = productos.filter(producto => {
-            const fechaDeMarca = new Date(producto.fechaDeMarca);
-            const diferenciaEnHoras = (ahora - fechaDeMarca) / cincoHorasEnMilisegundos;
-            return producto.fechaDeMarca === "" || diferenciaEnHoras <= 3;
-        }).reduce((acc, producto) => acc + (producto.cantidad * producto.precio), 0);
-
-        // Lógica para dividir en múltiples páginas
-        const agregarProductoEnPagina = (producto) => {
-            const fechaDeMarca = new Date(producto.fechaDeMarca);
-            const diferenciaEnHoras = (ahora - fechaDeMarca) / cincoHorasEnMilisegundos;
-
-            if (producto.fechaDeMarca === "" || diferenciaEnHoras <= 3) {
-                const productoTotal = producto.cantidad * producto.precio;
-                pdf.text(producto.nombre, 10, y);
-                pdf.text(producto.cantidad.toString(), 88, y);
-                pdf.text(`$${producto.precio.toFixed(2)}`, 150, y);
-                pdf.text(`$${productoTotal.toFixed(2)}`, 180, y);
-
-                // Actualizar posición Y
-                y += 10;
-
-                // Verificar si hay espacio suficiente para otro producto en la página actual
-                if (y > 282) { // 297 - Margen inferior
-                    // Cambiar a una nueva página
-                    pdf.addPage();
-                    y = 10; // Reiniciar la posición Y 
-                }
-            }
-        };
-
-        // Iterar sobre los productos
-        productos.forEach(agregarProductoEnPagina);
-
-        // Mostrar el total general en la última página
-        pdf.setFontSize(12);
-        pdf.text(`Total General: ${totalGeneral.toFixed(2)}`, 150, y);
-
-        pdf.save("factura.pdf");
     };
+
+    // Función para verificar el espacio y añadir nueva página si es necesario
+    const verificarEspacioYAgregarPaginaSiNecesario = async (espacioNecesario, reiniciarPosY = 20) => {
+        if (y + espacioNecesario > 272) {
+            pdf.addPage();
+            y = reiniciarPosY; // Reiniciar la posición Y en la nueva página
+            await agregarDisenoBase(); // Reconfigurar el diseño para la nueva página
+        }
+    };
+
+    // Función para formatear números con separador de miles y dos decimales
+    const formatearNumero = (numero) => {
+        return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(numero);
+    };
+
+    let y = 90; // Iniciar Y después de las imágenes y el título
+
+    await agregarDisenoBase(); // Aplicar diseño base a la primera página
+
+    // Encabezados de la tabla de productos
+    pdf.setFontSize(12);
+    pdf.text("Descripción", 10, y);
+    pdf.text("Cantidad", 80, y);
+    pdf.text("Precio", 150, y);
+    pdf.text("Total", 180, y);
+    pdf.line(10, y + 2, 200, y + 2);
+    y += 12; // Ajustar Y después de los encabezados
+
+    // Preparación de la lista de productos
+    const productos = [...selectedUser.bebidas, ...selectedUser.restaurante, ...selectedUser.descorche, ...selectedUser.recepcion];
+
+    // Iterar sobre los productos y agregarlos al PDF
+    productos.forEach(producto => {
+        verificarEspacioYAgregarPaginaSiNecesario(10); // Espacio por producto
+        pdf.text(producto.nombre, 10, y);
+        pdf.text(producto.cantidad.toString(), 88, y);
+
+        const precioFormateado = `$${formatearNumero(producto.precio)}`;
+        pdf.text(precioFormateado, 150, y);
+
+        const productoTotal = producto.cantidad * producto.precio;
+        const productoTotalFormateado = `$${formatearNumero(productoTotal)}`;
+        pdf.text(productoTotalFormateado, 180, y);
+
+        y += 10; // Actualizar posición Y para el próximo producto
+    });
+
+    // Total General antes de añadir los desgloses
+    const totalGeneral = productos.reduce((acc, producto) => acc + (producto.cantidad * producto.precio), 0);
+    const totalGeneralFormateado = formatearNumero(totalGeneral);
+
+    verificarEspacioYAgregarPaginaSiNecesario(40); // Asegurarse de tener espacio para los totales
+
+    // Texto del Total General y líneas
+    pdf.setFontSize(12);
+    pdf.text(`Total General: $${totalGeneralFormateado}`, 150, y);
+    y += 10; // Ajustar Y para la línea después del Total General
+    pdf.line(10, y, 200, y);
+    y += 5; // Ajustar Y para los siguientes elementos
+
+    // Aplicar formato y añadir texto al PDF para cada categoría
+    const categorias = [
+        { etiqueta: 'Pago Anticipado', valor: selectedUser.pagoAnticipado || 0 },
+        { etiqueta: 'Pago Posterior', valor: selectedUser.pagoPendiente || 0 },
+        // Asumiendo que barTotal, resTotal, recTotal, y desTotal están definidos en algún lugar de tu código
+        { etiqueta: 'Bar', valor: barTotal || 0 },
+        { etiqueta: 'Restaurante', valor: resTotal || 0 },
+        { etiqueta: 'Recepcion', valor: recTotal || 0 },
+        { etiqueta: 'Descorche', valor: desTotal || 0 }
+    ];
+
+    categorias.forEach(categoria => {
+        verificarEspacioYAgregarPaginaSiNecesario(7); // Asegurarse de tener espacio para cada categoría
+        pdf.text(`${categoria.etiqueta}: $${formatearNumero(categoria.valor)}`, 10, y);
+        y += 7;
+    });
+
+    const totalGeneralCalculado = categorias.reduce((acc, categoria) => acc + categoria.valor, 0);
+    verificarEspacioYAgregarPaginaSiNecesario(10); // Espacio para el total final
+    pdf.text(`Total: $${formatearNumero(totalGeneralCalculado)}`, 10, y);
+
+    pdf.save("factura.pdf");
+};
+
+
+// Ejemplo de llamada a generarPDF, asegúrate de definir o tener disponibles to
+
+
+
+
+
+
 
 
 
@@ -2765,174 +2812,7 @@ export default function review() {
                         {users.map((cliente) => (
                             <tr key={cliente._id} className="">
                                 <td className="text-left html-table-tbody ">
-                                    {selectedUser && (
-                                        <Modal open={openTd} onClose={handleCloseTd} className=""
-                                            BackdropProps={{
-                                                style: { backgroundColor: 'rgba(0, 0, 0, 0.3)' }
-                                            }}
-                                        >
-                                            <Box sx={styleAdd} style={{
-                                                maxHeight: "90vh",
-                                                minHeight: "min-content",
-                                                overflowY: "auto"
-                                            }} >
-                                                <Typography component="div" className="border-b-3 border-blue-500 text-3xl flex  justify-between">
-                                                    <div className="mb-0.5 text-2xl">History</div>
-                                                    <div className="uppercase text-lg"> {selectedUser.nombre} - {selectedUser.identificacion}</div>
-                                                </Typography>
-                                                <Typography component="div" className="uppercase flex">
-                                                    <div className="flex w-full">
-                                                        <section className="flex justify-between w-full flex-wrap">
 
-                                                            <div className="mx-5 my-1  w-full">
-                                                                <h4 className="text-green-600">Productos (Bebidas y Comidas)</h4>
-
-                                                                {/* Combina ambos arrays (bebidas y comidas) y verifica si tiene elementos */}
-                                                                {selectedUser.bebidas && selectedUser.restaurante &&
-                                                                    Array.isArray(selectedUser.bebidas) && Array.isArray(selectedUser.restaurante) && Array.isArray(selectedUser.descorche) && Array.isArray(selectedUser.recepcion) &&
-                                                                    [...selectedUser.bebidas, ...selectedUser.restaurante, ...selectedUser.descorche, ...selectedUser.recepcion].length > 0 ? (
-                                                                    <table className="w-full text-center">
-                                                                        <thead>
-                                                                            <tr>
-                                                                                <th className=" text-left">Nombre</th>
-                                                                                <th style={{ width: "100px" }}>Cantidad</th>
-                                                                                <th>mensaje</th>
-                                                                                <th>Precio Unitario</th>
-                                                                                <th>Total</th>
-                                                                            </tr>
-                                                                        </thead>
-                                                                        <tbody>
-                                                                            {[...selectedUser.bebidas, ...selectedUser.restaurante, ...selectedUser.descorche, ...selectedUser.recepcion].map((producto, index) => (
-                                                                                <tr key={index}>
-                                                                                    <td className="text-left" style={{ width: "280px" }}>{producto.nombre}</td>
-                                                                                    <td>{producto.cantidad}</td>
-                                                                                    <td>{producto.adicional}</td>
-                                                                                    <td style={{ width: "280px" }} >{producto.precio}</td>
-                                                                                    <td>{producto.cantidad * producto.precio}</td>
-                                                                                </tr>
-                                                                            ))}
-                                                                        </tbody>
-                                                                        <tfoot className="border-t-3 border-green-500 pt-2">
-                                                                            <tr>
-                                                                                <td className="text-left"></td>
-                                                                                <td></td>
-                                                                                <td></td>
-                                                                                <td></td>
-                                                                                <td style={{ height: "60px", paddingRight: "20px", width: "150px" }} className="text-right">Total: {
-                                                                                    [...selectedUser.bebidas, ...selectedUser.restaurante, ...selectedUser.recepcion, ...selectedUser.descorche].reduce((acc, producto) =>
-                                                                                        acc + (producto.cantidad * producto.precio), 0
-                                                                                    )
-                                                                                }</td>
-                                                                            </tr>
-                                                                        </tfoot>
-                                                                    </table>
-                                                                ) : (
-                                                                    <p className=" w-full text-center">No hay productos que mostrar😔</p>
-                                                                )}
-                                                            </div>
-
-                                                        </section>
-                                                    </div>
-                                                </Typography>
-                                                <div className="flex flex-col">
-                                                    <hr className="bg-gray-400 mb-2 mt-2" style={{ height: "4px" }} />
-                                                    {selectedUser.reserva === "Si" ? (
-                                                        <div>
-                                                            <span className=" flex w-full  pr-20">Pago pendiente {selectedUser.nuevoTotal || 0}</span>
-                                                            <span className=" flex w-full  pr-20">Pago adelantado:<span className="text-red-500"> {selectedUser.pagoAnticipado || 0}</span></span>
-                                                            <span className=" flex w-full  pr-20">Pago posterior: {selectedUser.pagoPendiente || 0}</span>
-                                                            <span className=" flex w-full  pr-20">Bar: {barTotal || 0}</span>
-                                                            <span className=" flex w-full  pr-20">Adicional: {recTotal || 0}</span>
-                                                            <span className=" flex w-full  pr-20">Descorche: {desTotal || 0}</span>
-                                                            <span className=" flex w-full  pr-20">Restaurante: {resTotal || 0}</span>
-                                                            <hr className="bg-gray-400 mt-2 flex justify-between" style={{ height: "3px" }} />
-                                                            <span className=" flex w-full mt-2  pr-20">Tatal a pagar:
-                                                                {(
-                                                                    barTotal +
-                                                                    resTotal +
-                                                                    recTotal +
-                                                                    desTotal +
-                                                                    selectedUser.pagoPendiente +
-                                                                    selectedUser.nuevoTotal +
-                                                                    selectedUser.pagoAnticipado
-                                                                ) - (selectedUser.pagoAnticipado)}</span>
-                                                            <hr className="bg-gray-400 mt-2 mb-5" style={{ height: "3px" }} />
-                                                            <span>Cancelado: {selectedUser.pago}</span>
-
-                                                        </div>
-                                                    ) : (
-                                                        <div>
-                                                            <span className=" flex w-full  pr-20">Pago pendiente cabania {selectedUser.tipo_cabania}: {selectedUser.nuevoTotal || 0}</span>
-                                                            <span className=" flex w-full  pr-20">Pago adelantado:<span className="text-red-500"> {selectedUser.pagoAnticipado || 0}</span></span>
-                                                            <span className=" flex w-full  pr-20">Pago posterior: {selectedUser.pagoPendiente || 0}</span>
-                                                            <span className=" flex w-full  pr-20">Bar: {barTotal || 0}</span>
-                                                            <span className=" flex w-full  pr-20">Adicional: {recTotal || 0}</span>
-                                                            <span className=" flex w-full  pr-20">Descorche: {desTotal || 0}</span>
-                                                            <span className=" flex w-full  pr-20">Restaurante: {resTotal || 0}</span>
-                                                            <span className=" flex w-full  pr-20 mt-2">Tatal a pagar: {(
-                                                                barTotal +
-                                                                resTotal +
-                                                                recTotal +
-                                                                desTotal +
-                                                                selectedUser.pagoAnticipado +
-                                                                selectedUser.pagoPendiente +
-                                                                selectedUser.nuevoTotal)} </span>
-                                                            <hr className="bg-gray-400 mt-2 mb-5" style={{ height: "3px" }} />
-                                                            <td className="">Cancelado: {selectedUser.pago || 0}</td>
-                                                        </div>
-                                                    )}
-
-                                                </div>
-
-                                                <div className="flex justify-between mt-5">
-                                                    <Typography component="div" >
-                                                        <Button color="primary" onClick={() => {
-                                                            Swal.fire({
-                                                                title: '¿Estás seguro?',
-                                                                text: "¿Quieres guardar esto como PDF?",
-                                                                icon: 'warning',
-                                                                showCancelButton: true,
-                                                                confirmButtonColor: '#3085d6',
-                                                                cancelButtonColor: '#d33',
-                                                                confirmButtonText: 'Sí, guardar',
-                                                                cancelButtonText: 'No, cancelar'
-                                                            }).then((result) => {
-                                                                if (result.isConfirmed) {
-                                                                    generarPDF(selectedUser._id);
-                                                                    // Muestra un nuevo SweetAlert con el chulito de confirmación
-                                                                    Swal.fire({
-                                                                        title: '¡Guardado!',
-                                                                        text: 'El archivo PDF ha sido guardado exitosamente.',
-                                                                        icon: 'success',
-                                                                        confirmButtonColor: '#3085d6',
-                                                                        confirmButtonText: 'Ok'
-                                                                    });
-                                                                }
-                                                            })
-                                                        }}>
-                                                            Guardar como PDF
-                                                        </Button>
-                                                        <Button className="ml-2" color="danger" variant="shadow" onClick={closeModal}>
-                                                            Cerrar
-                                                        </Button>
-                                                    </Typography>
-
-                                                    <Typography component="div">
-                                                        {/* {selectedUser.nuevoTotal > 0 && selectedUser.pago <= 0 ? ( */}
-                                                        <Button color="secondary" variant="shadow" onClick={() => actualizarDatosCliente(selectedUser.nuevoTotal, selectedUser.identificacion, "finalizado", selectedUser._id)}>
-                                                            Guardar
-                                                        </Button>
-                                                        {/* ) : (
-                                                             <Button color="secondary" variant="shadow" >
-                                                                 Inhabilitado
-                                                             </Button>
-                                                         )} */}
-                                                    </Typography>
-
-                                                </div>
-                                            </Box>
-                                        </Modal>
-                                    )}
                                 </td>
                                 <td className=" html-table-tbody border-r-2 pr-3 border-blue-500 text-center">
                                     <Popover placement="top">
@@ -4214,6 +4094,174 @@ export default function review() {
                     </tbody>
                 </Table>
             </section>
+            {selectedUser && (
+                <Modal open={openTd} onClose={handleCloseTd} className=""
+                    BackdropProps={{
+                        style: { backgroundColor: 'rgba(0, 0, 0, 0.3)' }
+                    }}
+                >
+                    <Box sx={styleAdd} style={{
+                        maxHeight: "90vh",
+                        minHeight: "min-content",
+                        overflowY: "auto"
+                    }} >
+                        <Typography component="div" className="border-b-3 border-blue-500 text-3xl flex  justify-between">
+                            <div className="mb-0.5 text-2xl">History</div>
+                            <div className="uppercase text-lg"> {selectedUser.nombre} - {selectedUser.identificacion}</div>
+                        </Typography>
+                        <Typography component="div" className="uppercase flex">
+                            <div className="flex w-full">
+                                <section className="flex justify-between w-full flex-wrap">
+
+                                    <div className="mx-5 my-1  w-full">
+                                        <h4 className="text-green-600">Productos (Bebidas y Comidas)</h4>
+
+                                        {/* Combina ambos arrays (bebidas y comidas) y verifica si tiene elementos */}
+                                        {selectedUser.bebidas && selectedUser.restaurante &&
+                                            Array.isArray(selectedUser.bebidas) && Array.isArray(selectedUser.restaurante) && Array.isArray(selectedUser.descorche) && Array.isArray(selectedUser.recepcion) &&
+                                            [...selectedUser.bebidas, ...selectedUser.restaurante, ...selectedUser.descorche, ...selectedUser.recepcion].length > 0 ? (
+                                            <table className="w-full text-center">
+                                                <thead>
+                                                    <tr>
+                                                        <th className=" text-left">Nombre</th>
+                                                        <th style={{ width: "100px" }}>Cantidad</th>
+                                                        <th>mensaje</th>
+                                                        <th>Precio Unitario</th>
+                                                        <th>Total</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {[...selectedUser.bebidas, ...selectedUser.restaurante, ...selectedUser.descorche, ...selectedUser.recepcion].map((producto, index) => (
+                                                        <tr key={index}>
+                                                            <td className="text-left" style={{ width: "280px" }}>{producto.nombre}</td>
+                                                            <td>{producto.cantidad}</td>
+                                                            <td>{producto.adicional}</td>
+                                                            <td style={{ width: "280px" }} >{producto.precio}</td>
+                                                            <td>{producto.cantidad * producto.precio}</td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                                <tfoot className="border-t-3 border-green-500 pt-2">
+                                                    <tr>
+                                                        <td className="text-left"></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td style={{ height: "60px", paddingRight: "20px", width: "150px" }} className="text-right">Total: {
+                                                            [...selectedUser.bebidas, ...selectedUser.restaurante, ...selectedUser.recepcion, ...selectedUser.descorche].reduce((acc, producto) =>
+                                                                acc + (producto.cantidad * producto.precio), 0
+                                                            )
+                                                        }</td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        ) : (
+                                            <p className=" w-full text-center">No hay productos que mostrar😔</p>
+                                        )}
+                                    </div>
+
+                                </section>
+                            </div>
+                        </Typography>
+                        <div className="flex flex-col">
+                            <hr className="bg-gray-400 mb-2 mt-2" style={{ height: "4px" }} />
+                            {selectedUser.reserva === "Si" ? (
+                                <div>
+                                    <span className=" flex w-full  pr-20">Pago pendiente {selectedUser.nuevoTotal || 0}</span>
+                                    <span className=" flex w-full  pr-20">Pago adelantado:<span className="text-red-500"> {selectedUser.pagoAnticipado || 0}</span></span>
+                                    <span className=" flex w-full  pr-20">Pago posterior: {selectedUser.pagoPendiente || 0}</span>
+                                    <span className=" flex w-full  pr-20">Bar: {barTotal || 0}</span>
+                                    <span className=" flex w-full  pr-20">Adicional: {recTotal || 0}</span>
+                                    <span className=" flex w-full  pr-20">Descorche: {desTotal || 0}</span>
+                                    <span className=" flex w-full  pr-20">Restaurante: {resTotal || 0}</span>
+                                    <hr className="bg-gray-400 mt-2 flex justify-between" style={{ height: "3px" }} />
+                                    <span className=" flex w-full mt-2  pr-20">Tatal a pagar:
+                                        {(
+                                            barTotal +
+                                            resTotal +
+                                            recTotal +
+                                            desTotal +
+                                            selectedUser.pagoPendiente +
+                                            selectedUser.nuevoTotal +
+                                            selectedUser.pagoAnticipado
+                                        ) - (selectedUser.pagoAnticipado)}</span>
+                                    <hr className="bg-gray-400 mt-2 mb-5" style={{ height: "3px" }} />
+                                    <span>Cancelado: {selectedUser.pago}</span>
+
+                                </div>
+                            ) : (
+                                <div>
+                                    <span className=" flex w-full  pr-20">Pago pendiente cabania {selectedUser.tipo_cabania}: {selectedUser.nuevoTotal || 0}</span>
+                                    <span className=" flex w-full  pr-20">Pago adelantado:<span className="text-red-500"> {selectedUser.pagoAnticipado || 0}</span></span>
+                                    <span className=" flex w-full  pr-20">Pago posterior: {selectedUser.pagoPendiente || 0}</span>
+                                    <span className=" flex w-full  pr-20">Bar: {barTotal || 0}</span>
+                                    <span className=" flex w-full  pr-20">Adicional: {recTotal || 0}</span>
+                                    <span className=" flex w-full  pr-20">Descorche: {desTotal || 0}</span>
+                                    <span className=" flex w-full  pr-20">Restaurante: {resTotal || 0}</span>
+                                    <span className=" flex w-full  pr-20 mt-2">Tatal a pagar: {(
+                                        barTotal +
+                                        resTotal +
+                                        recTotal +
+                                        desTotal +
+                                        selectedUser.pagoAnticipado +
+                                        selectedUser.pagoPendiente +
+                                        selectedUser.nuevoTotal)} </span>
+                                    <hr className="bg-gray-400 mt-2 mb-5" style={{ height: "3px" }} />
+                                    <td className="">Cancelado: {selectedUser.pago || 0}</td>
+                                </div>
+                            )}
+
+                        </div>
+
+                        <div className="flex justify-between mt-5">
+                            <Typography component="div" >
+                                <Button color="primary" onClick={() => {
+                                    Swal.fire({
+                                        title: '¿Estás seguro?',
+                                        text: "¿Quieres guardar esto como PDF?",
+                                        icon: 'warning',
+                                        showCancelButton: true,
+                                        confirmButtonColor: '#3085d6',
+                                        cancelButtonColor: '#d33',
+                                        confirmButtonText: 'Sí, guardar',
+                                        cancelButtonText: 'No, cancelar'
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            generarPDF(selectedUser._id);
+                                            // Muestra un nuevo SweetAlert con el chulito de confirmación
+                                            Swal.fire({
+                                                title: '¡Guardado!',
+                                                text: 'El archivo PDF ha sido guardado exitosamente.',
+                                                icon: 'success',
+                                                confirmButtonColor: '#3085d6',
+                                                confirmButtonText: 'Ok'
+                                            });
+                                        }
+                                    })
+                                }}>
+                                    Guardar como PDF
+                                </Button>
+                                <Button className="ml-2" color="danger" variant="shadow" onClick={closeModal}>
+                                    Cerrar
+                                </Button>
+                            </Typography>
+
+                            <Typography component="div">
+                                {/* {selectedUser.nuevoTotal > 0 && selectedUser.pago <= 0 ? ( */}
+                                <Button color="secondary" variant="shadow" onClick={() => actualizarDatosCliente(selectedUser.nuevoTotal, selectedUser.identificacion, "finalizado", selectedUser._id)}>
+                                    Guardar
+                                </Button>
+                                {/* ) : (
+                                                             <Button color="secondary" variant="shadow" >
+                                                                 Inhabilitado
+                                                             </Button>
+                                                         )} */}
+                            </Typography>
+
+                        </div>
+                    </Box>
+                </Modal>
+            )}
         </div>
     )
 }
