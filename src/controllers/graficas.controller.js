@@ -11,53 +11,48 @@ import Cliente from "../models/client.model.js";
   
 
   
-  export const usuariosQueMasCompraron = async (req, res) => {
+export const usuariosQueMasCompraron = async (req, res) => {
     try {
         const clientes = await Cliente.find({});
         const cabanias = await Cabania.find({});
         const habitaciones = await Habitaciones.find({});
+        const historiales = await Usuario.find({});
 
         let resultadosCombinados = {};
 
+        // Función para calcular el valor total de un cliente, cabaña o habitación
+        const calcularValorTotal = (objeto) => {
+            let valorTotal = objeto.bebidas?.reduce((acc, bebida) => acc + bebida.cantidad * bebida.precio, 0) || 0;
+            valorTotal += objeto.restaurante?.reduce((acc, item) => acc + item.cantidad * item.precio, 0) || 0;
+            valorTotal += objeto.descorche?.reduce((acc, item) => acc + item.cantidad * item.precio, 0) || 0;
+            valorTotal += objeto.recepcion?.reduce((acc, item) => acc + item.cantidad * item.precio, 0) || 0;
+            return valorTotal;
+        };
+
+        // Procesar clientes
         clientes.forEach(cliente => {
-            let valorTotal = cliente.bebidas?.reduce((acc, bebida) => acc + bebida.cantidad * bebida.precio, 0) || 0;
-            valorTotal += cliente.restaurante?.reduce((acc, item) => acc + item.cantidad * item.precio, 0) || 0;
-
-            resultadosCombinados[cliente.identificacion] = {
-                identificacion: cliente.identificacion,
-                nombre: cliente.nombre,
-                valorTotal: valorTotal
-            };
+            let valorTotal = calcularValorTotal(cliente);
+            agregarResultado(resultadosCombinados, cliente.identificacion, cliente.nombre, valorTotal);
         });
 
+        // Procesar cabañas
         cabanias.forEach(cabania => {
-            let valorTotal = cabania.bebidas?.reduce((acc, item) => acc + item.cantidad * item.precio, 0) || 0;
-            valorTotal += cabania.restaurante?.reduce((acc, item) => acc + item.cantidad * item.precio, 0) || 0;
-
-            if (resultadosCombinados[cabania.identificacion]) {
-                resultadosCombinados[cabania.identificacion].valorTotal += valorTotal;
-            } else {
-                resultadosCombinados[cabania.identificacion] = {
-                    identificacion: cabania.identificacion,
-                    nombre: cabania.nombre,
-                    valorTotal: valorTotal
-                };
-            }
+            let valorTotal = calcularValorTotal(cabania);
+            agregarResultado(resultadosCombinados, cabania.identificacion, cabania.nombre, valorTotal);
         });
 
+        // Procesar habitaciones
         habitaciones.forEach(habitacion => {
-            let valorTotal = habitacion.bebidas?.reduce((acc, item) => acc + item.cantidad * item.precio, 0) || 0;
-            valorTotal += habitacion.restaurante?.reduce((acc, item) => acc + item.cantidad * item.precio, 0) || 0;
+            let valorTotal = calcularValorTotal(habitacion);
+            agregarResultado(resultadosCombinados, habitacion.identificacion, habitacion.nombre, valorTotal);
+        });
 
-            if (resultadosCombinados[habitacion.identificacion]) {
-                resultadosCombinados[habitacion.identificacion].valorTotal += valorTotal;
-            } else {
-                resultadosCombinados[habitacion.identificacion] = {
-                    identificacion: habitacion.identificacion,
-                    nombre: habitacion.nombre,
-                    valorTotal: valorTotal
-                };
-            }
+        // Procesar historiales
+        historiales.forEach(historial => {
+            historial.historial.forEach(item => {
+                let valorTotal = calcularValorTotalHistorial(item);
+                agregarResultado(resultadosCombinados, historial.identificacion, item.nombre, valorTotal);
+            });
         });
 
         const resultadosArray = Object.values(resultadosCombinados);
@@ -68,6 +63,29 @@ import Cliente from "../models/client.model.js";
         res.status(500).send('Error en el servidor');
     }
 };
+
+// Función para calcular el valor total de un historial
+const calcularValorTotalHistorial = (historial) => {
+    let valorTotal = historial.bebidas?.reduce((acc, bebida) => acc + bebida.cantidad * bebida.precio, 0) || 0;
+    valorTotal += historial.restaurante?.reduce((acc, item) => acc + item.cantidad * item.precio, 0) || 0;
+    valorTotal += historial.recepcion?.reduce((acc, item) => acc + item.cantidad * item.precio, 0) || 0;
+    valorTotal += historial.descorche?.reduce((acc, item) => acc + item.cantidad * item.precio, 0) || 0;
+    return valorTotal;
+};
+
+// Función para agregar el resultado al objeto resultadosCombinados
+const agregarResultado = (resultadosCombinados, identificacion, nombre, valorTotal) => {
+    if (resultadosCombinados[identificacion]) {
+        resultadosCombinados[identificacion].valorTotal += valorTotal;
+    } else {
+        resultadosCombinados[identificacion] = {
+            identificacion: identificacion,
+            nombre: nombre,
+            valorTotal: valorTotal
+        };
+    }
+};
+
 
 export const obtenerTotal = async (req, res) => {
   try {
@@ -1603,31 +1621,33 @@ export const obtainClientsAndUsers = async (req, res) => {
     });
 
     const userData = users.flatMap(usuario => 
-  usuario.historial
-    .filter(registro => registro.servicio === 'pasadia')
-    .map(registro => {
-      const totalBebidas = calcularTotal(registro.bebidas || []);
-      const totalRestaurante = calcularTotal(registro.restaurante || []);
-      const totalDescorche = calcularTotal(registro.descorche || []);
-      const totalRecepcion = calcularTotal(registro.recepcion || []);
+      usuario.historial
+        .filter(registro => registro.servicio === 'pasadia')
+        .map(registro => {
+          const totalBebidas = calcularTotal(registro.bebidas || []);
+          const totalRestaurante = calcularTotal(registro.restaurante || []);
+          const totalDescorche = calcularTotal(registro.descorche || []);
+          const totalRecepcion = calcularTotal(registro.recepcion || []);
 
-      return {
-        identificacion: usuario.identificacion,
-        nombre: registro.nombre || 'Nombre no disponible',
-        totalBebidas,
-        totalRestaurante,
-        totalDescorche,
-        totalRecepcion,
-        fechaActivacion: registro.fechaActivacion,
-        totalPago: (registro.pago || 0) + (registro.pagoPendiente || 0)
-      };
-    })
-);
+          return {
+            identificacion: usuario.identificacion,
+            nombre: registro.nombre || 'Nombre no disponible',
+            totalBebidas,
+            totalRestaurante,
+            totalDescorche,
+            totalRecepcion,
+            fechaActivacion: registro.fechaActivacion,
+            totalPago: (registro.pago || 0) + (registro.pagoPendiente || 0)
+          };
+        })
+    );
 
 
     const allData = [...clientData, ...userData].sort((a, b) => new Date(b.fechaActivacion) - new Date(a.fechaActivacion));
-
     
+    // Sumar los totales de pago de todos los clientes y usuarios
+    const totalPagado = allData.reduce((total, item) => total + item.totalPago, 0);
+
     const startIndex = (page - 1) * pageSize;
     const paginatedData = allData.slice(startIndex, startIndex + pageSize);
 
@@ -1635,13 +1655,15 @@ export const obtainClientsAndUsers = async (req, res) => {
       data: paginatedData,
       page,
       pageSize,
-      totalCount: allData.length
+      totalCount: allData.length,
+      totalPagado
     });
   } catch (error) {
     console.error(error);
     res.status(500).send("Error al obtener los clientes y usuarios desde la base de datos");
   }
 };
+
 
 
 export const obtainClientsAndUsersCabania = async (req, res) => {

@@ -57,7 +57,8 @@
 }
 
 .ostias {
-  backdrop-filter: blur(45px) saturate(40%) brightness(380%);
+  /* backdrop-filter: blur(45px) saturate(40%) brightness(380%); */
+  background-color: #ffffff;
 }
 
 .informacion-adicional {

@@ -708,9 +708,10 @@ export default function CollapsibleTable() {
 
     const [rows, setRows] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
-    const [selectedType, setSelectedType] = useState("");
     const [backdrop, setBackdrop] = useState("blur");
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const [selectedType, setSelectedType] = useState('');
+    const [filteredProducts, setFilteredProducts] = useState([]);
     const [openFz, setOpenFz] = React.useState(false);
     const handleCloseFz = () => setOpenFz(false);
     const [formData, setFormData] = useState({
@@ -733,7 +734,7 @@ export default function CollapsibleTable() {
         ],
     });
 
-    const fetchProducts = async () => {
+   const fetchProducts = async () => {
         try {
             const productsResponse = await AxiosInstance.get('/obtener-inventario');
             const productsData = productsResponse.data;
@@ -770,6 +771,7 @@ export default function CollapsibleTable() {
             );
 
             setRows(updatedRows);
+            setFilteredProducts(updatedRows); // Aplicar filtros a todos los registros
         } catch (error) {
             console.error('Error fetching data:', error);
         }
@@ -863,8 +865,47 @@ export default function CollapsibleTable() {
         borderRadius: 5
     };
 
+    useEffect(() => {
+        // Filtrar los productos según el tipo seleccionado
+        if (selectedType === '') {
+            setFilteredProducts(rows);
+        } else {
+            setFilteredProducts(rows.filter(producto => producto.tipo === selectedType));
+        }
+    }, [selectedType]);
+
+
+     const applyFilters = (products) => {
+        let filtered = [...products];
+
+        if (selectedType !== '') {
+            filtered = filtered.filter(producto => producto.tipo === selectedType);
+        }
+
+        if (searchTerm.trim() !== '') {
+            filtered = filtered.filter(producto =>
+                producto.Descripcion.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+        }
+
+        setFilteredProducts(filtered);
+    };
+
+    const handleSearchTermChange = (event) => {
+        setSearchTerm(event.target.value);
+    };
+
+    const handleTypeChange = (event) => {
+        setSelectedType(event.target.value);
+    };
+
+    useEffect(() => {
+        applyFilters(rows);
+    }, [selectedType, searchTerm])
+
+
     return (
-        <div className='pl-5 pr-5 mt-10 border-2 border-red-500 flex flex-col'>
+        <div className='pl-5 pr-5 mt-10 flex flex-col'>
             <div>
                 <>
                     <div className=" flex justify-between w-12/12 gap-3 flex-col">
@@ -874,7 +915,7 @@ export default function CollapsibleTable() {
                                 <Input
                                     label="Search"
                                     value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    onChange={handleSearchTermChange}
                                     isClearable
                                     radius="lg"
                                     className="w-72 h-12"
@@ -907,13 +948,13 @@ export default function CollapsibleTable() {
                             </div>
 
                             <div className="btns flex ">
-                                <Button className="bg-blue-500 w-28 text-white" onClick={() => exportToExcel(filteredProducts)}>
+                                <Button className="w-28 mr-5" onClick={() => exportToExcel(filteredProducts)} style={{backgroundColor:"#0070f0", color:"white", marginRight:"20px"}}>
                                     Exportar
                                 </Button>
                                 <Button
                                     variant="flat"
                                     onClick={() => handleOpemModalMui()}
-                                    className="capitalize ml-5 text-white bg-black"
+                                    className=" ml-5 text-white bg-black" style={{backgroundColor:"#18c964", color:"white"}}
                                 >
                                     <PlusIcon />  Agregar
                                 </Button>
@@ -924,17 +965,7 @@ export default function CollapsibleTable() {
                         </div>
 
 
-
-                        <div className=" flex justify-end mr-5 ml-5">
-                            <select className="outline-0 h-8 w-32 px-2 rounded-2xl mr-5  text-white bg-white/0" value={selectedType} onChange={(e) => setSelectedType(e.target.value)}>
-                                <option id="p" className="w-52 text-black" value="">Todos</option>
-                                <option className="w-52 text-black" value="bebida">Bebidas</option>
-                                <option className="w-52 text-black" value="comida">Comidas</option>
-                                <option className="w-52 text-black" value="utensilios">Utensilios</option>
-                                <option className="w-52 text-black" value="despensa">Despensa</option>
-                            </select>
-
-                        </div>
+                       
 
 
 
@@ -967,7 +998,7 @@ export default function CollapsibleTable() {
 
 
                                         <select
-                                            className="outline-none h-16 border-3 rounded-xl border-blue-500 mb-3"
+                                            className="outline-none h-16 border-3 rounded-xl border-blue-500 mb-3 text-black"
                                             name="tipo"
                                             value={formData.tipo}
                                             onChange={(event) => handleInputChange(event)}
@@ -1117,6 +1148,19 @@ export default function CollapsibleTable() {
             <div className='w-full h-20 mt-5 mb-5 flex justify-center items-center text-4xl'>
                 <h1>PRODUCTOS Y SUBPRODUCTOS</h1>
             </div>
+            <div className=" flex justify-end mr-5 ml-5">
+                <select
+                    className="outline-0 h-8 w-32 px-2 rounded-2xl mr-5  text-black bg-white/0"
+                    value={selectedType}
+                    onChange={(e) => setSelectedType(e.target.value)}
+                >
+                    <option id="p" className="w-52 text-black" value="">Todos</option>
+                    <option className="w-52 text-black" value="bebida">Bebidas</option>
+                    <option className="w-52 text-black" value="comida">Comidas</option>
+                    <option className="w-52 text-black" value="utensilios">Utensilios</option>
+                    <option className="w-52 text-black" value="despensa">Despensa</option>
+                </select>
+            </div>
             <TableContainer component={Paper} style={{ borderRadius: "15px", overflow: "x" }}>
                 <Table aria-label="collapsible table" >
                     <TableHead style={{ height: "20px", marginLeft: "10px" }} >
@@ -1135,7 +1179,7 @@ export default function CollapsibleTable() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {rows.map((filas, index) => (
+                        {filteredProducts.map((filas, index) => (
                             <Row
                                 key={index}
                                 row={filas}

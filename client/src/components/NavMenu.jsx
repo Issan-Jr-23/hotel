@@ -136,7 +136,8 @@ const NavMenu = () => {
                     }
                         style={{ height: "auto", display: "flex", flexDirection: "column", overflow: "hidden" }}>
                         <div className=' flex flex-col pl-9' style={{ overflow: "hidden" }} >
-                            <Link className='mb-1 pt-2 pb-2' >Producción</Link>
+                            <Link to="/crear-registro" className='mb-1 pt-2 pb-2' >Crear</Link>
+                            <Link to="/bovinos/table" className='mb-1 pt-2 pb-2' >Producción</Link>
                             <Link className='mb-1 pt-2 pb-2' >Precios</Link>
                         </div>
                     </AccordionItem>
@@ -167,7 +168,7 @@ const NavMenu = () => {
                     }
                         style={{ height: "auto", display: "flex", flexDirection: "column", overflow: "hidden" }}>
                         <div className=' flex flex-col pl-9' style={{ overflow: "hidden" }} >
-                            <Link to="/crear-registro" className='mb-1 pt-2 pb-2' >Crear</Link>
+                            
                             <Link className='mb-1 pt-2 pb-2' >Create</Link>
                         </div>
                     </AccordionItem>

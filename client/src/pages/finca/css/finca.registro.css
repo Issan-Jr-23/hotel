@@ -1,4 +1,4 @@
-.backg{
+.backg {
     background-image: url("../../../images/banner.jpg");
     background-size: cover;
     background-attachment: fixed;
@@ -7,38 +7,72 @@
     width: 100%;
 }
 
-.finca-article-registro{
+.finca-article-registro {
     width: 450px;
     background-color: white;
-  
+
 }
 
-.finca-article-registro-title-form{
+.finca-article-registro-title-form {
     font-size: 20px;
     font-weight: 600;
     color: rgb(0, 144, 228);
-    
+
     text-align: center;
 }
 
-.finca-figure-registro img{
+.finca-figure-registro img {
     height: 200px;
     width: 100%;
 }
 
-.finca-registro-form{
+.finca-registro-form {
     display: flex;
     flex-direction: column;
     width: 450px;
     background-color: white;
-    
+
 }
 
-.finca-registro-form-input{
+.finca-registro-form-input {
     height: 40px;
     border-radius: 5px;
     margin-bottom: 10px;
     background-color: rgb(240, 240, 240);
     outline: none;
-   
+
 }
+
+
+.add-image {
+    background-image: url("../../../images//agregar.png");
+    height: 300px;
+    width: 300px;
+    background-size: cover;
+}
+
+/* CustomImageInput.css */
+.custom-image-input {
+    text-align: center;
+}
+
+.custom-image-input button {
+    background-image: url("../../../images//agregar.png");
+    color: #393939;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    height: 150px;
+    width: 200px;
+    background-size: cover;
+    border: 4px dashed black;
+    border-radius: 12px;
+    padding: 100px;
+}
+
+
+
+/* Puedes añadir más estilos aquí según tus preferencias */

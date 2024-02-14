@@ -35,6 +35,8 @@ import RegistroAnimales from "./pages/finca/Registro.jsx"
 import Pasadia from "./pages/table-component/PasadiaTable.jsx"
 import Cabanias from "./pages/table-component/CabaniaTable.jsx"
 import Habitaciones from "./pages/table-component/HabitacionesTable.jsx"
+import Animales from "./pages/finca/tableAnimal.jsx"
+import Info from "./pages/finca/informacionVacaBecerro.jsx"
 
 
 
@@ -66,6 +68,7 @@ function App() {
               <Route element={<ProtectedRoute allowedRoles={["superUser"]}/>}>
                 <Route path="/hotel-graphs" element={<Hotel_graphs />}/>
                 <Route path="/finca" element={<FincaVisualizacion/>}/>
+                <Route path="/informacion/becerro/vaca/:id" element={<Info/>}/>
                 <Route path="/message" element={<Message/>}/>
                 <Route path="/price" element={<Precios/>}/>
                 <Route path="/inventario-finca" element={<FincaInventario/>}/>
@@ -77,6 +80,7 @@ function App() {
                 <Route path="/dashboard-cabania" element={<DashboardCabania/>} ></Route>
                 <Route path="/dashboard-habitaciones" element={<DashboardHabitaciones/>} ></Route>
                 {/* <Route path="/cabania-stock" element={<CabaniasStock/>} ></Route> */}
+                <Route path="/bovinos/table" element={<Animales/>}></Route>
               </Route>
               <Route element={<ProtectedRoute allowedRoles={["editor"]} />}>
                 <Route path="/Register" element={<Register/>} />

@@ -1,0 +1,82 @@
+.ganado-form-table-cont{
+ display: flex;
+ background-color: white;
+ margin-left: 20px;
+ margin-right: 20px;
+}
+
+.ganado-table-cont{
+ width: 100%;
+ overflow-x: auto;
+}
+
+.ganado-table-cont h1{
+ font-size: 32px;
+ text-transform: uppercase;
+ text-align: center;
+ margin-bottom: 10px;
+ color: #3d53ff;
+ font-weight: 500;
+}
+
+.ganado-table{
+ width: 100%;
+ overflow-x: auto;
+}
+
+.tr-table-ganado{
+ height: 50px;
+}
+
+.td-table-ganado{
+ height: 50px;
+}
+
+.section-form-ganado{
+ width: 300px;
+ display: flex;
+ justify-content: center;
+ flex-direction: column;
+}
+
+.section-form-ganado-textField{
+ width: 90%;
+ margin-bottom: 20px;
+}
+
+.section-form-ganado-span{
+ display: flex;
+ justify-content: center;
+ align-items: center;
+}
+
+.button-form-ganado{
+ font-size: 16px;
+}
+
+.section-form-ganado-lottie{
+ display: flex;
+ height: 200px;
+ width: 200px;
+}
+
+.section-article-form-ganado{
+ display: flex;
+ justify-content: center;
+ align-items: center;
+}
+
+.table-userNotfound{
+ height: 800px;
+ width: 100%;
+ background-color: white;
+}
+/* 
+.box-modal-add-becerro{
+ height: 500px;
+  overflow-x: auto;
+}
+
+.box-modal-add-becerro-00{
+ overflow-x: auto;
+} */

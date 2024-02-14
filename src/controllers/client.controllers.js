@@ -54,7 +54,7 @@ export const filtrarClientePorIdentificacion = async (req, res) => {
   }
 };
 
-export const crearCliente = async (req, res) => {
+export const crearCliente = async (req, res) => { 
   try {
     const nuevoCliente = new Cliente(req.body);
     const clienteGuardado = await nuevoCliente.save();

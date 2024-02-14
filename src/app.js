@@ -18,6 +18,7 @@ import welcome from "./routes/welcome.routes.js"
 import transferencia from "./routes/transferencia.routes.js"
 import graficas from "./routes/graficas.routes.js"
 import cabaniaStock from "./routes/stockCabania.routes.js"
+import estateRoutes from "./routes/estate.routes.js"
 
 const app = express();
 
@@ -33,6 +34,8 @@ app.use(express.json());
 app.use(morgan("dev"));
 app.use(cookieParser());
 
+
+
 app.use("/api/auth", authRoutes);
 app.use("/api", clientRoutes,ranchRoutes,mensajeRoutes, preciosRoutes);
 app.use("/api", clienteHabitacionesModel);
@@ -46,6 +49,8 @@ app.use("/api", welcome);
 app.use("/api", transferencia);
 app.use("/api", graficas);
 app.use("/api", cabaniaStock);
+app.use("/api", estateRoutes);
+app.use(express.urlencoded({ extended: true }));
 
 if (process.env.NODE_ENV === "production") {
   const path = await import("path");

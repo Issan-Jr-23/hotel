@@ -1,0 +1,17 @@
+.span-infovc-cont-img{
+ display: flex;
+ width: 250px;
+ height: 230px;
+ border: 2px solid rgb(0, 115, 255);
+ border-radius: 0px 0px 50px 50px ;
+
+}
+
+.container-info-vb{
+ max-height: 85vh;
+}
+
+.cont-info-bv{
+ width: 290px;
+ background-color: white;
+}

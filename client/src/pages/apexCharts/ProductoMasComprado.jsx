@@ -20,7 +20,7 @@ const MiComponente = () => {
         }, {});
         const productosArray = Object.values(productosCombinados);
         const productosOrdenados = productosArray.sort((a, b) => b.total - a.total);
-        const productosTop10 = productosOrdenados.slice(0, 10);
+        const productosTop10 = productosOrdenados.slice(0, 20);
         setProductos(productosTop10);
         console.log('Productos más comprados:', productosTop10);
       } catch (error) {

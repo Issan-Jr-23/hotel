@@ -1,4 +1,5 @@
 import Ranch from "../models/ranch.model.js"
+import estate from "../models/estate.model.js"
 
 export const registrarProduccion = async (req, res) =>{
     try {
@@ -20,3 +21,9 @@ export const getData = async (req, res) => {
     res.status(500).send("Error al obtener los clientes desde la base de datos");
   }
 };
+
+
+
+
+
+
