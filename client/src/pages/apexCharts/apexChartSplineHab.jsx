@@ -54,7 +54,7 @@ const App = () => {
 
   const [error, setError] = useState('');
   const [filtroTipo, setFiltroTipo] = useState('dia');
-  const [fechaInicio, setFechaInicio] = useState(new Date());
+  const [fechaInicio, setFechaInicio] = useState(subDays(new Date(), 6));
   const [fechaFin, setFechaFin] = useState(new Date());
 
   useEffect(() => {
@@ -75,14 +75,14 @@ const App = () => {
     const fetchDatos = async () => {
       try {
         const responseFinalizacion = await AxiosInstance.get(
-          `/pasadia-fecha-finalizacion?inicio=${format(
+          `/habitaciones-fecha-finalizacion?inicio=${format(
             fechaInicioFiltro,
             'yyyy-MM-dd'
           )}&fin=${format(fechaFinFiltro, 'yyyy-MM-dd')}&filtroTipo=${filtroTipo}`
         );
 
         const responseActivacion = await AxiosInstance.get(
-          `/pasadia-fecha-activacion?inicio=${format(
+          `/habitaciones-fecha-activacion?inicio=${format(
             fechaInicioFiltro,
             'yyyy-MM-dd'
           )}&fin=${format(fechaFinFiltro, 'yyyy-MM-dd')}&filtroTipo=${filtroTipo}`

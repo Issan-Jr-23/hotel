@@ -21,9 +21,6 @@ const NavMenu = () => {
     const isSuperUser = user && user.role === 'superUser';
     const isEditor = user && user.role == "editor";
     const isUser = user && user.role == "user";
-    console.log("nombre del usuario: " + JSON.stringify(user))
-    // const userName = user.username;
-    // console.log(userName)
 
 
     const [menuAbierto, setMenuAbierto] = useState(false);
@@ -138,7 +135,6 @@ const NavMenu = () => {
                         <div className=' flex flex-col pl-9' style={{ overflow: "hidden" }} >
                             <Link to="/crear-registro" className='mb-1 pt-2 pb-2' >Crear</Link>
                             <Link to="/bovinos/table" className='mb-1 pt-2 pb-2' >Producción</Link>
-                            <Link className='mb-1 pt-2 pb-2' >Precios</Link>
                         </div>
                     </AccordionItem>
                 </Accordion>
@@ -147,33 +143,18 @@ const NavMenu = () => {
                     <AccordionItem className='flex flex-col' key="1" aria-label="Accordion 1" title={
                         <div className='flex'>
                             <img src={stock} style={{ width: "23px", marginBottom: "5px" }} className='ml-1 mr-3' />
-                            <span className='ml-2 text-white'>Productos</span>
+                            <span className='ml-2 text-white'>Stocks</span>
                         </div>
 
                     }
                         style={{ height: "auto", display: "flex", flexDirection: "column", overflow: "hidden" }}>
                         <div className=' flex flex-col pl-9' style={{ overflow: "hidden" }} >
-                            <Link to="/inventario" className='mb-1 pt-2 pb-2' >List</Link>
-                            <Link className='mb-1 pt-2 pb-2' >Create</Link>
+                            <Link to="/inventario" className='mb-1 pt-2 pb-2' >Inventario</Link>
+                            <Link to="/cabania-stock" className='mb-1 ml-5 pt-2 pb-2' >Inv Cabañas</Link>
                         </div>
                     </AccordionItem>
                 </Accordion>
-                <Accordion isCompact className="" style={{ overflow: "hidden" }}>
-                    <AccordionItem className='flex flex-col' key="1" aria-label="Accordion 1" title={
-                        <div className='flex'>
-                            <img src={StockFinca} style={{ width: "23px", marginBottom: "5px" }} className='ml-1 mr-3' />
-                            <span className='ml-2 text-white'>Finca</span>
-                        </div>
-
-                    }
-                        style={{ height: "auto", display: "flex", flexDirection: "column", overflow: "hidden" }}>
-                        <div className=' flex flex-col pl-9' style={{ overflow: "hidden" }} >
-                            
-                            <Link className='mb-1 pt-2 pb-2' >Create</Link>
-                        </div>
-                    </AccordionItem>
-                </Accordion>
-                <Accordion isCompact className="" style={{ overflow: "hidden" }}>
+                {/* <Accordion isCompact className="" style={{ overflow: "hidden" }}>
                     <AccordionItem className='flex flex-col' key="1" aria-label="Accordion 1" title={
                         <div className='flex'>
                             <img src={StockFinca} style={{ width: "23px", marginBottom: "5px" }} className='ml-1 mr-3' />
@@ -183,14 +164,14 @@ const NavMenu = () => {
                     }
                         style={{ height: "auto", display: "flex", flexDirection: "column", overflow: "hidden" }}>
                         <div className=' flex flex-col pl-9' style={{ overflow: "hidden" }} >
-                            <Link to="/cabania-stock" className='mb-1 ml-5 pt-2 pb-2' >List</Link>
+                            
                             <Link className='mb-1 ml-5 pt-2 pb-2' >Create</Link>
                         </div>
 
                     </AccordionItem>
 
 
-                </Accordion>
+                </Accordion> */}
 
             </nav>
         </div>

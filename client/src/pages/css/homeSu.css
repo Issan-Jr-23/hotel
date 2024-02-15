@@ -3,16 +3,37 @@
   height: 280px;
   background-color: #d5f4e7;
   border: 5px solid #d5f4e7;
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  border-radius: 20px;
+  
 }
 
 .container-card-home-mui {
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 200px;
+  margin-top: 60px;
+  margin-bottom: 60px;
+}
+
+  .btn-card-wb-user {
+    margin-top: 8px;
+    margin-left: 0;
+  }
+
+.img-wb-user {
+  width: 100%;
+}
+
+.cont-cover1 {
+  width: 50%;
 }
 
 .article-go {
-  padding-top: 40px;
+  padding-top: 35px;
 }
 
 .section-cards {
@@ -24,7 +45,7 @@
   width: 100%;
   height: 150px;
   padding: 15px;
-  
+
 }
 
 .box-grafic-hs {
@@ -38,29 +59,29 @@
 .vista-cantidades {
   width: 31.333%;
   box-shadow: 0px 5px 10px 0px rgb(216, 216, 216);
-  border-radius:20px 20px 0px 0px;
+  border-radius: 20px 20px 0px 0px;
   background-color: #ffffff;
   overflow: hidden;
   position: relative;
-  
+
 }
 
-.imagen-de-user-decoration{
+.imagen-de-user-decoration {
   position: absolute;
   top: -15px;
   right: -80px;
   width: 220px;
 }
 
-.bd-vc{
+.bd-vc {
   border-bottom: 4px solid rgb(16, 167, 236);
 }
 
-.bd-vc1{
+.bd-vc1 {
   border-bottom: 4px solid rgb(0, 189, 47);
 }
 
-.bd-vc2{
+.bd-vc2 {
   border-bottom: 4px solid rgb(162, 0, 255);
 }
 
@@ -69,7 +90,8 @@
   box-shadow: 0px 5px 10px 0px rgb(216, 216, 216);
   border-radius: 10px;
 }
-.article-alto-grf-pd{
+
+.article-alto-grf-pd {
   margin-right: 10px;
   margin-top: 30px;
 }
@@ -86,6 +108,7 @@
   margin-top: 30px;
   margin-left: 10px;
 }
+
 .cont-pieYes2 {
   margin-right: 10px;
   border-radius: 20px;
@@ -99,13 +122,12 @@
   margin-top: 50px;
 }
 
-.const-pieno{
-  
-}
+.const-pieno {}
 
-.article-alto-grf-pdl{
+.article-alto-grf-pdl {
   margin-left: 10px;
 }
+
 .go-now {
   font-size: 14.2px;
   color: #58918e;
@@ -124,10 +146,15 @@
 }
 
 .article-go {
-  width: 70%;
+  width: 40%;
 }
 
+
+
 @media only screen and (min-width: 320px) and (max-width: 736px) {
+
+  .container-card-home-mui {}
+
   .card-home-mui {
     width: 100%;
     height: 230px;
@@ -137,10 +164,20 @@
     overflow: hidden;
     padding: 0;
     margin: 0;
-    margin-top: 40px;
+    margin-top: 0px;
+    margin-bottom: 0px;
     display: flex;
     justify-content: center;
     align-items: center;
+    border-radius: 20px;
+  }
+
+  .article-go {
+  width: 100%;
+}
+
+  .btn-card-wb-user {
+    margin-top: 8px;
   }
 
   .section-cards {
@@ -165,7 +202,6 @@
   }
 
   .article-go {
-    width: 50%;
     padding-top: 0;
   }
 
@@ -200,7 +236,7 @@
     margin-bottom: 30px;
   }
 
-  .cont-pieYes2 { 
+  .cont-pieYes2 {
     height: auto;
     margin: 0;
   }
@@ -223,8 +259,6 @@
 }
 
 @media only screen and (min-width: 800px) and (max-width: 1280px) {
-  .section-cont-pieyes {
-  }
 
   .section-cards {
     display: flex;

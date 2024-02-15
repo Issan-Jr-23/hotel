@@ -1,14 +1,15 @@
 import { Router } from "express";
 import { comprasUsers, obtenerTotal, obtenerTotalesNiniosYAdultosEnCabaniaDashboard, obtenerTotalesNiniosYAdultosEnHabitaciones, obtenerTotalesNiniosYAdultosEnPasadia, productosMasComprados, productosMasCompradosPass, totalProductosCortesiasCabaniaHistorialDashboard, totalPructosCortesiasDashboard, totalPructosVendidosCabaniaDashboard, totalProductosVendidosDashboard, totalProductosVendidosHistorialCabaniaDashboard, totalPructosVendidosHistorialDashboard, totalgeneradoDashboard, totalgeneradoCabaniaDashboard, totalgeneradoHabitaciones, usuariosQueMasCompraron, totalProductosCortesiasHabitacionesHistorialDashboard, totalProductosVendidosHistorialHabitacionesDashboard, totalPructosVendidosHabitacionesDashboard, obtainVentasPasadia, obtainVentasPasadiaProducts, obtainClients, obtainUsers, obtainClientsCabanias, obtainUsersCabanias, obtainVentasCabania, obtainVentasCabaniaProducts, productosMasCompradosCab, obtainClientsAndUsers, obtainClientsAndUsersCabania, obtainClientsAndUsersHabitaciones, obtainVentasHabitaciones, obtainVentasHabitacionesProducts, productosMasCompradosHab } from "../controllers/graficas.controller.js";
 import { totalGeneradoBar, totalGeneradoCabaniaBard, totalGeneradoHabitacionesBard } from "../controllers/transferencia.controllers.js";
+import { auth } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
 
 
-router.get('/mayor-compra',usuariosQueMasCompraron);
-router.get('/obtener-historial-usuarios', obtenerTotal);
-router.get('/productos-mas-comprados', productosMasComprados);
+router.get('/mayor-compra', auth, usuariosQueMasCompraron);
+router.get('/obtener-historial-usuarios', auth, obtenerTotal);
+router.get('/productos-mas-comprados', auth, productosMasComprados);
 router.get('/productos-mas-comprados-pass', productosMasCompradosPass);
 router.get('/productos-mas-comprados-cab', productosMasCompradosCab);
 router.get('/productos-mas-comprados-hab', productosMasCompradosHab);

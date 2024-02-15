@@ -190,8 +190,8 @@ const CabaniasStock = () => {
                     <Button
                         variant="flat"
                         onClick={handleOpen}
-                        className="capitalize ml-5 text-white bg-black"
-                        style={{ backgroundColor: "black", color: "white", textTransform: "capitalize", padding: "8px 15px", fontWeight: "600", borderRadius: "13px" }}
+                        className="capitalize ml-5 text-white"
+                        style={{ backgroundColor: "#18c964", color: "white", textTransform: "capitalize", padding: "8px 15px", fontWeight: "600", borderRadius: "13px" }}
                     >
                         <PlusIcon />  Agregar
                     </Button>

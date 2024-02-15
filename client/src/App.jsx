@@ -13,7 +13,7 @@ import InvBebidas from "./pages/inventario.jsx";
 // import Habitaciones from "./pages/Habitaciones.jsx";
 import Precios from "./pages/Price.jsx";
 import Hotel_graphs from "./graphs/LinearCharts.jsx";
-import FincaVisualizacion from "./pages/FincaVisualizacion.jsx"; 
+import FincaVisualizacion from "./pages/FincaVisualizacion.jsx";
 import FincaInventario from "./pages/FincaInv.jsx";
 import InventarioRanch from "./pages/finca/InvRanch.jsx"
 import PreciosRanch from "./pages/finca/Precios.jsx"
@@ -24,7 +24,7 @@ import AppWithAuth from './context/apiWitchAuth.jsx';
 import HistorialCompras from "./pages/HistorialCompras.jsx";
 import HistorialUsuario from "./pages/Historial.jsx";
 import NotFoundPage from "./pages/Page404.jsx"
-import DashboardPasadia from "./pages/dashboard/dashboardPasadia.jsx";
+import DashboardPasadia from "./pages/dashboard/DashboardPasadia.jsx";
 import DashboardCabania from "./pages/dashboard/DashboardCabania.jsx";
 import DashboardHabitaciones from "./pages/dashboard/DashboardHabitaciones.jsx";
 import Adicionales from "./pages/adicionales/Adicionales.jsx";
@@ -62,13 +62,19 @@ function App() {
                 <Route path="/adicional/:id" element={<Adicionales />} />
                 <Route path="/cabanias-adicional/:id" element={<AdicionalesCabanias />} />
                 <Route path="/habitaciones-adicional/:id" element={<AdicionalesHabitaciones />} />
-                <Route path="/crear-registro" element={<RegistroAnimales/>}></Route>
                 <Route path="/review" element={<Habitaciones/>}></Route>
               </Route>
-              <Route element={<ProtectedRoute allowedRoles={["superUser"]}/>}>
+
+              <Route element={<ProtectedRoute allowedRoles={["superUser"]} />}>
+
+                <Route path="/crear-registro" element={<RegistroAnimales/>}></Route>
+                <Route path="/bovinos/table" element={<Animales/>}></Route>
+                <Route path="/informacion/becerro/vaca/:id" element={<Info/>}/>
+
+              </Route>
+              <Route element={<ProtectedRoute allowedRoles={["editor"]}/>}>
                 <Route path="/hotel-graphs" element={<Hotel_graphs />}/>
                 <Route path="/finca" element={<FincaVisualizacion/>}/>
-                <Route path="/informacion/becerro/vaca/:id" element={<Info/>}/>
                 <Route path="/message" element={<Message/>}/>
                 <Route path="/price" element={<Precios/>}/>
                 <Route path="/inventario-finca" element={<FincaInventario/>}/>
@@ -79,8 +85,7 @@ function App() {
                 <Route path="/dashboard-pasadia" element={<DashboardPasadia/>} ></Route>
                 <Route path="/dashboard-cabania" element={<DashboardCabania/>} ></Route>
                 <Route path="/dashboard-habitaciones" element={<DashboardHabitaciones/>} ></Route>
-                {/* <Route path="/cabania-stock" element={<CabaniasStock/>} ></Route> */}
-                <Route path="/bovinos/table" element={<Animales/>}></Route>
+                <Route path="/cabania-stock" element={<CabaniasStock/>} ></Route>
               </Route>
               <Route element={<ProtectedRoute allowedRoles={["editor"]} />}>
                 <Route path="/Register" element={<Register/>} />

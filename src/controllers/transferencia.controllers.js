@@ -68,7 +68,7 @@ export const agregarOActualizarUsuario = async (req, res) => {
 export const obtenerHistorial = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const pageSize = parseInt(req.query.pageSize) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 15;
 
     const totalUsuarios = await Usuario.countDocuments();
 

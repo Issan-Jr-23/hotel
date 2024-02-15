@@ -27,11 +27,11 @@ export default function App() {
         <div>
             {/* <Navbars/> */}
         </div>
-        <div className="flex justify-center items-center mt-10 flex-col">
-            <h2 className="text-white text-4xl mb-5 text-center pl-2 pr-2">CAMBIOS REALIZADOS EN EL INVENTARIO</h2>
+        <div className="flex justify-center items-center pt-20 flex-col">
+            <h2 className="text-black text-4xl mb-5 text-center pl-2 pr-2">CAMBIOS REALIZADOS EN EL INVENTARIO</h2>
             <div className="w-2/3 flex justify-end">
         <div >
-                    <label htmlFor="rows" className="text-white">Filas a mostrar: </label>
+                    <label htmlFor="rows" className="text-black">Filas a mostrar: </label>
                     <select className="h-8 w-32 rounded-xl outline-none mb-5" id="rows" value={rowsToShow} onChange={(e) => setRowsToShow(e.target.value)}>
                         <option value="5">5</option>
                         <option value="10">10</option>

@@ -54,7 +54,7 @@ const App = () => {
 
   const [error, setError] = useState('');
   const [filtroTipo, setFiltroTipo] = useState('dia');
-  const [fechaInicio, setFechaInicio] = useState(new Date());
+  const [fechaInicio, setFechaInicio] = useState(subDays(new Date(), 6));
   const [fechaFin, setFechaFin] = useState(new Date());
 
   useEffect(() => {

@@ -92,18 +92,18 @@ const HomeSu = () => {
     <div className=' min-h-screen pb-20'>
       {/* <NavMenu/> */}
       <div style={{ marginLeft: "20px", marginRight: "20px", paddingTop: "60px", fontSize: "black" }} >
-        <section className=' container-card-home-mui flex justify-between flex-wrap' >
-          <div className='card-home-mui rounded-3xl flex'>
-            <article className=' article-go  pr-4' style={{ borderRadius: " 20px 0px 0px 20px" }} >
+        <section className=' container-card-home-mui' >
+          <div className='card-home-mui'>
+            <article className=' article-go'>
               <h1 style={{ fontSize: "22px", fontWeight: "700", color: "#004b50" }} >Welcome back 👋 <br />  {user && <span className='uppercase'>{user.username}</span>} </h1>
-              <p className='pt-2 go-now' >
+              <p className='pt-2 go-now'>
                 "Bienvenido de nuevo a Meqo: Tu herramienta clave para una administración hotelera eficaz y sencilla."</p>
-              <Button className='mt-5 text-white' style={{ fontWeight: "700", backgroundColor: "#00a76f" }}>
+              <Button className='btn-card-wb-user text-white' style={{ fontWeight: "700", backgroundColor: "#00a76f" }}>
                 Go now
               </Button>
             </article>
             <article className='cont-cover1' style={{ borderRadius: " 0px 20px 20px 0px" }} >
-              <img className='h-full w-full' src={mockup} alt="" style={{ borderRadius: "0px 20px 20px 0px" }} />
+              <img className='img-wb-user' src={mockup} alt="" style={{ borderRadius: "0px 20px 20px 0px" }} />
             </article>
           </div>
           <div className='cover1 ml-5 rounded-3xl' style={{ width: "35%", height: "280px" }} >

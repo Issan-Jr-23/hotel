@@ -319,97 +319,82 @@ export const comprasUsers = async(req, res) => {
 };
 
 
+const combinarProductos = (productos) => {
+  const productosCombinados = {};
+
+  productos.forEach((producto) => {
+    const id = producto.id || producto.itemId;
+    if (productosCombinados[id]) {
+      productosCombinados[id].cantidad += producto.cantidad;
+      productosCombinados[id].total += producto.cantidad * producto.precio;
+    } else {
+      productosCombinados[id] = {
+        id: id,
+        nombre: producto.nombre,
+        cantidad: producto.cantidad,
+        total: producto.cantidad * producto.precio,
+      };
+    }
+  });
+
+  return Object.values(productosCombinados);
+};
+
+// Función principal para obtener y procesar los productos más comprados
 export const productosMasCompradosPass = async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = 10;
+    const productosInfo = [];
+
+    // Obtener datos de la base de datos
     const pasadia = await Cliente.find();
     const historial = await Usuario.find();
-    const productosInfo = [];
-    const findProductById = (array, id, itemId) => {
-      return array.find((item) => item.id === id && item.itemId === itemId);
-    };
 
-
+    // Combinar productos de pasadia
     pasadia.forEach((data) => {
-      data.restaurante.forEach((producto) => {
-        const existingProduct = findProductById(productosInfo, producto.id , producto.itemId);
-  
-        if (existingProduct) {
-          existingProduct.total += producto.cantidad * producto.precio;
-        } else {
-          productosInfo.push({
-            id: producto.id || producto.itemId,
-            nombre: producto.nombre,
-            total: producto.cantidad * producto.precio,
-          });
-        }
-      } )
-    });
 
-    pasadia.forEach((data) => {
-      data.bebidas.forEach((producto) => {
-        const existingProduct = findProductById(productosInfo, producto.id, producto.itemId);
-        if (existingProduct) {
-          existingProduct.cantidad += producto.cantidad;
-          existingProduct.total += producto.cantidad * producto.precio;
-        } else {
-          productosInfo.push({
-            id: producto.id || producto.itemId,
-            nombre: producto.nombre,
-            cantidad: producto.cantidad,
-            total: producto.cantidad * producto.precio,
-          });
-        }
-      } )
-    });
-
-
-
-
-    historial.forEach((producto) => {
-      producto.historial.forEach((response) => {
-        if (response.servicio === "pasadia") {
-          response.restaurante.forEach((data) => {
-            const existingProduct = findProductById(productosInfo, data.id, data.itemId);
-            if (existingProduct) {
-              existingProduct.total += data.cantidad * data.precio;
-            } else {
-              productosInfo.push({
-                id: data.id || data.itemId,
-                nombre: data.nombre,
-                total: data.cantidad * data.precio,
-              });
-            }
-          });
-        }
+      data.restaurante.concat(data.bebidas).concat(data.recepcion).forEach((producto) => {
+        productosInfo.push(producto);
       });
+
     });
+
+
+    // Combinar productos del historial
     historial.forEach((producto) => {
       producto.historial.forEach((response) => {
         if (response.servicio === "pasadia") {
-          response.bebidas.forEach((data) => {
-            const existingProduct = findProductById(productosInfo, data.id, data.itemId);
-            if (existingProduct) {
-              existingProduct.total += data.cantidad * data.precio;
-            } else {
-              productosInfo.push({
-                id: data.id || data.itemId ,  
-                nombre: data.nombre,
-                total: data.cantidad * data.precio,
-              });
-            }
+          response.restaurante.concat(response.bebidas).concat(response.recepcion).forEach((data) => {
+            productosInfo.push(data);
           });
         }
       });
     });
 
+    // Combinar productos con el mismo id o itemId
+    const productosCombinados = combinarProductos(productosInfo);
 
+    // Paginación
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = page * pageSize;
+    const paginatedProductsInfo = productosCombinados.slice(startIndex, endIndex);
+    const totalPages = Math.ceil(productosCombinados.length / pageSize);
 
-    res.status(200).json({ productosInfo });
+    // Enviar respuesta
+    res.status(200).json({
+      paginaActual: page,
+      totalPaginas: totalPages,
+      registrosEnPagina: paginatedProductsInfo.length,
+      totalRegistros: productosCombinados.length,
+      productosInfo: paginatedProductsInfo
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: 'Error en el servidor' });
   }
 };
+
 
 
 //dashboard pasadia
@@ -1395,92 +1380,72 @@ export const obtainUsersCabanias = async (req, res) => {
 
 //mas comprados 
 
+const combinarProductosCab = (productos) => {
+  const productosCombinados = {};
+
+  productos.forEach((producto) => {
+    const id = producto.id || producto.itemId;
+    if (productosCombinados[id]) {
+      productosCombinados[id].cantidad += producto.cantidad;
+      productosCombinados[id].total += producto.cantidad * producto.precio;
+    } else {
+      productosCombinados[id] = {
+        id: id,
+        nombre: producto.nombre,
+        cantidad: producto.cantidad,
+        total: producto.cantidad * producto.precio,
+      };
+    }
+  });
+
+  return Object.values(productosCombinados);
+};
+
 export const productosMasCompradosCab = async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = 10;
+    const productosInfo = [];
+
+    // Obtener datos de la base de datos
     const pasadia = await Cabania.find();
     const historial = await Usuario.find();
-    const productosInfo = [];
-    const findProductById = (array, id, itemId) => {
-      return array.find((item) => item.id === id && item.itemId === itemId);
-    };
 
-
+    // Combinar productos de pasadia
     pasadia.forEach((data) => {
-      data.restaurante.forEach((producto) => {
-        const existingProduct = findProductById(productosInfo, producto.id , producto.itemId);
-  
-        if (existingProduct) {
-          existingProduct.total += producto.cantidad * producto.precio;
-        } else {
-          productosInfo.push({
-            id: producto.id || producto.itemId,
-            nombre: producto.nombre,
-            total: producto.cantidad * producto.precio,
-          });
-        }
-      } )
-    });
-
-    pasadia.forEach((data) => {
-      data.bebidas.forEach((producto) => {
-        const existingProduct = findProductById(productosInfo, producto.id, producto.itemId);
-        if (existingProduct) {
-          existingProduct.cantidad += producto.cantidad;
-          existingProduct.total += producto.cantidad * producto.precio;
-        } else {
-          productosInfo.push({
-            id: producto.id || producto.itemId,
-            nombre: producto.nombre,
-            cantidad: producto.cantidad,
-            total: producto.cantidad * producto.precio,
-          });
-        }
-      } )
-    });
-
-
-
-
-    historial.forEach((producto) => {
-      producto.historial.forEach((response) => {
-        if (response.servicio === "cabania") {
-          response.restaurante.forEach((data) => {
-            const existingProduct = findProductById(productosInfo, data.id, data.itemId);
-            if (existingProduct) {
-              existingProduct.total += data.cantidad * data.precio;
-            } else {
-              productosInfo.push({
-                id: data.id || data.itemId,
-                nombre: data.nombre,
-                total: data.cantidad * data.precio,
-              });
-            }
-          });
-        }
+      data.restaurante.concat(data.bebidas).concat(data.recepcion).forEach((producto) => {
+        productosInfo.push(producto);
       });
     });
+
+    // Combinar productos del historial
     historial.forEach((producto) => {
       producto.historial.forEach((response) => {
         if (response.servicio === "cabania") {
-          response.bebidas.forEach((data) => {
-            const existingProduct = findProductById(productosInfo, data.id, data.itemId);
-            if (existingProduct) {
-              existingProduct.total += data.cantidad * data.precio;
-            } else {
-              productosInfo.push({
-                id: data.id || data.itemId ,
-                nombre: data.nombre,
-                total: data.cantidad * data.precio,
-              });
-            }
+          response.restaurante.concat(response.bebidas).concat(response.recepcion).forEach((data) => {
+            productosInfo.push(data);
           });
         }
       });
     });
 
+    // Combinar productos con el mismo id o itemId
+    const productosCombinados = combinarProductosCab(productosInfo);
 
+    // Paginación
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = page * pageSize;
+    const paginatedProductsInfo = productosCombinados.slice(startIndex, endIndex);
+    const totalPages = Math.ceil(productosCombinados.length / pageSize);
 
-    res.status(200).json({ productosInfo });
+    // Enviar respuesta
+    res.status(200).json({
+      paginaActual: page,
+      totalPaginas: totalPages,
+      registrosEnPagina: paginatedProductsInfo.length,
+      totalRegistros: productosCombinados.length,
+      productosInfo: paginatedProductsInfo
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: 'Error en el servidor' });
@@ -1488,93 +1453,73 @@ export const productosMasCompradosCab = async (req, res) => {
 };
 
 
+
+const combinarProductosHab = (productos) => {
+  const productosCombinados = {};
+
+  productos.forEach((producto) => {
+    const id = producto.id || producto.itemId;
+    if (productosCombinados[id]) {
+      productosCombinados[id].cantidad += producto.cantidad;
+      productosCombinados[id].total += producto.cantidad * producto.precio;
+    } else {
+      productosCombinados[id] = {
+        id: id,
+        nombre: producto.nombre,
+        cantidad: producto.cantidad,
+        total: producto.cantidad * producto.precio,
+      };
+    }
+  });
+
+  return Object.values(productosCombinados);
+};
 
 export const productosMasCompradosHab = async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = 10;
+    const productosInfo = [];
+
+    // Obtener datos de la base de datos
     const pasadia = await Habitaciones.find();
     const historial = await Usuario.find();
-    const productosInfo = [];
-    const findProductById = (array, id, itemId) => {
-      return array.find((item) => item.id === id && item.itemId === itemId);
-    };
 
-
+    // Combinar productos de pasadia
     pasadia.forEach((data) => {
-      data.restaurante.forEach((producto) => {
-        const existingProduct = findProductById(productosInfo, producto.id , producto.itemId);
-  
-        if (existingProduct) {
-          existingProduct.total += producto.cantidad * producto.precio;
-        } else {
-          productosInfo.push({
-            id: producto.id || producto.itemId,
-            nombre: producto.nombre,
-            total: producto.cantidad * producto.precio,
-          });
-        }
-      } )
-    });
-
-    pasadia.forEach((data) => {
-      data.bebidas.forEach((producto) => {
-        const existingProduct = findProductById(productosInfo, producto.id, producto.itemId);
-        if (existingProduct) {
-          existingProduct.cantidad += producto.cantidad;
-          existingProduct.total += producto.cantidad * producto.precio;
-        } else {
-          productosInfo.push({
-            id: producto.id || producto.itemId,
-            nombre: producto.nombre,
-            cantidad: producto.cantidad,
-            total: producto.cantidad * producto.precio,
-          });
-        }
-      } )
-    });
-
-
-
-
-    historial.forEach((producto) => {
-      producto.historial.forEach((response) => {
-        if (response.servicio === "habitaciones") {
-          response.restaurante.forEach((data) => {
-            const existingProduct = findProductById(productosInfo, data.id, data.itemId);
-            if (existingProduct) {
-              existingProduct.total += data.cantidad * data.precio;
-            } else {
-              productosInfo.push({
-                id: data.id || data.itemId,
-                nombre: data.nombre,
-                total: data.cantidad * data.precio,
-              });
-            }
-          });
-        }
+      data.restaurante.concat(data.bebidas).concat(data.recepcion).forEach((producto) => {
+        productosInfo.push(producto);
       });
     });
+
+    // Combinar productos del historial
     historial.forEach((producto) => {
       producto.historial.forEach((response) => {
-        if (response.servicio === "habitaciones") {
-          response.bebidas.forEach((data) => {
-            const existingProduct = findProductById(productosInfo, data.id, data.itemId);
-            if (existingProduct) {
-              existingProduct.total += data.cantidad * data.precio;
-            } else {
-              productosInfo.push({
-                id: data.id || data.itemId,
-                nombre: data.nombre,
-                total: data.cantidad * data.precio,
-              });
-            }
+        if (response.servicio === "cabania") {
+          response.restaurante.concat(response.bebidas).concat(response.recepcion).forEach((data) => {
+            productosInfo.push(data);
           });
         }
       });
     });
 
+    // Combinar productos con el mismo id o itemId
+    const productosCombinados = combinarProductosHab(productosInfo);
 
+    // Paginación
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = page * pageSize;
+    const paginatedProductsInfo = productosCombinados.slice(startIndex, endIndex);
+    const totalPages = Math.ceil(productosCombinados.length / pageSize);
 
-    res.status(200).json({ productosInfo });
+    // Enviar respuesta
+    res.status(200).json({
+      paginaActual: page,
+      totalPaginas: totalPages,
+      registrosEnPagina: paginatedProductsInfo.length,
+      totalRegistros: productosCombinados.length,
+      productosInfo: paginatedProductsInfo
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: 'Error en el servidor' });
@@ -1590,7 +1535,6 @@ export const productosMasCompradosHab = async (req, res) => {
 
 
 
-//
 
 
 

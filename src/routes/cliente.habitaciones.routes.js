@@ -20,8 +20,8 @@ router.put("/habitaciones-clientes/:id/cortesias",auth, updateClientCts);
 router.put("/habitaciones-facturacion",auth, actualizarFacturacion)
 router.get('/habitaciones-cliente-info/:id', obtenerClienteId)
 router.get('/habitaciones-clientes-identificacion/:identificacion', getClienteByIdentificacion);
-router.get("/hbaitaciones-fecha-activacion", fechaActivacion)
-router.get("/hbaitaciones-fecha-finalizacion", fechaFinalizacion)
+router.get("/habitaciones-fecha-activacion", fechaActivacion)
+router.get("/habitaciones-fecha-finalizacion", fechaFinalizacion)
 
 router.post("/habitaciones-agregar-bebida/:id",auth, addBebidaAdicional);
 router.post("/habitaciones-agregar-item-recepcion/:id",auth, addItemRecepcion);

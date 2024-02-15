@@ -8,7 +8,7 @@ import { auth } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-router.get("/pasadia-clientes", obtenerClientes);
+router.get("/pasadia-clientes", auth, obtenerClientes);
 router.post("/pasadia-registrar-cliente",auth, crearCliente);
 router.delete("/pasadia/:id",auth, deleteClient);
 router.put("/pasadia/edit/:id",auth, updateClient);

@@ -588,31 +588,37 @@ export default function review() {
 
                 if (cantidad > disponibleInventario) {
                     alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
+                    setIsSaving(false);
                     return false;
                 }
 
                 if (cantidad > cantidadRestante) {
                     alert(`el usuario tiene ${cantidadRestante} cortesias disponibles`)
+                    setIsSaving(false);
                     return;
                 }
 
                 if (nuevaCantidadTotalCortesia > totalPersonas) {
                     alert(`La cantidad de cortesías (${nuevaCantidadTotalCortesia}) no puede exceder la cantidad de personas (${totalPersonas}).`);
+                    setIsSaving(false);
                     return false;
                 }
 
                 if (cantidad > cantidadRestante) {
                     alert(`Solo puedes agregar hasta ${cantidadRestante} cortesías adicionales.`);
+                    setIsSaving(false);
                     return false;
                 }
             } else {
                 if (cantidad > disponibleInventario) {
                     alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
+                    setIsSaving(false);
                     return false;
                 }
             }
             if (cantidad > disponibleInventario) {
                 alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
+                setIsSaving(false);
                 return false;
             }
 
@@ -1038,39 +1044,47 @@ export default function review() {
 
                 if (cantidad > totalPersonas) {
                     alert(`La cantidad de cortesias ${cantidad} no debe superar a la cantidad de personas ${totalPersonas} `)
+                    setIsSaving(false);
                     return;
                 }
 
                 if (cantidad > disponibleInventario) {
                     alert(`Solo quedan 1 ${disponibleInventario} unidades disponibles en el inventario.`);
+                    setIsSaving(false);
                     return false;
                 }
 
 
                 if (cantidad > cantidadRestante) {
                     alert(`el usuario tiene ${cantidadRestante} cortesias disponibles`)
+                    setIsSaving(false);
                     return;
                 }
 
                 if (nuevaCantidadTotalCortesia > totalPersonas) {
                     alert(`La cantidad de cortesías (${nuevaCantidadTotalCortesia}) no puede exceder la cantidad de personas (${totalPersonas}).`);
+                    setIsSaving(false);
                     return false;
                 }
 
                 if (cantidad > cantidadRestante) {
                     alert(`Solo puedes agregar hasta ${cantidadRestante} cortesías adicionales.`);
+                    setIsSaving(false);
                     return false;
                 }
             }
 
             if (cantidad > disponibleInventario) {
                 alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
+                setIsSaving(false);
                 return;
             } else if (disponibleInventario === 0 && !foodSeleccionada) {
                 alert(`Ya no quedan ${foodSeleccionada} disponibles en el inventario `);
+                setIsSaving(false);
                 return;
             } else if (disponibleInventario === 0 && !food1Seleccionada) {
                 alert(`Ya no quedan ${food1Seleccionada} disponibles en el inventario `);
+                setIsSaving(false);
                 return;
             }
 
@@ -2087,27 +2101,32 @@ export default function review() {
 
                 if (cantidad > totalPersonas) {
                     alert(`La cantidad de cortesias ${cantidad} no debe superar a la cantidad de personas ${totalPersonas} `)
+                    setIsSaving(false);
                     return;
                 }
 
                 if (cantidad > disponibleInventario) {
                     alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
+                    setIsSaving(false);
                     return false;
                 }
 
 
                 if (cantidad > cantidadRestante) {
                     alert(`el usuario tiene ${cantidadRestante} cortesias disponibles`)
+                    setIsSaving(false);
                     return;
                 }
 
                 if (nuevaCantidadTotalCortesia > totalPersonas) {
                     alert(`La cantidad de cortesías (${nuevaCantidadTotalCortesia}) no puede exceder la cantidad de personas (${totalPersonas}).`);
+                    setIsSaving(false);
                     return false;
                 }
 
                 if (cantidad > cantidadRestante) {
                     alert(`Solo puedes agregar hasta ${cantidadRestante} cortesías adicionales.`);
+                    setIsSaving(false);
                     return false;
                 }
             }
@@ -2116,12 +2135,15 @@ export default function review() {
 
             if (cantidad > disponibleInventario) {
                 alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
+                setIsSaving(false);
                 return;
             } else if (disponibleInventario === 0 && !foodSeleccionada) {
                 alert(`Ya no quedan ${foodSeleccionada} disponibles en el inventario `);
+                setIsSaving(false);
                 return;
             } else if (disponibleInventario === 0 && !food1Seleccionada) {
                 alert(`Ya no quedan ${food1Seleccionada} disponibles en el inventario `);
+                setIsSaving(false);
                 return;
             }
             console.log("id de la comida seleccionada : " + foodSeleccionadaId)
@@ -2784,13 +2806,13 @@ export default function review() {
             </div>
             <span className="media-query-tittle"><h1>Pasadia</h1></span>
             <div className=" mediaquery-pagination-style">
-                    <Pagination
-                        count={totalPaginas}
-                        page={paginaActual}
-                        onChange={cambiarPagina}
-                        color="primary"
-                        className={paginaActual === 1 ? "first-page-disabled" : ""}
-                    />
+                <Pagination
+                    count={totalPaginas}
+                    page={paginaActual}
+                    onChange={cambiarPagina}
+                    color="primary"
+                    className={paginaActual === 1 ? "first-page-disabled" : ""}
+                />
             </div>
             <section className="table-scroll-transform" style={{ width: "90vw" }}>
                 <Table className="  bg-white p-5" style={{ paddingTop: "40px", width: "90vw" }}>

@@ -8,6 +8,11 @@
     margin-bottom: 20px;
 }
 
+.mediaquery-pagination-style{
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
 .price-table-mediaquery {
     /* flex flex-col w-full pt-20 pb-20 */
     display: flex;

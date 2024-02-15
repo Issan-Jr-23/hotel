@@ -20,7 +20,7 @@ export async function subirImagen(req, res) {
 export const ganado = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const pageSize = 3;
+    const pageSize = 15;
 
     const totalGanado = await Estate.countDocuments();
     const totalPages = Math.ceil(totalGanado / pageSize);

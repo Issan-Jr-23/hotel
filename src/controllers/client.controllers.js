@@ -6,7 +6,7 @@ import Usuario from '../models/transferencia.model.js';
 export const obtenerClientes = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const pageSize = 3;
+    const pageSize = 15;
 
     const totalClientes = await Cliente.countDocuments();
     const totalPages = Math.ceil(totalClientes / pageSize);

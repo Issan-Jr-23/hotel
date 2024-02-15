@@ -6,7 +6,7 @@ import Usuario from "../models/transferencia.model.js"
 export const obtenerClientes = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const pageSize = 3;
+    const pageSize = 15;
 
     const totalClientes = await Habitaciones.countDocuments();
     const totalPages = Math.ceil(totalClientes / pageSize);
@@ -779,6 +779,7 @@ export const fechaActivacion = async (req, res) => {
       if (response.servicio === "habitaciones" && response.estado === "activo") {
         const fechaActivacion = new Date(response.fechaActivacion);
 
+        // Formatear la fecha como "2024-01-19T14:38:14.749Z"
         const fechaFormateada = fechaActivacion.toISOString();
 
         fechasContadas[fechaFormateada] = (fechasContadas[fechaFormateada] || 0) + 1;

@@ -483,7 +483,7 @@ const Adicionales = () => {
 
     const guardarBebida = async (bebida) => {
         try {
-            await AxiosInstances.post(`/cabania-agregar-bebida/${id}`, {
+            await AxiosInstances.post(`/pasadia-agregar-bebida/${id}`, {
                 bebida,
             });
             toast.success('Bebida guardada exitosamente!');

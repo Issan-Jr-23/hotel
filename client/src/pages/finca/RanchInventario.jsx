@@ -21,6 +21,7 @@ import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import { DeleteDocumentIcon } from "../iconos/DeleteDocumentIcon.jsx"
 import { EditDocumentIcon } from "../iconos/EditDocumentIcon.jsx"
 import { VerticalDotsIcon } from '../iconos/VerticalDotsIcon.jsx';
+import { useAuth } from "../../context/authContext.jsx";
 // import { Dropdown, DropdownTrigger, DropdownItem, DropdownMenu, Button } from '@nextui-org/react';
 import Backdrop from '@mui/material/Backdrop';
 import Modal from '@mui/material/Modal';
@@ -714,6 +715,7 @@ export default function CollapsibleTable() {
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [openFz, setOpenFz] = React.useState(false);
     const handleCloseFz = () => setOpenFz(false);
+    const {user} = useAuth();
     const [formData, setFormData] = useState({
         Descripcion: "",
         tipo: "",
@@ -734,7 +736,7 @@ export default function CollapsibleTable() {
         ],
     });
 
-   const fetchProducts = async () => {
+    const fetchProducts = async () => {
         try {
             const productsResponse = await AxiosInstance.get('/obtener-inventario');
             const productsData = productsResponse.data;
@@ -783,22 +785,41 @@ export default function CollapsibleTable() {
     }, []);
 
     const handleDelete = async (id) => {
+        const userName = user.username;
         const confirmDelete = window.confirm(
-            "¿Estás seguro de que deseas eliminar este producto?"
+            `¿Estás seguro de que deseas eliminar este producto? Esta acción será realizada por ${userName}.`
         );
         if (!confirmDelete) {
             return;
         }
         try {
+            // Suponiendo que el registro tiene un campo 'name' que quieres registrar
+            const productToDelete = rows.find((product) => product._id === id);
+            const productName = productToDelete.nombre;
+            console.log(productName)
+
             await AxiosInstance.delete(`/eliminar-mekato/${id}`);
+
             const updatedProducts = rows.filter((product) => product._id !== id);
             setRows(updatedProducts);
-            console.log('Product deleted successfully');
+            console.log(`Producto eliminado exitosamente por ${userName}`);
+
+            // Guardar el mensaje en la base de datos
+            const deletionMessage = {
+                userName,
+                productName,
+                productId: id,
+                deletionDate: new Date().toISOString(), // Fecha y hora de la eliminación
+            };
+
+            await AxiosInstance.post('/registrar-eliminacion', deletionMessage);
+
         } catch (error) {
             console.error("Error al eliminar producto:", error);
             alert("Error al eliminar producto. Por favor, inténtalo de nuevo más tarde.");
         }
     };
+
 
     const handleSubproductoChange = (index, field, value) => {
         setFormDatas((prevFormData) => {
@@ -875,7 +896,7 @@ export default function CollapsibleTable() {
     }, [selectedType]);
 
 
-     const applyFilters = (products) => {
+    const applyFilters = (products) => {
         let filtered = [...products];
 
         if (selectedType !== '') {
@@ -948,13 +969,13 @@ export default function CollapsibleTable() {
                             </div>
 
                             <div className="btns flex ">
-                                <Button className="w-28 mr-5" onClick={() => exportToExcel(filteredProducts)} style={{backgroundColor:"#0070f0", color:"white", marginRight:"20px"}}>
+                                <Button className="w-28 mr-5" onClick={() => exportToExcel(filteredProducts)} style={{ backgroundColor: "#0070f0", color: "white", marginRight: "20px" }}>
                                     Exportar
                                 </Button>
                                 <Button
                                     variant="flat"
                                     onClick={() => handleOpemModalMui()}
-                                    className=" ml-5 text-white bg-black" style={{backgroundColor:"#18c964", color:"white"}}
+                                    className=" ml-5 text-white bg-black" style={{ backgroundColor: "#18c964", color: "white" }}
                                 >
                                     <PlusIcon />  Agregar
                                 </Button>
@@ -965,7 +986,6 @@ export default function CollapsibleTable() {
                         </div>
 
 
-                       
 
 
 
