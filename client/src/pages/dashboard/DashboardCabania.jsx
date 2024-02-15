@@ -103,7 +103,7 @@ const dashboardPasadia = () => {
 
           <div className='cont-icon-json'>
             <article className='cont-title-json'>
-              <h1 className='text-4xl mb-5 uppercase border-b-3'>Dashboard Cabaña </h1>
+              <h1 className='text-title-dash-pas'>Dashboard Cabaña </h1>
 
             </article>
             <article className='animation-lottie-json'>

@@ -5,6 +5,7 @@ import AxiosInstance from "../api/axios.js";
 import pen from "../images/pencil.png"
 import update from "../images/update.png"
 import toast, { Toaster } from 'react-hot-toast';
+import './table-component/pasadiaTable.css'
 
 export default function App() {
   const [selected, setSelected] = React.useState("login");
@@ -88,15 +89,15 @@ export default function App() {
 
 
   return (
-    <div className="flex flex-col w-full">
+    <div className=" price-table-mediaquery">
       <Toaster />
       <div>
         {/* <Navbars /> */}
       </div>
-      <h1 className="uppercase text-4xl mt-6 text-white w-ful flex justify-center">precios de los servicios</h1>
-      <div className="flex justify-evenly mt-10">
+      <h1 className="precie-title-mediaquery">precios de los servicios</h1>
+      <div className="container-table-preci-mediaquery">
 
-        <Table aria-label="Example empty table" className="w-8/12">
+        <Table aria-label="Example empty table" className="table-preci-register">
           <TableHeader className="text-center">
             <TableColumn className="text-center">SERVICIO</TableColumn>
             <TableColumn className="text-center">TIPO</TableColumn>
@@ -193,7 +194,7 @@ export default function App() {
           </TableBody>
         </Table>
 
-        <Card className="max-w-full w-[340px] h-[350px]">
+        <Card className="price-form-mediaquery">
           <CardBody className="overflow-hidden">
             <Tabs
               fullWidth

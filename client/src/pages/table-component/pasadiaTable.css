@@ -1,11 +1,46 @@
 .media-query-add-search {
     display: flex;
-    justify-content: space-between; 
+    justify-content: space-between;
     width: 100%;
     flex-direction: row-reverse;
     align-items: center;
     padding: 0 20px;
     margin-bottom: 20px;
+}
+
+.price-table-mediaquery {
+    /* flex flex-col w-full pt-20 pb-20 */
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+
+.precie-title-mediaquery {
+    /* uppercase text-4xl text-center mt-6  w-ful flex justify-center text-black  */
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 26px;
+    font-size: 32px;
+    text-transform: uppercase;
+    text-align: center;
+    font-weight: 600;
+}
+
+.container-table-preci-mediaquery {
+    /* flex flex-col-reverse justify-evenly mt-10 */
+    display: flex;
+    flex-direction: column-row;
+    margin: 10px;
+}
+
+.price-form-mediaquery {
+    /* max-w-full mb-5 h-[350px] */
+    margin: 0px 20px;
+    margin-bottom: 20px;
+    width: 500px;
 }
 
 .html-table-tr-th {
@@ -34,7 +69,7 @@
 .html-table-tbody {
     padding: 20px 0;
     padding-left: 10px;
-    
+
 }
 
 .media-query-tittle {}
@@ -59,23 +94,23 @@
 }
 
 
-.container-dropdown{
+.container-dropdown {
     border: 2px solid red;
     height: auto;
     width: 100px;
     position: relative;
 }
 
-.dropdown-container{
+.dropdown-container {
     border: 2px solid red;
-    border-radius: 12px ;
+    border-radius: 12px;
     width: 100px;
     position: absolute;
     z-index: 100;
     left: 0px;
 }
 
-.desing-cont-dropdown{
+.desing-cont-dropdown {
     width: 150px;
     display: flex;
     justify-content: center;
@@ -84,13 +119,13 @@
     margin-left: 30px;
 }
 
-.desing-btn-dropdown{
+.desing-btn-dropdown {
     width: 100px;
     display: flex;
     justify-content: center;
 }
 
-.desing-dropdown{
+.desing-dropdown {
     display: flex;
     flex-direction: column;
     transition: 0s;
@@ -104,7 +139,7 @@
     box-shadow: 1px 2px 15px 2px rgb(227, 227, 227);
 }
 
-.desing-condicional-dropdown{
+.desing-condicional-dropdown {
     height: 40px;
     display: flex;
     justify-content: center;
@@ -114,9 +149,76 @@
 
 .error-message {
     transition: opacity 0.5s ease-in-out;
-    opacity: 0; /* Inicia invisible */
+    opacity: 0;
+    /* Inicia invisible */
     color: red;
     margin-top: 4px;
-    height: 0; /* Evita ocupar espacio cuando esté oculto */
+    height: 0;
+    /* Evita ocupar espacio cuando esté oculto */
     overflow: hidden;
+}
+
+@media only screen and (min-width: 320px) and (max-width: 736px) {
+    .media-query-add-search {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        padding: 0 20px;
+        margin-bottom: 20px;
+    }
+
+    .mediaquery-movil-search {
+        margin-bottom: 20px;
+    }
+
+    .mediaquery-pagination-style {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    .price-table-mediaquery {
+        /* flex flex-col w-full pt-20 pb-20 */
+        display: flex;
+        flex-direction: column;
+        width: 99%;
+        padding-top: 40px;
+        padding-bottom: 40px;
+    }
+
+    .precie-title-mediaquery {
+        /* uppercase text-4xl text-center mt-6  w-ful flex justify-center text-black  */
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        margin-top: 26px;
+        font-size: 32px;
+        text-transform: uppercase;
+        text-align: center;
+        font-weight: 600;
+    }
+
+    .container-table-preci-mediaquery {
+        /* flex flex-col-reverse justify-evenly mt-10 */
+        display: flex;
+        flex-direction: column-reverse;
+        margin: 10px;
+    }
+
+    .price-form-mediaquery {
+        /* max-w-full mb-5 h-[350px] */
+       margin: 0;
+        margin-bottom: 20px;
+        width: 100%;
+    }
+
+    .table-preci-register{
+        width: 100%;
+    }
+
 }

@@ -75,7 +75,7 @@ const dashboardPasadia = () => {
     <div className=' fondo pt-20 pl-5 pr-5 pb-20'>
       <div className='cont-icon-json'>
         <article className='cont-title-json'>
-          <h1 className='text-4xl mb-5 uppercase border-b-3'>Dashboard Habitaciones</h1>
+          <h1 className='text-title-dash-pas'>Dashboard Habitaciones</h1>
 
         </article>
         <article className='animation-lottie-json'>

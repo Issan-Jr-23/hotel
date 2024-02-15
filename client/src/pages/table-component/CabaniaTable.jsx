@@ -2338,7 +2338,7 @@ const generarPDF = async () => {
                         onChange={handleSearchChange}
                         isClearable
                         radius="lg"
-                        className="w-72 h-12"
+                        className="w-72 h-12 mediaquery-movil-search"
                         classNames={{
                             label: "text-black/50 dark:text-white/90",
                             input: [
@@ -2609,7 +2609,7 @@ const generarPDF = async () => {
                 </div>
             </div>
             <span className="media-query-tittle"><h1>Cabañas</h1></span>
-            <div className="flex justify-end mb-5 w-full mr-20">
+            <div className="media-query-add-search">
                 <Pagination
                     count={totalPaginas}
                     page={paginaActual}

@@ -1768,66 +1768,66 @@ export default function habitacionesTable() {
   }
 
 
-const generarPDF = async () => {
+  const generarPDF = async () => {
     const pdf = new jsPDF();
 
     await actualizarFechaEnProductos(selectedUser._id);
 
     // Función para añadir el diseño base al PDF
     const agregarDisenoBase = async () => {
-        try {
-            const svgBase64 = await toBase64(svg);
-            pdf.addImage(svgBase64, 'JPEG', 0, 0, 220, 80);
-        } catch (error) {
-            console.error("Error al cargar la imagen SVG", error);
-        }
+      try {
+        const svgBase64 = await toBase64(svg);
+        pdf.addImage(svgBase64, 'JPEG', 0, 0, 220, 80);
+      } catch (error) {
+        console.error("Error al cargar la imagen SVG", error);
+      }
 
-        try {
-            const waveBase64 = await toBase64(wave);
-            pdf.addImage(waveBase64, 'JPEG', 0, 240, 220, 80);
-        } catch (error) {
-            console.error("Error al cargar la imagen Wave", error);
-        }
+      try {
+        const waveBase64 = await toBase64(wave);
+        pdf.addImage(waveBase64, 'JPEG', 0, 240, 220, 80);
+      } catch (error) {
+        console.error("Error al cargar la imagen Wave", error);
+      }
 
-        try {
-            const logoBase64 = await toBase64(logo);
-            pdf.addImage(logoBase64, 'JPEG', 85, 25, 40, 40);
-        } catch (error) {
-            console.error("Error al cargar el logo", error);
-        }
+      try {
+        const logoBase64 = await toBase64(logo);
+        pdf.addImage(logoBase64, 'JPEG', 85, 25, 40, 40);
+      } catch (error) {
+        console.error("Error al cargar el logo", error);
+      }
 
-        // Configuración inicial del PDF reutilizable
-        pdf.setFont("helvetica", "bold");
-        pdf.setFontSize(20);
-        pdf.setTextColor("#FFFFFF");
-        pdf.text("HOTEL MEQO", 105, 20, null, null, 'center');
+      // Configuración inicial del PDF reutilizable
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(20);
+      pdf.setTextColor("#FFFFFF");
+      pdf.text("HOTEL MEQO", 105, 20, null, null, 'center');
 
-        // Resto de elementos comunes...
-        pdf.setTextColor(0, 0, 0);
-        pdf.setFontSize(12);
-        pdf.text('Datos de la empresa', 157, 54);
-        pdf.setFontSize(10);
-        pdf.text('Nombre: Hotel Meqo', 164, 63);
-        pdf.text('Numero: 3152390814', 164, 70);
-        pdf.setFontSize(12);
-        pdf.text('Datos del cliente', 10, 54);
-        pdf.setFontSize(10);
-        pdf.text(`Nombre: ${selectedUser.nombre}`, 10, 63);
-        pdf.text(`Identificación: ${selectedUser.identificacion}`, 10, 70);
+      // Resto de elementos comunes...
+      pdf.setTextColor(0, 0, 0);
+      pdf.setFontSize(12);
+      pdf.text('Datos de la empresa', 157, 54);
+      pdf.setFontSize(10);
+      pdf.text('Nombre: Hotel Meqo', 164, 63);
+      pdf.text('Numero: 3152390814', 164, 70);
+      pdf.setFontSize(12);
+      pdf.text('Datos del cliente', 10, 54);
+      pdf.setFontSize(10);
+      pdf.text(`Nombre: ${selectedUser.nombre}`, 10, 63);
+      pdf.text(`Identificación: ${selectedUser.identificacion}`, 10, 70);
     };
 
     // Función para verificar el espacio y añadir nueva página si es necesario
     const verificarEspacioYAgregarPaginaSiNecesario = async (espacioNecesario, reiniciarPosY = 20) => {
-        if (y + espacioNecesario > 272) {
-            pdf.addPage();
-            y = reiniciarPosY; // Reiniciar la posición Y en la nueva página
-            await agregarDisenoBase(); // Reconfigurar el diseño para la nueva página
-        }
+      if (y + espacioNecesario > 272) {
+        pdf.addPage();
+        y = reiniciarPosY; // Reiniciar la posición Y en la nueva página
+        await agregarDisenoBase(); // Reconfigurar el diseño para la nueva página
+      }
     };
 
     // Función para formatear números con separador de miles y dos decimales
     const formatearNumero = (numero) => {
-        return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(numero);
+      return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(numero);
     };
 
     let y = 90; // Iniciar Y después de las imágenes y el título
@@ -1848,18 +1848,18 @@ const generarPDF = async () => {
 
     // Iterar sobre los productos y agregarlos al PDF
     productos.forEach(producto => {
-        verificarEspacioYAgregarPaginaSiNecesario(10); // Espacio por producto
-        pdf.text(producto.nombre, 10, y);
-        pdf.text(producto.cantidad.toString(), 88, y);
+      verificarEspacioYAgregarPaginaSiNecesario(10); // Espacio por producto
+      pdf.text(producto.nombre, 10, y);
+      pdf.text(producto.cantidad.toString(), 88, y);
 
-        const precioFormateado = `$${formatearNumero(producto.precio)}`;
-        pdf.text(precioFormateado, 150, y);
+      const precioFormateado = `$${formatearNumero(producto.precio)}`;
+      pdf.text(precioFormateado, 150, y);
 
-        const productoTotal = producto.cantidad * producto.precio;
-        const productoTotalFormateado = `$${formatearNumero(productoTotal)}`;
-        pdf.text(productoTotalFormateado, 180, y);
+      const productoTotal = producto.cantidad * producto.precio;
+      const productoTotalFormateado = `$${formatearNumero(productoTotal)}`;
+      pdf.text(productoTotalFormateado, 180, y);
 
-        y += 10; // Actualizar posición Y para el próximo producto
+      y += 10; // Actualizar posición Y para el próximo producto
     });
 
     // Total General antes de añadir los desgloses
@@ -1877,19 +1877,19 @@ const generarPDF = async () => {
 
     // Aplicar formato y añadir texto al PDF para cada categoría
     const categorias = [
-        { etiqueta: 'Pago Anticipado', valor: selectedUser.pagoAnticipado || 0 },
-        { etiqueta: 'Pago Posterior', valor: selectedUser.pagoPendiente || 0 },
-        // Asumiendo que barTotal, resTotal, recTotal, y desTotal están definidos en algún lugar de tu código
-        { etiqueta: 'Bar', valor: barTotal || 0 },
-        { etiqueta: 'Restaurante', valor: resTotal || 0 },
-        { etiqueta: 'Recepcion', valor: recTotal || 0 },
-        { etiqueta: 'Descorche', valor: desTotal || 0 }
+      { etiqueta: 'Pago Anticipado', valor: selectedUser.pagoAnticipado || 0 },
+      { etiqueta: 'Pago Posterior', valor: selectedUser.pagoPendiente || 0 },
+      // Asumiendo que barTotal, resTotal, recTotal, y desTotal están definidos en algún lugar de tu código
+      { etiqueta: 'Bar', valor: barTotal || 0 },
+      { etiqueta: 'Restaurante', valor: resTotal || 0 },
+      { etiqueta: 'Recepcion', valor: recTotal || 0 },
+      { etiqueta: 'Descorche', valor: desTotal || 0 }
     ];
 
     categorias.forEach(categoria => {
-        verificarEspacioYAgregarPaginaSiNecesario(7); // Asegurarse de tener espacio para cada categoría
-        pdf.text(`${categoria.etiqueta}: $${formatearNumero(categoria.valor)}`, 10, y);
-        y += 7;
+      verificarEspacioYAgregarPaginaSiNecesario(7); // Asegurarse de tener espacio para cada categoría
+      pdf.text(`${categoria.etiqueta}: $${formatearNumero(categoria.valor)}`, 10, y);
+      y += 7;
     });
 
     const totalGeneralCalculado = categorias.reduce((acc, categoria) => acc + categoria.valor, 0);
@@ -1897,7 +1897,7 @@ const generarPDF = async () => {
     pdf.text(`Total: $${formatearNumero(totalGeneralCalculado)}`, 10, y);
 
     pdf.save("factura.pdf");
-};
+  };
 
   // const totalPages = Math.ceil(datosFiltrados.length / displayLimit + 1);
   // const start = (currentPage - 1) * displayLimit;
@@ -2466,14 +2466,14 @@ const generarPDF = async () => {
         {/* <p>Cargando recursos</p> */}
       </div>
       <div className="media-query-add-search">
-        <div className="inputSearch">
+        <div className="">
           <Input
             label="Search"
             value={busqueda}
             onChange={handleSearchChange}
             isClearable
             radius="lg"
-            className="w-72 h-12"
+            className="w-72 h-12  mediaquery-movil-search"
             classNames={{
               label: "text-black/50 dark:text-white/90",
               input: [
@@ -2745,7 +2745,7 @@ const generarPDF = async () => {
 
       </div>
       <span className="media-query-tittle"><h1>Habitaciones</h1></span>
-      <div className="flex justify-end mb-5 w-full mr-20">
+      <div className="mediaquery-pagination-style">
         <Pagination
           count={totalPaginas}
           page={paginaActual}
@@ -2754,8 +2754,8 @@ const generarPDF = async () => {
           className={paginaActual === 1 ? "first-page-disabled" : ""}
         />
       </div>
-      <section className="table-scroll-transform flex justify-center" style={{ width: "90vw", }}>
-        <table className=" bg-white snaop-x" style={{ paddingTop: "40px", width: "100%" }}>
+      <section className="table-scroll-transform " style={{ width: "90vw", }}>
+        <table className=" bg-white p-5" style={{ paddingTop: "40px", width: "90vw" }}>
           <thead className="html-table-thead">
             <tr className="html-table-tr border-b-2 border-red-100" >
               <th className="html-table-tr-th"></th>
@@ -2773,7 +2773,7 @@ const generarPDF = async () => {
               <th className="html-table-tr-th"> <span className="html-table-thead-span pl-5"> <p></p>  Estado <img className="cursor-pointer mr-5 ml-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th>
               <th className="html-table-tr-th"> <span className="html-table-thead-span-fn"> <p></p><img className="cursor-pointer mr-2 ml-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> <p></p> </span></th>
             </tr>
-          </thead>
+          </thead> 
           <tbody key="body-h">
             {users.map((cliente) => (
               <tr key={cliente._id}>
@@ -2782,177 +2782,6 @@ const generarPDF = async () => {
                     <img className="w-4" src={chevron} alt="" />
                   </Button> */}
 
-                  {selectedUser && (
-                    <Modal open={openTd} onClose={handleCloseTd} className=""
-                      BackdropProps={{
-                        style: { backgroundColor: 'rgba(0, 0, 0, 0.3)' }
-                      }}
-                    >
-                      <Box sx={styleAdd} style={{
-                        maxHeight: "90vh",
-                        minHeight: "min-content",
-                        overflowY: "auto"
-                      }} >
-                        <Typography component="div" className="border-b-3 border-blue-500 text-3xl flex  justify-between">
-                          <div className="mb-0.5 text-2xl">History</div>
-                          <div className="uppercase text-lg"> {selectedUser.nombre} - {selectedUser.identificacion}</div>
-                        </Typography>
-                        <Typography component="div" className="uppercase flex">
-                          <div className="flex w-full">
-                            <section className="flex justify-between w-full flex-wrap">
-
-                              <div className="mx-5 my-1  w-full">
-                                <div className="mt-2 mb-2" style={{ fontWeight: "600" }}> Pago pendiente cabaña {selectedUser.tipo_cabania} : {selectedUser.nuevoTotal}</div>
-                                <h4 className="text-green-600">Productos (Bebidas y Comidas)</h4>
-
-                                {/* Combina ambos arrays (bebidas y comidas) y verifica si tiene elementos */}
-                                {selectedUser.bebidas && selectedUser.restaurante &&
-                                  Array.isArray(selectedUser.bebidas) && Array.isArray(selectedUser.restaurante) && Array.isArray(selectedUser.descorche) && Array.isArray(selectedUser.recepcion) &&
-                                  [...selectedUser.bebidas, ...selectedUser.restaurante, ...selectedUser.descorche, ...selectedUser.recepcion].length > 0 ? (
-                                  <table className="w-full text-center">
-                                    <thead>
-                                      <tr>
-                                        <th className=" text-left">Nombre</th>
-                                        <th style={{ width: "100px" }}>Cantidad</th>
-                                        <th>mensaje</th>
-                                        <th>Precio Unitario</th>
-                                        <th>Total</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody>
-                                      {[...selectedUser.bebidas, ...selectedUser.restaurante, ...selectedUser.descorche, ...selectedUser.recepcion].map((producto, index) => (
-                                        <tr key={index}>
-                                          <td className="text-left" style={{ width: "280px" }}>{producto.nombre}</td>
-                                          <td>{producto.cantidad}</td>
-                                          <td>{producto.adicional}</td>
-                                          <td style={{ width: "280px" }} >{producto.precio}</td>
-                                          <td>{producto.cantidad * producto.precio}</td>
-                                        </tr>
-                                      ))}
-                                    </tbody>
-                                    <tfoot className="border-t-3 border-green-500 pt-2">
-                                      <tr>
-                                        <td className="text-left"></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td style={{ height: "60px", paddingRight: "20px", width: "150px" }} className="text-right">Total: {
-                                          [...selectedUser.bebidas, ...selectedUser.restaurante, ...selectedUser.recepcion, ...selectedUser.descorche].reduce((acc, producto) =>
-                                            acc + (producto.cantidad * producto.precio), 0
-                                          )
-                                        }</td>
-                                      </tr>
-                                    </tfoot>
-                                  </table>
-                                ) : (
-                                  <p className=" w-full text-center">No hay productos que mostrar😔</p>
-                                )}
-                              </div>
-
-                            </section>
-                          </div>
-                        </Typography>
-                        <div className="flex flex-col">
-                          {/* <span className=" flex w-full  pr-20">¿El cliente realizo un pago anticipado para reservar? <Checkbox checked={esPagoAnticipado}
-                                                            onChange={handlePagoAnticipadoChange} className="ml-1"></Checkbox></span> */}
-                          <hr className="bg-gray-400 mb-2 mt-2" style={{ height: "4px" }} />
-                          {selectedUser.reserva === "Si" ? (
-                            <div>
-                              <span className=" flex w-full  pr-20">Pago pendiente cabania {selectedUser.tipo_cabania}: {selectedUser.nuevoTotal || 0}</span>
-                              <span className=" flex w-full  pr-20">Pago adelantado:<span className="text-red-500"> {selectedUser.pagoAnticipado || 0}</span></span>
-                              <span className=" flex w-full  pr-20">Pago posterior: {selectedUser.pagoPendiente || 0}</span>
-                              <span className=" flex w-full  pr-20">Bar: {barTotal || 0}</span>
-                              <span className=" flex w-full  pr-20">Adicional: {recTotal || 0}</span>
-                              <span className=" flex w-full  pr-20">Descorche: {desTotal || 0}</span>
-                              <span className=" flex w-full  pr-20">Restaurante: {resTotal || 0}</span>
-                              <hr className="bg-gray-400 mt-2 flex justify-between" style={{ height: "3px" }} />
-                              <span className=" flex w-full mt-2  pr-20">Tatal a pagar:
-                                {(
-                                  barTotal +
-                                  resTotal +
-                                  recTotal +
-                                  desTotal +
-                                  selectedUser.pagoPendiente +
-                                  selectedUser.nuevoTotal +
-                                  selectedUser.pagoAnticipado
-                                ) - (selectedUser.pagoAnticipado)}</span>
-                              <hr className="bg-gray-400 mt-2 mb-5" style={{ height: "3px" }} />
-                              <span>Cancelado: {selectedUser.pago}</span>
-
-                            </div>
-                          ) : (
-                            <div>
-                              <span className=" flex w-full  pr-20">Pago pendiente cabania {selectedUser.tipo_cabania}: {selectedUser.nuevoTotal || 0}</span>
-                              <span className=" flex w-full  pr-20">Pago adelantado:<span className="text-red-500"> {selectedUser.pagoAnticipado || 0}</span></span>
-                              <span className=" flex w-full  pr-20">Pago posterior: {selectedUser.pagoPendiente || 0}</span>
-                              <span className=" flex w-full  pr-20">Bar: {barTotal || 0}</span>
-                              <span className=" flex w-full  pr-20">Adicional: {recTotal || 0}</span>
-                              <span className=" flex w-full  pr-20">Descorche: {desTotal || 0}</span>
-                              <span className=" flex w-full  pr-20">Restaurante: {resTotal || 0}</span>
-                              <span className=" flex w-full  pr-20 mt-2">Tatal a pagar: {(
-                                barTotal +
-                                resTotal +
-                                recTotal +
-                                desTotal +
-                                selectedUser.pagoAnticipado +
-                                selectedUser.pagoPendiente +
-                                selectedUser.nuevoTotal)} </span>
-                              <hr className="bg-gray-400 mt-2 mb-5" style={{ height: "3px" }} />
-                              <span className="">Cancelado: {selectedUser.pago || 0}</span>
-                            </div>
-                          )}
-
-                        </div>
-
-                        <div className="flex justify-between mt-5">
-                          <Typography component="div" >
-                            <Button color="primary" onClick={() => {
-                              Swal.fire({
-                                title: '¿Estás seguro?',
-                                text: "¿Quieres guardar esto como PDF?",
-                                icon: 'warning',
-                                showCancelButton: true,
-                                confirmButtonColor: '#3085d6',
-                                cancelButtonColor: '#d33',
-                                confirmButtonText: 'Sí, guardar',
-                                cancelButtonText: 'No, cancelar'
-                              }).then((result) => {
-                                if (result.isConfirmed) {
-                                  generarPDF(selectedUser._id);
-                                  // Muestra un nuevo SweetAlert con el chulito de confirmación
-                                  Swal.fire({
-                                    title: '¡Guardado!',
-                                    text: 'El archivo PDF ha sido guardado exitosamente.',
-                                    icon: 'success',
-                                    confirmButtonColor: '#3085d6',
-                                    confirmButtonText: 'Ok'
-                                  });
-                                }
-                              })
-                            }}>
-                              Guardar como PDF
-                            </Button>
-                            <Button className="ml-2" color="danger" variant="shadow" onClick={closeModal}>
-                              Cerrar
-                            </Button>
-                          </Typography>
-
-                          <Typography>
-                            {/* {selectedUser.nuevoTotal > 0 && selectedUser.pago <= 0 ? ( */}
-                            <Button color="secondary" variant="shadow" onClick={() => actualizarDatosCliente(selectedUser.nuevoTotal, selectedUser.identificacion, "finalizado", selectedUser._id)}>
-                              Guardar
-                            </Button>
-                            {/* ) : (
-                                                             <Button color="secondary" variant="shadow" >
-                                                                 Inhabilitado
-                                                             </Button>
-                                                         )} */}
-                          </Typography>
-
-                        </div>
-                      </Box>
-                    </Modal>
-                  )}
                 </td>
                 <td className="html-table-tbody text-center uppercase border-r-2 border-red-500 pr-2 ">
                   <Popover placement="top">
@@ -4080,6 +3909,179 @@ const generarPDF = async () => {
           </tbody>
         </table>
       </section>
+
+      {selectedUser && (
+        <Modal open={openTd} onClose={handleCloseTd} className=""
+          BackdropProps={{
+            style: { backgroundColor: 'rgba(0, 0, 0, 0.3)' }
+          }}
+        >
+          <Box sx={styleAdd} style={{
+            maxHeight: "90vh",
+            minHeight: "min-content",
+            overflowY: "auto"
+          }} >
+            <Typography component="div" className="border-b-3 border-blue-500 text-3xl flex  justify-between">
+              <div className="mb-0.5 text-2xl">History</div>
+              <div className="uppercase text-lg"> {selectedUser.nombre} - {selectedUser.identificacion}</div>
+            </Typography>
+            <Typography component="div" className="uppercase flex">
+              <div className="flex w-full">
+                <section className="flex justify-between w-full flex-wrap">
+
+                  <div className="mx-5 my-1  w-full">
+                    <div className="mt-2 mb-2" style={{ fontWeight: "600" }}> Pago pendiente cabaña {selectedUser.tipo_cabania} : {selectedUser.nuevoTotal}</div>
+                    <h4 className="text-green-600">Productos (Bebidas y Comidas)</h4>
+
+                    {/* Combina ambos arrays (bebidas y comidas) y verifica si tiene elementos */}
+                    {selectedUser.bebidas && selectedUser.restaurante &&
+                      Array.isArray(selectedUser.bebidas) && Array.isArray(selectedUser.restaurante) && Array.isArray(selectedUser.descorche) && Array.isArray(selectedUser.recepcion) &&
+                      [...selectedUser.bebidas, ...selectedUser.restaurante, ...selectedUser.descorche, ...selectedUser.recepcion].length > 0 ? (
+                      <table className="w-full text-center">
+                        <thead>
+                          <tr>
+                            <th className=" text-left">Nombre</th>
+                            <th style={{ width: "100px" }}>Cantidad</th>
+                            <th>mensaje</th>
+                            <th>Precio Unitario</th>
+                            <th>Total</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {[...selectedUser.bebidas, ...selectedUser.restaurante, ...selectedUser.descorche, ...selectedUser.recepcion].map((producto, index) => (
+                            <tr key={index}>
+                              <td className="text-left" style={{ width: "280px" }}>{producto.nombre}</td>
+                              <td>{producto.cantidad}</td>
+                              <td>{producto.adicional}</td>
+                              <td style={{ width: "280px" }} >{producto.precio}</td>
+                              <td>{producto.cantidad * producto.precio}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                        <tfoot className="border-t-3 border-green-500 pt-2">
+                          <tr>
+                            <td className="text-left"></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td style={{ height: "60px", paddingRight: "20px", width: "150px" }} className="text-right">Total: {
+                              [...selectedUser.bebidas, ...selectedUser.restaurante, ...selectedUser.recepcion, ...selectedUser.descorche].reduce((acc, producto) =>
+                                acc + (producto.cantidad * producto.precio), 0
+                              )
+                            }</td>
+                          </tr>
+                        </tfoot>
+                      </table>
+                    ) : (
+                      <p className=" w-full text-center">No hay productos que mostrar😔</p>
+                    )}
+                  </div>
+
+                </section>
+              </div>
+            </Typography>
+            <div className="flex flex-col">
+              {/* <span className=" flex w-full  pr-20">¿El cliente realizo un pago anticipado para reservar? <Checkbox checked={esPagoAnticipado}
+                                                            onChange={handlePagoAnticipadoChange} className="ml-1"></Checkbox></span> */}
+              <hr className="bg-gray-400 mb-2 mt-2" style={{ height: "4px" }} />
+              {selectedUser.reserva === "Si" ? (
+                <div>
+                  <span className=" flex w-full  pr-20">Pago pendiente cabania {selectedUser.tipo_cabania}: {selectedUser.nuevoTotal || 0}</span>
+                  <span className=" flex w-full  pr-20">Pago adelantado:<span className="text-red-500"> {selectedUser.pagoAnticipado || 0}</span></span>
+                  <span className=" flex w-full  pr-20">Pago posterior: {selectedUser.pagoPendiente || 0}</span>
+                  <span className=" flex w-full  pr-20">Bar: {barTotal || 0}</span>
+                  <span className=" flex w-full  pr-20">Adicional: {recTotal || 0}</span>
+                  <span className=" flex w-full  pr-20">Descorche: {desTotal || 0}</span>
+                  <span className=" flex w-full  pr-20">Restaurante: {resTotal || 0}</span>
+                  <hr className="bg-gray-400 mt-2 flex justify-between" style={{ height: "3px" }} />
+                  <span className=" flex w-full mt-2  pr-20">Tatal a pagar:
+                    {(
+                      barTotal +
+                      resTotal +
+                      recTotal +
+                      desTotal +
+                      selectedUser.pagoPendiente +
+                      selectedUser.nuevoTotal +
+                      selectedUser.pagoAnticipado
+                    ) - (selectedUser.pagoAnticipado)}</span>
+                  <hr className="bg-gray-400 mt-2 mb-5" style={{ height: "3px" }} />
+                  <span>Cancelado: {selectedUser.pago}</span>
+
+                </div>
+              ) : (
+                <div>
+                  <span className=" flex w-full  pr-20">Pago pendiente cabania {selectedUser.tipo_cabania}: {selectedUser.nuevoTotal || 0}</span>
+                  <span className=" flex w-full  pr-20">Pago adelantado:<span className="text-red-500"> {selectedUser.pagoAnticipado || 0}</span></span>
+                  <span className=" flex w-full  pr-20">Pago posterior: {selectedUser.pagoPendiente || 0}</span>
+                  <span className=" flex w-full  pr-20">Bar: {barTotal || 0}</span>
+                  <span className=" flex w-full  pr-20">Adicional: {recTotal || 0}</span>
+                  <span className=" flex w-full  pr-20">Descorche: {desTotal || 0}</span>
+                  <span className=" flex w-full  pr-20">Restaurante: {resTotal || 0}</span>
+                  <span className=" flex w-full  pr-20 mt-2">Tatal a pagar: {(
+                    barTotal +
+                    resTotal +
+                    recTotal +
+                    desTotal +
+                    selectedUser.pagoAnticipado +
+                    selectedUser.pagoPendiente +
+                    selectedUser.nuevoTotal)} </span>
+                  <hr className="bg-gray-400 mt-2 mb-5" style={{ height: "3px" }} />
+                  <span className="">Cancelado: {selectedUser.pago || 0}</span>
+                </div>
+              )}
+
+            </div>
+
+            <div className="flex justify-between mt-5">
+              <Typography component="div" >
+                <Button color="primary" onClick={() => {
+                  Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: "¿Quieres guardar esto como PDF?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sí, guardar',
+                    cancelButtonText: 'No, cancelar'
+                  }).then((result) => {
+                    if (result.isConfirmed) {
+                      generarPDF(selectedUser._id);
+                      // Muestra un nuevo SweetAlert con el chulito de confirmación
+                      Swal.fire({
+                        title: '¡Guardado!',
+                        text: 'El archivo PDF ha sido guardado exitosamente.',
+                        icon: 'success',
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Ok'
+                      });
+                    }
+                  })
+                }}>
+                  Guardar como PDF
+                </Button>
+                <Button className="ml-2" color="danger" variant="shadow" onClick={closeModal}>
+                  Cerrar
+                </Button>
+              </Typography>
+
+              <Typography>
+                {/* {selectedUser.nuevoTotal > 0 && selectedUser.pago <= 0 ? ( */}
+                <Button color="secondary" variant="shadow" onClick={() => actualizarDatosCliente(selectedUser.nuevoTotal, selectedUser.identificacion, "finalizado", selectedUser._id)}>
+                  Guardar
+                </Button>
+                {/* ) : (
+                                                             <Button color="secondary" variant="shadow" >
+                                                                 Inhabilitado
+                                                             </Button>
+                                                         )} */}
+              </Typography>
+
+            </div>
+          </Box>
+        </Modal>
+      )}
+
     </div>
   )
 }

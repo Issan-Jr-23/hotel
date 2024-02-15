@@ -361,75 +361,67 @@ export const totalGeneradoBar = async(req, res) => {
     const pasadia = await Cliente.find(); 
     const historial = await Usuario.find();
 
-    let total = 0;
-    let totalRestaurante = 0;
-    let totalRecepcion = 0;
-    let totalDescorche = 0;
+    let totalBar = 0;
+    let totalRes = 0;
+    let totalRec = 0;
+    let totalDes = 0;
 
-    // Process pasadia
-    if (pasadia) {
-      pasadia.forEach((b) => {
-        b.bebidas?.forEach((data) => {
-          total += data.cantidad * data.precio;
+    pasadia.forEach((b) =>{
+      b.bebidas.forEach((data)=>{
+        if (data.precio !== 0) {
+          totalBar += data.cantidad * data.precio;
+        }
+      })
+
+      b.restaurante.forEach((data) => {
+        if (data.precio !== 0){
+          totalRes += data.cantidad * data.precio;
+        }
+      })
+
+      b.recepcion.forEach((data) => {
+        if (data.precio !== 0) {
+          totalRec += data.cantidad * data.precio
+        }
+      })
+
+      b.descorche.forEach((data) => {
+        if (data.precio !== 0) {
+          totalDes += data.cantidad * data.precio;
+        }
+      })
+
+    })
+
+    historial.forEach((a) => {
+        a.historial.forEach((data) => {
+            if (data.servicio === "pasadia") {
+                data.restaurante?.forEach((res) => {
+                    if (res.mensaje !== "Cortesía" && res.precio > 0) {
+                        totalRes += res.cantidad * res.precio;
+                    }
+                });
+                data.bebidas?.forEach((res) => {
+                    if (res.mensaje !== "Cortesía" && res.precio > 0) {
+                        totalBar += res.cantidad * res.precio;
+                    }
+                });
+                data.recepcion?.forEach((res) => {
+                    totalRec += res.cantidad * res.precio;
+                });
+                data.descorche?.forEach((res) => {
+                    totalDes += res.cantidad * res.precio;
+                });
+            }
         });
-      });
-
-      pasadia.forEach((r) => {
-        r.restaurante?.forEach((data) => {
-          totalRestaurante += data.cantidad * data.precio;
-        });
-      });
-
-      pasadia.forEach((rec) => {
-        rec.recepcion?.forEach((data) => {
-          totalRecepcion += data.cantidad * data.precio; 
-        });
-      });
-
-      pasadia.forEach((desc) => {
-        desc.descorche?.forEach((data) =>{
-          totalDescorche += data.cantidad * data.precio; 
-        });
-      });
-    }
-
-    // Process historial
-    if (historial) {
-      historial.forEach((hb) => {
-        hb.historial?.forEach((data) => {
-          data.bebidas?.forEach((response) => {
-            total += response.cantidad * response.precio;
-          });
-
-          if (data.servicio === "pasadia") {
-            data.restaurante?.forEach((response) => {
-              if (response.precio !== 0 ) {
-                totalRestaurante += response.cantidad * response.precio;
-              }
-            });
-
-            data.recepcion?.forEach((response) => {
-              if (response.precio !== 0 ) {
-                totalRecepcion += response.cantidad * response.precio;
-              }
-            });
-          }
-        });
-
-        hb.descorche?.forEach((data) => {
-          if (data.servicio === "pasadia") {
-            totalDescorche += data.cantidad * data.precio; 
-          }
-        });
-      });
-    }
+    });
 
     // Send response
     res.status(200).json({
-      bar: total || 0,
-      restaurante: totalRestaurante || 0,
-      recepcion: totalRecepcion || 0,
-      descorche: totalDescorche || 0
+      bar: totalBar || 0,
+      restaurante: totalRes || 0,
+      recepcion: totalRec || 0,
+      descorche: totalDes || 0
     });
 
   } catch(error) {
@@ -463,13 +455,13 @@ export const totalGeneradoCabaniaBard = async(req, res) => {
         }
       })
 
-      rec.recepcion.forEach((data) => {
+      b.recepcion.forEach((data) => {
         if (data.precio !== 0) {
           totalRec += data.cantidad * data.precio
         }
       })
 
-      des.descorche.forEach((data) => {
+      b.descorche.forEach((data) => {
         if (data.precio !== 0) {
           totalDes += data.cantidad * data.precio;
         }
@@ -478,42 +470,28 @@ export const totalGeneradoCabaniaBard = async(req, res) => {
     })
 
     historial.forEach((a) => {
-      a.historial.forEach((data) => {
-        if (data.servicio === "cabania") {
-        data.restaurante?.forEach((res) => {
-          if (res.mensaje !== "Cortesía" && res.precio > 0 ) {
-          totalRes += res.cantidad * res.precio
-          }
-        })
-        }
-      })
+        a.historial.forEach((data) => {
+            if (data.servicio === "cabania") {
+                data.restaurante?.forEach((res) => {
+                    if (res.mensaje !== "Cortesía" && res.precio > 0) {
+                        totalRes += res.cantidad * res.precio;
+                    }
+                });
+                data.bebidas?.forEach((res) => {
+                    if (res.mensaje !== "Cortesía" && res.precio > 0) {
+                        totalBar += res.cantidad * res.precio;
+                    }
+                });
+                data.recepcion?.forEach((res) => {
+                    totalRec += res.cantidad * res.precio;
+                });
+                data.descorche?.forEach((res) => {
+                    totalDes += res.cantidad * res.precio;
+                });
+            }
+        });
+    });
 
-      a.historial.forEach((data) => {
-        if (data.servicio === "cabania") {
-        data.bebidas?.forEach((res) => {
-          if (res.mensaje !== "Cortesía" && res.precio > 0 ) {
-          totalBar += res.cantidad * res.precio
-          }
-        })
-        }
-      })
-
-      a.historial.forEach((data) => {
-        data.recepcion?.forEach((res) => {
-          totalRec += res.cantidad * res.precio
-        })
-      })
-
-      a.historial.forEach((data) => {
-        data.descorche?.forEach((res) => {
-          totalDes+= res.cantidad * res.precio
-        })
-      })
-
-
-
-
-    })
 
 
     res.status(200).json({
@@ -538,59 +516,56 @@ export const totalGeneradoHabitacionesBard = async(req, res) => {
     let totalRec = 0;
     let totalDes = 0;
 
-    habitaciones.forEach((bar ) => {
-      bar.bebidas.forEach((data) => {
-        totalBar += data.cantidad * data.precio;
+    habitaciones.forEach((b) =>{
+      b.bebidas.forEach((data)=>{
+        if (data.precio !== 0) {
+          totalBar += data.cantidad * data.precio;
+        }
       })
-    })
-    habitaciones.forEach((res) => {
-      res.restaurante.forEach((data) => {
-        totalRes += data.cantidad * data.precio;
+
+      b.restaurante.forEach((data) => {
+        if (data.precio !== 0){
+          totalRes += data.cantidad * data.precio;
+        }
       })
-    })
-    habitaciones.forEach((rec) => {
-      rec.recepcion.forEach((data) => {
-        totalRec += data.cantidad * data.precio; 
+
+      b.recepcion.forEach((data) => {
+        if (data.precio !== 0) {
+          totalRec += data.cantidad * data.precio
+        }
       })
-    })
-    habitaciones.forEach((des) => {
-      des.descorche.forEach((data) => {
-        totalDes += data.cantidad * data.precio;
+
+      b.descorche.forEach((data) => {
+        if (data.precio !== 0) {
+          totalDes += data.cantidad * data.precio;
+        }
       })
+
     })
 
+    historial.forEach((a) => {
+        a.historial.forEach((data) => {
+            if (data.servicio === "habitaciones") {
+                data.restaurante?.forEach((res) => {
+                    if (res.mensaje !== "Cortesía" && res.precio > 0) {
+                        totalRes += res.cantidad * res.precio;
+                    }
+                });
+                data.bebidas?.forEach((res) => {
+                    if (res.mensaje !== "Cortesía" && res.precio > 0) {
+                        totalBar += res.cantidad * res.precio;
+                    }
+                });
+                data.recepcion?.forEach((res) => {
+                    totalRec += res.cantidad * res.precio;
+                });
+                data.descorche?.forEach((res) => {
+                    totalDes += res.cantidad * res.precio;
+                });
+            }
+        });
+    });
 
-    historial.forEach((bar) => {
-      bar.historial.forEach((data) => {
-        data.bebidas.forEach((bbr) => {
-          totalBar += bbr.cantidad * bbr.precio;
-        })
-      })
-    })
-
-    historial.forEach((res) =>{
-      res.historial.forEach((data) => {
-        data.restaurante.forEach((bbr) => {
-          totalRes += bbr.cantidad * data.precio; 
-        })
-      })
-    })
-
-    historial.forEach((rec) => {
-      rec.historial.forEach((data) => {
-        data.recepcion.forEach((data) => {
-          totalRec += data.cantidad * data.precio;
-        })
-      })
-    })
-
-    historial.forEach((des) => {
-      des.historial.forEach((data) => {
-        data.descorche.forEach((bbr) => {
-          totalDes += data.cantidad * bbr.precio; 
-        })
-      })
-    })
 
     res.status(200).json({
       bar: totalBar || 0,
