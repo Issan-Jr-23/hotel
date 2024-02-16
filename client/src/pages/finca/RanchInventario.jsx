@@ -22,6 +22,8 @@ import { DeleteDocumentIcon } from "../iconos/DeleteDocumentIcon.jsx"
 import { EditDocumentIcon } from "../iconos/EditDocumentIcon.jsx"
 import { VerticalDotsIcon } from '../iconos/VerticalDotsIcon.jsx';
 import { useAuth } from "../../context/authContext.jsx";
+import loading_progress from "../../images/Animation-alternativa-loading.json"
+import Lottie from "react-lottie"
 // import { Dropdown, DropdownTrigger, DropdownItem, DropdownMenu, Button } from '@nextui-org/react';
 import Backdrop from '@mui/material/Backdrop';
 import Modal from '@mui/material/Modal';
@@ -309,7 +311,7 @@ function Row(props) {
             if (ProductosVendidos !== editedProductosVendidos) changes.ProductosVendidos = { old: ProductosVendidos, new: editedProductosVendidos };
             if (Cortesias !== editedCortesias) changes.Cortesias = { old: Cortesias, new: editedCortesias };
 
-            
+
 
             // Crear el mensaje con la información necesaria
             const message = createMessage(user.username, user.id, id, idSubproducto, editedName, changes);
@@ -760,6 +762,7 @@ export default function CollapsibleTable() {
     const [openFz, setOpenFz] = React.useState(false);
     const handleCloseFz = () => setOpenFz(false);
     const { user } = useAuth();
+    const [isLoading, setIsLoading] = useState(true);
     const [formData, setFormData] = useState({
         Descripcion: "",
         tipo: "",
@@ -818,6 +821,9 @@ export default function CollapsibleTable() {
 
             setRows(updatedRows);
             setFilteredProducts(updatedRows); // Aplicar filtros a todos los registros
+            setTimeout(() => {
+                setIsLoading(false);
+            }, 100);
         } catch (error) {
             console.error('Error fetching data:', error);
         }
@@ -919,6 +925,14 @@ export default function CollapsibleTable() {
 
     const handleOpemModalMui = () => {
         setOpenFz(true)
+        setFormData({
+            Descripcion: "",
+            tipo: "",
+            CantidadInicial: "",
+            Caducidad: "",
+            ValorUnitario: ""
+        });
+
     }
 
     const style = {
@@ -973,9 +987,21 @@ export default function CollapsibleTable() {
         applyFilters(rows);
     }, [selectedType, searchTerm])
 
+    const defaultOptionLoadingHome = {
+        loop: true,
+        autoPlay: true,
+        animationData: loading_progress,
+        rendererSettings: {
+            preserveAspectRatio: "xMidYMid slice"
+        }
+    }
+
 
     return (
-        <div className='pl-5 pr-5 mt-10 flex flex-col'>
+        <div className='pl-5 pr-5 mt-10 pb-20 flex flex-col'>
+            <div className={`loading-overlay ${isLoading ? 'visible' : ''}`}>
+                <Lottie options={defaultOptionLoadingHome} width={100} height={100} />
+            </div>
             <div>
                 <>
                     <div className=" flex justify-between w-12/12 gap-3 flex-col">
@@ -1160,6 +1186,7 @@ export default function CollapsibleTable() {
                                             <option value="recepcion">Recepción</option>
                                             <option value="utensilios">Utensilios</option>
                                             <option value="despensa">Despensa</option>
+                                            <option value="otro">Otro</option>
                                         </select>
                                         <Input
                                             name="Caducidad"
@@ -1224,10 +1251,12 @@ export default function CollapsibleTable() {
                     onChange={(e) => setSelectedType(e.target.value)}
                 >
                     <option id="p" className="w-52 text-black" value="">Todos</option>
-                    <option className="w-52 text-black" value="bebida">Bebidas</option>
-                    <option className="w-52 text-black" value="comida">Comidas</option>
+                    <option className="w-52 text-black" value="bebida">Bar</option>
+                    <option className="w-52 text-black" value="comida">Restaurante</option>
                     <option className="w-52 text-black" value="utensilios">Utensilios</option>
                     <option className="w-52 text-black" value="despensa">Despensa</option>
+                    <option className="w-52 text-black" value="otro">Otro</option>
+                    
                 </select>
             </div>
             <TableContainer component={Paper} style={{ borderRadius: "15px", overflow: "x" }}>

@@ -11,6 +11,7 @@ import AxiosInstance from '../../api/axios.js';
 import Swal from "sweetalert2"
 import Lottie from "react-lottie"
 import animacion from "../iconos/Animation.json"
+import loading_progress from "../../images/Animation-alternativa-loading.json"
 import animacionPendiente from "../iconos/Animation-pendiente.json"
 import "./trf.css"
 
@@ -19,6 +20,7 @@ const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0"
 const TransferirData = () => {
   const [busqueda, setBusqueda] = useState('');
   const [users, setUsers] = useState([])
+  const [isLoading, setIsLoading] = useState(true);
   const [transferencia, setTransferencia] = useState({
     identificacion: "",
     historial: []
@@ -49,6 +51,9 @@ const TransferirData = () => {
         ].sort((a, b) => new Date(b.fechaDeRegistro) - new Date(a.fechaDeRegistro));
 
         setUsers(usuariosCombinados);
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 100);
       } catch (error) {
         console.error("Error al obtener datos del servidor:", error);
       }
@@ -208,6 +213,15 @@ const TransferirData = () => {
     }
   }
 
+  const defaultOptionLoadingHome = {
+    loop: true,
+    autoPlay: true,
+    animationData: loading_progress,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice"
+    }
+  }
+
   const itemsPerPage = 10;
   const totalPages = Math.ceil(datosFiltrados.length / itemsPerPage);
   const [currentPage, setCurrentPage] = useState(1);
@@ -223,7 +237,9 @@ const TransferirData = () => {
 
   return (
     <div className=' div-trf pb-20'>
-
+      <div className={`loading-overlay ${isLoading ? 'visible' : ''}`}>
+        <Lottie options={defaultOptionLoadingHome} width={100} height={100} />
+      </div>
       <h1 className='trfd' >TRANSFERENCIA DE DATOS</h1>
       <div className='cont-trs'>
         <div className=" cont-form-00 flex flex-col pl-5 pr-5">

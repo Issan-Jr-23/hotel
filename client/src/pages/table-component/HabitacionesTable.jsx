@@ -55,8 +55,8 @@ export default function habitacionesTable() {
         setTotalPaginas(response.data.totalPages);
         setTimeout(() => {
           setIsLoading(false);
-        }, 100);
-      } catch (error) {
+        }, 1);
+      } catch (error){
         console.error("Error al obtener los clientes: ", error);
       }
     };
@@ -927,37 +927,44 @@ export default function habitacionesTable() {
 
         if (cantidad > totalPersonas) {
           alert(`La cantidad de cortesias ${cantidad} no debe superar a la cantidad de personas ${totalPersonas} `)
+          setIsSaving(true);
           return;
         }
 
         if (cantidad > disponibleInventario) {
           alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
+          setIsSaving(true);
           return false;
         }
 
 
         if (cantidad > cantidadRestante) {
           alert(`el usuario tiene ${cantidadRestante} cortesias disponibles`)
+          setIsSaving(true);
           return;
         }
 
         if (nuevaCantidadTotalCortesia > totalPersonas) {
           alert(`La cantidad de cortesías (${nuevaCantidadTotalCortesia}) no puede exceder la cantidad de personas (${totalPersonas}).`);
+          setIsSaving(true);
           return false;
         }
 
         if (cantidad > cantidadRestante) {
           alert(`Solo puedes agregar hasta ${cantidadRestante} cortesías adicionales.`);
+          setIsSaving(true);
           return false;
         }
       } else {
         if (cantidad > disponibleInventario) {
           alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
+          setIsSaving(true);
           return false;
         }
       }
       if (cantidad > disponibleInventario) {
         alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
+        setIsSaving(true);
         return false;
       }
 
@@ -2102,27 +2109,32 @@ export default function habitacionesTable() {
 
         if (cantidad > totalPersonas) {
           alert(`La cantidad de cortesias ${cantidad} no debe superar a la cantidad de personas ${totalPersonas} `)
+          setIsSaving(true);
           return;
         }
 
         if (cantidad > disponibleInventario) {
           alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
+          setIsSaving(true);
           return false;
         }
 
 
         if (cantidad > cantidadRestante) {
           alert(`el usuario tiene ${cantidadRestante} cortesias disponibles`)
+          setIsSaving(true);
           return;
         }
 
         if (nuevaCantidadTotalCortesia > totalPersonas) {
           alert(`La cantidad de cortesías (${nuevaCantidadTotalCortesia}) no puede exceder la cantidad de personas (${totalPersonas}).`);
+          setIsSaving(true);
           return false;
         }
 
         if (cantidad > cantidadRestante) {
           alert(`Solo puedes agregar hasta ${cantidadRestante} cortesías adicionales.`);
+          setIsSaving(true);
           return false;
         }
       }
@@ -2131,12 +2143,15 @@ export default function habitacionesTable() {
 
       if (cantidad > disponibleInventario) {
         alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
+        setIsSaving(true);
         return;
       } else if (disponibleInventario === 0 && !foodSeleccionada) {
         alert(`Ya no quedan ${foodSeleccionada} disponibles en el inventario `);
+        setIsSaving(true);
         return;
       } else if (disponibleInventario === 0 && !food1Seleccionada) {
         alert(`Ya no quedan ${food1Seleccionada} disponibles en el inventario `);
+        setIsSaving(true);
         return;
       }
       console.log("id de la comida seleccionada : " + foodSeleccionadaId)
@@ -2773,7 +2788,7 @@ export default function habitacionesTable() {
               <th className="html-table-tr-th"> <span className="html-table-thead-span pl-5"> <p></p>  Estado <img className="cursor-pointer mr-5 ml-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> </span></th>
               <th className="html-table-tr-th"> <span className="html-table-thead-span-fn"> <p></p><img className="cursor-pointer mr-2 ml-2" src={fd} alt="" style={{ width: "12px", height: "12px", }} /> <p></p> </span></th>
             </tr>
-          </thead> 
+          </thead>
           <tbody key="body-h">
             {users.map((cliente) => (
               <tr key={cliente._id}>

@@ -1,12 +1,14 @@
-
 .login-mockup {
-    background-image: url('../../images/img-hm.webp'); /* Replace with your image path */
+    background-image: url('../../images/img-hm.webp');
+    /* Replace with your image path */
     background-repeat: no-repeat;
     background-size: cover;
-    height: 100vh; /* Full viewport height */
+    height: 100vh;
+    /* Full viewport height */
     display: flex;
     justify-content: center;
     align-items: center;
+    /* min-h-screen w-6/12  overflow-hidden flex justify-center items-center */
 }
 
 .login-mockup:before {
@@ -16,28 +18,34 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.6); /* Dark semi-transparent overlay */
+    background: rgba(0, 0, 0, 0.6);
+    /* Dark semi-transparent overlay */
     z-index: 1;
 }
 
-.section-login{
+.section-login {
     z-index: 100;
+    background-image: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* min-h-screen w-6/12  flex items-center justify-center  */
 }
 
-.title-login{
+.title-login {
     color: #0070f0;
     z-index: 5;
     font-size: 35px;
     font-weight: 600;
 }
 
-.container-descripcion{
+.container-descripcion {
     width: 90%;
     display: flex;
     flex-direction: column;
 }
 
-.subtitle-login{
+.subtitle-login {
     color: rgb(234, 234, 234);
     z-index: 5;
     font-size: 20px;
@@ -45,16 +53,74 @@
     margin-bottom: 10px;
 }
 
-.pd-login{
+.pd-login {
     color: rgb(234, 234, 234);
     z-index: 5;
     font-size: 14px;
     margin-bottom: 10px;
 }
 
-.sst-login{
+.sst-login {
     color: rgb(234, 234, 234);
     z-index: 5;
     font-weight: 600;
     font-size: 32px;
+}
+
+.img-login-hotel-meqo{
+    display: none;
+}
+
+@media only screen and (min-width: 320px) and (max-width: 736px) {
+    .login-mockup {
+        background-image: none;
+        display: none;
+    }
+
+    .container-descripcion {
+        display: none;
+    }
+
+    .section-login {
+        height: 100vh;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-image: url("../../images/img-hm.webp");
+        background-size: cover;
+        position: relative;
+        /* Asegúrate de que .section-login tenga posición relativa */
+    }
+
+    .section-login::before {
+        content: "";
+        /* Necesario para que el pseudo-elemento se muestre */
+        position: absolute;
+        /* Posiciona el pseudo-elemento sobre el fondo */
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.6);
+        /* Ajusta la transparencia según necesites */
+        z-index: -1;
+        /* Coloca el efecto detrás del contenido de .section-login */
+    }
+
+    .pd-login {
+        display: none;
+    }
+
+    .img-login-hmeqo {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .img-login-hotel-meqo {
+        display: block;
+        height: 200px;
+        width: 200px;
+    }
 }

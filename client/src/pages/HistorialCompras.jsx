@@ -9,6 +9,7 @@ import { VerticalDotsIcon } from './iconos/VerticalDotsIcon.jsx';
 import { Pagination } from '@mui/material'
 import check from "./iconos/check.png";
 import NotResults from "../images/Animation-noresults.json"
+import loading_progress from "../images/Animation-alternativa-loading.json"
 
 const TransferirData = () => {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ const TransferirData = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [userNotFound, setUserNotFound] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (!busqueda) {
@@ -26,6 +28,9 @@ const TransferirData = () => {
           setUsers(response.data.resultado);
           setTotalPages(response.data.totalPages);
           setUserNotFound(false);
+          setTimeout(() => {
+            setIsLoading(false);
+          }, 100);
         } catch (error) {
           console.error("Error al obtener datos del servidor:", error);
         }
@@ -84,11 +89,23 @@ const TransferirData = () => {
     }
   };
 
+  const defaultOptionLoadingHome = {
+    loop: true,
+    autoPlay: true,
+    animationData: loading_progress,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice"
+    }
+  }
+
 
 
 
   return (
     <div className='pt-20 flex flex-col w-full' style={{ background: "linear-gradient(to right, #4ca1af, #c4e0e5)", height: "100vh", backgroundAttachment: "fixed", backgroundSize: "cover", position: "fixed", overflowY: "auto" }}>
+      <div className={`loading-overlay ${isLoading ? 'visible' : ''}`}>
+        <Lottie options={defaultOptionLoadingHome} width={100} height={100} />
+      </div>
       <h1 className='mhdu-h1'>HISTORIAL DE USUARIO</h1>
       <div className='hdu flex'>
         <div className="flex flex-col ml-5 mr-5">
@@ -108,9 +125,9 @@ const TransferirData = () => {
         </div>
         <div className='flex flex-col w-full'>
           {userNotFound ? (
-            <div className='text-center mt-4 border-2 bg-white mr-5 flex justify-center items-center ' style={{ height: "293px", borderRadius:"14px" }}>
+            <div className='text-center mt-4 border-2 bg-white mr-5 flex justify-center items-center ' style={{ height: "293px", borderRadius: "14px" }}>
 
-              <span className='flex ' style={{width:"330px", height:"330px"}}>
+              <span className='flex ' style={{ width: "330px", height: "330px" }}>
                 <Lottie options={optionsResults} />
               </span>
             </div>

@@ -8,6 +8,8 @@ import { obtenerInventario, registrarData, deleteRegistro } from "../../api/ranc
 import { PlusIcon } from "./PlusIcon.jsx";
 import toast, { Toaster } from 'react-hot-toast';
 import Swal from 'sweetalert2';
+import loading_progress from "../../images/Animation-alternativa-loading.json"
+import Lottie from "react-lottie"
 
 const colors = ["default", "primary", "secondary", "success", "warning", "danger"];
 
@@ -20,13 +22,16 @@ export default function App() {
         Cantidad: ""
     })
     const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const getData = await obtenerInventario();
                 setInventario(getData);
-                console.log("My data: " + getData)
+                setTimeout(() => {
+                    setIsLoading(false);
+                }, 100);
             } catch (error) {
                 console.log("los datos no se pudieron obtener en este momento")
             }
@@ -86,9 +91,22 @@ export default function App() {
         }
     };
 
+
+    const defaultOptionLoadingHome = {
+        loop: true,
+        autoPlay: true,
+        animationData: loading_progress,
+        rendererSettings: {
+            preserveAspectRatio: "xMidYMid slice"
+        }
+    }
+
     return (
         <div className="flex flex-col gap-3 pt-20">
             <Toaster position="top-right" />
+            <div className={`loading-overlay ${isLoading ? 'visible' : ''}`}>
+                <Lottie options={defaultOptionLoadingHome} width={100} height={100} />
+            </div>
             <h1 className="W-FULL H text-center" style={{ fontSize: "32px" }}>INVENTARIO FINCA</h1>
             {/* <Navbars /> */}
             <div>

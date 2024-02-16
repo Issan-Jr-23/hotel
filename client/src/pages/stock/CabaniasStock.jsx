@@ -18,6 +18,8 @@ import { MenuItem } from '@mui/material';
 import Backdrop from '@mui/material/Backdrop';
 import Fade from '@mui/material/Fade';
 import pi from "../../images/personajes-ilustrados.png"
+import loading_progress from "../../images/Animation-alternativa-loading.json"
+import Lottie from "react-lottie"
 
 
 const style = {
@@ -46,10 +48,11 @@ const CabaniasStock = () => {
     const [openM, setOpenM] = React.useState(false);
     const [productoSeleccionado, setProductoSeleccionado] = useState({})
     const [selectedId, setSelectedId] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
 
 
-    const handleClicked = (id) => (event) => { 
+    const handleClicked = (id) => (event) => {
         setSelectedId(id);
         setAnchorEl(event.currentTarget);
     };
@@ -91,19 +94,19 @@ const CabaniasStock = () => {
     const handlePost = async () => {
         // Crear una copia del formData para no modificar el estado directamente
         let dataToSend = { ...formData };
-    
+
         // Recorrer cada clave en dataToSend y cambiar cadenas vacías por "No definido"
         Object.keys(dataToSend).forEach(key => {
             if (dataToSend[key].trim() === "") {
                 dataToSend[key] = "No definido";
             }
         });
-    
+
         try {
             // Envía los datos al servidor
             await AxiosInstance.post(`/register-cabania-stock`, dataToSend);
             console.log("succesfully");
-    
+
             // Obtener la respuesta actualizada
             const response = await AxiosInstance.get("/view-cabania-stock");
             console.log(response.data);
@@ -112,7 +115,7 @@ const CabaniasStock = () => {
             console.log("false");
         }
     };
-    
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -120,6 +123,9 @@ const CabaniasStock = () => {
                 const response = await AxiosInstance.get("/view-cabania-stock");
                 console.log(response.data)
                 setData(response.data);
+                setTimeout(() => {
+                    setIsLoading(false);
+                }, 100);
             } catch (error) {
                 console.error("Error al obtener datos del servidor:", error);
             }
@@ -181,10 +187,22 @@ const CabaniasStock = () => {
         }));
     };
 
+    const defaultOptionLoadingHome = {
+        loop: true,
+        autoPlay: true,
+        animationData: loading_progress,
+        rendererSettings: {
+            preserveAspectRatio: "xMidYMid slice"
+        }
+    }
+
     // const handleEdit = async(id,editedItem,editedCantidad, editedUbicacion, )
 
     return (
         <div className='pt-20 flex flex-col pl-5 pr-5 pb-20'>
+            <div className={`loading-overlay ${isLoading ? 'visible' : ''}`}>
+                <Lottie options={defaultOptionLoadingHome} width={100} height={100} />
+            </div>
             <div className='flex justify-between'>
                 <div>
                     <Button
@@ -387,7 +405,7 @@ const CabaniasStock = () => {
                                         }}
                                         PaperProps={{
                                             style: { boxShadow: '0px 3px 5px 1px #D2D2D2' }, // Aquí se elimina el box-shadow
-                                          }}
+                                        }}
                                     >
                                         <MenuItem onClick={() => handleOpenM(selectedId)}>Edit file</MenuItem>
                                         <MenuItem onClick={() => handleDelete(selectedId)}>Delete file</MenuItem>
@@ -403,10 +421,10 @@ const CabaniasStock = () => {
                                         slotProps={{
                                             backdrop: {
                                                 timeout: 500,
-                                                style: { backgroundColor: 'rgba(0, 0, 0, 0.1)' } 
+                                                style: { backgroundColor: 'rgba(0, 0, 0, 0.1)' }
                                             },
                                         }}
-                                        // BackdropProps={{ style: { backgroundColor: 'rgba(0, 0, 0, 0.1)' } }}
+                                    // BackdropProps={{ style: { backgroundColor: 'rgba(0, 0, 0, 0.1)' } }}
                                     >
                                         <Fade in={openM}>
                                             <Box sx={style}>

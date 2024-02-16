@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom';
 import AxiosInstance from '../api/axios.js';
 import { Button } from '@nextui-org/react';
+import loading_progress from "../images/Animation-alternativa-loading.json"
+import Lottie from "react-lottie"
 import "./global.css"
 
 const Historial = () => {
@@ -9,6 +11,9 @@ const Historial = () => {
     const [historial, setHistorial] = useState(null);
     const [error, setError] = useState(null);
     const [historialExpandido, setHistorialExpandido] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [resetKey, setResetKey] = useState(0);
+
 
     const { id } = useParams();
 
@@ -17,6 +22,9 @@ const Historial = () => {
             try {
                 const response = await AxiosInstance.get(`/obtener-historial/${id}`);
                 setHistorial(response.data);
+                setTimeout(() => {
+                    setIsLoading(false);
+                }, 100);
             } catch (err) {
                 setError(err);
                 console.error('Error al cargar el historial:', err);
@@ -53,15 +61,27 @@ const Historial = () => {
 
     let total = 0;
 
+    const defaultOptionLoadingHome = {
+        loop: true,
+        autoPlay: true,
+        animationData: loading_progress,
+        rendererSettings: {
+            preserveAspectRatio: "xMidYMid slice"
+        }
+    }
+
 
     return (
-        <div className='pt-20 pb-20 w-full' style={{  background:"linear-gradient(to right, #4ca1af, #c4e0e5)", height:"100vh", backgroundAttachment:"fixed", backgroundSize:"cover", position:"fixed", overflowY:"auto"}}>
+        <div className='pt-20 pb-20 w-full' style={{ background: "linear-gradient(to right, #4ca1af, #c4e0e5)", height: "100vh", backgroundAttachment: "fixed", backgroundSize: "cover", position: "fixed", overflowY: "auto" }}>
+            <div className={`loading-overlay ${isLoading ? 'visible' : ''}`}>
+                <Lottie options={defaultOptionLoadingHome} width={100} height={100} />
+            </div>
             <h1 className='hdlu text-white'>Historial del Usuario</h1>
             <section className='mt-10'>
                 {historial && historial.length > 0 ? (
                     historial.map((item, index) => (
                         <div key={index} className=''>
-                            <div className='border-1 mr-5 ml-5 mb-10 rounded-xl p-5 uppercase bg-white ' style={{overflowX:"auto"}}>
+                            <div className='border-1 mr-5 ml-5 mb-10 rounded-xl p-5 uppercase bg-white ' style={{ overflowX: "auto" }}>
                                 <h3 className='text-3xl mb-5'>Historial {index + 1}</h3>
                                 <p className='ml-1' style={{ fontWeight: "600" }}> <span className='text-blue-500'>ID
                                     Historial:</span> {item.idHistorial}</p>
@@ -69,18 +89,18 @@ const Historial = () => {
                                     className='text-blue- 500'>Nombre:</span> {item.nombre}</p>
                                 <div className={`informacion-adicional ml-1  ${historialExpandido === index ? 'expandido' :
                                     'contraido'}`} style={{ fontWeight: "600" }} >
-                                        <div className='flex flex-col'>
-                                            <span className='text-left mb-2'>Reserva: {item.reserva}</span>
-                                            <span className='text-left mb-2'>Niños: {item.ninios}</span>
-                                            <span className='text-left mb-2'>Adultos: {item.adultos}</span>
-                                            <span className='text-left mb-2'>Servicio: {item.servicio}</span>
-                                            <span className='text-left mb-2'>Metodo de pago anticipado: {item.metodoPago}</span>
-                                            <span className='text-left mb-2'>PagoAnticipado: {item.pago}</span>
-                                            <span className='text-left mb-2'>Metodo de pago pendiente: {item.metodoPagoPendiente || "No aplica"}</span>
-                                            <span className='text-left mb-2'>Pago posterior: {item.pagoPendiente || 0}</span>
-                                            <span className='text-left mb-2'>Estado: {item.estado}</span>
-                                        </div>
-                                        <hr />
+                                    <div className='flex flex-col'>
+                                        <span className='text-left mb-2'>Reserva: {item.reserva}</span>
+                                        <span className='text-left mb-2'>Niños: {item.ninios}</span>
+                                        <span className='text-left mb-2'>Adultos: {item.adultos}</span>
+                                        <span className='text-left mb-2'>Servicio: {item.servicio}</span>
+                                        <span className='text-left mb-2'>Metodo de pago anticipado: {item.metodoPago}</span>
+                                        <span className='text-left mb-2'>PagoAnticipado: {item.pago}</span>
+                                        <span className='text-left mb-2'>Metodo de pago pendiente: {item.metodoPagoPendiente || "No aplica"}</span>
+                                        <span className='text-left mb-2'>Pago posterior: {item.pagoPendiente || 0}</span>
+                                        <span className='text-left mb-2'>Estado: {item.estado}</span>
+                                    </div>
+                                    <hr />
 
                                     {/* <table className=' mb-2 mt-2 border-b-1 border-t-1' >
                                         <tr >

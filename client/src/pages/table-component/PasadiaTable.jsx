@@ -266,7 +266,7 @@ export default function review() {
                 setTotalPaginas(response.data.totalPages);
                 setTimeout(() => {
                     setIsLoading(false);
-                }, 100);
+                }, 1);
             } catch (error) {
                 console.error("Error al obtener los clientes: ", error);
             }
