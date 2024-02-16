@@ -67,6 +67,7 @@ function Row(props) {
     const [miValor, setMiValor] = useState('');
     const [miValorM, setMiValorM] = useState('');
     const [rows, setRows] = useState([]);
+    const { user } = useAuth();
 
     const [anchorEl, setAnchorEl] = React.useState(null);
     const opens = Boolean(anchorEl);
@@ -232,23 +233,37 @@ function Row(props) {
 
 
 
-    const handleSave = async (id, editedName, editedTipo, editedCaducidad, editedPrecio, editedCi, editedCv) => {
-        console.log("  *********************  ", id)
-        console.log("id********", editedName)
-        try {
-            await AxiosInstance.put(
-                `/update-producto/${id}`,
-                {
-                    Descripcion: editedName,
-                    tipo: editedTipo,
-                    Caducidad: editedCaducidad,
-                    CantidadInicial: editedCi,
-                    ValorUnitario: editedPrecio,
-                    ProductosVendidos: editedCv
+    const createMessage = (userName, userId, productId, productName, changes) => {
+        return `${userName} (${userId}) ha editado el producto ${productName} (ID: ${productId}). Cambios realizados: ${JSON.stringify(changes)}.`;
+    };
 
-                }
-            );
-            handleCloseM()
+    const handleSave = async (id, editedName, editedTipo, editedCaducidad, editedPrecio, editedCi, editedCv) => {
+        try {
+            // Obtener el producto antes de la actualización para comparar
+            const productBeforeUpdate = await AxiosInstance.get(`/obtener-inventario/${id}`);
+            const { Descripcion, tipo, Caducidad, CantidadInicial, ValorUnitario, ProductosVendidos } = productBeforeUpdate.data;
+
+            // Comparar los valores antiguos con los nuevos valores
+            const changes = {};
+            if (Descripcion !== editedName) changes.Descripcion = { old: Descripcion, new: editedName };
+            if (tipo !== editedTipo) changes.tipo = { old: tipo, new: editedTipo };
+            if (Caducidad !== editedCaducidad) changes.Caducidad = { old: Caducidad, new: editedCaducidad };
+            if (CantidadInicial !== editedCi) changes.CantidadInicial = { old: CantidadInicial, new: editedCi };
+            if (ValorUnitario !== editedPrecio) changes.ValorUnitario = { old: ValorUnitario, new: editedPrecio };
+            if (ProductosVendidos !== editedCv) changes.ProductosVendidos = { old: ProductosVendidos, new: editedCv };
+
+            // Mostrar los cambios
+            console.log('Changes:', changes);
+
+            // Crear el mensaje con la información necesaria
+            const message = createMessage(user.username, user.id, id, editedName, changes);
+
+            // Enviar el mensaje al servidor
+            await AxiosInstance.post('/registrar-edicion', {
+                message: message
+            });
+
+            handleCloseM();
             console.log('Product updated successfully');
             fetchProducts();
         } catch (error) {
@@ -256,6 +271,11 @@ function Row(props) {
             alert("Error al actualizar producto. Por favor, inténtalo de nuevo más tarde.");
         }
     };
+
+
+
+
+
 
     const handleDeleteSubproducto = async (id, idSubproducto) => {
         console.log("eliminar subproducto", id, idSubproducto);
@@ -278,18 +298,42 @@ function Row(props) {
 
     const hadleUpdateSubProducto = async (id, idSubproducto, editedName, editedValorUnitario, editedProductosVendidos, editedCortesias) => {
         try {
+            // Obtener el subproducto antes de la actualización para comparar
+            const subproductoBeforeUpdate = await AxiosInstance.get(`/obtener/sub/productos/${id}/${idSubproducto}`);
+            const { Descripcion, ValorUnitario, ProductosVendidos, Cortesias } = subproductoBeforeUpdate.data;
+
+            // Comparar los valores antiguos con los nuevos valores
+            const changes = {};
+            if (Descripcion !== editedName) changes.Descripcion = { old: Descripcion, new: editedName };
+            if (ValorUnitario !== editedValorUnitario) changes.ValorUnitario = { old: ValorUnitario, new: editedValorUnitario };
+            if (ProductosVendidos !== editedProductosVendidos) changes.ProductosVendidos = { old: ProductosVendidos, new: editedProductosVendidos };
+            if (Cortesias !== editedCortesias) changes.Cortesias = { old: Cortesias, new: editedCortesias };
+
+            
+
+            // Crear el mensaje con la información necesaria
+            const message = createMessage(user.username, user.id, id, idSubproducto, editedName, changes);
+
+            // Enviar los datos al servidor, incluyendo el ID del producto y del subproducto
             await AxiosInstance.put(`/update-prueba-subproducto/${id}`, {
                 idSubproducto: idSubproducto,
                 Descripcion: editedName,
                 ValorUnitario: editedValorUnitario,
                 ProductosVendidos: editedProductosVendidos,
                 Cortesias: editedCortesias,
-            })
-            console.log("succesfully")
+            });
+
+            // Enviar el mensaje al servidor para registrarlo
+            await AxiosInstance.post('/registrar-edicion', {
+                message: message
+            });
+
+            console.log("successfully");
         } catch (error) {
-            console.log(error)
+            console.log(error);
         }
     }
+
 
 
 
@@ -420,7 +464,7 @@ function Row(props) {
                         }}
                     >
                         <MenuItem onClick={handleOpenM}>Edit file</MenuItem>
-                        <MenuItem onClick={() => onDelete(row._id)}>Delete file</MenuItem>
+                        <MenuItem onClick={() => onDelete(row)}>Delete file</MenuItem>
 
                     </Menu>
                     <Modal
@@ -715,7 +759,7 @@ export default function CollapsibleTable() {
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [openFz, setOpenFz] = React.useState(false);
     const handleCloseFz = () => setOpenFz(false);
-    const {user} = useAuth();
+    const { user } = useAuth();
     const [formData, setFormData] = useState({
         Descripcion: "",
         tipo: "",
@@ -784,41 +828,46 @@ export default function CollapsibleTable() {
         fetchProducts();
     }, []);
 
-    const handleDelete = async (id) => {
+    const handleDelete = async (row) => {
         const userName = user.username;
+        const productId = row._id;
+        const productName = row.Descripcion;
+
+        console.log(userName, " ha borrado el producto ", productName, " con el id ", productId)
+
         const confirmDelete = window.confirm(
             `¿Estás seguro de que deseas eliminar este producto? Esta acción será realizada por ${userName}.`
         );
+
         if (!confirmDelete) {
             return;
         }
+
         try {
-            // Suponiendo que el registro tiene un campo 'name' que quieres registrar
-            const productToDelete = rows.find((product) => product._id === id);
-            const productName = productToDelete.nombre;
-            console.log(productName)
+            await AxiosInstance.delete(`/eliminar-mekato/${productId}`);
 
-            await AxiosInstance.delete(`/eliminar-mekato/${id}`);
+            const updatedRows = rows.filter((product) => product._id !== productId);
+            setRows(updatedRows);
 
-            const updatedProducts = rows.filter((product) => product._id !== id);
-            setRows(updatedProducts);
-            console.log(`Producto eliminado exitosamente por ${userName}`);
+            console.log(`Producto "${productName}" eliminado exitosamente por ${userName}`);
 
             // Guardar el mensaje en la base de datos
             const deletionMessage = {
                 userName,
                 productName,
-                productId: id,
+                productId,
                 deletionDate: new Date().toISOString(), // Fecha y hora de la eliminación
             };
 
-            await AxiosInstance.post('/registrar-eliminacion', deletionMessage);
+            console.log("data enviada al servidor: ", deletionMessage)
 
+            await AxiosInstance.post('/registrar-eliminacion', deletionMessage);
         } catch (error) {
             console.error("Error al eliminar producto:", error);
             alert("Error al eliminar producto. Por favor, inténtalo de nuevo más tarde.");
         }
     };
+
 
 
     const handleSubproductoChange = (index, field, value) => {

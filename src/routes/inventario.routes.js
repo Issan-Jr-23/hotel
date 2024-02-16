@@ -1,5 +1,5 @@
 import {Router} from "express";
-import { crearProducto, deleteSubproduct, filType, guardarCortesiaFoodInventory, guardarCortesiaItemInventory, obtenerProductosRecepcion, obtenerSubProductos, updateBebidas, updateCB, updateCF, updateCSTOCKB, updateCSTOCKF, updateStockSubproductos, updateSubproduct, validCB, validCF } from '../controllers/inventario.controllers.js'
+import { crearProducto, deleteSubproduct, filType, guardarCortesiaFoodInventory, guardarCortesiaItemInventory, obtenerProductoPorId, obtenerProductosRecepcion, obtenerSubProductoPorId, obtenerSubProductos, updateBebidas, updateCB, updateCF, updateCSTOCKB, updateCSTOCKF, updateStockSubproductos, updateSubproduct, validCB, validCF } from '../controllers/inventario.controllers.js'
 import {updateProducto } from '../controllers/inventario.controllers.js'
 import {obtenerInventario } from '../controllers/inventario.controllers.js'
 // import {crearAlimentos } from '../controllers/alimentos.controllers.js'
@@ -14,6 +14,8 @@ const router = Router();
 
 router.post("/inventario",auth, crearProducto)
 router.get("/obtener-inventario",auth, obtenerInventario) 
+router.get("/obtener-inventario/:id",auth, obtenerProductoPorId) 
+router.get("/obtener/sub/productos/:id/:idSubproducto",auth, obtenerSubProductoPorId) 
 // router.post("/alimentos",auth, crearAlimentos)
 // router.get("/obtener-alimentos",auth, obtenerAlimentos)
 router.get("/mekatos",auth, obtenerMekatos)

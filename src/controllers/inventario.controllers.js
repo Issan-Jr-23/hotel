@@ -22,6 +22,51 @@ export const obtenerInventario = async (req, res) => {
   }
 };
 
+export const obtenerProductoPorId = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const producto = await Bebida.findById(id);
+
+    if (!producto) {
+      return res.status(404).json({ mensaje: "Producto no encontrado" });
+    }
+
+    res.status(200).json(producto);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error al obtener el producto desde la base de datos");
+  }
+};
+
+
+export const obtenerSubProductoPorId = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const producto = await Bebida.findById(id);
+
+    if (!producto) {
+      return res.status(404).json({ mensaje: "Producto no encontrado" });
+    }
+
+    // Buscar el subproducto dentro del arreglo de subproductos
+    const { idSubproducto } = req.params;
+    const subproducto = producto.subproductos.find(sub => sub._id.toString() === idSubproducto);
+
+    if (!subproducto) {
+      return res.status(404).json({ mensaje: "Subproducto no encontrado" });
+    }
+
+    res.status(200).json(subproducto);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error al obtener el producto desde la base de datos");
+  }
+};
+
+
+
 export const obtenerMekatos = (req, res) => {
   Bebida.find({ tipo: "mekatos" })
     .then((mekatos) => {

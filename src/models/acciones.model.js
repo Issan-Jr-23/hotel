@@ -7,14 +7,14 @@ function getCurrentDateMinus5Hours() {
     return now;
 }
 
-const accionModel = new mongoose.Schema({
+const accionSchema = new mongoose.Schema({
     mensaje: {
         type: String,
     },
-    fecha: {
+    actionDate: {
         type: Date,
-        default: getCurrentDateMinus5Hours // Usamos la función aquí
+        default: getCurrentDateMinus5Hours
     }
 });
 
-export default mongoose.model("Mensaje", accionModel);
+export default mongoose.model("Accion", accionSchema);

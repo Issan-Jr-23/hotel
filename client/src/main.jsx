@@ -11,7 +11,7 @@ import { NextUIProvider } from "@nextui-org/react";
 ReactDOM.createRoot(
   document.getElementById('root')).render(
     <NextUIProvider>
-      <main>
+      <main className='' style={{backgroundColor:"#f1f1fb"}}>
         <App />
       </main>
     </NextUIProvider>,

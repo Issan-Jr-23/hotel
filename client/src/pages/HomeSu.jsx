@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
+import { Swiper, SwiperSlide } from 'swiper/react';
 import NavMenu from '../components/NavMenu.jsx'
 import { Button, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@nextui-org/react"
 import mockup from "../images/proyecto.png"
@@ -15,7 +16,11 @@ import AxiosInstance from '../api/axios.js'
 import userimg from '../images/usuariopng.png'
 import userimg2 from '../images/usuariopng2.png'
 import userimg3 from '../images/usuariopng3.png'
+import { Autoplay, Pagination, Navigation } from 'swiper/modules';
 import "./css/homeSu.css"
+import 'swiper/css';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
 
 
 const HomeSu = () => {
@@ -27,6 +32,15 @@ const HomeSu = () => {
   const [totalUsersHab, setTotalUsersHab] = useState([])
   const [totalVentaHabitaciones, setTotalVentaHabitaciones] = useState([])
 
+
+
+
+  const progressCircle = useRef(null);
+  const progressContent = useRef(null);
+  const onAutoplayTimeLeft = (s, time, progress) => {
+    progressCircle.current.style.setProperty('--progress', 1 - progress);
+    progressContent.current.textContent = `${Math.ceil(time / 1000)}s`;
+  };
 
 
 
@@ -106,9 +120,40 @@ const HomeSu = () => {
               <img className='img-wb-user' src={mockup} alt="" style={{ borderRadius: "0px 20px 20px 0px" }} />
             </article>
           </div>
-          <div className='cover1 ml-5 rounded-3xl' style={{ width: "35%", height: "280px" }} >
-            <h2 className=' text-cover text-inherit'>Title</h2>
-            <p className=' text-cover1'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe delectus voluptate aliquam et eos molestias nisi amet ut ipsam iure...</p>
+          <div className='cover1' style={{ width: "35%", height: "280px" }} >
+            <>
+              <Swiper
+                spaceBetween={30}
+                centeredSlides={true}
+                autoplay={{
+                  delay: 2500,
+                  disableOnInteraction: false,
+                }}
+                pagination={{
+                  clickable: true,
+                }}
+                navigation={true}
+                modules={[Autoplay, Pagination, Navigation]}
+                onAutoplayTimeLeft={onAutoplayTimeLeft}
+                className="mySwiper"
+              >
+                <SwiperSlide>Slide 1</SwiperSlide>
+                <SwiperSlide>Slide 2</SwiperSlide>
+                <SwiperSlide>Slide 3</SwiperSlide>
+                <SwiperSlide>Slide 4</SwiperSlide>
+                <SwiperSlide>Slide 5</SwiperSlide>
+                <SwiperSlide>Slide 6</SwiperSlide>
+                <SwiperSlide>Slide 7</SwiperSlide>
+                <SwiperSlide>Slide 8</SwiperSlide>
+                <SwiperSlide>Slide 9</SwiperSlide>
+                <div className="autoplay-progress" slot="container-end">
+                  <svg viewBox="0 0 48 48" ref={progressCircle}>
+                    <circle cx="24" cy="24" r="20"></circle>
+                  </svg>
+                  <span ref={progressContent}></span>
+                </div>
+              </Swiper>
+            </>
           </div>
 
         </section>

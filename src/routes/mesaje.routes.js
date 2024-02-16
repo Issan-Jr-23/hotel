@@ -8,6 +8,6 @@ const router = Router();
 
 router.post("/registrar-eliminacion",auth, registrarEliminacion )
 router.post("/registrar-edicion",auth, registrarEdicion )
-router.get("/notificaciones",auth, obtenerMessage)
+router.get("/notificaciones", obtenerMessage)
 
 export default router;
