@@ -701,7 +701,7 @@ export const productosCategoria = async (req, res) => {
         })
 
       data.bebidas?.forEach((response) => {
-        if (response.adicional === "adicional"  ) {
+        if (response.adicional === "adicional") {
           totalAd += response.cantidad * response.precio;
         } else {
           totalBar += response.cantidad * response.precio;
@@ -709,7 +709,11 @@ export const productosCategoria = async (req, res) => {
       })
 
       data.recepcion?.forEach((response) => {
+        // if (response.adicional === "adicional") {
+        //   totalAd += response.cantidad * response.precio;
+        // } else {
           totalRec += response.cantidad * response.precio;
+        // }
       })
 
       data.descorche?.forEach((response) => {
@@ -717,6 +721,8 @@ export const productosCategoria = async (req, res) => {
       })
 
     })
+
+
 
     historial.forEach((data) => {
       data.historial.forEach((response) => {
@@ -742,10 +748,12 @@ export const productosCategoria = async (req, res) => {
         })
         }
       })
+
         data.historial.forEach((response) => {
           if (response.servicio === "cabania") {
-          response.recepcion?.forEach((dataRes) => {
-            totalRec += dataRes.cantidad * dataRes.Precio;
+          response.recepcion?.forEach((resData) => {
+          totalRec += resData.cantidad * resData.precio;
+        // }
           })
           }
         })
@@ -772,7 +780,6 @@ export const productosCategoria = async (req, res) => {
     console.log(error)
   }
 }
- 
 
 
 

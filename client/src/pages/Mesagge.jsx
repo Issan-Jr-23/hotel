@@ -3,6 +3,8 @@ import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from 
 import AxiosInstance from "../api/axios.js";
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
+import Lottie from "react-lottie";
+import loading_progress from "../images/Animation-alternativa-loading.json"
 import "../App.css";
 
 export default function App() {
@@ -10,6 +12,7 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [pageSize, setPageSize] = useState(15);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -18,6 +21,9 @@ export default function App() {
         setMessage(response.data.mensajesObtenidos);
         setTotalPages(response.data.totalPages);
         setPageSize(response.data.pageSize);
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 100);
       } catch (error) {
         console.error("Error al obtener datos del servidor:", error);
       }
@@ -29,6 +35,16 @@ export default function App() {
     setCurrentPage(newPage);
   };
 
+
+  const defaultOptionLoadingHome = {
+    loop: true,
+    autoPlay: true,
+    animationData: loading_progress,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice"
+    }
+  }
+
   // Calcula los índices de los mensajes que se mostrarán en la página actual
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = startIndex + pageSize;
@@ -36,6 +52,9 @@ export default function App() {
 
   return (
     <div>
+      <div className={`loading-overlay ${isLoading ? 'visible' : ''}`}>
+        <Lottie options={defaultOptionLoadingHome} width={100} height={100} />
+      </div>
       <div className="flex justify-center items-center pt-20 flex-col">
         <h2 className="text-black text-4xl mb-5 text-center pl-2 pr-2">CAMBIOS REALIZADOS EN EL INVENTARIO</h2>
 

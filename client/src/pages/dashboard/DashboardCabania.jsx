@@ -16,7 +16,7 @@ import cubo from "../../images/triangular.png"
 import fa from "../../images/triangular1.png"
 import fa1 from "../../images/triangular2.png"
 import animationDb from "../../images/Animation-cabania.json"
-import loading_progress from "../../images/Animation-loading.json"
+import loading_progress from "../../images/Animation-alternativa-loading.json"
 import Mc from "../adicionales/MostrarClientesCabania.jsx"
 
 
@@ -28,10 +28,11 @@ const dashboardPasadia = () => {
   const [cantidadComprada, setCantidadComprada] = useState()
   const [totalVentaProducts, setTotalVentaProducts] = useState()
   const [cantidadCortesias, setCantidadCortesias] = useState();
+   const [isLoading, setIsLoading] = useState(true);
 
 
   useEffect(() => {
-    const fetchData = async () => { 
+    const fetchData = async () => {
       try {
         const response = await AxiosInstance.get('/obtain-cabania-products');
         console.log(response);
@@ -39,6 +40,9 @@ const dashboardPasadia = () => {
         setCantidadComprada(cantidadComprada);
         setTotalVentaProducts(money);
         setCantidadCortesias(cortesias);
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 100);
 
       } catch (error) {
         console.error('Error al obtener los datos: ', error);
@@ -89,98 +93,106 @@ const dashboardPasadia = () => {
     }
   }
 
+  const defaultOptionLoadingHome = {
+    loop: true,
+    autoPlay: true,
+    animationData: loading_progress,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice"
+    }
+  }
+
 
   return (
 
     <div>
 
-      {/* <div className={`loading-overlay ${loading ? 'visible' : ''}`}>
-        <Lottie options={defaultOptionLoading} width={100} height={100} />
-        <p>Cargando recursos</p>
-      </div> */}
-      
-        <div className=' fondo pt-20 pl-5 pr-5 pb-20'>
+      <div className={`loading-overlay ${isLoading ? 'visible' : ''}`}>
+        <Lottie options={defaultOptionLoadingHome} width={100} height={100} />
+      </div>
 
-          <div className='cont-icon-json'>
-            <article className='cont-title-json'>
-              <h1 className='text-title-dash-pas'>Dashboard Cabaña </h1>
+      <div className=' fondo pt-20 pl-5 pr-5 pb-20'>
 
-            </article>
-            <article className='animation-lottie-json'>
-              <Lottie options={defaultOption} width="100%" height="100%"
-              />
-            </article>
+        <div className='cont-icon-json'>
+          <article className='cont-title-json'>
+            <h1 className='text-title-dash-pas'>Dashboard Cabaña </h1>
 
-          </div>
-          <div className='flex justify-between flex-wrap'>
-            <div className='box-style  flex rounded-2xl '>
-              <span className='box-grafic justify-between flex flex-col p-4' >
-                <h3 className='fondo-text' style={{ fontWeight: "600", fontSize: "20px" }} >Cabaña</h3>
-                <p className='fondo-text flex' style={{ fontWeight: "600" }}>
-                  ${typeof totalVentaPasadia === 'number' ? totalVentaPasadia.toLocaleString('es-CO') : '0'}
-                  {<span className='fondo-text alza flex flex-row items-center ml-2 text-green-600'>
-                    {/* <span className='alza'>
+          </article>
+          <article className='animation-lottie-json'>
+            <Lottie options={defaultOption} width="100%" height="100%"
+            />
+          </article>
+
+        </div>
+        <div className='flex justify-between flex-wrap'>
+          <div className='box-style  flex rounded-2xl '>
+            <span className='box-grafic justify-between flex flex-col p-4' >
+              <h3 className='fondo-text' style={{ fontWeight: "600", fontSize: "20px" }} >Cabaña</h3>
+              <p className='fondo-text flex' style={{ fontWeight: "600" }}>
+                ${typeof totalVentaPasadia === 'number' ? totalVentaPasadia.toLocaleString('es-CO') : '0'}
+                {<span className='fondo-text alza flex flex-row items-center ml-2 text-green-600'>
+                  {/* <span className='alza'>
               <img className='down' src={down} alt="" /> </span>   */}</span>}
-                </p>
-                <p className=' fondo-text text-3xl flex' style={{ fontWeight: "600" }}>  {totalUsers}</p>
+              </p>
+              <p className=' fondo-text text-3xl flex' style={{ fontWeight: "600" }}>  {totalUsers}</p>
 
-              </span>
-              <img className='img-cubo-dasboard-cabania' src={cubo} alt="" />
-            </div>
-            <div className='box-style  flex rounded-2xl '>
-              <span className='box-grafic justify-between flex flex-col p-4'>
-                <h3 className='fondo-text' style={{ fontWeight: "600", fontSize: "20px" }} >Productos Comprados</h3>
-                <p className='fondo-text flex' style={{ fontWeight: "600" }}>
-                  ${typeof  totalVentaProducts === 'number' ? totalVentaProducts.toLocaleString('es-CO') : '0'}
-                  {<span className='fondo-text alza flex items-center ml-2 text-red-600'>
-                    {/* <span className='alza'>
+            </span>
+            <img className='img-cubo-dasboard-cabania' src={cubo} alt="" />
+          </div>
+          <div className='box-style  flex rounded-2xl '>
+            <span className='box-grafic justify-between flex flex-col p-4'>
+              <h3 className='fondo-text' style={{ fontWeight: "600", fontSize: "20px" }} >Productos Comprados</h3>
+              <p className='fondo-text flex' style={{ fontWeight: "600" }}>
+                ${typeof totalVentaProducts === 'number' ? totalVentaProducts.toLocaleString('es-CO') : '0'}
+                {<span className='fondo-text alza flex items-center ml-2 text-red-600'>
+                  {/* <span className='alza'>
               <img className='down' src={down} alt="" /> </span>   */}
-                  </span>}
-                </p>
-                <p className=' fondo-text text-3xl flex' style={{ fontWeight: "600" }}>   {cantidadComprada}</p>
-              </span>
-              <img className='img-cubo-dasboard-cabania' src={fa} alt="" />
-            </div>
-            <div className='box-style  flex rounded-2xl '>
-              <span className='box-grafic justify-between flex flex-col p-4'>
-                <h3 className='fondo-text' style={{ fontWeight: "600", fontSize: "20px" }} >Cortesias</h3>
-                <p className='fondo-text' style={{ fontWeight: "600" }}>
-                  ${0}
-                </p>
-                <p className=' fondo-text text-3xl flex' style={{ fontWeight: "600" }}>
-                  {cantidadCortesias}</p>
-
-              </span>
-              <img className='img-cubo-dasboard-cabania' src={fa1} alt="" />
-            </div>
-
+                </span>}
+              </p>
+              <p className=' fondo-text text-3xl flex' style={{ fontWeight: "600" }}>   {cantidadComprada}</p>
+            </span>
+            <img className='img-cubo-dasboard-cabania' src={fa} alt="" />
           </div>
-          <div className=' flex mt-10 cont-table-apexg '>
+          <div className='box-style  flex rounded-2xl '>
+            <span className='box-grafic justify-between flex flex-col p-4'>
+              <h3 className='fondo-text' style={{ fontWeight: "600", fontSize: "20px" }} >Cortesias</h3>
+              <p className='fondo-text' style={{ fontWeight: "600" }}>
+                ${0}
+              </p>
+              <p className=' fondo-text text-3xl flex' style={{ fontWeight: "600" }}>
+                {cantidadCortesias}</p>
 
-            <div className='box-table'>
-              <Mc />
-            </div>
-
+            </span>
+            <img className='img-cubo-dasboard-cabania' src={fa1} alt="" />
           </div>
-          <ApexSpline />
-          <div className='box-table-ventas flex'>
 
-            <div className='cont-table-user'>
+        </div>
+        <div className=' flex mt-10 cont-table-apexg '>
 
-              <TableProductos />
-            </div>
+          <div className='box-table'>
+            <Mc />
           </div>
-          <div className='flex container-apexPie-box '>
-            <div className='container-apex-pie'>
-              <ApexPie />
-            </div>
-            <div className='container-apex-box'>
 
-              <Box />
-            </div>
+        </div>
+        <ApexSpline />
+        <div className='box-table-ventas flex'>
+
+          <div className='cont-table-user'>
+
+            <TableProductos />
           </div>
         </div>
-      
+        <div className='flex container-apexPie-box '>
+          <div className='container-apex-pie'>
+            <ApexPie />
+          </div>
+          <div className='container-apex-box'>
+
+            <Box />
+          </div>
+        </div>
+      </div>
+
     </div>
 
   )

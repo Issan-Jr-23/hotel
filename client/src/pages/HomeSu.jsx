@@ -21,6 +21,12 @@ import "./css/homeSu.css"
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
+import grafic1 from "../images/Animation-grafic.json"
+import grafic2 from "../images/Animation-grafic1.json"
+import grafic3 from "../images/Animation-grafic2.json"
+import loading_progress from "../images/Animation-alternativa-loading.json"
+import Lottie from 'react-lottie';
+import { Link } from 'react-router-dom';
 
 
 const HomeSu = () => {
@@ -31,6 +37,7 @@ const HomeSu = () => {
   const [totalVentaCabania, setTotalVentaCabania] = useState([])
   const [totalUsersHab, setTotalUsersHab] = useState([])
   const [totalVentaHabitaciones, setTotalVentaHabitaciones] = useState([])
+  const [isLoading, setIsLoading] = useState(true);
 
 
 
@@ -56,6 +63,9 @@ const HomeSu = () => {
         const { totalCompras, numeroCompras } = response.data;
         setTotalUsers(numeroCompras);
         setTotalVentaPasadia(totalCompras)
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 100);
 
       } catch (error) {
         console.error('Error al obtener los datos: ', error);
@@ -100,11 +110,47 @@ const HomeSu = () => {
   }, []);
 
 
+  const defaultOptionLoading = {
+    loop: true,
+    autoPlay: true,
+    animationData: grafic1,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice"
+    }
+  }
+  const defaultOptionLoading1 = {
+    loop: true,
+    autoPlay: true,
+    animationData: grafic2,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice"
+    }
+  }
+  const defaultOptionLoading2 = {
+    loop: true,
+    autoPlay: true,
+    animationData: grafic3,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice"
+    }
+  }
+
+      const defaultOptionLoadingHome = {
+        loop: true,
+        autoPlay: true,
+        animationData: loading_progress,
+        rendererSettings: {
+            preserveAspectRatio: "xMidYMid slice"
+        }
+    }
 
 
   return (
     <div className=' min-h-screen pb-20'>
       {/* <NavMenu/> */}
+      <div className={`loading-overlay ${isLoading ? 'visible' : ''}`}>
+        <Lottie options={defaultOptionLoadingHome} width={100} height={100} />
+      </div>
       <div style={{ marginLeft: "20px", marginRight: "20px", paddingTop: "60px", fontSize: "black" }} >
         <section className=' container-card-home-mui' >
           <div className='card-home-mui'>
@@ -126,7 +172,7 @@ const HomeSu = () => {
                 spaceBetween={30}
                 centeredSlides={true}
                 autoplay={{
-                  delay: 2500,
+                  delay: 5500,
                   disableOnInteraction: false,
                 }}
                 pagination={{
@@ -137,15 +183,24 @@ const HomeSu = () => {
                 onAutoplayTimeLeft={onAutoplayTimeLeft}
                 className="mySwiper"
               >
-                <SwiperSlide>Slide 1</SwiperSlide>
-                <SwiperSlide>Slide 2</SwiperSlide>
-                <SwiperSlide>Slide 3</SwiperSlide>
-                <SwiperSlide>Slide 4</SwiperSlide>
-                <SwiperSlide>Slide 5</SwiperSlide>
-                <SwiperSlide>Slide 6</SwiperSlide>
-                <SwiperSlide>Slide 7</SwiperSlide>
-                <SwiperSlide>Slide 8</SwiperSlide>
-                <SwiperSlide>Slide 9</SwiperSlide>
+                <SwiperSlide>
+                  <Link to="/dashboard-pasadia">
+                    <p style={{ position: "absolute" }} className=' w-full'>DASHBOARD PASADIA</p>
+                    <Lottie options={defaultOptionLoading} />
+                  </Link>
+                </SwiperSlide>
+                <SwiperSlide>
+                  <Link to="/dashboard-cabania">
+                    <p style={{ position: "absolute", zIndex: "5" }} className=' w-full bg-white' >DASHBOARD CABAÑAS</p>
+                    <Lottie options={defaultOptionLoading1} />
+                  </Link>
+                </SwiperSlide>
+                <SwiperSlide>
+                  <Link to="/dashboard-habitaciones" className='text-center'>
+                    <p style={{ position: "absolute" }} className=' w-full'>DASHBOARD HABITACIONES</p>
+                    <Lottie options={defaultOptionLoading2} />
+                  </Link>
+                </SwiperSlide>
                 <div className="autoplay-progress" slot="container-end">
                   <svg viewBox="0 0 48 48" ref={progressCircle}>
                     <circle cx="24" cy="24" r="20"></circle>

@@ -1056,10 +1056,12 @@ export const productosCategoria = async (req, res) => {
         })
         }
       })
+
         data.historial.forEach((response) => {
           if (response.servicio === "pasadia") {
-          response.recepcion?.forEach((dataRes) => {
-            totalRec += dataRes.cantidad * dataRes.Precio;
+          response.recepcion?.forEach((resData) => {
+          totalRec += resData.cantidad * resData.precio;
+        // }
           })
           }
         })

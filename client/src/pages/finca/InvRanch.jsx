@@ -4,7 +4,7 @@ import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, RadioG
 import { EditIcon } from "./EditIcon.jsx";
 import { DeleteIcon } from "./DeleteIcon.jsx";
 import { EyeIcon } from "./EyeIcon.jsx";
-import { obtenerInventario, registrarData, deleteRegistro} from "../../api/ranch.api.js";
+import { obtenerInventario, registrarData, deleteRegistro } from "../../api/ranch.api.js";
 import { PlusIcon } from "./PlusIcon.jsx";
 import toast, { Toaster } from 'react-hot-toast';
 import Swal from 'sweetalert2';
@@ -66,33 +66,34 @@ export default function App() {
 
     const handleDelete = async (id) => {
         const confirmDelete = window.confirm(
-          "¿Estás seguro de que deseas eliminar este usuario?"
+            "¿Estás seguro de que deseas eliminar este usuario?"
         );
         if (!confirmDelete) {
-          return;
+            return;
         }
         try {
-          await deleteRegistro(id);
-          const updatedUsers = inventario.filter((inv) => inv._id !== id);
-          setInventario(updatedUsers);
-          Swal.fire({
-            title: "Good job!",
-            text: "Registro eliminado exitosamente!",
-            icon: "success"
-          });
+            await deleteRegistro(id);
+            const updatedUsers = inventario.filter((inv) => inv._id !== id);
+            setInventario(updatedUsers);
+            Swal.fire({
+                title: "Good job!",
+                text: "Registro eliminado exitosamente!",
+                icon: "success"
+            });
         } catch (error) {
             alert("Error al eliminar usuario. Por favor, inténtalo de nuevo más tarde.");
             console.error("Error al eliminar usuario:", error);
         }
-      };
+    };
 
     return (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 pt-20">
             <Toaster position="top-right" />
+            <h1 className="W-FULL H text-center" style={{ fontSize: "32px" }}>INVENTARIO FINCA</h1>
             {/* <Navbars /> */}
             <div>
                 <>
-                    <Button onPress={() => handleOpen()} className="bg-black text-white ml-5" >Agregar <PlusIcon /> </Button>
+                    <Button color="success" onPress={() => handleOpen()} className="text-white ml-5" >Agregar <PlusIcon /> </Button>
                     <Modal
                         backdrop="transparent"
                         isOpen={isOpen}
@@ -192,7 +193,7 @@ export default function App() {
                             <TableColumn>Descripcion</TableColumn>
                             <TableColumn>Cantidad</TableColumn>
                             <TableColumn>Ubicacion</TableColumn>
-                            <TableColumn className="text-center" >Acciones</TableColumn>
+                            {/* <TableColumn className="text-center" >Acciones</TableColumn> */}
                         </TableHeader>
                         <TableBody emptyContent="No hay elementos por mostrar">
                             {inventario.map((data) => (
@@ -200,7 +201,7 @@ export default function App() {
                                     <TableCell>{data.Descripcion}</TableCell>
                                     <TableCell>{data.Cantidad}</TableCell>
                                     <TableCell>{data.Ubicacion}</TableCell>
-                                    <TableCell className="flex h-12  justify-center items-center">
+                                    {/* <TableCell className="flex h-12  justify-center items-center">
                                         <Tooltip content="Details">
                                             <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
                                                 <EyeIcon />
@@ -216,7 +217,7 @@ export default function App() {
                                                 <DeleteIcon onClick={() => handleDelete(data._id)} />
                                             </span>
                                         </Tooltip>
-                                    </TableCell>
+                                    </TableCell> */}
                                 </TableRow>
                             ))}
                         </TableBody>

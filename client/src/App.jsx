@@ -14,7 +14,7 @@ import InvBebidas from "./pages/inventario.jsx";
 import Precios from "./pages/Price.jsx";
 import Hotel_graphs from "./graphs/LinearCharts.jsx";
 import FincaVisualizacion from "./pages/FincaVisualizacion.jsx";
-import FincaInventario from "./pages/FincaInv.jsx";
+// import FincaInventario from "./pages/FincaInv.jsx";
 import InventarioRanch from "./pages/finca/InvRanch.jsx"
 import PreciosRanch from "./pages/finca/Precios.jsx"
 import Message from "./pages/Mesagge.jsx";
@@ -62,33 +62,35 @@ function App() {
                 <Route path="/adicional/:id" element={<Adicionales />} />
                 <Route path="/cabanias-adicional/:id" element={<AdicionalesCabanias />} />
                 <Route path="/habitaciones-adicional/:id" element={<AdicionalesHabitaciones />} />
-                <Route path="/review" element={<Habitaciones/>}></Route>
+                <Route path="/habitaciones" element={<Habitaciones/>}></Route>
+                <Route path="/cabania-stock" element={<CabaniasStock/>} ></Route>
+                <Route path="/transferencia-data" element={<TransferenciaData/>}/>
+                <Route path="/historial-compras" element={<HistorialCompras/>}/>
               </Route>
 
-              <Route element={<ProtectedRoute allowedRoles={["superUser"]} />}>
+              <Route element={<ProtectedRoute allowedRoles={["superUser", "editor"]} />}>
 
                 <Route path="/crear-registro" element={<RegistroAnimales/>}></Route>
                 <Route path="/bovinos/table" element={<Animales/>}></Route>
                 <Route path="/informacion/becerro/vaca/:id" element={<Info/>}/>
+                <Route path="/Register" element={<Register/>} />
+                <Route path="/inventario-finca" element={<InventarioRanch/>}/>
+                <Route path="/finca" element={<FincaVisualizacion/>}/>
+                <Route path="/precios" element={<PreciosRanch/>}/>
 
               </Route>
-              <Route element={<ProtectedRoute allowedRoles={["editor"]}/>}>
+
+
+              <Route element={<ProtectedRoute allowedRoles={["editor", "superUser"]}/>}>
                 <Route path="/hotel-graphs" element={<Hotel_graphs />}/>
-                <Route path="/finca" element={<FincaVisualizacion/>}/>
                 <Route path="/message" element={<Message/>}/>
                 <Route path="/price" element={<Precios/>}/>
-                <Route path="/inventario-finca" element={<FincaInventario/>}/>
-                <Route path="/inventario-ranch" element={<InventarioRanch/>}/>
-                <Route path="/precios" element={<PreciosRanch/>}/>
-                <Route path="/transferencia-data" element={<TransferenciaData/>}/>
-                <Route path="/historial-compras" element={<HistorialCompras/>}/>
+                {/* <Route path="/inventario" element={<FincaInventario/>}/> */}
                 <Route path="/dashboard-pasadia" element={<DashboardPasadia/>} ></Route>
                 <Route path="/dashboard-cabania" element={<DashboardCabania/>} ></Route>
                 <Route path="/dashboard-habitaciones" element={<DashboardHabitaciones/>} ></Route>
-                <Route path="/cabania-stock" element={<CabaniasStock/>} ></Route>
               </Route>
               <Route element={<ProtectedRoute allowedRoles={["editor"]} />}>
-                <Route path="/Register" element={<Register/>} />
               </Route>
               <Route path="*" element={<NotFoundPage />} />
             </Routes>

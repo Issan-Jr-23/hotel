@@ -96,9 +96,9 @@ const NavMenu = () => {
                     }
                         style={{ height: "auto", display: "flex", flexDirection: "column", overflow: "hidden" }}>
                         <div className=' flex flex-col pl-9' style={{ overflow: "hidden" }} >
-                            <Link to="/dashboard-pasadia" className='mb-1 pt-2 pb-2' >Dashboard pasadia</Link>
-                            <Link to="/dashboard-cabania" className='mb-1 pt-2 pb-2' >Dashboard cabaña</Link>
-                            <Link to="/dashboard-habitaciones" className='mb-1 pt-2 pb-2' >Dashboard habitaciones</Link>
+                            <Link to="/dashboard-pasadia" className='mb-1 pt-2 pb-2' >Pasadia</Link>
+                            <Link to="/dashboard-cabania" className='mb-1 pt-2 pb-2' >Cabaña</Link>
+                            <Link to="/dashboard-habitaciones" className='mb-1 pt-2 pb-2' >Habitaciones</Link>
                         </div>
                     </AccordionItem>
                 </Accordion>
@@ -135,6 +135,7 @@ const NavMenu = () => {
                         <div className=' flex flex-col pl-9' style={{ overflow: "hidden" }} >
                             <Link to="/crear-registro" className='mb-1 pt-2 pb-2' >Crear</Link>
                             <Link to="/bovinos/table" className='mb-1 pt-2 pb-2' >Producción</Link>
+                            
                         </div>
                     </AccordionItem>
                 </Accordion>
@@ -151,6 +152,7 @@ const NavMenu = () => {
                         <div className=' flex flex-col pl-9' style={{ overflow: "hidden" }} >
                             <Link to="/inventario" className='mb-1 pt-2 pb-2' >Inventario</Link>
                             <Link to="/cabania-stock" className='mb-1 ml-5 pt-2 pb-2' >Inv Cabañas</Link>
+                            <Link to="/inventario-finca" className='mb-1 ml-5 pt-2 pb-2' >Inv Finca</Link>
                         </div>
                     </AccordionItem>
                 </Accordion>

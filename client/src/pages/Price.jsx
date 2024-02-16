@@ -5,6 +5,8 @@ import AxiosInstance from "../api/axios.js";
 import pen from "../images/pencil.png"
 import update from "../images/update.png"
 import toast, { Toaster } from 'react-hot-toast';
+import loading_progress from "../images/Animation-alternativa-loading.json"
+import Lottie from "react-lottie";
 import './table-component/pasadiaTable.css'
 
 export default function App() {
@@ -19,6 +21,7 @@ export default function App() {
   const [editPrecio, setEditPrecio] = useState("");
   const [editTipo, setEditTipo] = useState("");
   const [editServicio, setEditServicio] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
   //   const [precios, setPrecios] = useState([])
 
 
@@ -42,6 +45,9 @@ export default function App() {
       try {
         const response = await AxiosInstance.get("/table-precios");
         setPreciosData(response.data);
+        setTimeout(() => {
+        setIsLoading(false);
+      }, 100);
       } catch (error) {
         console.error("Error al obtener datos del servidor:", error);
       }
@@ -87,10 +93,22 @@ export default function App() {
     }));
   };
 
+  const defaultOptionLoadingHome = {
+    loop: true,
+    autoPlay: true,
+    animationData: loading_progress,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice"
+    }
+  }
+
 
   return (
     <div className=" price-table-mediaquery">
       <Toaster />
+      <div className={`loading-overlay ${isLoading ? 'visible' : ''}`}>
+        <Lottie options={defaultOptionLoadingHome} width={100} height={100} />
+      </div>
       <div>
         {/* <Navbars /> */}
       </div>

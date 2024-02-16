@@ -16,6 +16,7 @@ import cubo from "../../images/forma-abstracta2.png"
 import fa from "../../images/forma-abstracta.png"
 import fa1 from "../../images/forma-abstracta1.png"
 import animationDb from "../../images/Animation - 1705932434807.json"
+import loading_progress from "../../images/Animation-alternativa-loading.json"
 import Mc from "../adicionales/MostrarClientes.jsx"
 
 const dashboardPasadia = () => {
@@ -26,6 +27,7 @@ const dashboardPasadia = () => {
   const [cantidadComprada, setCantidadComprada] = useState()
   const [totalVentaProducts, setTotalVentaProducts] = useState()
   const [cantidadCortesias, setCantidadCortesias] = useState();
+  const [isLoading, setIsLoading] = useState(true);
 
 
   useEffect(() => {
@@ -37,6 +39,9 @@ const dashboardPasadia = () => {
         setCantidadComprada(cantidadComprada);
         setTotalVentaProducts(money);
         setCantidadCortesias(cortesias);
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 100);
 
       } catch (error) {
         console.error('Error al obtener los datos: ', error);
@@ -75,9 +80,21 @@ const dashboardPasadia = () => {
     }
   }
 
+  const defaultOptionLoadingHome = {
+    loop: true,
+    autoPlay: true,
+    animationData: loading_progress,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice"
+    }
+  }
+
 
   return (
     <div className=' fondo pt-20 pl-5 pr-5 pb-20'>
+      <div className={`loading-overlay ${isLoading ? 'visible' : ''}`}>
+        <Lottie options={defaultOptionLoadingHome} width={100} height={100} />
+      </div>
       <div className='cont-icon-json'>
         <article className='cont-title-json'>
           <h1 className='text-title-dash-pas'>Dashboard Pasadia </h1>
@@ -136,7 +153,7 @@ const dashboardPasadia = () => {
       </div>
       <div className=' flex mt-10 cont-table-apexg '>
         <div className='box-table'>
-          <Mc/>
+          <Mc />
         </div>
 
       </div>

@@ -1982,11 +1982,6 @@ export default function review() {
 
     //#endregion
 
-
-
-
-
-
     const limpiarItems = async () => {
 
         const response = await AxiosInstance.get("/food");
@@ -2542,10 +2537,11 @@ export default function review() {
     return (
         <div className="pt-20 flex justify-center items-center flex-col">
             <Toaster />
+
             <div className={`loading-overlay ${isLoading ? 'visible' : ''}`}>
                 <Lottie options={defaultOptionLoading} width={100} height={100} />
-                {/* <p>Cargando recursos</p> */}
             </div>
+
             <div className="media-query-add-search">
                 <div className="">
                     <Input
