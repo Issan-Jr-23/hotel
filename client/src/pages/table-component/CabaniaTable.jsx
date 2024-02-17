@@ -1436,11 +1436,14 @@ export default function cabaniaTable() {
         setBebida4SeleccionadaId('');
 
 
+
         setCantidadBebidaDisponible("")
         setCantidadBebida1Disponible("")
         setCantidadBebida2Disponible("")
         setCantidadBebida3Disponible("")
         setCantidadBebida4Disponible("")
+
+        setEsCortesia(false)
 
 
         const response = await AxiosInstance.get("/drinks");
@@ -1455,8 +1458,8 @@ export default function cabaniaTable() {
     const handleOpenmf = async (userId) => {
         setAncho(size);
         setSelectedClientId(userId);
-        setOpenAf(true)
-        setIsSaving(false)
+        setOpenAf(true);
+        setIsSaving(false);
 
         // Sin números
         setCantidadFood("");
@@ -1481,20 +1484,25 @@ export default function cabaniaTable() {
         setFood3Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
         setPrecioFood3Seleccionada(""); // o el valor por defecto inicial
         setFood3SeleccionadaId('');
-
-        // Con número 4
+     
         setCantidadFood4("");
-        setFood4Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
-        setPrecioFood4Seleccionada(""); // o el valor por defecto inicial
+        setFood4Seleccionada('');
+        setPrecioFood4Seleccionada("");
         setFood4SeleccionadaId('');
 
+        setCantidadItem("");
+        setCantidadItem1("");
+        setCantidadItem2("");
+        setCantidadItem3("");
+        setCantidadItem4("");
 
+        setCantidadFoodDisponible("");
+        setCantidadFood1Disponible("");
+        setCantidadFood2Disponible("");
+        setCantidadFood3Disponible("");
+        setCantidadFood4Disponible("");
 
-        setCantidadFoodDisponible("")
-        setCantidadFood1Disponible("")
-        setCantidadFood2Disponible("")
-        setCantidadFood3Disponible("")
-        setCantidadFood4Disponible("")
+        setEsCortesia(false)
 
         const response = await AxiosInstance.get("/food");
         const snacksWithoutSubproducts = response.data.filter(product =>
@@ -1660,136 +1668,136 @@ export default function cabaniaTable() {
         }
     }
 
-const generarPDF = async () => {
-    const pdf = new jsPDF();
+    const generarPDF = async () => {
+        const pdf = new jsPDF();
 
-    await actualizarFechaEnProductos(selectedUser._id);
+        await actualizarFechaEnProductos(selectedUser._id);
 
-    // Función para añadir el diseño base al PDF
-    const agregarDisenoBase = async () => {
-        try {
-            const svgBase64 = await toBase64(svg);
-            pdf.addImage(svgBase64, 'JPEG', 0, 0, 220, 80);
-        } catch (error) {
-            console.error("Error al cargar la imagen SVG", error);
-        }
+        // Función para añadir el diseño base al PDF
+        const agregarDisenoBase = async () => {
+            try {
+                const svgBase64 = await toBase64(svg);
+                pdf.addImage(svgBase64, 'JPEG', 0, 0, 220, 80);
+            } catch (error) {
+                console.error("Error al cargar la imagen SVG", error);
+            }
 
-        try {
-            const waveBase64 = await toBase64(wave);
-            pdf.addImage(waveBase64, 'JPEG', 0, 240, 220, 80);
-        } catch (error) {
-            console.error("Error al cargar la imagen Wave", error);
-        }
+            try {
+                const waveBase64 = await toBase64(wave);
+                pdf.addImage(waveBase64, 'JPEG', 0, 240, 220, 80);
+            } catch (error) {
+                console.error("Error al cargar la imagen Wave", error);
+            }
 
-        try {
-            const logoBase64 = await toBase64(logo);
-            pdf.addImage(logoBase64, 'JPEG', 85, 25, 40, 40);
-        } catch (error) {
-            console.error("Error al cargar el logo", error);
-        }
+            try {
+                const logoBase64 = await toBase64(logo);
+                pdf.addImage(logoBase64, 'JPEG', 85, 25, 40, 40);
+            } catch (error) {
+                console.error("Error al cargar el logo", error);
+            }
 
-        // Configuración inicial del PDF reutilizable
-        pdf.setFont("helvetica", "bold");
-        pdf.setFontSize(20);
-        pdf.setTextColor("#FFFFFF");
-        pdf.text("HOTEL MEQO", 105, 20, null, null, 'center');
+            // Configuración inicial del PDF reutilizable
+            pdf.setFont("helvetica", "bold");
+            pdf.setFontSize(20);
+            pdf.setTextColor("#FFFFFF");
+            pdf.text("HOTEL MEQO", 105, 20, null, null, 'center');
 
-        // Resto de elementos comunes...
-        pdf.setTextColor(0, 0, 0);
+            // Resto de elementos comunes...
+            pdf.setTextColor(0, 0, 0);
+            pdf.setFontSize(12);
+            pdf.text('Datos de la empresa', 157, 54);
+            pdf.setFontSize(10);
+            pdf.text('Nombre: Hotel Meqo', 164, 63);
+            pdf.text('Numero: 3152390814', 164, 70);
+            pdf.setFontSize(12);
+            pdf.text('Datos del cliente', 10, 54);
+            pdf.setFontSize(10);
+            pdf.text(`Nombre: ${selectedUser.nombre}`, 10, 63);
+            pdf.text(`Identificación: ${selectedUser.identificacion}`, 10, 70);
+        };
+
+        // Función para verificar el espacio y añadir nueva página si es necesario
+        const verificarEspacioYAgregarPaginaSiNecesario = async (espacioNecesario, reiniciarPosY = 20) => {
+            if (y + espacioNecesario > 272) {
+                pdf.addPage();
+                y = reiniciarPosY; // Reiniciar la posición Y en la nueva página
+                await agregarDisenoBase(); // Reconfigurar el diseño para la nueva página
+            }
+        };
+
+        // Función para formatear números con separador de miles y dos decimales
+        const formatearNumero = (numero) => {
+            return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(numero);
+        };
+
+        let y = 90; // Iniciar Y después de las imágenes y el título
+
+        await agregarDisenoBase(); // Aplicar diseño base a la primera página
+
+        // Encabezados de la tabla de productos
         pdf.setFontSize(12);
-        pdf.text('Datos de la empresa', 157, 54);
-        pdf.setFontSize(10);
-        pdf.text('Nombre: Hotel Meqo', 164, 63);
-        pdf.text('Numero: 3152390814', 164, 70);
+        pdf.text("Descripción", 10, y);
+        pdf.text("Cantidad", 80, y);
+        pdf.text("Precio", 150, y);
+        pdf.text("Total", 180, y);
+        pdf.line(10, y + 2, 200, y + 2);
+        y += 12; // Ajustar Y después de los encabezados
+
+        // Preparación de la lista de productos
+        const productos = [...selectedUser.bebidas, ...selectedUser.restaurante, ...selectedUser.descorche, ...selectedUser.recepcion];
+
+        // Iterar sobre los productos y agregarlos al PDF
+        productos.forEach(producto => {
+            verificarEspacioYAgregarPaginaSiNecesario(10); // Espacio por producto
+            pdf.text(producto.nombre, 10, y);
+            pdf.text(producto.cantidad.toString(), 88, y);
+
+            const precioFormateado = `$${formatearNumero(producto.precio)}`;
+            pdf.text(precioFormateado, 150, y);
+
+            const productoTotal = producto.cantidad * producto.precio;
+            const productoTotalFormateado = `$${formatearNumero(productoTotal)}`;
+            pdf.text(productoTotalFormateado, 180, y);
+
+            y += 10; // Actualizar posición Y para el próximo producto
+        });
+
+        // Total General antes de añadir los desgloses
+        const totalGeneral = productos.reduce((acc, producto) => acc + (producto.cantidad * producto.precio), 0);
+        const totalGeneralFormateado = formatearNumero(totalGeneral);
+
+        verificarEspacioYAgregarPaginaSiNecesario(40); // Asegurarse de tener espacio para los totales
+
+        // Texto del Total General y líneas
         pdf.setFontSize(12);
-        pdf.text('Datos del cliente', 10, 54);
-        pdf.setFontSize(10);
-        pdf.text(`Nombre: ${selectedUser.nombre}`, 10, 63);
-        pdf.text(`Identificación: ${selectedUser.identificacion}`, 10, 70);
+        pdf.text(`Total General: $${totalGeneralFormateado}`, 150, y);
+        y += 10; // Ajustar Y para la línea después del Total General
+        pdf.line(10, y, 200, y);
+        y += 5; // Ajustar Y para los siguientes elementos
+
+        // Aplicar formato y añadir texto al PDF para cada categoría
+        const categorias = [
+            { etiqueta: 'Pago Anticipado', valor: selectedUser.pagoAnticipado || 0 },
+            { etiqueta: 'Pago Posterior', valor: selectedUser.pagoPendiente || 0 },
+            // Asumiendo que barTotal, resTotal, recTotal, y desTotal están definidos en algún lugar de tu código
+            { etiqueta: 'Bar', valor: barTotal || 0 },
+            { etiqueta: 'Restaurante', valor: resTotal || 0 },
+            { etiqueta: 'Recepcion', valor: recTotal || 0 },
+            { etiqueta: 'Descorche', valor: desTotal || 0 }
+        ];
+
+        categorias.forEach(categoria => {
+            verificarEspacioYAgregarPaginaSiNecesario(7); // Asegurarse de tener espacio para cada categoría
+            pdf.text(`${categoria.etiqueta}: $${formatearNumero(categoria.valor)}`, 10, y);
+            y += 7;
+        });
+
+        const totalGeneralCalculado = categorias.reduce((acc, categoria) => acc + categoria.valor, 0);
+        verificarEspacioYAgregarPaginaSiNecesario(10); // Espacio para el total final
+        pdf.text(`Total: $${formatearNumero(totalGeneralCalculado)}`, 10, y);
+
+        pdf.save("factura.pdf");
     };
-
-    // Función para verificar el espacio y añadir nueva página si es necesario
-    const verificarEspacioYAgregarPaginaSiNecesario = async (espacioNecesario, reiniciarPosY = 20) => {
-        if (y + espacioNecesario > 272) {
-            pdf.addPage();
-            y = reiniciarPosY; // Reiniciar la posición Y en la nueva página
-            await agregarDisenoBase(); // Reconfigurar el diseño para la nueva página
-        }
-    };
-
-    // Función para formatear números con separador de miles y dos decimales
-    const formatearNumero = (numero) => {
-        return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(numero);
-    };
-
-    let y = 90; // Iniciar Y después de las imágenes y el título
-
-    await agregarDisenoBase(); // Aplicar diseño base a la primera página
-
-    // Encabezados de la tabla de productos
-    pdf.setFontSize(12);
-    pdf.text("Descripción", 10, y);
-    pdf.text("Cantidad", 80, y);
-    pdf.text("Precio", 150, y);
-    pdf.text("Total", 180, y);
-    pdf.line(10, y + 2, 200, y + 2);
-    y += 12; // Ajustar Y después de los encabezados
-
-    // Preparación de la lista de productos
-    const productos = [...selectedUser.bebidas, ...selectedUser.restaurante, ...selectedUser.descorche, ...selectedUser.recepcion];
-
-    // Iterar sobre los productos y agregarlos al PDF
-    productos.forEach(producto => {
-        verificarEspacioYAgregarPaginaSiNecesario(10); // Espacio por producto
-        pdf.text(producto.nombre, 10, y);
-        pdf.text(producto.cantidad.toString(), 88, y);
-
-        const precioFormateado = `$${formatearNumero(producto.precio)}`;
-        pdf.text(precioFormateado, 150, y);
-
-        const productoTotal = producto.cantidad * producto.precio;
-        const productoTotalFormateado = `$${formatearNumero(productoTotal)}`;
-        pdf.text(productoTotalFormateado, 180, y);
-
-        y += 10; // Actualizar posición Y para el próximo producto
-    });
-
-    // Total General antes de añadir los desgloses
-    const totalGeneral = productos.reduce((acc, producto) => acc + (producto.cantidad * producto.precio), 0);
-    const totalGeneralFormateado = formatearNumero(totalGeneral);
-
-    verificarEspacioYAgregarPaginaSiNecesario(40); // Asegurarse de tener espacio para los totales
-
-    // Texto del Total General y líneas
-    pdf.setFontSize(12);
-    pdf.text(`Total General: $${totalGeneralFormateado}`, 150, y);
-    y += 10; // Ajustar Y para la línea después del Total General
-    pdf.line(10, y, 200, y);
-    y += 5; // Ajustar Y para los siguientes elementos
-
-    // Aplicar formato y añadir texto al PDF para cada categoría
-    const categorias = [
-        { etiqueta: 'Pago Anticipado', valor: selectedUser.pagoAnticipado || 0 },
-        { etiqueta: 'Pago Posterior', valor: selectedUser.pagoPendiente || 0 },
-        // Asumiendo que barTotal, resTotal, recTotal, y desTotal están definidos en algún lugar de tu código
-        { etiqueta: 'Bar', valor: barTotal || 0 },
-        { etiqueta: 'Restaurante', valor: resTotal || 0 },
-        { etiqueta: 'Recepcion', valor: recTotal || 0 },
-        { etiqueta: 'Descorche', valor: desTotal || 0 }
-    ];
-
-    categorias.forEach(categoria => {
-        verificarEspacioYAgregarPaginaSiNecesario(7); // Asegurarse de tener espacio para cada categoría
-        pdf.text(`${categoria.etiqueta}: $${formatearNumero(categoria.valor)}`, 10, y);
-        y += 7;
-    });
-
-    const totalGeneralCalculado = categorias.reduce((acc, categoria) => acc + categoria.valor, 0);
-    verificarEspacioYAgregarPaginaSiNecesario(10); // Espacio para el total final
-    pdf.text(`Total: $${formatearNumero(totalGeneralCalculado)}`, 10, y);
-
-    pdf.save("factura.pdf");
-};
 
 
     let fecha2 = new Date();
@@ -3902,7 +3910,11 @@ const generarPDF = async () => {
                                         <span className=" mr-2">
                                             <EstadoIcono estado={cliente.estado} />
                                         </span>
-                                        {cliente.estado}
+                                        {cliente.estado === "activo" && (
+                                            <div>
+                                                Alojamiento en Curso
+                                            </div>
+                                        ) }
                                     </div>
                                 </td>
                                 <td className="html-table-tbody">

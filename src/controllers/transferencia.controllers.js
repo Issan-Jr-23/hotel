@@ -80,23 +80,20 @@ export const obtenerHistorial = async (req, res) => {
                                             .skip(skip)
                                             .limit(pageSize);
 
-    const nombresHistoriales = clientesObtenidos.map(usuario => usuario.historial.map(item => item.nombre));
-
-    // Obtener el nombre más largo
-    let nombreMasLargo = '';
-    nombresHistoriales.forEach(nombres => {
-      nombres.forEach(nombre => {
-        if (nombre.length > nombreMasLargo.length) {
-          nombreMasLargo = nombre;
+    // Modificación aquí: calcular el nombre más largo por usuario
+    const resultado = clientesObtenidos.map(usuario => {
+      let nombreMasLargo = '';
+      usuario.historial.forEach(item => {
+        if (item.nombre.length > nombreMasLargo.length) {
+          nombreMasLargo = item.nombre;
         }
       });
-    });
 
-    // Crear un array de objetos con la identificación y el nombre más largo
-    const resultado = clientesObtenidos.map(usuario => ({
-      identificacion: usuario.identificacion,
-      nombre: nombreMasLargo
-    }));
+      return {
+        identificacion: usuario.identificacion,
+        nombre: nombreMasLargo // Ahora es específico para cada usuario
+      };
+    });
 
     res.status(200).json({
       resultado,
@@ -112,6 +109,7 @@ export const obtenerHistorial = async (req, res) => {
     res.status(500).send("Error al obtener los clientes desde la base de datos");
   }
 };
+
 
 
 

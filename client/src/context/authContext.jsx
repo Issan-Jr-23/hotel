@@ -69,7 +69,6 @@ export const AuthProvider = ({ children }) => {
         if (!res.data) return setIsAuthenticated(false);
         setIsAuthenticated(true);
         setUser(res.data);
-        
         setLoading(false);
       } catch (error) {
         setIsAuthenticated(false);
@@ -80,7 +79,6 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
 
-  
 
   return (
     <AuthContext.Provider

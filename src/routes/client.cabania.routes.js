@@ -9,7 +9,7 @@ import { auth } from "../middlewares/auth.middleware.js"
 
 const router = Router();
 
-router.get("/cabania-clientes",auth, obtenerClientes);
+router.get("/cabania-clientes", obtenerClientes);
 router.post("/cabania-registrar-cliente",auth, crearCliente);
 router.delete("/cabania/:id",auth, deleteClient);
 router.put("/cabania/edit/:identificacion",auth, updateClient);

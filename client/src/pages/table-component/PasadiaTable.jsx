@@ -898,7 +898,7 @@ export default function review() {
 
             setEsCortesia(false);
             refresh();
-            closeModalM();
+            handleCloseMd();
         } catch (error) {
             setIsSaving(false);
             console.error('Error al guardar la bebida en el cliente:', error.message);
@@ -1352,7 +1352,6 @@ export default function review() {
     };
 
     const guardarFood = async (food) => {
-
         try {
             const response = await AxiosInstance.post('/pasadia-agregar-food', {
                 id: selectedClientId,
@@ -1362,7 +1361,7 @@ export default function review() {
             setEsCortesia(false);
             closeModalF();
             setIsSaving(false);
-            closeModalF();
+            handleCloseFz();
             refresh()
         } catch (error) {
             setIsSaving(false);
@@ -1601,6 +1600,7 @@ export default function review() {
         setCantidadBebida2Disponible("")
         setCantidadBebida3Disponible("")
         setCantidadBebida4Disponible("")
+        setEsCortesia(false)
     }
 
     const limpiarCampos1 = () => {
@@ -1638,6 +1638,8 @@ export default function review() {
         setCantidadFood2Disponible("")
         setCantidadFood3Disponible("")
         setCantidadFood4Disponible("")
+
+        setEsCortesia(false)
     }
 
     const handleOpenm = async (userId) => {

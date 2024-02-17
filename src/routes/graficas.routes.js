@@ -9,7 +9,7 @@ const router = Router();
 
 router.get('/mayor-compra', auth, usuariosQueMasCompraron);
 router.get('/obtener-historial-usuarios', auth, obtenerTotal);
-router.get('/productos-mas-comprados', auth, productosMasComprados);
+router.get('/productos-mas-comprados', productosMasComprados);
 router.get('/productos-mas-comprados-pass', productosMasCompradosPass);
 router.get('/productos-mas-comprados-cab', productosMasCompradosCab);
 router.get('/productos-mas-comprados-hab', productosMasCompradosHab);

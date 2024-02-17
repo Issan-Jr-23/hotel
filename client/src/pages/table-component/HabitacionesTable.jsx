@@ -56,7 +56,7 @@ export default function habitacionesTable() {
         setTimeout(() => {
           setIsLoading(false);
         }, 1);
-      } catch (error){
+      } catch (error) {
         console.error("Error al obtener los clientes: ", error);
       }
     };
@@ -413,9 +413,6 @@ export default function habitacionesTable() {
     }
     return () => clearTimeout(timer);
   }, [errorMensajeIdentificacion]);
-
-
-
 
 
   const handleReservaChange = (selectedSize) => {
@@ -1561,6 +1558,8 @@ export default function habitacionesTable() {
     setCantidadBebida3Disponible("")
     setCantidadBebida4Disponible("")
 
+    setEsCortesia(false)
+
 
     const response = await AxiosInstance.get("/drinks");
     const filteredDrinks = response.data.filter(drink => drink.CantidadInicial > 0);
@@ -1605,11 +1604,13 @@ export default function habitacionesTable() {
     setPrecioFood4Seleccionada(""); // o el valor por defecto inicial
     setFood4SeleccionadaId('');
 
-    setFoodFiltro("");
-    setFoodFiltro2("");
-    setFoodFiltro3("");
-    setFoodFiltro4("");
-    setFoodFiltro5("");
+
+    setCantidadItem("")
+    setCantidadItem1("")
+    setCantidadItem2("")
+    setCantidadItem3("")
+    setCantidadItem4("")
+
 
 
     setCantidadFoodDisponible("")
@@ -1617,6 +1618,8 @@ export default function habitacionesTable() {
     setCantidadFood2Disponible("")
     setCantidadFood3Disponible("")
     setCantidadFood4Disponible("")
+
+    setEsCortesia(false)
 
     const response = await AxiosInstance.get("/food");
     const snacksWithoutSubproducts = response.data.filter(product =>
@@ -2383,7 +2386,7 @@ export default function habitacionesTable() {
       toast.success('Comida guardada exitosamente!');
       setEsCortesia(false);
       limpiarItems();
-      closeModalF()
+      handleCloseAf();
       setIsSaving(false);
 
       const responses = await AxiosInstance.get(`/habitaciones-clientes?page=${paginaActual}`);
