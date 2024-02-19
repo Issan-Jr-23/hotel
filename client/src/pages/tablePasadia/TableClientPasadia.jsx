@@ -2424,7 +2424,7 @@ export default function App() {
               <div className="flex items-center justify-center ml-7">
                 <Button className="bg-blue-500 w-28 text-white">
                   Exportar
-                 
+
                 </Button>
               </div>
             </div>
@@ -2768,7 +2768,7 @@ export default function App() {
                   </TableCell>
 
                   <TableCell key={cliente.id} className="">
-                    
+
                   </TableCell>
 
                   <TableCell> {cliente.nuevoTotal}</TableCell>

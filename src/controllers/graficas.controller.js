@@ -1541,7 +1541,7 @@ export const productosMasCompradosHab = async (req, res) => {
 export const obtainClientsAndUsers = async (req, res) => {
   try {
     const page = parseInt(req.query.page || '1', 10);
-    const pageSize = 1;
+    const pageSize = 5;
  
     const clients = await Cliente.find().sort({ fechaActivacion: -1 });
     const users = await Usuario.find();
@@ -1613,7 +1613,7 @@ export const obtainClientsAndUsers = async (req, res) => {
 export const obtainClientsAndUsersCabania = async (req, res) => {
   try {
     const page = parseInt(req.query.page || '1', 10);
-    const pageSize = 1;
+    const pageSize = 5;
  
     const clients = await Cabania.find().sort({ fechaActivacion: -1 });
     const users = await Usuario.find();
@@ -1681,7 +1681,7 @@ export const obtainClientsAndUsersCabania = async (req, res) => {
 export const obtainClientsAndUsersHabitaciones = async (req, res) => {
   try {
     const page = parseInt(req.query.page || '1', 10);
-    const pageSize = 1;
+    const pageSize = 5;
  
     const clients = await Habitaciones.find().sort({ fechaActivacion: -1 });
     const users = await Usuario.find();

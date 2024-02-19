@@ -1639,6 +1639,12 @@ export default function review() {
         setCantidadFood3Disponible("")
         setCantidadFood4Disponible("")
 
+        setCantidadItem("")
+        setCantidadItem1("")
+        setCantidadItem2("")
+        setCantidadItem3("")
+        setCantidadItem4("")
+
         setEsCortesia(false)
     }
 
@@ -4019,7 +4025,11 @@ export default function review() {
                                         <span className=" mr-2">
                                             <EstadoIcono estado={cliente.estado} />
                                         </span>
-                                        {cliente.estado}
+                                        {cliente.estado === "activo" ? (
+                                            <div className="uppercase"> Pasadia en curso</div>
+                                        ) : (
+                                            null
+                                        )}
                                     </div>
                                 </td>
                                 <td className="html-table-tbody pr-5 pl-5">

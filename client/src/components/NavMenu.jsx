@@ -19,8 +19,8 @@ import { useAuth } from "../context/authContext.jsx";
 const NavMenu = () => {
     const { isAuthenticated, logout, user } = useAuth();
     const isSuperUser = user && user.role === 'superUser';
-    const isEditor = user && user.role == "editor";
-    const isUser = user && user.role == "user";
+    const isEditor = user && user.role === "editor";
+    const isUser = user && user.role === "user";
 
 
     const [menuAbierto, setMenuAbierto] = useState(false);
@@ -52,10 +52,9 @@ const NavMenu = () => {
         <div className={`cont-nav text-white ${menuAbierto ? 'mostrar' : ''}`}>
             <div className='barra-superior ostias h-14 flex justify-between items-center' style={{ zIndex: "8" }}>
                 <img className='w-8 ml-5 z-10 cursor-pointer' src={open} alt="" onClick={abrirMenu} />
-
                 <Dropdown placement="bottom-end">
                     <DropdownTrigger className="">
-                        <Avatar   classNames={{ base: "bg-gradient-to-br from-[#FFB457] to-[#FF705B]", icon: "text-black/80" }}
+                        <Avatar classNames={{ base: "bg-gradient-to-br from-[#FFB457] to-[#FF705B]", icon: "text-black/80" }}
                             className='cursor-pointer'
                             src={AvatarPerfil}
                         />
@@ -63,6 +62,11 @@ const NavMenu = () => {
                     </DropdownTrigger>
                     <DropdownMenu aria-label="Profile Actions" variant="flat">
                         <DropdownItem aria-label="prueba" key="profile" className="h-14 gap-2">
+
+                            {user && <span>{user.username}</span>}
+
+                        </DropdownItem>
+                        <DropdownItem aria-label="prueba" key="profile" className="h-14 gap-2 ">
 
                             {user && <span>{user.email}</span>}
 
@@ -87,21 +91,24 @@ const NavMenu = () => {
                     <img src={Home} style={{ width: "27px", }} className='mb-1 mr-4' />
                     Home
                 </NavLink>
-                <Accordion isCompact className="" style={{ overflow: "hidden" }}>
-                    <AccordionItem className='flex flex-col text-white' key="1" aria-label="Accordion 1" title={
-                        <div className='flex'>
-                            <img src={Dashboard} style={{ width: "23px", marginBottom: "5px" }} className='ml-1 mr-3' />
-                            <span className='ml-2 text-white'  >Dashboard</span>
-                        </div>
-                    }
-                        style={{ height: "auto", display: "flex", flexDirection: "column", overflow: "hidden" }}>
-                        <div className=' flex flex-col pl-9' style={{ overflow: "hidden" }} >
-                            <Link to="/dashboard-pasadia" className='mb-1 pt-2 pb-2' >Pasadia</Link>
-                            <Link to="/dashboard-cabania" className='mb-1 pt-2 pb-2' >Cabaña</Link>
-                            <Link to="/dashboard-habitaciones" className='mb-1 pt-2 pb-2' >Habitaciones</Link>
-                        </div>
-                    </AccordionItem>
-                </Accordion>
+                {(isSuperUser || isEditor) && (
+                    <Accordion isCompact className="" style={{ overflow: "hidden" }}>
+                        <AccordionItem className='flex flex-col text-white' key="1" aria-label="Accordion 1" title={
+                            <div className='flex'>
+                                <img src={Dashboard} style={{ width: "23px", marginBottom: "5px" }} className='ml-1 mr-3' />
+                                <span className='ml-2 text-white'  >Dashboard</span>
+                            </div>
+                        }
+                            style={{ height: "auto", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+                            <div className=' flex flex-col pl-9' style={{ overflow: "hidden" }} >
+                                <Link to="/dashboard-pasadia" className='mb-1 pt-2 pb-2' >Pasadia</Link>
+                                <Link to="/dashboard-cabania" className='mb-1 pt-2 pb-2' >Cabaña</Link>
+                                <Link to="/dashboard-habitaciones" className='mb-1 pt-2 pb-2' >Habitaciones</Link>
+                            </div>
+                        </AccordionItem>
+                    </Accordion>
+                )}
+
                 <Accordion isCompact className="" style={{ overflow: "hidden" }}>
                     <AccordionItem className='flex flex-col text-white' key="1" aria-label="Accordion 1" title={
                         <div className='flex'>
@@ -114,31 +121,34 @@ const NavMenu = () => {
                             <Link to="/pasadia" className='mb-1 pt-2 pb-2' >Pasadia</Link>
                             <Link to="/cabanias" className='mb-1 pt-2 pb-2' >Cabaña</Link>
                             <Link to="/habitaciones" className='mb-1 pt-2 pb-2' >Habitaciones</Link>
-                            {isSuperUser || isEditor && (
-                                <Link to="/message" className='mb-1 pt-2 pb-2' >Notificaciones</Link>
-                                )}
-                                <Link to="price" className='mb-1 pt-2 pb-2' >Precios</Link>
-                                <Link to="/transferencia-data" className='mb-1 pt-2 pb-2' >Transferencia de datos</Link>
-                                <Link to="/historial-compras" className='mb-1 pt-2 pb-2' >Historial</Link>
-                        </div>
-                    </AccordionItem>
-                </Accordion>
-                <Accordion isCompact className="" style={{ overflow: "hidden" }}>
-                    <AccordionItem className='flex flex-col' key="1" aria-label="Accordion 1" title={
-                        <div className='flex'>
-                            <img src={Finca} style={{ width: "23px", marginBottom: "5px" }} className='ml-1 mr-3' />
-                            <span className='ml-2 text-white'>Finca</span>
-                        </div>
+                            {(isSuperUser || isEditor) && (
+                                <>
+                                    <Link to="/message" className='mb-1 pt-2 pb-2' >Notificaciones</Link>
+                                    <Link to="/price" className='mb-1 pt-2 pb-2' >Precios</Link>
+                                </>
 
-                    }
-                        style={{ height: "auto", display: "flex", flexDirection: "column", overflow: "hidden" }}>
-                        <div className=' flex flex-col pl-9' style={{ overflow: "hidden" }} >
-                            <Link to="/crear-registro" className='mb-1 pt-2 pb-2' >Crear</Link>
-                            <Link to="/bovinos/table" className='mb-1 pt-2 pb-2' >Producción</Link>
-                            
+                            )}
+                            <Link to="/transferencia-data" className='mb-1 pt-2 pb-2' >Transferencia de datos</Link>
+                            <Link to="/historial-compras" className='mb-1 pt-2 pb-2' >Historial</Link>
                         </div>
                     </AccordionItem>
                 </Accordion>
+                {(isSuperUser) && (
+                    <Accordion isCompact className="" style={{ overflow: "hidden" }}>
+                        <AccordionItem className='flex flex-col' key="1" aria-label="Accordion 1" title={
+                            <div className='flex'>
+                                <img src={Finca} style={{ width: "23px", marginBottom: "5px" }} className='ml-1 mr-3' />
+                                <span className='ml-2 text-white'>Finca</span>
+                            </div>
+                        }
+                            style={{ height: "auto", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+                            <div className=' flex flex-col pl-9' style={{ overflow: "hidden" }} >
+                                <Link to="/crear-registro" className='mb-1 pt-2 pb-2' >Crear</Link>
+                                <Link to="/bovinos/table" className='mb-1 pt-2 pb-2' >Producción</Link>
+                            </div>
+                        </AccordionItem>
+                    </Accordion>
+                )}
                 <span className='pl-2' style={{ fontSize: "11px", fontWeight: "500" }} >CONCEPTS</span>
                 <Accordion isCompact className="" style={{ overflow: "hidden" }}>
                     <AccordionItem className='flex flex-col' key="1" aria-label="Accordion 1" title={
@@ -156,24 +166,9 @@ const NavMenu = () => {
                         </div>
                     </AccordionItem>
                 </Accordion>
-                {/* <Accordion isCompact className="" style={{ overflow: "hidden" }}>
-                    <AccordionItem className='flex flex-col' key="1" aria-label="Accordion 1" title={
-                        <div className='flex'>
-                            <img src={StockFinca} style={{ width: "23px", marginBottom: "5px" }} className='ml-1 mr-3' />
-                            <span className='ml-2 text-white'>Cabañas stock</span>
-                        </div>
-
-                    }
-                        style={{ height: "auto", display: "flex", flexDirection: "column", overflow: "hidden" }}>
-                        <div className=' flex flex-col pl-9' style={{ overflow: "hidden" }} >
-                            
-                            <Link className='mb-1 ml-5 pt-2 pb-2' >Create</Link>
-                        </div>
-
-                    </AccordionItem>
-
-
-                </Accordion> */}
+                {(isSuperUser) && (
+                    <Link to="/Register" className='mb-1 ml-5 pt-5 pb-2' style={{fontSize:"16px"}} >Registrar usuario</Link>
+                )}
 
             </nav>
         </div>

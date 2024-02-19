@@ -18,21 +18,21 @@ router.get('/habitaciones-clientes/:id',auth, obtenerCPI)
 router.put('/habitaciones-clientes/:id/actualizar',auth, updatePP)
 router.put("/habitaciones-clientes/:id/cortesias",auth, updateClientCts);
 router.put("/habitaciones-facturacion",auth, actualizarFacturacion)
-router.get('/habitaciones-cliente-info/:id', obtenerClienteId)
-router.get('/habitaciones-clientes-identificacion/:identificacion', getClienteByIdentificacion);
-router.get("/habitaciones-fecha-activacion", fechaActivacion)
-router.get("/habitaciones-fecha-finalizacion", fechaFinalizacion)
+router.get('/habitaciones-cliente-info/:id',auth, obtenerClienteId)
+router.get('/habitaciones-clientes-identificacion/:identificacion',auth, getClienteByIdentificacion);
+router.get("/habitaciones-fecha-activacion",auth, fechaActivacion)
+router.get("/habitaciones-fecha-finalizacion",auth, fechaFinalizacion)
 
 router.post("/habitaciones-agregar-bebida/:id",auth, addBebidaAdicional);
 router.post("/habitaciones-agregar-item-recepcion/:id",auth, addItemRecepcion);
 router.post("/habitaciones-agregar-descorche/:id",auth, addDescorche);
 router.post("/habitaciones-agregar-food/:id",auth, addFoodAdicional);
 router.post("/habitaciones-agregar-food-subproducto/:id",auth, addFoodAdicionalSubproducto);
-router.put("/habitaciones-actualizar-estado", updateUserStatus)
-router.get("/habitaciones-productos-categoria", productosCategoria)
+router.put("/habitaciones-actualizar-estado",auth, updateUserStatus)
+router.get("/habitaciones-productos-categoria",auth, productosCategoria)
 
-router.get("/habitaciones-totalidad-pago/:id", resTotal)
-router.get("/habitaciones-totalidad-reserva-pago/:id", postPago)
-router.put("/habitaciones-actualizar-valor", actualizarValor)
+router.get("/habitaciones-totalidad-pago/:id",auth, resTotal)
+router.get("/habitaciones-totalidad-reserva-pago/:id",auth, postPago)
+router.put("/habitaciones-actualizar-valor",auth, actualizarValor)
 
 export default router;

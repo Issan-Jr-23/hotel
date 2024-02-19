@@ -1619,6 +1619,12 @@ export default function habitacionesTable() {
     setCantidadFood3Disponible("")
     setCantidadFood4Disponible("")
 
+    setCantidadItem("")
+    setCantidadItem1("")
+    setCantidadItem2("")
+    setCantidadItem3("")
+    setCantidadItem4("")
+
     setEsCortesia(false)
 
     const response = await AxiosInstance.get("/food");
@@ -3875,7 +3881,11 @@ export default function habitacionesTable() {
                     <span className=" mr-2">
                       <EstadoIcono estado={cliente.estado} />
                     </span>
-                    {cliente.estado}
+                    {cliente.estado === "activo" ? (
+                      <div className="uppercase"> Alojamiento en curso</div>
+                    ) : (
+                      null
+                    )}
                   </div>
                 </td>
                 <td className="html-table-tbody">

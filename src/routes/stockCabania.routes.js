@@ -1,11 +1,11 @@
 import { Router } from "express";
 import { create, deleteRegistro, registroStockCabanias } from "../controllers/stockCabanias.controller.js";
+import { auth } from "../middlewares/auth.middleware.js";
 
 const route = Router()
 
-route.get("/view-cabania-stock", registroStockCabanias)
-route.post("/register-cabania-stock", create)
-route.delete("/delete-cabania-stock/:id", deleteRegistro)
-route.put("/update-cabania-stock")
+route.get("/view-cabania-stock",auth, registroStockCabanias)
+route.post("/register-cabania-stock",auth, create)
+route.delete("/delete-cabania-stock/:id",auth, deleteRegistro)
 
 export default route;

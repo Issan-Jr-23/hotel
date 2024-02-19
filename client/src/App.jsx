@@ -46,51 +46,54 @@ function App() {
       <TaskProvider>
         <MenuProvider>
           <BrowserRouter basename="/meqo-soft">
-            <AppWithAuth/>
+            <AppWithAuth />
             <Routes>
               <Route path="/" element={<LoginPage />} />
-              <Route path="/meqo-soft" element={<LoginPage />}/>
+              <Route path="/meqo-soft" element={<LoginPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route element={<ProtectedRoute />}>
                 {/* <Route path="/home" element={<Home/>} /> */}
-                <Route path="/home" element={<HomeSu/>} />
+                <Route path="/home" element={<HomeSu />} />
                 <Route path="/Pasadia" element={<Pasadia />} />
-                <Route path="/cabanias" element={<Cabanias />} />
-                <Route path="/inventario" element={<InvBebidas />} />
                 <Route path="/habitaciones" element={<Habitaciones />} />
                 <Route path="/historial/:id" element={<HistorialUsuario />} />
                 <Route path="/adicional/:id" element={<Adicionales />} />
                 <Route path="/cabanias-adicional/:id" element={<AdicionalesCabanias />} />
                 <Route path="/habitaciones-adicional/:id" element={<AdicionalesHabitaciones />} />
-                <Route path="/habitaciones" element={<Habitaciones/>}></Route>
-                <Route path="/cabania-stock" element={<CabaniasStock/>} ></Route>
-                <Route path="/transferencia-data" element={<TransferenciaData/>}/>
-                <Route path="/historial-compras" element={<HistorialCompras/>}/>
+                <Route path="/habitaciones" element={<Habitaciones />}></Route>
+                <Route path="/transferencia-data" element={<TransferenciaData />} />
+                <Route path="/historial-compras" element={<HistorialCompras />} />
+                <Route path="/cabanias" element={<Cabanias />} />
               </Route>
 
-              <Route element={<ProtectedRoute allowedRoles={["superUser", "editor"]} />}>
+                <Route element={<ProtectedRoute allowedRoles={["superUser", "admin", "editor"]} />}>
+                <Route path="/inventario" element={<InvBebidas />} />
+                <Route path="/inventario-finca" element={<InventarioRanch />} />
+                <Route path="/cabania-stock" element={<CabaniasStock />} ></Route>
+                </Route>
 
-                <Route path="/crear-registro" element={<RegistroAnimales/>}></Route>
-                <Route path="/bovinos/table" element={<Animales/>}></Route>
-                <Route path="/informacion/becerro/vaca/:id" element={<Info/>}/>
-                <Route path="/Register" element={<Register/>} />
-                <Route path="/inventario-finca" element={<InventarioRanch/>}/>
-                <Route path="/finca" element={<FincaVisualizacion/>}/>
-                <Route path="/precios" element={<PreciosRanch/>}/>
+              <Route element={<ProtectedRoute allowedRoles={["superUser"]} />}>
+
+                <Route path="/crear-registro" element={<RegistroAnimales />}></Route>
+                <Route path="/bovinos/table" element={<Animales />}></Route>
+                <Route path="/informacion/becerro/vaca/:id" element={<Info />} />
+                <Route path="/finca" element={<FincaVisualizacion />} />
+                <Route path="/precios" element={<PreciosRanch />} />
 
               </Route>
 
+              <Route element={<ProtectedRoute allowedRoles={["superUser"]} />}>
+                <Route path="/Register" element={<Register />} />
+              </Route>
 
               <Route element={<ProtectedRoute allowedRoles={["editor", "superUser"]}/>}>
-                <Route path="/hotel-graphs" element={<Hotel_graphs />}/>
-                <Route path="/message" element={<Message/>}/>
-                <Route path="/price" element={<Precios/>}/>
+                <Route path="/hotel-graphs" element={<Hotel_graphs />} />
+                <Route path="/message" element={<Message />} />
+                <Route path="/price" element={<Precios />} />
                 {/* <Route path="/inventario" element={<FincaInventario/>}/> */}
-                <Route path="/dashboard-pasadia" element={<DashboardPasadia/>} ></Route>
-                <Route path="/dashboard-cabania" element={<DashboardCabania/>} ></Route>
-                <Route path="/dashboard-habitaciones" element={<DashboardHabitaciones/>} ></Route>
-              </Route>
-              <Route element={<ProtectedRoute allowedRoles={["editor"]} />}>
+                <Route path="/dashboard-pasadia" element={<DashboardPasadia />} ></Route>
+                <Route path="/dashboard-cabania" element={<DashboardCabania />} ></Route>
+                <Route path="/dashboard-habitaciones" element={<DashboardHabitaciones />} ></Route>
               </Route>
               <Route path="*" element={<NotFoundPage />} />
             </Routes>

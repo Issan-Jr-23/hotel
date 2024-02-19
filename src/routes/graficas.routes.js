@@ -9,14 +9,14 @@ const router = Router();
 
 router.get('/mayor-compra', auth, usuariosQueMasCompraron);
 router.get('/obtener-historial-usuarios', auth, obtenerTotal);
-router.get('/productos-mas-comprados', productosMasComprados);
-router.get('/productos-mas-comprados-pass', productosMasCompradosPass);
-router.get('/productos-mas-comprados-cab', productosMasCompradosCab);
-router.get('/productos-mas-comprados-hab', productosMasCompradosHab);
-router.get("/total-generado-ventas-brad", totalGeneradoBar)
-router.get("/total-generado-ventas-cabania-brad", totalGeneradoCabaniaBard)
-router.get("/total-generado-ventas-habitaciones-brad", totalGeneradoHabitacionesBard)
-router.get("/grafic-usuarios-mas-compras", comprasUsers)
+router.get('/productos-mas-comprados', auth, productosMasComprados);
+router.get('/productos-mas-comprados-pass',auth, productosMasCompradosPass);
+router.get('/productos-mas-comprados-cab',auth, productosMasCompradosCab);
+router.get('/productos-mas-comprados-hab',auth, productosMasCompradosHab);
+router.get("/total-generado-ventas-brad",auth, totalGeneradoBar)
+router.get("/total-generado-ventas-cabania-brad",auth, totalGeneradoCabaniaBard)
+router.get("/total-generado-ventas-habitaciones-brad",auth, totalGeneradoHabitacionesBard)
+router.get("/grafic-usuarios-mas-compras",auth, comprasUsers)
 
 
 
@@ -32,35 +32,35 @@ router.get("/grafic-usuarios-mas-compras", comprasUsers)
 
 
 //dashboar cabaña
-router.get("/cabania-productos-vendidos-dashboard", totalPructosVendidosCabaniaDashboard) //CHECK
-router.get('/productos-vendidos-cabania-dashboard',totalProductosVendidosHistorialCabaniaDashboard);
-router.get('/productos-cortesias-cabania-dashboard',totalProductosCortesiasCabaniaHistorialDashboard);
-router.get('/obtener-cantidad-usuarios-cabania-dashboard',obtenerTotalesNiniosYAdultosEnCabaniaDashboard);
-router.get('/cabania-total-generado',totalgeneradoCabaniaDashboard);
+router.get("/cabania-productos-vendidos-dashboard",auth, totalPructosVendidosCabaniaDashboard) //CHECK
+router.get('/productos-vendidos-cabania-dashboard',auth, totalProductosVendidosHistorialCabaniaDashboard);
+router.get('/productos-cortesias-cabania-dashboard',auth, totalProductosCortesiasCabaniaHistorialDashboard);
+router.get('/obtener-cantidad-usuarios-cabania-dashboard',auth, obtenerTotalesNiniosYAdultosEnCabaniaDashboard);
+router.get('/cabania-total-generado',auth, totalgeneradoCabaniaDashboard);
 
 
 
 //dashboard habitaciones
-router.get("/habitaciones-productos-vendidos-dashboard", totalPructosVendidosHabitacionesDashboard)
-router.get('/productos-vendidos-habitaciones-dashboard',totalProductosVendidosHistorialHabitacionesDashboard);
-router.get('/productos-cortesias-habitaciones-dashboard',totalProductosCortesiasHabitacionesHistorialDashboard);
-router.get('/obtener-cantidad-usuarios-habitaciones-dashboard',obtenerTotalesNiniosYAdultosEnHabitaciones);
-router.get('/habitaciones-total-generado',totalgeneradoHabitaciones);
+router.get("/habitaciones-productos-vendidos-dashboard",auth, totalPructosVendidosHabitacionesDashboard)
+router.get('/productos-vendidos-habitaciones-dashboard',auth, totalProductosVendidosHistorialHabitacionesDashboard);
+router.get('/productos-cortesias-habitaciones-dashboard',auth, totalProductosCortesiasHabitacionesHistorialDashboard);
+router.get('/obtener-cantidad-usuarios-habitaciones-dashboard',auth, obtenerTotalesNiniosYAdultosEnHabitaciones);
+router.get('/habitaciones-total-generado',auth, totalgeneradoHabitaciones);
 
 
 //controlador distinto
 //pasadia
-router.get("/obtain-pasadia-ventas", obtainVentasPasadia )
-router.get("/obtain-pasadia-products", obtainVentasPasadiaProducts)
+router.get("/obtain-pasadia-ventas",auth, obtainVentasPasadia )
+router.get("/obtain-pasadia-products",auth, obtainVentasPasadiaProducts)
 //cabania
 
-router.get("/obtain-cabania-ventas", obtainVentasCabania )
-router.get("/obtain-cabania-products", obtainVentasCabaniaProducts)
+router.get("/obtain-cabania-ventas",auth, obtainVentasCabania )
+router.get("/obtain-cabania-products",auth, obtainVentasCabaniaProducts)
 
 //habitaciones
 
-router.get("/obtain-habitaciones-ventas", obtainVentasHabitaciones )
-router.get("/obtain-habitaciones-products", obtainVentasHabitacionesProducts)
+router.get("/obtain-habitaciones-ventas",auth, obtainVentasHabitaciones )
+router.get("/obtain-habitaciones-products",auth, obtainVentasHabitacionesProducts)
 
 
 //Fin controlador distinto
@@ -69,16 +69,16 @@ router.get("/obtain-habitaciones-products", obtainVentasHabitacionesProducts)
 
 
 //pasadia
-router.get("/obtain-clientes", obtainClients)
-router.get("/obtain-clientes-historial", obtainUsers)
+router.get("/obtain-clientes",auth, obtainClients)
+router.get("/obtain-clientes-historial",auth, obtainUsers)
 //cabañas
-router.get("/obtain-clientes-cabanias", obtainClientsCabanias)
-router.get("/obtain-clientes-historial-cabanias", obtainUsersCabanias)
+router.get("/obtain-clientes-cabanias",auth, obtainClientsCabanias)
+router.get("/obtain-clientes-historial-cabanias",auth, obtainUsersCabanias)
 
 
-router.get("/data", obtainClientsAndUsers)
-router.get("/data-cabania", obtainClientsAndUsersCabania)
-router.get("/data-habitaciones", obtainClientsAndUsersHabitaciones)
+router.get("/data",auth, obtainClientsAndUsers)
+router.get("/data-cabania",auth, obtainClientsAndUsersCabania)
+router.get("/data-habitaciones",auth, obtainClientsAndUsersHabitaciones)
 
 
 

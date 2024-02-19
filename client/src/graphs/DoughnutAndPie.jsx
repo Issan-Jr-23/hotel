@@ -13,7 +13,6 @@ const DoughnutChart = () => {
     const fetchData = async () => {
       try {
         const response = await AxiosInstance.get('/obtener-historial-reservas-no');
-        console.log("Response data:", response.data); 
   
         let totalReservasSi = 0;
   

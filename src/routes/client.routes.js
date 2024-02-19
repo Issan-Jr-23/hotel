@@ -8,7 +8,7 @@ import { auth } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-router.get("/pasadia-clientes", obtenerClientes);
+router.get("/pasadia-clientes",auth, obtenerClientes);
 router.post("/pasadia-registrar-cliente",auth, crearCliente);
 router.delete("/pasadia/:id",auth, deleteClient);
 router.put("/pasadia/edit/:id",auth, updateClient);
@@ -20,30 +20,30 @@ router.put("/pasadia-clientes/:id/cortesias",auth, updateClientCts);
 router.put("/facturacion",auth, actualizarFacturacion)
 router.get('/pasadia-clientes-identificacion/:identificacion', auth, getClienteByIdentificacion);
 
-router.get("/pasadia-productos-cortesias", totalPructosVendidosCortesias)
-router.get("/pasadia-obtener-compras", obtenerResumenCompras)
-router.get("/pasadia-obtener-productosCop", obtenerProductosCop)
-router.put("/pasadia-actualizar-estado", updateUserStatus)
-router.get("/pasadia-fecha-activacion", fechaActivacion)
-router.get("/pasadia-fecha-finalizacion", fechaFinalizacion)
-router.get("/pasadia-fecha-compra", obtenerFechasCompras)
+router.get("/pasadia-productos-cortesias",auth, totalPructosVendidosCortesias)
+router.get("/pasadia-obtener-compras",auth, obtenerResumenCompras)
+router.get("/pasadia-obtener-productosCop",auth, obtenerProductosCop)
+router.put("/pasadia-actualizar-estado",auth, updateUserStatus)
+router.get("/pasadia-fecha-activacion",auth, fechaActivacion)
+router.get("/pasadia-fecha-finalizacion",auth, fechaFinalizacion)
+router.get("/pasadia-fecha-compra",auth, obtenerFechasCompras)
 
 
-router.get('/pasadia-cliente-info/:id', obtenerClienteId)
+router.get('/pasadia-cliente-info/:id',auth, obtenerClienteId)
 router.post("/pasadia-agregar-bebida/:id",auth, addBebidaAdicional);
 router.post("/pasadia-agregar-item-recepcion/:id",auth, addItemRecepcion);
 router.post("/pasadia-agregar-descorche/:id",auth, addDescorche);
 router.post("/pasadia-agregar-food/:id",auth, addFoodAdicional);
 router.post("/pasadia-agregar-food-subproducto/:id",auth, addFoodAdicionalSubproducto);
-router.get("/pasadia-productos-comprados", productosMasCompradosPasadia)
-router.get("/pasadia-productos-categoria", productosCategoria)
+router.get("/pasadia-productos-comprados",auth, productosMasCompradosPasadia)
+router.get("/pasadia-productos-categoria",auth, productosCategoria)
 
 
-router.get("/pasadia-totalidad-pago/:id", resTotal)
-router.get("/pasadia-totalidad-reserva-pago/:id", postPago)
-router.put("/pasadia-actualizar-valor", actualizarValor)
+router.get("/pasadia-totalidad-pago/:id",auth, resTotal)
+router.get("/pasadia-totalidad-reserva-pago/:id",auth, postPago)
+router.put("/pasadia-actualizar-valor",auth, actualizarValor)
 
-router.get("/clientes/filtrar", filtrarClientePorIdentificacion);
+router.get("/clientes/filtrar",auth, filtrarClientePorIdentificacion);
 
 
 export default router;

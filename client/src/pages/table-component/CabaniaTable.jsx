@@ -1484,7 +1484,7 @@ export default function cabaniaTable() {
         setFood3Seleccionada(''); // Establecer como vacío o el valor por defecto que desees
         setPrecioFood3Seleccionada(""); // o el valor por defecto inicial
         setFood3SeleccionadaId('');
-     
+
         setCantidadFood4("");
         setFood4Seleccionada('');
         setPrecioFood4Seleccionada("");
@@ -3914,7 +3914,7 @@ export default function cabaniaTable() {
                                             <div>
                                                 Alojamiento en Curso
                                             </div>
-                                        ) }
+                                        )}
                                     </div>
                                 </td>
                                 <td className="html-table-tbody">

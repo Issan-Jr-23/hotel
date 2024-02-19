@@ -7,14 +7,14 @@ HC_accessibility(Highcharts);
 
 const DoughnutChart = () => {
   const [data, setData] = useState([]);
-  const [totalReservas, setTotalReservas] = useState(0); 
+  const [totalReservas, setTotalReservas] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await AxiosInstance.get('/obtener-historial-reservas-no');
         console.log(response);
-  
+
         let reservasSi = [];
         response.data.forEach(usuario => {
           usuario.reservasSi.forEach(reserva => {
@@ -24,14 +24,14 @@ const DoughnutChart = () => {
             });
           });
         });
-  
+
         setData(reservasSi);
         setTotalReservas(reservasSi.length);
       } catch (error) {
         console.error('Error al obtener los datos: ', error);
       }
     };
-  
+
     fetchData();
   }, []);
 
@@ -40,11 +40,11 @@ const DoughnutChart = () => {
     const colors = ['#33FF57', '#3357FF', '#FF33F6', '#F6FF33'];
 
     const processedData = data.reduce((acc, item, index) => {
-      const existing = acc.find(({name}) => name === item.name);
+      const existing = acc.find(({ name }) => name === item.name);
       if (existing) {
         existing.y += 1;
       } else {
-        acc.push({...item, color: colors[index % colors.length]});
+        acc.push({ ...item, color: colors[index % colors.length] });
       }
       return acc;
     }, []);
@@ -52,9 +52,9 @@ const DoughnutChart = () => {
     const options = {
       chart: { type: 'pie', backgroundColor: "#fff" },
       accessibility: { enabled: false },
-      title: { 
-        text: 'ESTADO DE RESERVAS', 
-        style: { color: '#fff' } 
+      title: {
+        text: 'ESTADO DE RESERVAS',
+        style: { color: '#fff' }
       },
       plotOptions: {
         pie: {

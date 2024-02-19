@@ -3,9 +3,9 @@ import AxiosInstance from "../api/axios.js";
 export const registrarProduction = async (formData) => {
     try {
       await AxiosInstance.post("/registrar-produccion", formData);
-      console.log("registro creado exitosamente");
+      // console.log("registro creado exitosamente");
     } catch (error) {
-      console.log("tipo de error al crear el registro del usuario: " + error);
+      console.log("tipo de error al crear el registro del usuario");
     }
   };
 
@@ -14,7 +14,7 @@ export const registrarProduction = async (formData) => {
       const response = await AxiosInstance.get("/produccion");
       return response.data;
     } catch (error) {
-      console.error("Error al obtener datos del servidor:", error);
+      console.error("Error al obtener datos del servidor:");
       throw error;
     }
   };
@@ -24,7 +24,7 @@ export const registrarProduction = async (formData) => {
       const response = await AxiosInstance.get("/inventario")
       return response.data
     } catch (error) {
-      console.error("Error al obtener los datos del servidor: ", error)
+      console.error("Error al obtener los datos del servidor: ")
       throw error;
     }
   }
@@ -32,9 +32,9 @@ export const registrarProduction = async (formData) => {
   export const registrarData = async (formData) =>{
     try {
       await AxiosInstance.post("/registrar-data", formData) 
-      console.log("¡Datos registrados con exito!")
+      // console.log("¡Datos registrados con exito!")
     } catch (error) {
-      console.error("Error al registrar los datos", error)
+      console.error("Error al registrar los datos")
       throw error;
     }
   }
@@ -42,10 +42,10 @@ export const registrarProduction = async (formData) => {
  export const deleteRegistro = async (id) => {
     try {
       await AxiosInstance.delete(`/delete-registro/${id}`);
-      console.log("Usuario eliminado con éxito!");
+      // console.log("Usuario eliminado con éxito!");
     } catch (error) {
-      console.log("datos no eliminados: ", id)
-      console.error("Error al eliminar usuario:", error);
+      console.log("datos no eliminados")
+      console.error("Error al eliminar usuario");
       throw error;
     }
   };
@@ -53,9 +53,9 @@ export const registrarProduction = async (formData) => {
  export const registrarPrecios = async (formData) => {
     try {
         await AxiosInstance.post("/crear-precio", formData);
-        console.log("¡Registro de la tabla precio creado con exito!")
+        // console.log("¡Registro de la tabla precio creado con exito!")
     } catch (error) {
-        console.error("Error al agregar Pasadia: ", error);
+        console.error("Error al agregar Pasadia: ");
     }
 };
 

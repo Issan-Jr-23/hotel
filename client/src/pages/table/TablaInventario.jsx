@@ -87,14 +87,14 @@ export default function App() {
 
   const [users, setUsers] = useState([]);
 
-  const obtenerInventarioStock = async() => {
-      try {
-        const response = await AxiosInstance.get("/obtener-inventario");
-        setUsers(response.data);
-        console.log("response data: " + JSON.stringify(response.data))
-      } catch (error) {
-        console.error("Error al obtener datos del servidor:", error);
-      }
+  const obtenerInventarioStock = async () => {
+    try {
+      const response = await AxiosInstance.get("/obtener-inventario");
+      setUsers(response.data);
+      console.log("response data: " + JSON.stringify(response.data))
+    } catch (error) {
+      console.error("Error al obtener datos del servidor:", error);
+    }
 
   }
 

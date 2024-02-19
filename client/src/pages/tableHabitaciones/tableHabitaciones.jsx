@@ -2159,265 +2159,265 @@ export default function App() {
         <Lottie options={defaultOptionLoading} width={100} height={100} />
         {/* <p>Cargando recursos</p> */}
       </div>
-    <div className="max-w-full w-98 mx-auto">
-      <Toaster position="top-right" />
-      <div className="btnAdd flex  px-5 flex-wrap">
-        <div className="inputSearch">
-          <Input
-            label="Search"
-            value={busqueda}
-            onChange={handleSearchChange}
-            isClearable
-            radius="lg"
-            className="w-72 h-12"
-            classNames={{
-              label: "text-black/50 dark:text-white/90",
-              input: [
-                "bg-transparent",
-                "text-black/90 dark:text-black/90",
-                "placeholder:text-black/60 dark:placeholder:text-black/60",
-              ],
-              innerWrapper: "bg-transparent",
-              inputWrapper: [
-                "shadow-xl",
-                "bg-default-200/50",
-                "dark:bg-default/60",
-                "backdrop-blur-xl",
-                "backdrop-saturate-200",
-                "hover:bg-default-200/70",
-                "dark:hover:bg-default/70",
-                "group-data-[focused=true]:bg-default-200/50",
-                "dark:group-data-[focused=true]:bg-default/60",
-                "!cursor-text",
-              ],
-            }}
-            placeholder="Type to search..."
-            startContent={
-              <SearchIcon className="text-black/50 mb-0.5 dark:text-black/90 text-black pointer-events-none flex-shrink-0" />
-            }
-          />
-        </div>
+      <div className="max-w-full w-98 mx-auto">
+        <Toaster position="top-right" />
+        <div className="btnAdd flex  px-5 flex-wrap">
+          <div className="inputSearch">
+            <Input
+              label="Search"
+              value={busqueda}
+              onChange={handleSearchChange}
+              isClearable
+              radius="lg"
+              className="w-72 h-12"
+              classNames={{
+                label: "text-black/50 dark:text-white/90",
+                input: [
+                  "bg-transparent",
+                  "text-black/90 dark:text-black/90",
+                  "placeholder:text-black/60 dark:placeholder:text-black/60",
+                ],
+                innerWrapper: "bg-transparent",
+                inputWrapper: [
+                  "shadow-xl",
+                  "bg-default-200/50",
+                  "dark:bg-default/60",
+                  "backdrop-blur-xl",
+                  "backdrop-saturate-200",
+                  "hover:bg-default-200/70",
+                  "dark:hover:bg-default/70",
+                  "group-data-[focused=true]:bg-default-200/50",
+                  "dark:group-data-[focused=true]:bg-default/60",
+                  "!cursor-text",
+                ],
+              }}
+              placeholder="Type to search..."
+              startContent={
+                <SearchIcon className="text-black/50 mb-0.5 dark:text-black/90 text-black pointer-events-none flex-shrink-0" />
+              }
+            />
+          </div>
 
-        <div>
-          <div className="flex flex-wrap gap-3">
-            <Button
-              onClick={handleOpenMod}
-              className="capitalize text-white bg-black"
-            >
-              <PlusIcon /> Agregar
-            </Button>
-            <div className="flex items-center justify-center ml-7">
-              <Button className="bg-blue-500 w-28 text-white">
-                Exportar
+          <div>
+            <div className="flex flex-wrap gap-3">
+              <Button
+                onClick={handleOpenMod}
+                className="capitalize text-white bg-black"
+              >
+                <PlusIcon /> Agregar
               </Button>
+              <div className="flex items-center justify-center ml-7">
+                <Button className="bg-blue-500 w-28 text-white">
+                  Exportar
+                </Button>
+
+              </div>
 
             </div>
-
           </div>
-        </div>
 
 
-        <Modal open={open}
-          onClose={handleClose}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-          BackdropProps={{
-            style: { backgroundColor: 'rgba(0, 0, 0, 0.1)' }
-          }}>
-          <Box
-            sx={style} style={{
-              maxHeight: "90vh",
-              minHeight: "min-content",
-              overflowY: "auto"
-            }}
-          >
-            <>
-              <Typography className="flex flex-col gap-1"></Typography>
-              <Typography>
-
-                <Input
-                  isRequired
-                  id="identificacion"
-                  name="identificacion"
-                  type="number"
-
-                  variant="flat"
-                  label="IDENTIFICACIÓN DE USUARIO"
-                  value={formData.identificacion}
-                  onChange={handleInputChange}
-                  className={`rounded-xl h-12 border-2 ${errorIdentificacion ? 'border-red-500' : 'border-blue-400'}`}
-                />
-                <Input
-                  isRequired
-                  id="nombre"
-                  name="nombre"
-                  type="text"
-
-                  variant="flat"
-                  label="NOMBRE DE USUARIO"
-                  value={formData.nombre}
-                  onChange={handleInputChange}
-                  className={`rounded-xl h-12 border-2 ${errorNombre ? 'border-red-500' : 'border-blue-400'}`}
-                />
-
-                <Select
-                  isRequired
-                  id="reserva"
-                  name="reserva"
-                  label="¿LA RESERVA FUE REALIZADA?"
-                  className={`rounded-xl border-2 ${errorReserva ? 'border-red-500' : 'border-blue-400'}`}
-                  value={formData.reserva}
-                  onChange={(event) => handleReservaChange(event.target.value)}
-                >
-                  {options.map((option) => (
-                    <SelectItem key={option} value={option}>
-                      {option}
-                    </SelectItem>
-                  ))}
-                </Select>
-
-                <select
-                  required
-                  id="mediosDePago"
-                  name="habitaciones"
-                  value={formData.habitaciones}
-                  onChange={(event) => handleInputChange(event)}
-                  className={`h-14 outline-none rounded-xl border-2 ${errorHabitacion ? 'border-red-500' : 'border-blue-400'}`}
-                >
-                  <option value="">ELIGE LA HABITACIÓN </option>
-                  <option value="Descanso">DESCANSO</option>
-                  <option value="Jardin_Secreto">JARDIN SECRETO</option>
-                  <option value="Arcoiris">ARCOIRIS</option>
-
-                </select>
-                <div className="flex">
+          <Modal open={open}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+            BackdropProps={{
+              style: { backgroundColor: 'rgba(0, 0, 0, 0.1)' }
+            }}>
+            <Box
+              sx={style} style={{
+                maxHeight: "90vh",
+                minHeight: "min-content",
+                overflowY: "auto"
+              }}
+            >
+              <>
+                <Typography className="flex flex-col gap-1"></Typography>
+                <Typography>
 
                   <Input
                     isRequired
-                    id="adultos"
-                    name="adultos"
+                    id="identificacion"
+                    name="identificacion"
                     type="number"
-                    variant="flat"
-                    label="CANTIDAD DE ADULTOS"
-                    value={formData.cantidadPersonas.adultos}
-                    onChange={(event) => handleInputChange(event, "adultos")}
-                    className={`rounded-xl h-12 border-2 ${errorAdultos ? 'border-red-500' : 'border-blue-400'}`}
-                  />
 
+                    variant="flat"
+                    label="IDENTIFICACIÓN DE USUARIO"
+                    value={formData.identificacion}
+                    onChange={handleInputChange}
+                    className={`rounded-xl h-12 border-2 ${errorIdentificacion ? 'border-red-500' : 'border-blue-400'}`}
+                  />
                   <Input
-                    required
-                    id="ninios"
-                    name="ninios"
-                    type="number"
-                    variant="flat"
-                    label="CANTIDAD DE NIÑOS"
-                    value={formData.cantidadPersonas.ninios}
-                    onChange={(event) => handleInputChange(event, "ninios")}
-                    className="ml-3 h-12 border-green-400 border-2 rounded-xl"
+                    isRequired
+                    id="nombre"
+                    name="nombre"
+                    type="text"
 
+                    variant="flat"
+                    label="NOMBRE DE USUARIO"
+                    value={formData.nombre}
+                    onChange={handleInputChange}
+                    className={`rounded-xl h-12 border-2 ${errorNombre ? 'border-red-500' : 'border-blue-400'}`}
                   />
-                </div>
-                <div className="flex">
+
+                  <Select
+                    isRequired
+                    id="reserva"
+                    name="reserva"
+                    label="¿LA RESERVA FUE REALIZADA?"
+                    className={`rounded-xl border-2 ${errorReserva ? 'border-red-500' : 'border-blue-400'}`}
+                    value={formData.reserva}
+                    onChange={(event) => handleReservaChange(event.target.value)}
+                  >
+                    {options.map((option) => (
+                      <SelectItem key={option} value={option}>
+                        {option}
+                      </SelectItem>
+                    ))}
+                  </Select>
 
                   <select
+                    required
                     id="mediosDePago"
-                    name="mediosDePago"
-
-                    value={formData.mediosDePago}
+                    name="habitaciones"
+                    value={formData.habitaciones}
                     onChange={(event) => handleInputChange(event)}
-                    className="mr-3 w-6/12 outline-none border-2 rounded-xl border-blue-400"
+                    className={`h-14 outline-none rounded-xl border-2 ${errorHabitacion ? 'border-red-500' : 'border-blue-400'}`}
                   >
-                    <option value="">METODO DE PAGO</option>
-                    <option value="efectivo">Efectivo</option>
-                    <option value="nequi">Nequi</option>
-                    <option value="daviplata">Daviplata</option>
-                    <option value="pse">PSE</option>
-                    <option value="efecty">Efecty</option>
-                    <option value="transferencia">Transferencia</option>
+                    <option value="">ELIGE LA HABITACIÓN </option>
+                    <option value="Descanso">DESCANSO</option>
+                    <option value="Jardin_Secreto">JARDIN SECRETO</option>
+                    <option value="Arcoiris">ARCOIRIS</option>
+
                   </select>
+                  <div className="flex">
+
+                    <Input
+                      isRequired
+                      id="adultos"
+                      name="adultos"
+                      type="number"
+                      variant="flat"
+                      label="CANTIDAD DE ADULTOS"
+                      value={formData.cantidadPersonas.adultos}
+                      onChange={(event) => handleInputChange(event, "adultos")}
+                      className={`rounded-xl h-12 border-2 ${errorAdultos ? 'border-red-500' : 'border-blue-400'}`}
+                    />
+
+                    <Input
+                      required
+                      id="ninios"
+                      name="ninios"
+                      type="number"
+                      variant="flat"
+                      label="CANTIDAD DE NIÑOS"
+                      value={formData.cantidadPersonas.ninios}
+                      onChange={(event) => handleInputChange(event, "ninios")}
+                      className="ml-3 h-12 border-green-400 border-2 rounded-xl"
+
+                    />
+                  </div>
+                  <div className="flex">
+
+                    <select
+                      id="mediosDePago"
+                      name="mediosDePago"
+
+                      value={formData.mediosDePago}
+                      onChange={(event) => handleInputChange(event)}
+                      className="mr-3 w-6/12 outline-none border-2 rounded-xl border-blue-400"
+                    >
+                      <option value="">METODO DE PAGO</option>
+                      <option value="efectivo">Efectivo</option>
+                      <option value="nequi">Nequi</option>
+                      <option value="daviplata">Daviplata</option>
+                      <option value="pse">PSE</option>
+                      <option value="efecty">Efecty</option>
+                      <option value="transferencia">Transferencia</option>
+                    </select>
+                    <Input
+                      required
+                      id="pagoAnticipado"
+                      name="pagoAnticipado"
+                      className="w-6/12 ml-3 rounded-xl border-2  border-blue-400"
+                      type="number"
+                      variant="flat"
+                      label="PAGO ANTICIPADO"
+                      value={formData.pagoAnticipado}
+                      onChange={handleInputChange}
+
+                    />
+                  </div>
                   <Input
-                    required
-                    id="pagoAnticipado"
-                    name="pagoAnticipado"
-                    className="w-6/12 ml-3 rounded-xl border-2  border-blue-400"
-                    type="number"
-                    variant="flat"
-                    label="PAGO ANTICIPADO"
-                    value={formData.pagoAnticipado}
-                    onChange={handleInputChange}
-
-                  />
-                </div>
-                <Input
-                  isRequired
-                  name="fechaPasadia"
-                  type="date"
-                  label="FECHA EN LA QUE DESEA DISFRUTAR DE LA HABITACIÓN"
-                  className={`rounded-xl border-2 ${errorFechaPasadia ? 'border-red-500' : 'border-blue-400'}`}
-                  placeholder="Fecha en la desea disfrutar el pasadia"
-                  value={formData.fechaPasadia}
-                  onChange={handleInputChange}
-                />
-                <div className="flex">
-                  <select
-                    className="w-6/12 mr-3 outline-none rounded-xl border-2 border-blue-400"
-                    id="mediosDePagoPendiente"
-                    name="mediosDePagoPendiente"
-                    value={formData.mediosDePagoPendiente}
-                    onChange={(event) => handleInputChange(event)}
-                  >
-                    <option value="">METODO DE PAGO</option>
-                    <option value="efectivo">Efectivo</option>
-                    <option value="nequi">Nequi</option>
-                    <option value="daviplata">Daviplata</option>
-                    <option value="pse">PSE</option>
-                    <option value="efecty">Efecty</option>
-                    <option value="transferencia">Transferencia</option>
-                  </select>
-                  <Input
-                    id="pagoPendiente"
-                    name="pagoPendiente"
-                    className="w-6/12 ml-3 border-2 border-blue-400 rounded-xl"
-                    type="number"
-                    variant="flat"
-                    label="PAGO ANTICIPADO"
-                    value={formData.pagoPendiente}
+                    isRequired
+                    name="fechaPasadia"
+                    type="date"
+                    label="FECHA EN LA QUE DESEA DISFRUTAR DE LA HABITACIÓN"
+                    className={`rounded-xl border-2 ${errorFechaPasadia ? 'border-red-500' : 'border-blue-400'}`}
+                    placeholder="Fecha en la desea disfrutar el pasadia"
+                    value={formData.fechaPasadia}
                     onChange={handleInputChange}
                   />
-                </div>
+                  <div className="flex">
+                    <select
+                      className="w-6/12 mr-3 outline-none rounded-xl border-2 border-blue-400"
+                      id="mediosDePagoPendiente"
+                      name="mediosDePagoPendiente"
+                      value={formData.mediosDePagoPendiente}
+                      onChange={(event) => handleInputChange(event)}
+                    >
+                      <option value="">METODO DE PAGO</option>
+                      <option value="efectivo">Efectivo</option>
+                      <option value="nequi">Nequi</option>
+                      <option value="daviplata">Daviplata</option>
+                      <option value="pse">PSE</option>
+                      <option value="efecty">Efecty</option>
+                      <option value="transferencia">Transferencia</option>
+                    </select>
+                    <Input
+                      id="pagoPendiente"
+                      name="pagoPendiente"
+                      className="w-6/12 ml-3 border-2 border-blue-400 rounded-xl"
+                      type="number"
+                      variant="flat"
+                      label="PAGO ANTICIPADO"
+                      value={formData.pagoPendiente}
+                      onChange={handleInputChange}
+                    />
+                  </div>
 
-              </Typography>
-              <Typography>
-                <Button color="danger" variant="light" onClick={onClose}>
-                  Cerrar
-                </Button>
-                <Button color="primary" onClick={handleFormSubmit}>
-                  Guardar
-                </Button>
-              </Typography>
-            </>
+                </Typography>
+                <Typography>
+                  <Button color="danger" variant="light" onClick={onClose}>
+                    Cerrar
+                  </Button>
+                  <Button color="primary" onClick={handleFormSubmit}>
+                    Guardar
+                  </Button>
+                </Typography>
+              </>
 
-          </Box>
-        </Modal>
+            </Box>
+          </Modal>
 
-
-      </div>
-
-      <section className="flex mt-5 mx-5 rounded-t-2xl flex-col">
-        {/* Input de búsqueda */}
-
-        <div className="flex justify-end">
-          <select className="w-28 h-8 rounded-xl mb-1 outline-none bg-white/0 text-white" onChange={handleChangeDisplayLimit} value={displayLimit}>
-            <option className="text-black" value="1">Mostrar 1</option>
-            <option className="text-black" value="5">Mostrar 5</option>
-            <option className="text-black" value="10">Mostrar 10</option>
-            <option className="text-black" value="20">Mostrar 20</option>
-            <option className="text-black" value="50">Mostrar 50</option>
-            <option className="text-black" value="100">Mostrar 100</option>
-          </select>
 
         </div>
-        <div className=" flex justify-end">
+
+        <section className="flex mt-5 mx-5 rounded-t-2xl flex-col">
+          {/* Input de búsqueda */}
+
+          <div className="flex justify-end">
+            <select className="w-28 h-8 rounded-xl mb-1 outline-none bg-white/0 text-white" onChange={handleChangeDisplayLimit} value={displayLimit}>
+              <option className="text-black" value="1">Mostrar 1</option>
+              <option className="text-black" value="5">Mostrar 5</option>
+              <option className="text-black" value="10">Mostrar 10</option>
+              <option className="text-black" value="20">Mostrar 20</option>
+              <option className="text-black" value="50">Mostrar 50</option>
+              <option className="text-black" value="100">Mostrar 100</option>
+            </select>
+
+          </div>
+          <div className=" flex justify-end">
             <Pagination
               showControls
               color="primary"
@@ -2426,83 +2426,83 @@ export default function App() {
               onChange={(newPage) => changePage(newPage)}
             />
           </div>
-        
-        <Table className=" text-center uppercase" aria-label="Lista de Usuarios"
-        >
-          <TableHeader className="text-center">
-            <TableColumn className="text-center">+</TableColumn>
-            <TableColumn className="text-center max-w-xs">ID</TableColumn>
-            <TableColumn className="text-center ">Nombre</TableColumn>
-            <TableColumn className="text-center ">Reserva</TableColumn>
-            <TableColumn className="text-center ">HABITACIONES</TableColumn>
-            <TableColumn className="text-center tables_im">fecha de inicio habitaciones</TableColumn>
-            <TableColumn className="text-center">agregar bebida</TableColumn>
-            <TableColumn className="text-center">agregar comida</TableColumn>
-            <TableColumn className="text-center">Pago pendiente</TableColumn>
-            <TableColumn className="text-center">Estado</TableColumn>
-            <TableColumn className="text-center"></TableColumn>
-          </TableHeader>
 
-          <TableBody emptyContent="No hay elementos por mostrar" className="">
-            {users.map((cliente) => (
+          <Table className=" text-center uppercase" aria-label="Lista de Usuarios"
+          >
+            <TableHeader className="text-center">
+              <TableColumn className="text-center">+</TableColumn>
+              <TableColumn className="text-center max-w-xs">ID</TableColumn>
+              <TableColumn className="text-center ">Nombre</TableColumn>
+              <TableColumn className="text-center ">Reserva</TableColumn>
+              <TableColumn className="text-center ">HABITACIONES</TableColumn>
+              <TableColumn className="text-center tables_im">fecha de inicio habitaciones</TableColumn>
+              <TableColumn className="text-center">agregar bebida</TableColumn>
+              <TableColumn className="text-center">agregar comida</TableColumn>
+              <TableColumn className="text-center">Pago pendiente</TableColumn>
+              <TableColumn className="text-center">Estado</TableColumn>
+              <TableColumn className="text-center"></TableColumn>
+            </TableHeader>
 
-              <TableRow className="cursor-pointer hover:bg-blue-200" key={cliente._id}>
+            <TableBody emptyContent="No hay elementos por mostrar" className="">
+              {users.map((cliente) => (
 
-                <TableCell>
+                <TableRow className="cursor-pointer hover:bg-blue-200" key={cliente._id}>
 
-                  
-                </TableCell>
-
-                <TableCell className="w-2/12">
-                  
-                </TableCell>
-
-                <TableCell>
-
-                  
-
-                </TableCell>
-                <TableCell></TableCell>
-                <TableCell></TableCell>
-                <TableCell>
-                  {new Date(new Date(cliente.fechaPasadia).getTime() + new Date().getTimezoneOffset() * 60000)
-                    .toLocaleDateString('es-ES', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
-                </TableCell>
+                  <TableCell>
 
 
-                <TableCell key={cliente._id} >
+                  </TableCell>
 
-                  
+                  <TableCell className="w-2/12">
 
-                </TableCell>
+                  </TableCell>
 
-
-                <TableCell key={cliente.id} className="">
-                  
-                </TableCell>
+                  <TableCell>
 
 
 
-                <TableCell> {((valorHabitaciones) - (cliente.pagoAnticipado + cliente.pagoPendiente))}</TableCell>
+                  </TableCell>
+                  <TableCell></TableCell>
+                  <TableCell></TableCell>
+                  <TableCell>
+                    {new Date(new Date(cliente.fechaPasadia).getTime() + new Date().getTimezoneOffset() * 60000)
+                      .toLocaleDateString('es-ES', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}
+                  </TableCell>
 
 
-                <TableCell className="text-center" style={{ width: "150px" }}>
-                  
-                </TableCell>
+                  <TableCell key={cliente._id} >
 
-                <TableCell>
-                 
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
 
-        <div className=" flex justify-end">
+
+                  </TableCell>
+
+
+                  <TableCell key={cliente.id} className="">
+
+                  </TableCell>
+
+
+
+                  <TableCell> {((valorHabitaciones) - (cliente.pagoAnticipado + cliente.pagoPendiente))}</TableCell>
+
+
+                  <TableCell className="text-center" style={{ width: "150px" }}>
+
+                  </TableCell>
+
+                  <TableCell>
+
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+
+          <div className=" flex justify-end">
             <Pagination
               showControls
               color="danger"
@@ -2512,8 +2512,8 @@ export default function App() {
             />
           </div>
 
-      </section>
-    </div>
+        </section>
+      </div>
     </div>
   );
 }

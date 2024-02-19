@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Pagination, getKeyValue, Button, Popover, PopoverContent, PopoverTrigger, Input,Listbox, ListboxItem, Textarea } from "@nextui-org/react";
-import {ListboxWrapper} from "./ListboxWrapper";
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Pagination, getKeyValue, Button, Popover, PopoverContent, PopoverTrigger, Input, Listbox, ListboxItem, Textarea } from "@nextui-org/react";
+import { ListboxWrapper } from "./ListboxWrapper";
 // import { users } from "./data";
 import { PlusIcon } from "./PlusIcon";
 import { ChevronDownIcon } from "./ChevronDownIcon";
@@ -48,7 +48,7 @@ export default function App() {
   const handdleFormSubmit = async () => {
     try {
       await registrarProduction(formData);
-      const getData = await obtenerData(); 
+      const getData = await obtenerData();
       setRanchData(getData);
     } catch (error) {
       console.log("Error al registrar la producción: " + error);
@@ -57,13 +57,13 @@ export default function App() {
 
   useEffect(() => {
     const fetchData = async () => {
-     try {
-      const getData = await obtenerData(); 
-      setRanchData(getData);
-      console.log("My data: "+ getData)
-     } catch (error) {
-      console.log("los datos no se pudieron obtener en este momento")
-     }
+      try {
+        const getData = await obtenerData();
+        setRanchData(getData);
+        console.log("My data: " + getData)
+      } catch (error) {
+        console.log("los datos no se pudieron obtener en este momento")
+      }
     }
     fetchData();
   }, [])
@@ -72,92 +72,92 @@ export default function App() {
 
     <div>
 
-    <div className="flex justify-between">
-      <article>
-      <Button
-        endContent={<ChevronDownIcon className="text-small" />}
-        size="sm"
-        variant="flat"
-        className="mr-2"
-      >
-        Columns
-      </Button>
-
-      <Popover placement="bottom" showArrow={true}>
-      <PopoverTrigger>
-      <Button
-        endContent={<ChevronDownIcon className="text-small" />}
-        size="sm"
-        variant="flat"
-        className="mr-2"
-      >
-        Columns
-      </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-60">
-      <div className="flex flex-col ">
-      <ListboxWrapper>
-        <Listbox 
-          aria-label="Multiple selection example"
-          variant="flat"
-          disallowEmptySelection
-          selectionMode="multiple"
-          selectedKeys={selectedKeys}
-          onSelectionChange={setSelectedKeys}
-        >
-          <ListboxItem key="text">Text</ListboxItem>
-          <ListboxItem key="number">Number</ListboxItem>
-          <ListboxItem key="date">Date</ListboxItem>
-          <ListboxItem key="single_date">Single Date</ListboxItem>
-          <ListboxItem key="iteration">Iteration</ListboxItem>
-        </Listbox>
-      </ListboxWrapper>
-    </div>
-      </PopoverContent>
-    </Popover>
-      </article>
-      <Popover placement="button" showArrow={true}>
-        <PopoverTrigger>
+      <div className="flex justify-between">
+        <article>
           <Button
-            className="bg-foreground text-background"
-            endContent={<PlusIcon />}
+            endContent={<ChevronDownIcon className="text-small" />}
             size="sm"
+            variant="flat"
+            className="mr-2"
           >
-            Add New
+            Columns
           </Button>
 
-        </PopoverTrigger>
-        <PopoverContent className="bg-white">
-          <div>
-            <h2 className="w-full text-center mt-2 mb-2 text-black">CONTENIDO</h2>
-            <div>
-              <Input
-                id="nombre"
-                name="nombre"
-                type="text"
-                radius="none" 
-                value={formData.nombre}
-                onChange={handleChange}
-                label="Nombre" 
-                className="h-12 w-80 p-1"/>
-              <Input name="tipo" type="text" onChange={handleChange} value={formData.tipo} radius="none" className="h-12 w-80 p-1" label="Tipo" />
-              <Input name="cantidadProducida" onChange={handleChange} value={formData.cantidadProducida} radius="none" className="h-12 w-80 p-1" label="Cantidad producida" />
-              <Input name="areaDeProduccion" onChange={handleChange} value={formData.areaDeProduccion} radius="none" className="h-12 w-80 p-1" label="area de produccion" />
-              <Textarea
-              name="notasEspeciales"
-              label="Description"
-              placeholder="Enter your description"
-                value={formData.notasEspeciales}
-                onChange={handleChange}
-                radius="none" className=" w-80 p-1"/>
-            </div>
-            <Button onClick={handdleFormSubmit} color="primary" className="h-10 w-20 ml-1 mt-1 mb-5 mr-2">Enviar</Button>
-            <Button className="text-red-500 font-bolt">Cerrar</Button>
-          </div>
-        </PopoverContent>
+          <Popover placement="bottom" showArrow={true}>
+            <PopoverTrigger>
+              <Button
+                endContent={<ChevronDownIcon className="text-small" />}
+                size="sm"
+                variant="flat"
+                className="mr-2"
+              >
+                Columns
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-60">
+              <div className="flex flex-col ">
+                <ListboxWrapper>
+                  <Listbox
+                    aria-label="Multiple selection example"
+                    variant="flat"
+                    disallowEmptySelection
+                    selectionMode="multiple"
+                    selectedKeys={selectedKeys}
+                    onSelectionChange={setSelectedKeys}
+                  >
+                    <ListboxItem key="text">Text</ListboxItem>
+                    <ListboxItem key="number">Number</ListboxItem>
+                    <ListboxItem key="date">Date</ListboxItem>
+                    <ListboxItem key="single_date">Single Date</ListboxItem>
+                    <ListboxItem key="iteration">Iteration</ListboxItem>
+                  </Listbox>
+                </ListboxWrapper>
+              </div>
+            </PopoverContent>
+          </Popover>
+        </article>
+        <Popover placement="button" showArrow={true}>
+          <PopoverTrigger>
+            <Button
+              className="bg-foreground text-background"
+              endContent={<PlusIcon />}
+              size="sm"
+            >
+              Add New
+            </Button>
 
-      </Popover>
-    </div>
+          </PopoverTrigger>
+          <PopoverContent className="bg-white">
+            <div>
+              <h2 className="w-full text-center mt-2 mb-2 text-black">CONTENIDO</h2>
+              <div>
+                <Input
+                  id="nombre"
+                  name="nombre"
+                  type="text"
+                  radius="none"
+                  value={formData.nombre}
+                  onChange={handleChange}
+                  label="Nombre"
+                  className="h-12 w-80 p-1" />
+                <Input name="tipo" type="text" onChange={handleChange} value={formData.tipo} radius="none" className="h-12 w-80 p-1" label="Tipo" />
+                <Input name="cantidadProducida" onChange={handleChange} value={formData.cantidadProducida} radius="none" className="h-12 w-80 p-1" label="Cantidad producida" />
+                <Input name="areaDeProduccion" onChange={handleChange} value={formData.areaDeProduccion} radius="none" className="h-12 w-80 p-1" label="area de produccion" />
+                <Textarea
+                  name="notasEspeciales"
+                  label="Description"
+                  placeholder="Enter your description"
+                  value={formData.notasEspeciales}
+                  onChange={handleChange}
+                  radius="none" className=" w-80 p-1" />
+              </div>
+              <Button onClick={handdleFormSubmit} color="primary" className="h-10 w-20 ml-1 mt-1 mb-5 mr-2">Enviar</Button>
+              <Button className="text-red-500 font-bolt">Cerrar</Button>
+            </div>
+          </PopoverContent>
+
+        </Popover>
+      </div>
 
 
       <Table

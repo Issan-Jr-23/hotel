@@ -1256,7 +1256,7 @@ export default function CollapsibleTable() {
                     <option className="w-52 text-black" value="utensilios">Utensilios</option>
                     <option className="w-52 text-black" value="despensa">Despensa</option>
                     <option className="w-52 text-black" value="otro">Otro</option>
-                    
+
                 </select>
             </div>
             <TableContainer component={Paper} style={{ borderRadius: "15px", overflow: "x" }}>

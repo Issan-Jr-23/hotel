@@ -1,10 +1,10 @@
 {
-  "name": "mern-tasks",
+  "name": "administration_meqo-soft",
   "version": "1.0.0",
   "description": "A MERN CRUD with Authentication",
   "main": "index.js",
   "type": "module",
-  "homepage": "https://www.hotelmeqo.com/meqo-soft/",
+  "homepage": "https://www.hotelmeqo.com/meqo-soft/v2",
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon src/index.js --ignore client",
     "start": "cross-env NODE_ENV=production node src/index.js"

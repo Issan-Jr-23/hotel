@@ -33,12 +33,12 @@ router.get('/verificar-disponibilidad/:id',auth,validCB);
 router.get('/fill-type',auth, filType);
 router.post('/actualizar-inventario-food',auth,updateCF);
 router.get('/verificar-disponibilidad-food/:id',auth,validCF); 
-router.get('/obtener-sub-productos/:id', obtenerSubProductos)
+router.get('/obtener-sub-productos/:id',auth, obtenerSubProductos)
 // router.post('/actualizar-subproducto', actualizarSubproducto);
-router.post('/update-cantidad-inicial', updateStockSubproductos);
-router.post('/guardar-cortesia-inventario', guardarCortesiaItemInventory);
-router.post('/guardar-cortesias-inventario', guardarCortesiaFoodInventory);
-router.delete('/eliminar-subproduct/:id', deleteSubproduct);
-router.put('/update-prueba-subproducto/:id', updateSubproduct);
+router.post('/update-cantidad-inicial',auth, updateStockSubproductos);
+router.post('/guardar-cortesia-inventario',auth, guardarCortesiaItemInventory);
+router.post('/guardar-cortesias-inventario',auth, guardarCortesiaFoodInventory);
+router.delete('/eliminar-subproduct/:id',auth, deleteSubproduct);
+router.put('/update-prueba-subproducto/:id',auth, updateSubproduct);
 
 export default router;

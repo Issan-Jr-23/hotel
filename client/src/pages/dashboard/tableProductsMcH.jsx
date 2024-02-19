@@ -55,14 +55,14 @@ const HorizontalBarChart = () => {
       <HighchartsReact highcharts={Highcharts} options={chartOptions} />
       <div className='h-12 flex justify-center '>
 
-      <Pagination
-        count={totalPaginas}
-        page={paginaActual}
-        onChange={handleChangePage}
-        color="primary"
-        showFirstButton
-        showLastButton
-      />
+        <Pagination
+          count={totalPaginas}
+          page={paginaActual}
+          onChange={handleChangePage}
+          color="primary"
+          showFirstButton
+          showLastButton
+        />
       </div>
     </div>
   );

@@ -9,7 +9,7 @@ import { auth } from "../middlewares/auth.middleware.js"
 
 const router = Router();
 
-router.get("/cabania-clientes", obtenerClientes);
+router.get("/cabania-clientes",auth, obtenerClientes);
 router.post("/cabania-registrar-cliente",auth, crearCliente);
 router.delete("/cabania/:id",auth, deleteClient);
 router.put("/cabania/edit/:identificacion",auth, updateClient);
@@ -20,20 +20,20 @@ router.put('/cabania-clientes/:id/actualizar',auth, updatePP);
 router.put("/cabania-clientes/:id/cortesias",auth, updateClientCts);
 router.put("/cabania-facturacion",auth, actualizarFacturacion);
 router.get('/cabania-clientes-identificacion/:identificacion', auth, getClienteByIdentificacion);
-router.put("/cabania-actualizar-estado", updateUserStatus);
-router.get('/cabania-cliente-info/:id', obtenerClienteId);
+router.put("/cabania-actualizar-estado",auth ,updateUserStatus);
+router.get('/cabania-cliente-info/:id',auth, obtenerClienteId);
 router.post("/cabania-agregar-bebida/:id",auth, addBebidaAdicional);
 router.post("/cabania-agregar-item-recepcion/:id",auth, addItemRecepcion);
 router.post("/cabania-agregar-descorche/:id",auth, addDescorche);
 router.post("/cabania-agregar-food/:id",auth, addFoodAdicional);
 router.post("/cabania-agregar-food-subproducto/:id",auth, addFoodAdicionalSubproducto);
-router.get("/cabania-productos-categoria", productosCategoria)
-router.get("/cabania-fecha-activacion", fechaActivacion)
-router.get("/cabania-fecha-finalizacion", fechaFinalizacion)
+router.get("/cabania-productos-categoria",auth, productosCategoria)
+router.get("/cabania-fecha-activacion", auth,fechaActivacion)
+router.get("/cabania-fecha-finalizacion", auth,fechaFinalizacion)
 
-router.get("/cabania-totalidad-pago/:id", resTotal)
-router.get("/cabania-totalidad-reserva-pago/:id", postPago)
-router.put("/cabania-actualizar-valor", actualizarValor)
+router.get("/cabania-totalidad-pago/:id",auth, resTotal)
+router.get("/cabania-totalidad-reserva-pago/:id", auth,postPago)
+router.put("/cabania-actualizar-valor", auth,actualizarValor)
 
 
 export default router;

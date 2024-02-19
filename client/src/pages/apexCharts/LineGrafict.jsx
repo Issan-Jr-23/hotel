@@ -3,10 +3,10 @@ import React, { useEffect, useState } from 'react';
 import AxiosInstance from "../../api/axios.js"
 
 const MyComponent = () => {
-  
+
   const [totalVentaPasadia, setTotalVentaPasadia] = useState(0);
   const [totalVentaCabania, setTotalVentaCabania] = useState(0);
-  const [totalVentaHabitaciones, setTotalVentaHabitaciones] = useState(0); 
+  const [totalVentaHabitaciones, setTotalVentaHabitaciones] = useState(0);
   const [bar, setBar] = useState(0);
   const [restaurante, setRestaurante] = useState(0);
   const [recepcion, setRecepcion] = useState(0);
@@ -15,7 +15,7 @@ const MyComponent = () => {
   const [restauranteC, setRestauranteC] = useState(0);
   const [recepcionC, setRecepcionC] = useState(0);
   const [descorcheC, setDescorcheC] = useState(0);
-  const [barH, setBarH ] = useState(0);
+  const [barH, setBarH] = useState(0);
   const [restauranteH, setRestauranteH] = useState(0);
   const [recepcionH, setRecepcionH] = useState(0);
   const [descorcheH, setDescorcheH] = useState(0);
@@ -78,7 +78,7 @@ const MyComponent = () => {
       try {
         const response = await AxiosInstance.get(`/total-generado-ventas-brad`)
         const { bar, restaurante, recepcion, descorche } = response.data
-        console.log("muestra: ",recepcion)
+        console.log("muestra: ", recepcion)
         setBar(bar)
         setRestaurante(restaurante)
         setRecepcion(recepcion)
@@ -91,10 +91,10 @@ const MyComponent = () => {
   }, [])
 
   useEffect(() => {
-    const fetchData = async() => {
+    const fetchData = async () => {
       try {
         const response = await AxiosInstance.get('/total-generado-ventas-cabania-brad')
-        const {bar, restaurante, recepcion, descorche} = response.data
+        const { bar, restaurante, recepcion, descorche } = response.data
         console.log(bar, restaurante, recepcion, descorche)
         setBarC(bar)
         setRestauranteC(restaurante)
@@ -108,10 +108,10 @@ const MyComponent = () => {
   }, [])
 
   useEffect(() => {
-    const fetchData = async() => {
+    const fetchData = async () => {
       try {
         const response = await AxiosInstance.get('/total-generado-ventas-habitaciones-brad')
-        const {bar, restaurante, recepcion, descorche} = response.data
+        const { bar, restaurante, recepcion, descorche } = response.data
         setBarH(bar)
         setRestauranteH(restaurante)
         setRecepcionH(recepcion)
@@ -132,7 +132,7 @@ const MyComponent = () => {
     function filterData(data) {
       return data.filter(point => point.y !== 0);
     }
-  
+
     Highcharts.chart('myChart', {
       chart: {
         type: 'column'
@@ -212,50 +212,50 @@ const MyComponent = () => {
         },
         {
           name: 'Recepción Cabaña',
-          data: filterData([{y: recepcionC}]),
+          data: filterData([{ y: recepcionC }]),
           stack: 'Cabaña',
           showInLegend: true
 
         },
         {
           name: 'Descorche Cabaña',
-          data: filterData([{y: descorcheC}]),
+          data: filterData([{ y: descorcheC }]),
           stack: 'Cabaña',
           showInLegend: true
         },
         {
           name: 'Total Habitaciones',
-          data: filterData([{y: totalVentaHabitaciones}]),
+          data: filterData([{ y: totalVentaHabitaciones }]),
           stack: 'Habitaciones'
         },
         {
           name: 'Bar habitaciones',
-          data: filterData([{y: barH}]),
+          data: filterData([{ y: barH }]),
           stack: 'Habitaciones',
           showInLegend: true
         },
         {
           name: 'Restaurante Habitaciones',
-          data: filterData([{y:restauranteH}]),
+          data: filterData([{ y: restauranteH }]),
           stack: 'Habitaciones',
           showInLegend: true
         },
         {
           name: 'Recepcion Habitaciones',
-          data: filterData([{y: recepcionH}]),
+          data: filterData([{ y: recepcionH }]),
           stack: 'Habitaciones',
           showInLegend: true
         },
         {
           name: 'Descorche Habitaciones',
-          data: filterData([{y: descorcheH}]),
-          stack:'Habitaciones',
+          data: filterData([{ y: descorcheH }]),
+          stack: 'Habitaciones',
           showInLegend: true
         }
       ]
     });
   }, [totalVentaPasadia, bar, restaurante, recepcion, descorche, totalVentaCabania, barC, restauranteC, recepcionC, descorcheC, barH, restauranteH, recepcionH, descorcheH]);
-  
+
 
 
   return (
