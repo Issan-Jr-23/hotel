@@ -79,9 +79,9 @@ export const buscarRegistroGanado = async (req, res) => {
 
 export const updateEstateRegister = async (req, res) => {
   const { vacaId, terneroId } = req.params;
-  console.log("ides de vaca y ternero: ", vacaId, terneroId)
+  // console.log("ides de vaca y ternero: ", vacaId, terneroId)
   const updatedData = req.body;
-  console.log("data para actualizar: ", updatedData)
+  // console.log("data para actualizar: ", updatedData)
 
   try {
     const vaca = await Estate.findById(vacaId);
@@ -101,7 +101,7 @@ const terneroIndex = vaca.historialTerneros.findIndex(ternero => ternero.id === 
     await vaca.save();
     res.status(200).json({ message: "Registro actualizado correctamente" });
   } catch (error) {
-    console.log("Error al actualizar el registro:", error);
+    // console.log("Error al actualizar el registro:", error);
     res.status(500).json({ message: "Error del servidor al actualizar el registro" });
   }
 };
@@ -160,7 +160,7 @@ export const obtainBv = async (req, res) => {
     }
     res.json(data);
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     res.status(500).json({ message: 'Ocurrió un error al obtener los datos' });
   }
 };
@@ -176,7 +176,7 @@ export const obtainVbecerro = async (req, res) => {
     }
     res.json(data);
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     res.status(500).json({ message: 'Ocurrió un error al obtener los datos' });
   }
 };
@@ -193,7 +193,7 @@ export const updateEstateRegisterCow = async (req, res) => {
     await vaca.save();
     res.status(200).json({ message: "Vaca actualizada correctamente" });
   } catch (error) {
-    console.log("Error al actualizar la vaca:", error);
+    // console.log("Error al actualizar la vaca:", error);
     res.status(500).json({ message: "Error del servidor al actualizar la vaca" });
   }
 };

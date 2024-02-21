@@ -7,7 +7,7 @@ export const registrarProduccion = async (req, res) =>{
         const registroCreado  = await nuevoRegistro.save();
         res.status(201).json(registroCreado)
     } catch (error) {
-        console.log(error)
+        console.error(error)
         res.status(500).send("Error al crear el registro Ranch")
     }
 }

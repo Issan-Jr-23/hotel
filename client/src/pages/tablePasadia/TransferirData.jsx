@@ -149,7 +149,7 @@ const TransferirData = () => {
       if (response.status === 200) {
         console.log("Datos transferidos con éxito");
       } else {
-        console.error("Error al transferir datos: ", response);
+        console.error("Error al transferir datos ");
       }
     } catch (error) {
       console.error("Error de red: ", error);
@@ -163,17 +163,17 @@ const TransferirData = () => {
 
     try {
       await AxiosInstance.delete(`/pasadia/${id}`);
-      console.log("Pasadia eliminado con éxito");
+      // console.log("Pasadia eliminado con éxito");
       isDeleted = true;
       actualizartTabla();
     } catch (error) {
-      console.log("error delete register")
+      console.error("error delete register")
     }
 
     if (!isDeleted) {
       try {
         await AxiosInstance.delete(`/cabania/${id}`);
-        console.log("Cabania eliminada con éxito");
+        // console.log("Cabania eliminada con éxito");
         isDeleted = true;
         actualizartTabla();
       } catch (error) {
@@ -183,11 +183,11 @@ const TransferirData = () => {
     if (!isDeleted) {
       try {
         await AxiosInstance.delete(`/habitaciones/${id}`);
-        console.log("Habitación eliminada con éxito");
+        // console.log("Habitación eliminada con éxito");
         isDeleted = true;
         actualizartTabla();
       } catch (error) {
-
+        console.error(error.message)
       }
     }
     if (!isDeleted) {

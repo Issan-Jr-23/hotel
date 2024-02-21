@@ -243,9 +243,9 @@ export default function cabaniaTable() {
     const navigate = useNavigate();
 
     const adicional = (id) => {
-        console.log(" id de cabañas: ", id)
+        // console.log(" id de cabañas: ", id)
         navigate(`/cabanias-adicional/${id}`);
-        console.log("id del usuario para ver el historial del usuario: " + id)
+        // console.log("id del usuario para ver el historial del usuario: " + id)
     };
 
     const toBase64 = (url) => new Promise((resolve, reject) => {
@@ -376,7 +376,7 @@ export default function cabaniaTable() {
                 nuevoTotal = totalCosto - totalPagos;
                 formData.nuevoTotal = nuevoTotal;
 
-                console.log("el total que debe pagar la persona: " + nuevoTotal);
+                // console.log("el total que debe pagar la persona: " + nuevoTotal);
             }
         }
 
@@ -437,12 +437,12 @@ export default function cabaniaTable() {
             });
 
             if (response.status === 200) {
-                console.log('Cortesías guardadas correctamente:', response.data);
+                console.log('Cortesías guardadas correctamente');
             } else {
-                console.error('Error en la respuesta del servidor:', response.status);
+                console.error('Error en la respuesta del servidor');
             }
         } catch (error) {
-            console.error('Error al enviar la petición:', error.message);
+            console.error('Error al enviar la petición',);
         }
     };
 
@@ -500,16 +500,16 @@ export default function cabaniaTable() {
             const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
             const numeroDebebidas = clienteResponse.data.cantidadDeBebidas.filter(bebida => bebida.mensaje === "Cortesía" && bebida.fechaDeMarca === "");
             const cantidadTotalCortesia = numeroDebebidas.reduce((total, bebida) => total + bebida.cantidad, 0);
-            console.log("numero de cortesias: " + cantidadTotalCortesia)
-            console.log("cantidad de bebidas del usuario" + JSON.stringify(numeroDebebidas, null, 2))
+            // console.log("numero de cortesias: " + cantidadTotalCortesia)
+            // console.log("cantidad de bebidas del usuario" + JSON.stringify(numeroDebebidas, null, 2))
             const totalPersonas = ninios + adultos;
 
             if (esCortesia) {
 
                 const nuevaCantidadTotalCortesia = cantidadTotalCortesia;
                 const cantidadRestante = totalPersonas - cantidadTotalCortesia;
-                console.log("cantidad restante: " + cantidadRestante)
-                console.log("supuesta nueva cantidad: " + nuevaCantidadTotalCortesia)
+                // console.log("cantidad restante: " + cantidadRestante)
+                // console.log("supuesta nueva cantidad: " + nuevaCantidadTotalCortesia)
 
                 if (cantidad > disponibleInventario) {
                     alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
@@ -825,7 +825,7 @@ export default function cabaniaTable() {
     };
 
     const guardarCortesiaFoodInventory = async (foodId, cantidad) => {
-        console.log("datos de las cortesias que se guardaran: ", foodId, cantidad)
+        // console.log("datos de las cortesias que se guardaran: ", foodId, cantidad)
         try {
             const response = await AxiosInstance.post('/guardar-cortesias-inventario', {
                 foodId,
@@ -833,12 +833,12 @@ export default function cabaniaTable() {
             });
 
             if (response.status === 200) {
-                console.log('Cortesías guardadas correctamente:', response.data);
+                console.log('Cortesías guardadas correctamente');
             } else {
-                console.error('Error en la respuesta del servidor:', response.status);
+                console.error('Error en la respuesta del servidor');
             }
         } catch (error) {
-            console.error('Error al enviar la petición:', error.message);
+            console.error('Error al enviar la petición');
         }
     };
 
@@ -896,8 +896,8 @@ export default function cabaniaTable() {
             const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
             const numeroDeFood = clienteResponse.data.cantidadDeFood.filter(food => food.mensaje === "Cortesía" && food.fechaDeMarca === "");
             const cantidadTotalCortesia = numeroDeFood.reduce((total, food) => total + food.cantidad, 0);
-            console.log("numero de cortesias: " + cantidadTotalCortesia)
-            console.log("cantidad de bebidas del usuario" + JSON.stringify(numeroDeFood, null, 2))
+            // console.log("numero de cortesias: " + cantidadTotalCortesia)
+            // console.log("cantidad de bebidas del usuario" + JSON.stringify(numeroDeFood, null, 2))
             const totalPersonas = ninios + adultos;
 
 
@@ -1324,7 +1324,7 @@ export default function cabaniaTable() {
             }
         } catch (error) {
             toast.error('Ocurrió un error al agregar el cliente.');
-            console.log("error al guardar los datos en cabañas", error)
+            // console.log("error al guardar los datos en cabañas", error)
         }
     };
 
@@ -1333,7 +1333,7 @@ export default function cabaniaTable() {
             try {
                 const response = await AxiosInstance.get("/drinks");
                 const filteredDrinks = response.data.filter(drink => drink.CantidadInicial > 0);
-                console.log("filtrar data: ", filteredDrinks)
+                // console.log("filtrar data: ", filteredDrinks)
                 setDrinks(filteredDrinks);
             } catch (error) {
                 console.error("Error al obtener datos del servidor:", error);
@@ -1570,7 +1570,7 @@ export default function cabaniaTable() {
     };
 
     const actualizarDatosCliente = async (data1, data2, estado, userId) => {
-        console.log("DATOS ENVIADOS: ", estado, userId)
+        // console.log("DATOS ENVIADOS: ", estado, userId)
         await handleStatus(estado, userId)
 
         if (selectedClienteId) {
@@ -1578,22 +1578,22 @@ export default function cabaniaTable() {
                 const responseData = await AxiosInstance.get(`/cabania-totalidad-reserva-pago/${selectedClienteId}`);
                 const { identificacion, restaurante, bar, recepcion, descorche, reserva, anticipado, posterior, pendiente } = responseData.data;
                 if (reserva === "Si") {
-                    console.log("ingresos al condicional")
+                    // console.log("ingresos al condicional")
                     const calculo1 = restaurante + bar + recepcion + descorche + anticipado + posterior + pendiente;
                     const calculo2 = calculo1 - anticipado;
-                    console.log("id del usuario: ", selectedClienteId)
+                    // console.log("id del usuario: ", selectedClienteId)
                     await AxiosInstance.put(`/cabania-actualizar-valor`, { id: selectedClienteId, valor: calculo2 })
-                    console.log("success")
+                    // console.log("success")
                     toast.success("datos actualizados")
                     const responses = await AxiosInstance.get(`/cabania-clientes?page=${paginaActual}`);
                     setUsers(responses.data.clientes);
                     setTotalPaginas(responses.data.totalPages);
                 } else {
-                    console.log("ingresos al condicional")
+                    // console.log("ingresos al condicional")
                     const calculo1 = restaurante + bar + recepcion + descorche + anticipado + posterior + pendiente;
-                    console.log("id del usuario: ", selectedClienteId)
+                    // console.log("id del usuario: ", selectedClienteId)
                     await AxiosInstance.put(`/cabania-actualizar-valor`, { id: selectedClienteId, valor: calculo1 })
-                    console.log("success")
+                    // console.log("success")
                     toast.success("datos actualizados")
                     const responses = await AxiosInstance.get(`/cabania-clientes?page=${paginaActual}`);
                     setUsers(responses.data.clientes);
@@ -1805,7 +1805,7 @@ export default function cabaniaTable() {
     const hours = fecha2.toLocaleString();
 
     const actualizarInventarioItem = async (foodId, subproductoId, cantidad) => {
-        console.log("peticion actualizar inventario item: " + foodId, subproductoId, cantidad)
+        // console.log("peticion actualizar inventario item: " + foodId, subproductoId, cantidad)
         try {
             const response = await AxiosInstance.post('/update-cantidad-inicial', {
                 foodId,
@@ -1813,20 +1813,20 @@ export default function cabaniaTable() {
                 cantidad
             });
 
-            console.log("Datos enviados al servidor - FoodID: " + foodId + ", SubProductoID: " + subproductoId);
+            // console.log("Datos enviados al servidor - FoodID: " + foodId + ", SubProductoID: " + subproductoId);
 
             if (response.status < 200 || response.status >= 300) {
                 throw new Error(`Error al actualizar el inventario. Estado de la respuesta: ${response.status}`);
             }
         } catch (error) {
             console.error('Error al actualizar el inventario de comidas:', error.message);
-            console.log("ID predeterminado: " + foodId);
+            console.error("ID predeterminado");
             throw error;
         }
     };
 
     const guardarCortesiaItemInventory = async (foodId, subproductoId, cantidad) => {
-        console.log("datos de las cortesias que se guardaran: ", foodId, subproductoId, cantidad)
+        // console.log("datos de las cortesias que se guardaran: ", foodId, subproductoId, cantidad)
         try {
             const response = await AxiosInstance.post('/guardar-cortesia-inventario', {
                 foodId,
@@ -1835,9 +1835,9 @@ export default function cabaniaTable() {
             });
 
             if (response.status === 200) {
-                console.log('Cortesías guardadas correctamente:', response.data);
+                console.log('Cortesías guardadas correctamente');
             } else {
-                console.error('Error en la respuesta del servidor:', response.status);
+                console.error('Error en la respuesta del servidor');
             }
         } catch (error) {
             console.error('Error al enviar la petición:', error.message);
@@ -1849,7 +1849,7 @@ export default function cabaniaTable() {
         if (isSaving) return;
         setIsSaving(true);
 
-        console.log()
+        // console.log()
         if (!selectedClientId || (!subItemSeleccionadoId && !subItemSeleccionadoId1 && !subItemSeleccionadoId2 && !subItemSeleccionadoId3 && !subItemSeleccionadoId4)) {
             toast.error('No se ha seleccionado un cliente o una comida.');
             setIsSaving(false);
@@ -1858,7 +1858,7 @@ export default function cabaniaTable() {
 
 
         const checkStockAndUpdateInventory = async (foodId, subProductoId, cantidad) => {
-            console.log("quiero ver quien pasa ese id y cantidad: ", foodId, cantidad)
+            // console.log("quiero ver quien pasa ese id y cantidad: ", foodId, cantidad)
             const response = await AxiosInstance.get(`/verificar-disponibilidad/${foodId}`);
 
             let fecha = new Date();
@@ -1873,10 +1873,10 @@ export default function cabaniaTable() {
             const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
             const numeroDeFood = clienteResponse.data.cantidadDeFood.filter(food => food.mensaje === "Cortesía" && food.fechaDeMarca === "");
             const cantidadTotalCortesia = numeroDeFood.reduce((total, food) => total + food.cantidad, 0);
-            console.log("numero de cortesias: " + cantidadTotalCortesia)
-            console.log("cantidad de bebidas del usuario" + JSON.stringify(numeroDeFood, null, 2))
+            // console.log("numero de cortesias: " + cantidadTotalCortesia)
+            // console.log("cantidad de bebidas del usuario" + JSON.stringify(numeroDeFood, null, 2))
             const totalPersonas = ninios + adultos;
-            console.log("cantidad de personas en cortesias: ", totalPersonas)
+            // console.log("cantidad de personas en cortesias: ", totalPersonas)
 
             if (foodSeleccionada && disponibleInventario === 0) {
                 toast.error('Algun producto esta agotado',
@@ -1944,7 +1944,7 @@ export default function cabaniaTable() {
                 setIsSaving(false);
                 return;
             }
-            console.log("id de la comida seleccionada : " + foodSeleccionadaId)
+            // console.log("id de la comida seleccionada : " + foodSeleccionadaId)
 
             // let subproductoId = subItemSeleccionadoId;
             // console.log("..... muestra de datos", subproductoId)
@@ -2116,7 +2116,7 @@ export default function cabaniaTable() {
                     fecha: obtenerFechaConAjuste()
                 };
                 let subproductoId = subItemSeleccionadoId;
-                console.log("depuracion dentro del checkInventory: ", itemSeleccionadoId, subproductoId, cantidadItem)
+                // console.log("depuracion dentro del checkInventory: ", itemSeleccionadoId, subproductoId, cantidadItem)
                 if (await checkStockAndUpdateInventory(itemSeleccionadoId, subproductoId, cantidadItem)) {
                     await guardarItem(item);
                     setItemSeleccionado("");
@@ -2286,7 +2286,7 @@ export default function cabaniaTable() {
 
 
     const handleStatus = async (nuevoEstado, userId) => {
-        console.log(userId, nuevoEstado)
+        // console.log(userId, nuevoEstado)
         try {
             const response = await AxiosInstance.put('/cabania-actualizar-estado', {
                 userId: userId,
@@ -2906,8 +2906,6 @@ export default function cabaniaTable() {
                                         </PopoverContent>
                                     </Popover>
                                 </td>
-                                {/* <td className="text-left html-table-tbody">{cliente.reserva}</td> */}
-                                {/* <td className="text-left html-table-tbody">{cliente.tipo_cabania}</td> */}
                                 <td className="text-center html-table-tbody uppercase whitespace-nowrap pr-2">
                                     {new Date(new Date(cliente.fechaPasadia).getTime() + new Date().getTimezoneOffset() * 60000)
                                         .toLocaleDateString('es-ES', {

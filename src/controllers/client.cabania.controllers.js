@@ -37,7 +37,7 @@ export const obtenerClientes = async (req, res) => {
 export const resTotal = async (req, res) => {
   try {
     const identificacion = req.params.id;
-    console.log("response: ", identificacion)
+    // console.log("response: ", identificacion)
      const usuario = await Cabania.findOne({ identificacion: identificacion });
     if (!usuario) {
       return res.status(404).json({ error: 'Usuario no encontrado' });
@@ -86,8 +86,8 @@ export const resTotal = async (req, res) => {
 export const postPago = async (req, res) => {
   try {
     const identificacion = req.params.id;
-    console.log("id: ", identificacion)
-    console.log("response: ", identificacion)
+    // console.log("id: ", identificacion)
+    // console.log("response: ", identificacion)
      const usuario = await Cabania.findOne({ identificacion: identificacion });
     if (!usuario) {
       return res.status(404).json({ error: 'Usuario no encontrado' });
@@ -151,7 +151,7 @@ export const postPago = async (req, res) => {
 export const actualizarValor = async (req, res) => {
   try {
     const { id, valor } = req.body;
-    console.log("id del usuario: ",id)
+    // console.log("id del usuario: ",id)
 
     const cliente = await Cabania.findOne({identificacion: id});
     if (!cliente) {
@@ -408,7 +408,7 @@ export const actualizarFacturacion = async (req, res) => {
 
     cliente.bebidas = bebidas;
     cliente.restaurante = restaurante;
-    console.log(restaurante)
+    // console.log(restaurante)
 
     await cliente.save();
 
@@ -473,7 +473,7 @@ export const updateUserStatus = async (req, res) => {
 export const obtenerClienteId = async (req, res) => {
   try {
     const clientId = req.params.id;
-    console.log("id de usuario :", clientId);
+    // console.log("id de usuario :", clientId);
 
     if (!mongoose.Types.ObjectId.isValid(clientId)) {
       return res.status(400).send("ID de cliente inválido");
@@ -481,7 +481,7 @@ export const obtenerClienteId = async (req, res) => {
     const objectId = new mongoose.Types.ObjectId(clientId);
 
     const cliente = await Cabania.findById(objectId);
-    console.log("datos del usuario: ", cliente);
+    // console.log("datos del usuario: ", cliente);
 
     if (!cliente) {
       return res.status(404).send("Cliente no encontrado");
@@ -492,7 +492,6 @@ export const obtenerClienteId = async (req, res) => {
       identificacion: cliente.identificacion 
     });
   } catch (error) {
-    console.log(error);
     res.status(500).send("Error al obtener los datos del cliente: " + error.message);
   }
 };
@@ -654,7 +653,7 @@ export const addFoodAdicional = async (req, res) => {
 export const addFoodAdicionalSubproducto = async (req, res) => {
   const {id} = req.params;
   const { food } = req.body;
-  console.log("datos a guardar :", food)
+  // console.log("datos a guardar :", food)
 
   try {
     const cliente = await Cabania.findById(id);
@@ -777,7 +776,7 @@ export const productosCategoria = async (req, res) => {
     })
 
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 }
 

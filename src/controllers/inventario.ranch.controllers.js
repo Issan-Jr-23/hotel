@@ -6,7 +6,6 @@ export const registrarData = async (req, res) =>{
         const registroCreado  = await nuevoRegistro.save();
         res.status(201).json(registroCreado)
     } catch (error) {
-        console.log(error)
         res.status(500).send("Error al crear el registro Ranch")
     }
 }
@@ -23,7 +22,6 @@ export const obtenerInventario = async (req, res) => {
 
   export const deleteRegistro = async (req, res) => {
     const identificacion = req.params.id; 
-    console.log("identificador: ",identificacion)
     try {
       const resultado = await Inventario.deleteOne({ _id: identificacion }); 
       if (resultado.deletedCount > 0) {

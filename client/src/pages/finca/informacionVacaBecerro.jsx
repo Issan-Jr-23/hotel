@@ -21,7 +21,7 @@ const info = () => {
  const [open, setOpen] = React.useState(false);
  const handleOpen = item => {
   setSelectedItem(item)
-  console.log("item a mostrar: ", item)
+  // console.log("item a mostrar: ", item)
   setOpen(true)
  };
 
@@ -37,10 +37,10 @@ const info = () => {
   const fetchData = async () => {
    try {
     const response = await AxiosInstance.get(`/obtain/register/becerro/vb/${id}`)
-    console.log("data becerro", response.data.historialTerneros)
+    // console.log("data becerro", response.data.historialTerneros)
     setBecerroData(response.data.historialTerneros)
    } catch (error) {
-    console.log("error")
+    console.error("Error al encontrar el registro")
    }
   };
   fetchData();
@@ -52,7 +52,7 @@ const info = () => {
     const response = await AxiosInstance.get(`/obtain/register/vb/${id}`)
     setData(response.data)
    } catch (error) {
-    console.log("error")
+    console.error("Error al encontrar el registro")
    }
   };
   fetchData();
@@ -61,20 +61,20 @@ const info = () => {
  const handleUpdate = async () => {
   try {
    await AxiosInstance.put(`/update/register/vb/${id}/${selectedItem._id}`, selectedItem);
-   console.log("Registro actualizado correctamente");
+   // console.log("Registro actualizado correctamente");
    handleClose(); // Cerrar el modal después de la actualización
   } catch (error) {
-   console.error("Error al actualizar el registro:", error);
+   console.error("Error al actualizar el registro:");
   }
  };
 
  const handleUpdateCow = async () => {
   try {
    await AxiosInstance.put(`/update/register/vb/${id}`, selectedItemCow);
-   console.log("Registro actualizado correctamente");
+   // console.log("Registro actualizado correctamente");
    handleClose(); // Cerrar el modal después de la actualización
   } catch (error) {
-   console.error("Error al actualizar el registro:", error);
+   console.error("Error al actualizar el registro");
   }
  };
 

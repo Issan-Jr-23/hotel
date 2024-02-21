@@ -26,7 +26,7 @@ const Table = () => {
 
 
   const handleOpen = (id, prueba) => {
-    console.log("prueba de registro selccionado", prueba)
+    // console.log("prueba de registro selccionado", prueba)
     setOpen(true)
     setRegistroSelected(id)
   };

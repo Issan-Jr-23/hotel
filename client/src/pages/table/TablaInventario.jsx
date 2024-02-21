@@ -91,7 +91,7 @@ export default function App() {
     try {
       const response = await AxiosInstance.get("/obtener-inventario");
       setUsers(response.data);
-      console.log("response data: " + JSON.stringify(response.data))
+      // console.log("response data: " + JSON.stringify(response.data))
     } catch (error) {
       console.error("Error al obtener datos del servidor:", error);
     }

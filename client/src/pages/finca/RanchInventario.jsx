@@ -88,7 +88,7 @@ function Row(props) {
     }
 
     const handleOpenMod = (idSubproducto) => {
-        console.log(idSubproducto)
+        // console.log(idSubproducto)
         const subproductoEncontrado = row.subproductsData.find(subproducto => subproducto._id === idSubproducto);
 
         if (subproductoEncontrado) {
@@ -255,7 +255,7 @@ function Row(props) {
             if (ProductosVendidos !== editedCv) changes.ProductosVendidos = { old: ProductosVendidos, new: editedCv };
 
             // Mostrar los cambios
-            console.log('Changes:', changes);
+            // console.log('Changes:', changes);
 
             // Crear el mensaje con la información necesaria
             const message = createMessage(user.username, user.id, id, editedName, changes);
@@ -266,7 +266,7 @@ function Row(props) {
             });
 
             handleCloseM();
-            console.log('Product updated successfully');
+            // console.log('Product updated successfully');
             fetchProducts();
         } catch (error) {
             console.error("Error al actualizar producto:", error);
@@ -280,7 +280,7 @@ function Row(props) {
 
 
     const handleDeleteSubproducto = async (id, idSubproducto) => {
-        console.log("eliminar subproducto", id, idSubproducto);
+        // console.log("eliminar subproducto", id, idSubproducto);
         const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar este subproducto?");
         if (!confirmDelete) {
             return;
@@ -290,10 +290,10 @@ function Row(props) {
                 data: { idSubproducto: idSubproducto }
             };
             await AxiosInstance.delete(`/eliminar-subproduct/${id}`, options);
-            console.log("successfully");
+            // console.log("successfully");
             fetchProducts();
         } catch (error) {
-            console.log(error);
+            console.error("Error al encontrar el registro");
         }
     }
 
@@ -330,9 +330,9 @@ function Row(props) {
                 message: message
             });
 
-            console.log("successfully");
+            // console.log("successfully");
         } catch (error) {
-            console.log(error);
+            console.error("Error al encontrar el registro");
         }
     }
 
@@ -839,7 +839,7 @@ export default function CollapsibleTable() {
         const productId = row._id;
         const productName = row.Descripcion;
 
-        console.log(userName, " ha borrado el producto ", productName, " con el id ", productId)
+        // console.log(userName, " ha borrado el producto ", productName, " con el id ", productId)
 
         const confirmDelete = window.confirm(
             `¿Estás seguro de que deseas eliminar este producto? Esta acción será realizada por ${userName}.`
@@ -855,7 +855,7 @@ export default function CollapsibleTable() {
             const updatedRows = rows.filter((product) => product._id !== productId);
             setRows(updatedRows);
 
-            console.log(`Producto "${productName}" eliminado exitosamente por ${userName}`);
+            // console.log(`Producto "${productName}" eliminado exitosamente por ${userName}`);
 
             // Guardar el mensaje en la base de datos
             const deletionMessage = {
@@ -865,11 +865,11 @@ export default function CollapsibleTable() {
                 deletionDate: new Date().toISOString(), // Fecha y hora de la eliminación
             };
 
-            console.log("data enviada al servidor: ", deletionMessage)
+            // console.log("data enviada al servidor: ", deletionMessage)
 
             await AxiosInstance.post('/registrar-eliminacion', deletionMessage);
         } catch (error) {
-            console.error("Error al eliminar producto:", error);
+            console.error("Error al eliminar producto");
             alert("Error al eliminar producto. Por favor, inténtalo de nuevo más tarde.");
         }
     };

@@ -47,7 +47,7 @@ export const obtenerMessage = async (req, res) => {
 export const registrarEliminacion = async (req, res) => {
   try {
     const { userName, userId, productName, productId, deletionDate } = req.body;
-    console.log("Data enviada al servidor: ", userName, userId, productName, productId, deletionDate);
+    // console.log("Data enviada al servidor: ", userName, userId, productName, productId, deletionDate);
 
     // Crear el mensaje en el servidor
     const message = `El usuario ${userName} eliminó el producto "${productName}" (ID: ${productId}) en la fecha ${new Date(deletionDate).toLocaleString()}.`;
@@ -81,7 +81,7 @@ export const registrarEdicion = async (req, res) => {
 
     res.status(201).json({ mensaje: 'Registro de edición guardado con éxito.' });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ mensaje: 'Error al guardar el registro de edición.' });
+    console.error(error);
+    res.status(200).json({ mensaje: 'Error al guardar el registro de edición.' });
   }
 };

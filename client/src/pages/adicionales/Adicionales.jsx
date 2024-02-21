@@ -232,7 +232,7 @@ const Adicionales = () => {
         const fetchData = async () => {
             try {
                 const response = await AxiosInstances.get(`/pasadia-cliente-info/${id}`);
-                console.log("Respuesta del servidor: ", response);
+                // console.log("Respuesta del servidor: ", response);
                 setUser(response.data);
             } catch (error) {
                 console.error("Error al obtener datos del servidor:", error);
@@ -533,18 +533,18 @@ const Adicionales = () => {
     };
 
     const handleGuardarItemRecepcion = async () => {
-        console.log("entra a la funcion")
+        // console.log("entra a la funcion")
         if (!itemSeleccionadoIdRec && !itemSeleccionadoId1Rec && !itemSeleccionadoId2Rec && !itemSeleccionadoId3Rec && !itemSeleccionadoId4Rec) {
-            console.log("entra a la validacion")
+            // console.log("entra a la validacion")
             toast.error('No se ha seleccionado un cliente o una Bebida.');
             toast.
                 return;
         }
 
         const checkStockAndUpdateInventory = async (itemRecId, cantidad) => {
-            console.log("mostrar cantidad: ", cantidad)
+            // console.log("mostrar cantidad: ", cantidad)
             const response = await AxiosInstances.get(`/verificar-disponibilidad/${itemRecId}`);
-            console.log(response.data)
+            // console.log(response.data)
 
             let fecha = new Date();
 
@@ -751,7 +751,7 @@ const Adicionales = () => {
                     adicional: "descorche",
                     cantidad: 1
                 }
-                console.log("detalles del decsorche", descorche1)
+                // console.log("detalles del decsorche", descorche1)
                 await handleCrearDescorche(descorche1)
             }
 
@@ -768,7 +768,7 @@ const Adicionales = () => {
 
 
         } catch (error) {
-            console.log(error)
+            console.error("false")
         }
     }
 
@@ -778,7 +778,7 @@ const Adicionales = () => {
             limpiarDescorches();
             toast.success("Descorche agregado con exito")
         } catch (error) {
-            console.log("false: ", error)
+            console.error("Error al encontrar el registro")
         }
     }
 
@@ -826,7 +826,7 @@ const Adicionales = () => {
     }
 
     const actualizarInventarioItemSub = async (foodId, subproductoId, cantidad) => {
-        console.log("peticion actualizar inventario item: " + foodId, subproductoId, cantidad)
+        // console.log("peticion actualizar inventario item: " + foodId, subproductoId, cantidad)
         try {
             const response = await AxiosInstances.post('/update-cantidad-inicial', {
                 foodId,
@@ -834,14 +834,14 @@ const Adicionales = () => {
                 cantidad
             });
 
-            console.log("Datos enviados al servidor - FoodID: " + foodId + ", SubProductoID: " + subproductoId);
+            // console.log("Datos enviados al servidor - FoodID: " + foodId + ", SubProductoID: " + subproductoId);
 
             if (response.status < 200 || response.status >= 300) {
                 throw new Error(`Error al actualizar el inventario. Estado de la respuesta: ${response.status}`);
             }
         } catch (error) {
-            console.error('Error al actualizar el inventario de comidas:', error.message);
-            console.log("ID predeterminado: " + foodId);
+            console.error('Error al actualizar el inventario de comidas');
+            // console.log("ID predeterminado: " + foodId);
             throw error;
         }
     };
@@ -850,8 +850,7 @@ const Adicionales = () => {
 
         if (isSaving) return;
         setIsSaving(true);
-
-        console.log()
+       
         if (!subItemSeleccionadoId && !subItemSeleccionadoId1 && !subItemSeleccionadoId2 && !subItemSeleccionadoId3 && !subItemSeleccionadoId4) {
             toast.error('No se ha seleccionado un cliente o una comida.');
             setIsSaving(false);
@@ -860,7 +859,7 @@ const Adicionales = () => {
 
 
         const checkStockAndUpdateInventory = async (foodId, subProductoId, cantidad) => {
-            console.log("quiero ver quien pasa ese id y cantidad: ", foodId, cantidad)
+            // console.log("quiero ver quien pasa ese id y cantidad: ", foodId, cantidad)
             const response = await AxiosInstances.get(`/verificar-disponibilidad/${foodId}`);
             let fecha = new Date();
             fecha.setHours(fecha.getHours() - 5);
@@ -890,7 +889,7 @@ const Adicionales = () => {
                 alert(`Ya no quedan ${food1Seleccionada} disponibles en el inventario `);
                 return;
             }
-            console.log("id de la comida seleccionada : " + foodSeleccionadaId)
+            // console.log("id de la comida seleccionada : " + foodSeleccionadaId)
 
             // let subproductoId = subItemSeleccionadoId;
             // console.log("..... muestra de datos", subproductoId)
@@ -922,7 +921,7 @@ const Adicionales = () => {
                     fecha: obtenerFechaConAjuste()
                 };
                 let subproductoId = subItemSeleccionadoId;
-                console.log("depuracion dentro del checkInventory: ", itemSeleccionadoId, subproductoId, cantidadItem)
+                // console.log("depuracion dentro del checkInventory: ", itemSeleccionadoId, subproductoId, cantidadItem)
                 if (await checkStockAndUpdateInventory(itemSeleccionadoId, subproductoId, cantidadItem)) {
                     await guardarItem(item);
                     setCantidadItem("")
@@ -2337,7 +2336,7 @@ const Adicionales = () => {
                                             setItemSeleccionadoRec(itemSelected);
                                             if (itemSelected) {
                                                 const itemSeleccionadoInfo = recepcion.find(recepcion => recepcion.Descripcion === itemSelected);
-                                                console.log(itemSeleccionadoInfo)
+                                                // console.log(itemSeleccionadoInfo)
                                                 if (itemSeleccionadoInfo) {
                                                     setPrecioItemSeleccionadoRec(itemSeleccionadoInfo.ValorUnitario);
                                                     setItemSeleccionadoIdRec(itemSeleccionadoInfo._id);
@@ -2369,7 +2368,7 @@ const Adicionales = () => {
 
                                             if (itemSelected) {
                                                 const itemSeleccionadoInfo = recepcion.find(recepcion => recepcion.Descripcion === itemSelected);
-                                                console.log(itemSeleccionadoInfo)
+                                                // console.log(itemSeleccionadoInfo)
                                                 if (itemSeleccionadoInfo) {
                                                     setPrecioItemSeleccionado1Rec(itemSeleccionadoInfo.ValorUnitario);
                                                     setItemSeleccionadoId1Rec(itemSeleccionadoInfo._id);
@@ -2426,7 +2425,7 @@ const Adicionales = () => {
 
                                             if (itemSelected) {
                                                 const itemSeleccionadoInfo = recepcion.find(recepcion => recepcion.Descripcion === itemSelected);
-                                                console.log(itemSeleccionadoInfo)
+                                                // console.log(itemSeleccionadoInfo)
                                                 if (itemSeleccionadoInfo) {
                                                     setPrecioItemSeleccionado2Rec(itemSeleccionadoInfo.ValorUnitario);
                                                     setItemSeleccionadoId2Rec(itemSeleccionadoInfo._id);
@@ -2482,7 +2481,7 @@ const Adicionales = () => {
 
                                             if (itemSelected) {
                                                 const itemSeleccionadoInfo = recepcion.find(recepcion => recepcion.Descripcion === itemSelected);
-                                                console.log(itemSeleccionadoInfo)
+                                                // console.log(itemSeleccionadoInfo)
                                                 if (itemSeleccionadoInfo) {
                                                     setPrecioItemSeleccionado3Rec(itemSeleccionadoInfo.ValorUnitario);
                                                     setItemSeleccionadoId3Rec(itemSeleccionadoInfo._id);
@@ -2537,7 +2536,7 @@ const Adicionales = () => {
 
                                             if (itemSelected) {
                                                 const itemSeleccionadoInfo = recepcion.find(recepcion => recepcion.Descripcion === itemSelected);
-                                                console.log(itemSeleccionadoInfo)
+                                                // console.log(itemSeleccionadoInfo)
                                                 if (itemSeleccionadoInfo) {
                                                     setPrecioItemSeleccionado4Rec(itemSeleccionadoInfo.ValorUnitario);
                                                     setItemSeleccionadoId4Rec(itemSeleccionadoInfo._id);

@@ -51,7 +51,7 @@ export default function App() {
       const getData = await obtenerData();
       setRanchData(getData);
     } catch (error) {
-      console.log("Error al registrar la producción: " + error);
+      console.error("Error al registrar la producción");
     }
   };
 
@@ -60,9 +60,9 @@ export default function App() {
       try {
         const getData = await obtenerData();
         setRanchData(getData);
-        console.log("My data: " + getData)
+        // console.log("My data: " + getData)
       } catch (error) {
-        console.log("los datos no se pudieron obtener en este momento")
+        console.error("los datos no se pudieron obtener en este momento")
       }
     }
     fetchData();

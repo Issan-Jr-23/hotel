@@ -28,7 +28,7 @@ export function TaskProvider({ children }) {
       const res = await deleteTaskRequest(id);
       if (res.status === 204) setTasks(tasks.filter((task) => task._id !== id));
     } catch (error) {
-      console.log(error);
+      console.error("Error al encontrar el registro");
     }
   };
 

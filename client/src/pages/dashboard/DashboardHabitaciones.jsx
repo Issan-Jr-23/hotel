@@ -34,7 +34,7 @@ const dashboardPasadia = () => {
     const fetchData = async () => {
       try {
         const response = await AxiosInstance.get('/obtain-habitaciones-products');
-        console.log(response);
+        //console.log(response);
         const { cantidadComprada, money, cortesias } = response.data;
         setCantidadComprada(cantidadComprada);
         setTotalVentaProducts(money);
@@ -53,7 +53,7 @@ const dashboardPasadia = () => {
     const fetchData = async () => {
       try {
         const response = await AxiosInstance.get('/obtain-habitaciones-ventas');
-        console.log(response);
+        //console.log(response);
         const { totalCompras, numeroCompras } = response.data;
         setTotalUsers(numeroCompras);
         setTotalVentaPasadia(totalCompras)

@@ -59,15 +59,15 @@ const CabaniasStock = () => {
 
 
     const handleOpenM = (id) => {
-        console.log("depuracion del id seleccionado: ", id);
+        // console.log("depuracion del id seleccionado: ", id);
         const itemSeleccionado = data.find(item => item._id === id);
-        console.log("depuración del item seleccionado: ", itemSeleccionado);
+        // console.log("depuración del item seleccionado: ", itemSeleccionado);
 
         if (itemSeleccionado) {
             setProductoSeleccionado(itemSeleccionado);
             setOpenM(true);
         } else {
-            console.log('Item no encontrado');
+            console.error('Item no encontrado');
         }
     };
 
@@ -105,11 +105,11 @@ const CabaniasStock = () => {
         try {
             // Envía los datos al servidor
             await AxiosInstance.post(`/register-cabania-stock`, dataToSend);
-            console.log("succesfully");
+            // console.log("succesfully");
 
             // Obtener la respuesta actualizada
             const response = await AxiosInstance.get("/view-cabania-stock");
-            console.log(response.data);
+            // console.log(response.data);
             setData(response.data);
         } catch (error) {
             console.log("false");
@@ -121,7 +121,7 @@ const CabaniasStock = () => {
         const fetchData = async () => {
             try {
                 const response = await AxiosInstance.get("/view-cabania-stock");
-                console.log(response.data)
+                // console.log(response.data)
                 setData(response.data);
                 setTimeout(() => {
                     setIsLoading(false);

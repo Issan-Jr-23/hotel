@@ -25,7 +25,7 @@ const MyComponent = () => {
     const fetchData = async () => {
       try {
         const response = await AxiosInstance.get('/obtain-pasadia-ventas');
-        console.log(response);
+        // //console.log(response);
 
         const { totalCompras } = response.data;
         setTotalVentaPasadia(totalCompras);
@@ -42,7 +42,7 @@ const MyComponent = () => {
       try {
         //resuelto
         const response = await AxiosInstance.get('/obtain-cabania-ventas');
-        console.log(response);
+        //console.log(response);
 
         const { totalCompras } = response.data;
         setTotalVentaCabania(totalCompras);
@@ -59,7 +59,7 @@ const MyComponent = () => {
     const fetchData = async () => {
       try {
         const response = await AxiosInstance.get('/obtain-habitaciones-ventas');
-        console.log(response);
+        //console.log(response);
 
         const { totalCompras } = response.data;
         setTotalVentaHabitaciones(totalCompras);
@@ -78,13 +78,13 @@ const MyComponent = () => {
       try {
         const response = await AxiosInstance.get(`/total-generado-ventas-brad`)
         const { bar, restaurante, recepcion, descorche } = response.data
-        console.log("muestra: ", recepcion)
+        // console.log("muestra: ", recepcion)
         setBar(bar)
         setRestaurante(restaurante)
         setRecepcion(recepcion)
         setDescorche(descorche)
       } catch (error) {
-        console.log(error)
+        console.error("false")
       }
     };
     fetchData();
@@ -95,13 +95,13 @@ const MyComponent = () => {
       try {
         const response = await AxiosInstance.get('/total-generado-ventas-cabania-brad')
         const { bar, restaurante, recepcion, descorche } = response.data
-        console.log(bar, restaurante, recepcion, descorche)
+        // console.log(bar, restaurante, recepcion, descorche)
         setBarC(bar)
         setRestauranteC(restaurante)
         setRecepcionC(recepcion)
         setDescorcheC(descorche)
       } catch (error) {
-        console.log(error)
+        console.error("false")
       }
     };
     fetchData();
@@ -117,7 +117,7 @@ const MyComponent = () => {
         setRecepcionH(recepcion)
         setDescorcheH(descorche)
       } catch (error) {
-        console.log(error)
+        console.error("Error al encontrar el registro")
       }
     };
     fetchData();

@@ -71,7 +71,7 @@ export const obtenerMekatos = (req, res) => {
   Bebida.find({ tipo: "mekatos" })
     .then((mekatos) => {
       res.json(mekatos);
-      console.log(mekatos);
+      // console.log(mekatos);
     })
     .catch((error) => {
       res.status(500).json({ error: "Error al obtener los mekatos" });
@@ -82,7 +82,7 @@ export const obtenerDrinks = (req, res) => {
   Bebida.find({ tipo: "bebida" })
     .then((mekatos) => {
       res.json(mekatos);
-      console.log(mekatos);
+      // console.log(mekatos);
     })
     .catch((error) => {
       res.status(500).json({ error: "Error al obtener los mekatos" });
@@ -93,7 +93,7 @@ export const obtenerProductosRecepcion = (req, res) => {
   Bebida.find({ tipo: "recepcion" })
     .then((mekatos) => {
       res.json(mekatos);
-      console.log(mekatos);
+      // console.log(mekatos);
     })
     .catch((error) => {
       res.status(500).json({ error: "Error al obtener los mekatos" });
@@ -104,7 +104,7 @@ export const obtenerFood = (req, res) => {
   Bebida.find({ tipo: "comida" })
     .then((mekatos) => {
       res.json(mekatos);
-      console.log(mekatos);
+      // console.log(mekatos);
     })
     .catch((error) => {
       res.status(500).json({ error: "Error al obtener los mekatos" });
@@ -154,7 +154,7 @@ export const addCv = async (req, res) => {
 
 export const deleteProducto = async (req, res) => {
   const identificacion = req.params.id;
-  console.log(identificacion);
+  // console.log(identificacion);
 
   try {
     const resultado = await Bebida.deleteOne({ _id: identificacion });
@@ -383,8 +383,8 @@ export const updateCF = async (req, res) => {
 
     const cantidadRestante = bebida.CantidadInicial;
     const psubproducto = bebida.id;
-    console.log("muestra el _id del producto seleccionado: " + psubproducto);
-    console.log("cantidad mostrada en el server: " + cantidadRestante);
+    // console.log("muestra el _id del producto seleccionado: " + psubproducto);
+    // console.log("cantidad mostrada en el server: " + cantidadRestante);
 
     if (
       psubproducto === "656f7968d49f0b774cc57d00" ||
@@ -399,7 +399,7 @@ export const updateCF = async (req, res) => {
           error: `Solo quedan ${cantidadRestante} unidades de ${bebida.Descripcion} disponibles en el inventario.`,
         });
     } else {
-      console.log("cantidad enviadas al servidor: " + cantidad);
+      // console.log("cantidad enviadas al servidor: " + cantidad);
 
       bebida.ProductosVendidos += cantidad;
     }
@@ -431,7 +431,7 @@ export const validCF = async (req, res) => {
 export const updateCSTOCKB = async (req, res) => {
   const bebidaId = req.params.id;
   const { cantidad } = req.body;
-  console.log("cantidad a restar: " + cantidad);
+  // console.log("cantidad a restar: " + cantidad);
 
   // Validación básica
   if (!bebidaId || cantidad === undefined) {
@@ -455,7 +455,7 @@ export const updateCSTOCKB = async (req, res) => {
     }
 
     const nuevaCantidadInicial = bebida.CantidadInicial - cantidad;
-    console.log("nueva cantidad: " + nuevaCantidadInicial);
+    // console.log("nueva cantidad: " + nuevaCantidadInicial);
 
     if (nuevaCantidadInicial < 0) {
       return res
@@ -468,7 +468,6 @@ export const updateCSTOCKB = async (req, res) => {
       { $set: { CantidadInicial: nuevaCantidadInicial } },
       { new: true }
     );
-    console.log("2 log" + bebidaActualizada);
 
     res
       .status(200)
@@ -485,7 +484,7 @@ export const updateCSTOCKB = async (req, res) => {
 export const updateCSTOCKF = async (req, res) => {
   const foodId = req.params.id;
   const { cantidad } = req.body;
-  console.log("cantidad a restar: " + cantidad);
+  // console.log("cantidad a restar: " + cantidad);
 
   if (!foodId || cantidad === undefined) {
     return res
@@ -507,7 +506,7 @@ export const updateCSTOCKF = async (req, res) => {
     }
 
     const nuevaCantidadInicial = alimento.CantidadInicial - cantidad;
-    console.log("nueva cantidad: " + nuevaCantidadInicial);
+    // console.log("nueva cantidad: " + nuevaCantidadInicial);
 
     if (nuevaCantidadInicial < 0) {
       return res
@@ -520,7 +519,6 @@ export const updateCSTOCKF = async (req, res) => {
       { $set: { CantidadInicial: nuevaCantidadInicial } },
       { new: true }
     );
-    console.log("2 log" + alimentoActualizado);
 
     res
       .status(200)
@@ -587,11 +585,11 @@ export const updateStockSubproductos = async (req, res) => {
   const { foodId } = req.body;
   const subproductoId = req.body.subproductoId;
   const { cantidad } = req.body;
-  console.log("Ver informacion del producto principal", foodId);
-  console.log("Ver informacion del subproducto", subproductoId);
-  console.log("Ver informacion de la cantidad inicial", cantidad);
+  // console.log("Ver informacion del producto principal", foodId);
+  // console.log("Ver informacion del subproducto", subproductoId);
+  // console.log("Ver informacion de la cantidad inicial", cantidad);
 
-  console.log("Cantidad a restar del subproducto: " + cantidad);
+  // console.log("Cantidad a restar del subproducto: " + cantidad);
 
   if (!foodId || !subproductoId || cantidad === undefined) {
     return res
@@ -628,9 +626,9 @@ export const updateStockSubproductos = async (req, res) => {
 
     // Resta la cantidad del subproducto del stock total del producto principal
     const nuevaCantidadInicial = alimento.CantidadInicial - cantidad;
-    console.log(
-      "Nueva cantidad del producto principal: " + nuevaCantidadInicial
-    );
+    // console.log(
+    //   "Nueva cantidad del producto principal: " + nuevaCantidadInicial
+    // );
 
     if (nuevaCantidadInicial < 0) {
       return res
@@ -645,7 +643,7 @@ export const updateStockSubproductos = async (req, res) => {
 
     // Guardar los cambios en la base de datos
     const alimentoActualizado = await alimento.save();
-    console.log("Alimento actualizado: ", alimentoActualizado);
+    // console.log("Alimento actualizado: ", alimentoActualizado);
 
     res
       .status(200)
@@ -661,12 +659,12 @@ export const updateStockSubproductos = async (req, res) => {
 
 export const guardarCortesiaItemInventory = async (req, res) => {
   const { foodId, subproductoId, cantidad } = req.body;
-  console.log(
-    "datos de las cotersias que se guardaran - mensaje desde el servidor: ",
-    foodId,
-    subproductoId,
-    cantidad
-  );
+  // console.log(
+  //   "datos de las cotersias que se guardaran - mensaje desde el servidor: ",
+  //   foodId,
+  //   subproductoId,
+  //   cantidad
+  // );
 
   // Validar que todos los datos necesarios estén presentes
   if (!foodId || !subproductoId || cantidad === undefined) {
@@ -703,7 +701,7 @@ export const guardarCortesiaItemInventory = async (req, res) => {
 
     // Guardar los cambios en la base de datos
     const alimentoActualizado = await alimento.save();
-    console.log("Alimento actualizado con cortesías: ", alimentoActualizado);
+    // console.log("Alimento actualizado con cortesías: ", alimentoActualizado);
 
     res
       .status(200)
@@ -719,11 +717,11 @@ export const guardarCortesiaItemInventory = async (req, res) => {
 
 export const guardarCortesiaFoodInventory = async (req, res) => {
   const { foodId, cantidad } = req.body;
-  console.log(
-    "datos de las cotersias que se guardaran - mensaje desde el servidor: ",
-    foodId,
-    cantidad
-  );
+  // console.log(
+  //   "datos de las cotersias que se guardaran - mensaje desde el servidor: ",
+  //   foodId,
+  //   cantidad
+  // );
 
   if (!foodId || cantidad === undefined) {
     return res
@@ -748,7 +746,7 @@ export const guardarCortesiaFoodInventory = async (req, res) => {
     alimento.Cortesias += cantidad;
 
     const alimentoActualizado = await alimento.save();
-    console.log("Alimento actualizado con cortesías: ", alimentoActualizado);
+    // console.log("Alimento actualizado con cortesías: ", alimentoActualizado);
 
     res
       .status(200)
@@ -765,7 +763,7 @@ export const guardarCortesiaFoodInventory = async (req, res) => {
 export const deleteSubproduct = async (req, res) => {
   const productId = req.params.id;
   const subproductId = req.body.idSubproducto;
-  console.log("detalles de la peticion 200.OK", subproductId);
+  // console.log("detalles de la peticion 200.OK", subproductId);
 
   try {
     const product = await Bebida.findById(productId);
@@ -788,23 +786,8 @@ export const updateSubproduct = async (req, res) => {
   const productId = req.params.id;
   const subproductId = req.body.idSubproducto;
   const { Descripcion, ValorUnitario, ProductosVendidos, Cortesias } = req.body;
-  console.log(
-    "datos del producto a actualizar: ",
-    "id del producto: ",
-    productId,
-    "id del subproducto: ",
-    subproductId,
-    "Descripcion del subproducto",
-    Descripcion,
-    "Valor del subproducto",
-    ValorUnitario,
-    "subproductos vendidos",
-    ProductosVendidos,
-    "Cortesias ",
-    Cortesias
-  );
 
-  console.log("Detalles de la petición 200.OK", subproductId);
+  // console.log("Detalles de la petición 200.OK", subproductId);
 
   try {
     const product = await Bebida.findById(productId);

@@ -16,9 +16,9 @@ const HorizontalBarChart = () => {
         const data = respuesta.data;
         setProductos(data.productosInfo);
         setTotalPaginas(data.totalPaginas);
-        console.log('Productos más comprados:', data.productosInfo);
+        // console.log('Productos más comprados:', data.productosInfo);
       } catch (error) {
-        console.error('Hubo un error al obtener los productos:', error);
+        console.error('Hubo un error al obtener los productos:');
       }
     };
     obtenerProductos(paginaActual);

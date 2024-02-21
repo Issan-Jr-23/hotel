@@ -27,9 +27,9 @@ router.post("/cabania-agregar-item-recepcion/:id",auth, addItemRecepcion);
 router.post("/cabania-agregar-descorche/:id",auth, addDescorche);
 router.post("/cabania-agregar-food/:id",auth, addFoodAdicional);
 router.post("/cabania-agregar-food-subproducto/:id",auth, addFoodAdicionalSubproducto);
-router.get("/cabania-productos-categoria",auth, productosCategoria)
-router.get("/cabania-fecha-activacion", auth,fechaActivacion)
-router.get("/cabania-fecha-finalizacion", auth,fechaFinalizacion)
+router.get("/cabania-productos-categoria",auth, productosCategoria);
+router.get("/cabania-fecha-activacion", auth,fechaActivacion);
+router.get("/cabania-fecha-finalizacion", auth,fechaFinalizacion);
 
 router.get("/cabania-totalidad-pago/:id",auth, resTotal)
 router.get("/cabania-totalidad-reserva-pago/:id", auth,postPago)

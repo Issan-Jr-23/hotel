@@ -78,6 +78,8 @@ export default function review() {
 
     const [menuAbierto, setMenuAbierto] = useState(false);
 
+    const [mpPendiente, setMpPendiente] = useState("");
+
     //#region
 
     const { user } = useAuth();
@@ -311,7 +313,7 @@ export default function review() {
 
     const adicional = (id) => {
         navigate(`/adicional/${id}`);
-        console.log("id del usuario para ver el historial del usuario: " + id)
+        // console.log("id del usuario para ver el historial del usuario: " + id)
     };
 
     const handleCortesiaChange = (event) => {
@@ -493,9 +495,9 @@ export default function review() {
             });
 
             if (response.status === 200) {
-                console.log('Cortesías guardadas correctamente:', response.data);
+                console.log('Cortesías guardadas correctamente');
             } else {
-                console.error('Error en la respuesta del servidor:', response.status);
+                console.error('Error en la respuesta del servidor');
             }
         } catch (error) {
             console.error('Error al enviar la petición:', error.message);
@@ -556,8 +558,8 @@ export default function review() {
             const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
             const numeroDebebidas = clienteResponse.data.cantidadDeBebidas.filter(bebida => bebida.mensaje === "Cortesía" && bebida.fechaDeMarca === "");
             const cantidadTotalCortesia = numeroDebebidas.reduce((total, bebida) => total + bebida.cantidad, 0);
-            console.log("numero de cortesias: " + cantidadTotalCortesia)
-            console.log("cantidad de bebidas del usuario" + JSON.stringify(numeroDebebidas, null, 2))
+            // console.log("numero de cortesias: " + cantidadTotalCortesia)
+            // console.log("cantidad de bebidas del usuario" + JSON.stringify(numeroDebebidas, null, 2))
             const totalPersonas = ninios + adultos;
 
 
@@ -583,8 +585,8 @@ export default function review() {
                 const nuevaCantidadTotalCortesia = cantidadTotalCortesia;
                 const cantidadRestante = totalPersonas - cantidadTotalCortesia;
                 setCcDisponibles(cantidadRestante)
-                console.log("cantidad restante: " + cantidadRestante)
-                console.log("supuesta nueva cantidad: " + nuevaCantidadTotalCortesia)
+                // console.log("cantidad restante: " + cantidadRestante)
+                // console.log("supuesta nueva cantidad: " + nuevaCantidadTotalCortesia)
 
                 if (cantidad > disponibleInventario) {
                     alert(`Solo quedan ${disponibleInventario} unidades disponibles en el inventario.`);
@@ -944,7 +946,7 @@ export default function review() {
     }
 
     const guardarCortesiaFoodInventory = async (foodId, cantidad) => {
-        console.log("datos de las cortesias que se guardaran: ", foodId, cantidad)
+        // console.log("datos de las cortesias que se guardaran: ", foodId, cantidad)
         try {
             const response = await AxiosInstance.post('/guardar-cortesias-inventario', {
                 foodId,
@@ -952,9 +954,9 @@ export default function review() {
             });
 
             if (response.status === 200) {
-                console.log('Cortesías guardadas correctamente:', response.data);
+                console.log('Cortesías guardadas correctamente');
             } else {
-                console.error('Error en la respuesta del servidor:', response.status);
+                console.error('Error en la respuesta del servidor');
             }
         } catch (error) {
             console.error('Error al enviar la petición:', error.message);
@@ -967,14 +969,13 @@ export default function review() {
                 id: foodId,
                 cantidad,
             });
-            console.log("datos enviados al servidor: " + foodId)
+            // console.log("datos enviados al servidor: " + foodId)
 
             if (response.status < 200 || response.status >= 300) {
                 throw new Error(`Error al actualizar el inventario. Estado de la respuesta: ${response.status}`);
             }
         } catch (error) {
             console.error('Error al actualizar el inventario de comidas:', error.message);
-            console.log("id predeterminado: " + foodId)
             throw error;
         }
     };
@@ -1017,8 +1018,8 @@ export default function review() {
             const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
             const numeroDeFood = clienteResponse.data.cantidadDeFood.filter(food => food.mensaje === "Cortesía" && food.fechaDeMarca === "");
             const cantidadTotalCortesia = numeroDeFood.reduce((total, food) => total + food.cantidad, 0);
-            console.log("numero de cortesias: " + cantidadTotalCortesia)
-            console.log("cantidad de bebidas del usuario" + JSON.stringify(numeroDeFood, null, 2))
+            // console.log("numero de cortesias: " + cantidadTotalCortesia)
+            // console.log("cantidad de bebidas del usuario" + JSON.stringify(numeroDeFood, null, 2))
             const totalPersonas = ninios + adultos;
 
             if (foodSeleccionada && disponibleInventario === 0) {
@@ -1039,8 +1040,8 @@ export default function review() {
 
                 const nuevaCantidadTotalCortesia = cantidadTotalCortesia;
                 const cantidadRestante = totalPersonas - cantidadTotalCortesia;
-                console.log("cantidad restante: " + cantidadRestante)
-                console.log("supuesta nueva cantidad: " + nuevaCantidadTotalCortesia)
+                // console.log("cantidad restante: " + cantidadRestante)
+                // console.log("supuesta nueva cantidad: " + nuevaCantidadTotalCortesia)
 
                 if (cantidad > totalPersonas) {
                     alert(`La cantidad de cortesias ${cantidad} no debe superar a la cantidad de personas ${totalPersonas} `)
@@ -1088,7 +1089,7 @@ export default function review() {
                 return;
             }
 
-            console.log("id de la comida seleccionada : " + foodSeleccionadaId)
+            // console.log("id de la comida seleccionada : " + foodSeleccionadaId)
 
             await actualizarInventarioFood(foodId, cantidad);
             await actualizarStockInicialFood(foodId, cantidad);
@@ -1462,7 +1463,7 @@ export default function review() {
                     fechaPasadia: editedDate,
                     reserva: editedReserva
                 },
-                console.log("id del usuario " + id)
+                // console.log("id del usuario " + id)
             );
             const updatedUsers = users.map((user) =>
                 user._id === id ? { nombre: editedName, fechaPasadia: editedDate, reserva: editedReserva } : user
@@ -1698,7 +1699,7 @@ export default function review() {
     };
 
     const seleccionarCliente = async (identificacion) => {
-        console.log("data : ", identificacion)
+        // console.log("data : ", identificacion)
         const response = await AxiosInstance.get(`/pasadia-totalidad-pago/${identificacion}`)
         const { restaurante, bar, recepcion, descorche } = response.data
         setResTotal(restaurante)
@@ -1722,14 +1723,13 @@ export default function review() {
         }
     };
 
-    const handleInputChanges = (e) => {
-        const { name, value } = e.target;
-        setFormDatas({ ...formDatas, [name]: value });
+    const handleInputChanges = (event) => {
+        setMpPendiente(event.target.value);
     };
 
-    const actualizarDatosCliente = async (data1, data2, estado, userId) => {
+    const actualizarDatosCliente = async (data1, data2, estado, userId, mpPendiente) => {
         try {
-            await handleStatus(estado, userId)
+            await handleStatus(estado, userId, mpPendiente)
             if (selectedClienteId) {
                 try {
                     const responseData = await AxiosInstance.get(`/pasadia-totalidad-reserva-pago/${selectedClienteId}`);
@@ -1737,7 +1737,7 @@ export default function review() {
                     if (reserva === "Si") {
                         const calculo1 = restaurante + bar + recepcion + descorche + anticipado + posterior + pendiente;
                         const calculo2 = calculo1 - anticipado;
-                        await AxiosInstance.put(`/pasadia-actualizar-valor`, { id: selectedClienteId, valor: calculo2 })
+                        await AxiosInstance.put(`/pasadia-actualizar-valor`, { id: selectedClienteId, valor: calculo2, metodoPago: mpPendiente })
                         toast.success("datos actualizados")
                         const responses = await AxiosInstance.get(`/pasadia-clientes?page=${paginaActual}`);
                         setUsers(responses.data.clientes);
@@ -1786,7 +1786,7 @@ export default function review() {
                 console.error('No hay un cliente seleccionado para actualizar');
             }
         } catch (error) {
-            console.log(error)
+            console.error(error)
         }
 
     };
@@ -2010,7 +2010,7 @@ export default function review() {
     }
 
     const actualizarInventarioItem = async (foodId, subproductoId, cantidad) => {
-        console.log("peticion actualizar inventario item: " + foodId, subproductoId, cantidad)
+        // console.log("peticion actualizar inventario item: " + foodId, subproductoId, cantidad)
         try {
             const response = await AxiosInstance.post('/update-cantidad-inicial', {
                 foodId,
@@ -2018,20 +2018,20 @@ export default function review() {
                 cantidad
             });
 
-            console.log("Datos enviados al servidor - FoodID: " + foodId + ", SubProductoID: " + subproductoId);
+            // console.log("Datos enviados al servidor - FoodID: " + foodId + ", SubProductoID: " + subproductoId);
 
             if (response.status < 200 || response.status >= 300) {
                 throw new Error(`Error al actualizar el inventario. Estado de la respuesta: ${response.status}`);
             }
         } catch (error) {
             console.error('Error al actualizar el inventario de comidas:', error.message);
-            console.log("ID predeterminado: " + foodId);
+            // console.log("ID predeterminado: " + foodId);
             throw error;
         }
     };
 
     const guardarCortesiaItemInventory = async (foodId, subproductoId, cantidad) => {
-        console.log("datos de las cortesias que se guardaran: ", foodId, subproductoId, cantidad)
+        // console.log("datos de las cortesias que se guardaran: ", foodId, subproductoId, cantidad)
         try {
             const response = await AxiosInstance.post('/guardar-cortesia-inventario', {
                 foodId,
@@ -2040,9 +2040,9 @@ export default function review() {
             });
 
             if (response.status === 200) {
-                console.log('Cortesías guardadas correctamente:', response.data);
+                console.log('Cortesías guardadas correctamente');
             } else {
-                console.error('Error en la respuesta del servidor:', response.status);
+                console.error('Error en la respuesta del servidor');
             }
         } catch (error) {
             console.error('Error al enviar la petición:', error.message);
@@ -2061,7 +2061,7 @@ export default function review() {
 
 
         const checkStockAndUpdateInventory = async (foodId, subProductoId, cantidad) => {
-            console.log("quiero ver quien pasa ese id y cantidad: ", foodId, cantidad)
+            // console.log("quiero ver quien pasa ese id y cantidad: ", foodId, cantidad)
             const response = await AxiosInstance.get(`/verificar-disponibilidad/${foodId}`);
 
             let fecha = new Date();
@@ -2076,10 +2076,10 @@ export default function review() {
             const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
             const numeroDeFood = clienteResponse.data.cantidadDeFood.filter(food => food.mensaje === "Cortesía" && food.fechaDeMarca === "");
             const cantidadTotalCortesia = numeroDeFood.reduce((total, food) => total + food.cantidad, 0);
-            console.log("numero de cortesias: " + cantidadTotalCortesia)
-            console.log("cantidad de bebidas del usuario" + JSON.stringify(numeroDeFood, null, 2))
+            // console.log("numero de cortesias: " + cantidadTotalCortesia)
+            // console.log("cantidad de bebidas del usuario" + JSON.stringify(numeroDeFood, null, 2))
             const totalPersonas = ninios + adultos;
-            console.log("cantidad de personas en cortesias: ", totalPersonas)
+            // console.log("cantidad de personas en cortesias: ", totalPersonas)
 
             if (foodSeleccionada && disponibleInventario === 0) {
                 toast.error('Algun producto esta agotado',
@@ -2099,8 +2099,8 @@ export default function review() {
 
                 const nuevaCantidadTotalCortesia = cantidadTotalCortesia;
                 const cantidadRestante = totalPersonas - cantidadTotalCortesia;
-                console.log("cantidad restante: " + cantidadRestante)
-                console.log("supuesta nueva cantidad: " + nuevaCantidadTotalCortesia)
+                // console.log("cantidad restante: " + cantidadRestante)
+                // console.log("supuesta nueva cantidad: " + nuevaCantidadTotalCortesia)
 
                 if (cantidad > totalPersonas) {
                     alert(`La cantidad de cortesias ${cantidad} no debe superar a la cantidad de personas ${totalPersonas} `)
@@ -2149,7 +2149,7 @@ export default function review() {
                 setIsSaving(false);
                 return;
             }
-            console.log("id de la comida seleccionada : " + foodSeleccionadaId)
+            // console.log("id de la comida seleccionada : " + foodSeleccionadaId)
 
             // let subproductoId = subItemSeleccionadoId;
             // console.log("..... muestra de datos", subproductoId)
@@ -2321,7 +2321,7 @@ export default function review() {
                     fecha: obtenerFechaConAjuste()
                 };
                 let subproductoId = subItemSeleccionadoId;
-                console.log("depuracion dentro del checkInventory: ", itemSeleccionadoId, subproductoId, cantidadItem)
+                // console.log("depuracion dentro del checkInventory: ", itemSeleccionadoId, subproductoId, cantidadItem)
                 if (await checkStockAndUpdateInventory(itemSeleccionadoId, subproductoId, cantidadItem)) {
                     await guardarItem(item);
                     setItemSeleccionado("");
@@ -2463,7 +2463,7 @@ export default function review() {
     const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
 
     const handleStatus = async (nuevoEstado, userId) => {
-        console.log(userId, nuevoEstado)
+        // console.log(userId, nuevoEstado)
         try {
             const response = await AxiosInstance.put('/pasadia-actualizar-estado', {
                 userId: userId,
@@ -4028,7 +4028,7 @@ export default function review() {
                                         {cliente.estado === "activo" ? (
                                             <div className="uppercase"> Pasadia en curso</div>
                                         ) : (
-                                            null
+                                            cliente.estado
                                         )}
                                     </div>
                                 </td>
@@ -4197,7 +4197,28 @@ export default function review() {
                             <hr className="bg-gray-400 mb-2 mt-2" style={{ height: "4px" }} />
                             {selectedUser.reserva === "Si" ? (
                                 <div>
-                                    <span className=" flex w-full  pr-20">Pago pendiente {selectedUser.nuevoTotal || 0}</span>
+                                    <div className="flex">
+                                        <span className=" flex w-full  pr-20">Pago pendiente {selectedUser.nuevoTotal || 0}</span>
+                                        {!selectedUser.mediosDePagoPendiente ? (
+                                            <div><select
+                                                className="w-full h-10 mt-2 outline-none rounded-xl border-2 border-blue-400"
+                                                id="mediosDePagoPendiente"
+                                                name="mediosDePagoPendiente"
+                                                value={mpPendiente}
+                                                onChange={handleInputChanges}
+                                            >
+                                                <option value="">METODO DE PAGO</option>
+                                                <option value="efectivo">Efectivo</option>
+                                                <option value="nequi">Nequi</option>
+                                                <option value="daviplata">Daviplata</option>
+                                                <option value="pse">PSE</option>
+                                                <option value="efecty">Efecty</option>
+                                                <option value="transferencia">Transferencia</option>
+                                            </select></div>
+                                        ) : (
+                                            mpPendiente
+                                        )}
+                                    </div>
                                     <span className=" flex w-full  pr-20">Pago adelantado:<span className="text-red-500"> {selectedUser.pagoAnticipado || 0}</span></span>
                                     <span className=" flex w-full  pr-20">Pago posterior: {selectedUser.pagoPendiente || 0}</span>
                                     <span className=" flex w-full  pr-20">Bar: {barTotal || 0}</span>
@@ -4221,7 +4242,30 @@ export default function review() {
                                 </div>
                             ) : (
                                 <div>
-                                    <span className=" flex w-full  pr-20">Pago pendiente cabania {selectedUser.tipo_cabania}: {selectedUser.nuevoTotal || 0}</span>
+                                    <div>
+                                        <div className="flex">
+                                            <span className=" flex w-full  pr-20">Pago pendiente {selectedUser.nuevoTotal || 0}</span>
+                                            {!selectedUser.mediosDePagoPendiente ? (
+                                                <div><select
+                                                    className="w-full h-10 mt-2 outline-none rounded-xl border-2 border-blue-400"
+                                                    id="mediosDePagoPendiente"
+                                                    name="mediosDePagoPendiente"
+                                                    value={mpPendiente}
+                                                    onChange={handleInputChanges}
+                                                >
+                                                    <option value="">METODO DE PAGO</option>
+                                                    <option value="efectivo">Efectivo</option>
+                                                    <option value="nequi">Nequi</option>
+                                                    <option value="daviplata">Daviplata</option>
+                                                    <option value="pse">PSE</option>
+                                                    <option value="efecty">Efecty</option>
+                                                    <option value="transferencia">Transferencia</option>
+                                                </select></div>
+                                            ) : (
+                                                mpPendiente
+                                            )}
+                                        </div>
+                                    </div>
                                     <span className=" flex w-full  pr-20">Pago adelantado:<span className="text-red-500"> {selectedUser.pagoAnticipado || 0}</span></span>
                                     <span className=" flex w-full  pr-20">Pago posterior: {selectedUser.pagoPendiente || 0}</span>
                                     <span className=" flex w-full  pr-20">Bar: {barTotal || 0}</span>
@@ -4278,9 +4322,17 @@ export default function review() {
 
                             <Typography component="div">
                                 {/* {selectedUser.nuevoTotal > 0 && selectedUser.pago <= 0 ? ( */}
-                                <Button color="secondary" variant="shadow" onClick={() => actualizarDatosCliente(selectedUser.nuevoTotal, selectedUser.identificacion, "finalizado", selectedUser._id)}>
-                                    Guardar
-                                </Button>
+                                {
+                                    ((mpPendiente && mpPendiente.trim() !== "") || (selectedUser.mediosDePagoPendiente && selectedUser.mediosDePagoPendiente.trim() !== "")) ? (
+                                        <div>
+                                            <Button color="secondary" variant="shadow" onClick={() => actualizarDatosCliente(selectedUser.nuevoTotal, selectedUser.identificacion, "finalizado", selectedUser._id, mpPendiente)}>
+                                                Guardar
+                                            </Button>
+                                        </div>
+                                    ) : null
+                                }
+
+
                                 {/* ) : (
                                                              <Button color="secondary" variant="shadow" >
                                                                  Inhabilitado
@@ -4290,8 +4342,9 @@ export default function review() {
 
                         </div>
                     </Box>
-                </Modal>
-            )}
-        </div>
+                </Modal >
+            )
+            }
+        </div >
     )
 }

@@ -59,7 +59,7 @@ const HomeSu = () => {
     const fetchData = async () => {
       try {
         const response = await AxiosInstance.get('/obtain-pasadia-ventas');
-        // console.log(response);
+        // //console.log(response);
         const { totalCompras, numeroCompras } = response.data;
         setTotalUsers(numeroCompras);
         setTotalVentaPasadia(totalCompras)
@@ -79,7 +79,7 @@ const HomeSu = () => {
     const fetchData = async () => {
       try {
         const response = await AxiosInstance.get('/obtain-cabania-ventas');
-        // console.log(response);
+        // //console.log(response);
         const { totalCompras, numeroCompras } = response.data;
         setTotalUsersCab(numeroCompras);
         setTotalVentaCabania(totalCompras)
@@ -96,7 +96,7 @@ const HomeSu = () => {
     const fetchData = async () => {
       try {
         const response = await AxiosInstance.get('/obtain-habitaciones-ventas');
-        // console.log(response);
+        // //console.log(response);
         const { totalCompras, numeroCompras } = response.data;
         setTotalUsersHab(numeroCompras);
         setTotalVentaHabitaciones(totalCompras)

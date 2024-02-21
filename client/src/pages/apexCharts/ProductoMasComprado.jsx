@@ -22,9 +22,9 @@ const MiComponente = () => {
         const productosOrdenados = productosArray.sort((a, b) => b.total - a.total);
         const productosTop10 = productosOrdenados.slice(0, 20);
         setProductos(productosTop10);
-        console.log('Productos más comprados:', productosTop10);
+        // console.log('Productos más comprados:', productosTop10);
       } catch (error) {
-        console.error('Hubo un error al obtener los productos:', error);
+        console.error('Hubo un error al obtener los productos');
       }
     };
     obtenerProductos();

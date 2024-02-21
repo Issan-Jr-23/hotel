@@ -764,7 +764,7 @@ const Adicionales = () => {
 
 
         } catch (error) {
-            console.log("error")
+            console.error("false")
         }
     }
 
@@ -883,7 +883,6 @@ const Adicionales = () => {
                 alert(`Ya no quedan ${food1Seleccionada} disponibles en el inventario `);
                 return;
             }
-            console.log("id de la comida seleccionada : " + foodSeleccionadaId)
 
             // let subproductoId = subItemSeleccionadoId;
             // console.log("..... muestra de datos", subproductoId)
@@ -915,7 +914,7 @@ const Adicionales = () => {
                     fecha: obtenerFechaConAjuste()
                 };
                 let subproductoId = subItemSeleccionadoId;
-                console.log("depuracion dentro del checkInventory: ", itemSeleccionadoId, subproductoId, cantidadItem)
+                // console.log("depuracion dentro del checkInventory: ", itemSeleccionadoId, subproductoId, cantidadItem)
                 if (await checkStockAndUpdateInventory(itemSeleccionadoId, subproductoId, cantidadItem)) {
                     await guardarItem(item);
                     setCantidadItem("")
@@ -2330,7 +2329,6 @@ const Adicionales = () => {
                                             setItemSeleccionadoRec(itemSelected);
                                             if (itemSelected) {
                                                 const itemSeleccionadoInfo = recepcion.find(recepcion => recepcion.Descripcion === itemSelected);
-                                                console.log(itemSeleccionadoInfo)
                                                 if (itemSeleccionadoInfo) {
                                                     setPrecioItemSeleccionadoRec(itemSeleccionadoInfo.ValorUnitario);
                                                     setItemSeleccionadoIdRec(itemSeleccionadoInfo._id);
@@ -2362,7 +2360,7 @@ const Adicionales = () => {
 
                                             if (itemSelected) {
                                                 const itemSeleccionadoInfo = recepcion.find(recepcion => recepcion.Descripcion === itemSelected);
-                                                console.log(itemSeleccionadoInfo)
+                                                // console.log(itemSeleccionadoInfo)
                                                 if (itemSeleccionadoInfo) {
                                                     setPrecioItemSeleccionado1Rec(itemSeleccionadoInfo.ValorUnitario);
                                                     setItemSeleccionadoId1Rec(itemSeleccionadoInfo._id);
@@ -2419,7 +2417,7 @@ const Adicionales = () => {
 
                                             if (itemSelected) {
                                                 const itemSeleccionadoInfo = recepcion.find(recepcion => recepcion.Descripcion === itemSelected);
-                                                console.log(itemSeleccionadoInfo)
+                                                // console.log(itemSeleccionadoInfo)
                                                 if (itemSeleccionadoInfo) {
                                                     setPrecioItemSeleccionado2Rec(itemSeleccionadoInfo.ValorUnitario);
                                                     setItemSeleccionadoId2Rec(itemSeleccionadoInfo._id);
@@ -2475,7 +2473,7 @@ const Adicionales = () => {
 
                                             if (itemSelected) {
                                                 const itemSeleccionadoInfo = recepcion.find(recepcion => recepcion.Descripcion === itemSelected);
-                                                console.log(itemSeleccionadoInfo)
+                                                // console.log(itemSeleccionadoInfo)
                                                 if (itemSeleccionadoInfo) {
                                                     setPrecioItemSeleccionado3Rec(itemSeleccionadoInfo.ValorUnitario);
                                                     setItemSeleccionadoId3Rec(itemSeleccionadoInfo._id);
@@ -2530,7 +2528,7 @@ const Adicionales = () => {
 
                                             if (itemSelected) {
                                                 const itemSeleccionadoInfo = recepcion.find(recepcion => recepcion.Descripcion === itemSelected);
-                                                console.log(itemSeleccionadoInfo)
+                                                // console.log(itemSeleccionadoInfo)
                                                 if (itemSeleccionadoInfo) {
                                                     setPrecioItemSeleccionado4Rec(itemSeleccionadoInfo.ValorUnitario);
                                                     setItemSeleccionadoId4Rec(itemSeleccionadoInfo._id);

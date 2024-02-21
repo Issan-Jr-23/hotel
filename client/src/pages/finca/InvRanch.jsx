@@ -33,7 +33,7 @@ export default function App() {
                     setIsLoading(false);
                 }, 100);
             } catch (error) {
-                console.log("los datos no se pudieron obtener en este momento")
+                console.error("los datos no se pudieron obtener en este momento")
             }
         }
         fetchData();
@@ -56,7 +56,7 @@ export default function App() {
             onClose();
         } catch (error) {
             toast.error('Error al guardar los datos');
-            console.log("Error al guardar los datos", error)
+            console.error("Error al guardar los datos", error)
         }
     }
 

@@ -5,9 +5,8 @@ export const create = async (req, res) => {
     const nuevoRegistro = new CabaniaStock(req.body);
     const productoGuardado = await nuevoRegistro.save();
     res.status(201).json(productoGuardado);
-    console.log("succesfully");
   } catch (error) {
-    console.log("error al crear el registro: ", error);
+    console.error("error al crear el registro: ", error);
   }
 };
 
@@ -15,9 +14,7 @@ export const registroStockCabanias = async (req, res) => {
   try {
     const registros = await CabaniaStock.find();
     res.status(200).json(registros);
-    console.log("successfully");
   } catch (error) {
-    console.log("Error:", error);
     res.status(500).send(error);
   }
 };

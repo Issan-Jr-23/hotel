@@ -36,7 +36,6 @@ export const agregarOActualizarUsuario = async (req, res) => {
 
   try {
     let usuario = await Usuario.findOne({ identificacion });
-    console.log("datos en el servidor: ", usuario);
 
     const idHistorial = `${identificacion}-${Date.now()}`;
 
@@ -45,7 +44,6 @@ export const agregarOActualizarUsuario = async (req, res) => {
       ...datosHistorial,
     };
 
-    console.log("datos del servidor: ", nuevoRegistroHistorial);
 
     if (usuario) {
       usuario.historial.push(nuevoRegistroHistorial);
@@ -62,7 +60,6 @@ export const agregarOActualizarUsuario = async (req, res) => {
       .json({ message: "Usuario agregado o actualizado con éxito", usuario });
   } catch (error) {
     res.status(500).json({ message: "Error al procesar la solicitud", error });
-    console.log(error);
   }
 };
 export const obtenerHistorial = async (req, res) => {
@@ -103,9 +100,7 @@ export const obtenerHistorial = async (req, res) => {
       totalUsuarios
     });
 
-    console.log(resultado);
   } catch (error) {
-    console.error(error);
     res.status(500).send("Error al obtener los clientes desde la base de datos");
   }
 };
@@ -248,14 +243,14 @@ export const afp = async (req, res) => {
         finalizados++
       }
         }else{
-          console.log("No hay datos")
+          console.error("No hay datos")
         }
       })
     })
     res.json({pendientes: pendientes,activos : activos,finalizados : finalizados,cancelados : cancelados
     })
   } catch (error) {
-    console.log("Error")
+    console.error("Error")
     
   }
 }
@@ -289,14 +284,14 @@ export const afpc = async (req, res) => {
         cancelados++
       }
         }else{
-          console.log("No hay datos")
+          console.error("No hay datos")
         }
       })
     })
     res.json({pendientes: pendientes,activos : activos,finalizados : finalizados,cancelados : cancelados
     })
   } catch (error) {
-    console.log("Error")
+    console.error("Error")
     
   }
 }
@@ -328,14 +323,14 @@ export const afph = async (req, res) => {
         finalizados++
       }
         }else{
-          console.log("No hay datos")
+          console.error("No hay datos")
         }
       })
     })
     res.json({pendientes: pendientes,activos : activos,finalizados : finalizados,cancelados : cancelados
     })
   } catch (error) {
-    console.log("Error")
+    console.error("Error")
     
   }
 }
@@ -423,7 +418,6 @@ export const totalGeneradoBar = async(req, res) => {
     });
 
   } catch(error) {
-    console.log(error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
@@ -500,7 +494,7 @@ export const totalGeneradoCabaniaBard = async(req, res) => {
     })
 
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 }
 
@@ -573,7 +567,7 @@ export const totalGeneradoHabitacionesBard = async(req, res) => {
     })
     
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 }
 
@@ -602,7 +596,6 @@ export const buscarUsuario = async (req, res) => {
       });
 
       res.status(200).json({ resultado });
-      console.log("respuesta: ", resultado);
     } else {
       res.status(404).json({ message: 'No se encontraron usuarios' });
     }

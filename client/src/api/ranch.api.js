@@ -5,7 +5,7 @@ export const registrarProduction = async (formData) => {
       await AxiosInstance.post("/registrar-produccion", formData);
       // console.log("registro creado exitosamente");
     } catch (error) {
-      console.log("tipo de error al crear el registro del usuario");
+      console.error("tipo de error al crear el registro del usuario");
     }
   };
 
@@ -14,8 +14,7 @@ export const registrarProduction = async (formData) => {
       const response = await AxiosInstance.get("/produccion");
       return response.data;
     } catch (error) {
-      console.error("Error al obtener datos del servidor:");
-      throw error;
+      console.error("Error al obtener datos del servidor");
     }
   };
 
@@ -25,28 +24,22 @@ export const registrarProduction = async (formData) => {
       return response.data
     } catch (error) {
       console.error("Error al obtener los datos del servidor: ")
-      throw error;
     }
   }
 
   export const registrarData = async (formData) =>{
     try {
-      await AxiosInstance.post("/registrar-data", formData) 
-      // console.log("¡Datos registrados con exito!")
+      await AxiosInstance.post("/registrar-data", formData)
     } catch (error) {
       console.error("Error al registrar los datos")
-      throw error;
     }
   }
 
  export const deleteRegistro = async (id) => {
     try {
       await AxiosInstance.delete(`/delete-registro/${id}`);
-      // console.log("Usuario eliminado con éxito!");
     } catch (error) {
-      console.log("datos no eliminados")
       console.error("Error al eliminar usuario");
-      throw error;
     }
   };
    
@@ -55,7 +48,7 @@ export const registrarProduction = async (formData) => {
         await AxiosInstance.post("/crear-precio", formData);
         // console.log("¡Registro de la tabla precio creado con exito!")
     } catch (error) {
-        console.error("Error al agregar Pasadia: ");
+        console.error("Error al agregar Pasadia");
     }
 };
 
@@ -64,9 +57,7 @@ export const obtenerPrecios = async () => {
     const response = await AxiosInstance.get("/precios-ranch")
     return response.data
   } catch (error) {
-    console.error("Error al obtener los datos del servidor: ", error)
-    throw error;
+    console.error("Error al obtener los datos del servidor")
   }
 }
-
   

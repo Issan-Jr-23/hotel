@@ -28,12 +28,12 @@ const Registro = () => {
   };
 
   const cargarData = async () => {
-    console.log("datos enviados", formData)
+    // console.log("datos enviados", formData)
     try {
       await AxiosInstance.post("/cargar/data", formData)
-      console.log(success)
+      // console.log(success)
     } catch (error) {
-      console.log(error)
+      console.error("Error al encontrar el resgistro")
     }
   }
 

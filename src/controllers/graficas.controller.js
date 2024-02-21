@@ -59,7 +59,7 @@ export const usuariosQueMasCompraron = async (req, res) => {
 
         res.status(200).json(resultadosArray);
     } catch (error) {
-        console.log(error)
+        // console.log(error)
         res.status(500).send('Error en el servidor');
     }
 };
@@ -126,7 +126,7 @@ export const obtenerTotal = async (req, res) => {
 
     res.json(totalesPorUsuario);
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     res.status(500).send(error.message);
   }
 };
@@ -284,7 +284,7 @@ export const productosMasComprados = async (req, res) => {
 
     res.status(200).json({ productosInfo });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     res.status(500).json({ error: 'Error en el servidor' });
   }
 };
@@ -313,7 +313,7 @@ export const comprasUsers = async(req, res) => {
 
     res.status(200).json(response);
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     res.status(500).send(error);
   }
 };
@@ -390,7 +390,7 @@ export const productosMasCompradosPass = async (req, res) => {
       productosInfo: paginatedProductsInfo
     });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     res.status(500).json({ error: 'Error en el servidor' });
   }
 };
@@ -875,7 +875,7 @@ export const obtainVentasPasadia = async(req, res) => {
     res.status(200).json({ totalCompras: totalVentas || 0, numeroCompras: cantidad || 0 })
 
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 }
 
@@ -938,7 +938,7 @@ export const obtainVentasPasadiaProducts = async(req, res) => {
     res.status(200).json({cantidadComprada: cantidadComprada, money:compras, cortesias: cortesias})
 
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 }
 
@@ -969,7 +969,7 @@ export const obtainVentasCabania = async(req, res) => {
     res.status(200).json({ totalCompras: totalVentas || 0, numeroCompras: cantidad || 0 })
 
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 }
 
@@ -1034,7 +1034,7 @@ export const obtainVentasCabaniaProducts = async(req, res) => {
     res.status(200).json({cantidadComprada: cantidadComprada, money:compras, cortesias: cortesias})
 
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 }
 
@@ -1066,7 +1066,7 @@ export const obtainVentasHabitaciones = async(req, res) => {
     res.status(200).json({ totalCompras: totalVentas || 0, numeroCompras: cantidad || 0 })
 
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 }
 
@@ -1129,7 +1129,7 @@ export const obtainVentasHabitacionesProducts = async(req, res) => {
     res.status(200).json({cantidadComprada: cantidadComprada, money:compras, cortesias: cortesias})
 
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 }
 
@@ -1447,7 +1447,7 @@ export const productosMasCompradosCab = async (req, res) => {
       productosInfo: paginatedProductsInfo
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({ error: 'Error en el servidor' });
   }
 };
@@ -1521,7 +1521,7 @@ export const productosMasCompradosHab = async (req, res) => {
       productosInfo: paginatedProductsInfo
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({ error: 'Error en el servidor' });
   }
 };

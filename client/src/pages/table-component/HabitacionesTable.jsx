@@ -78,7 +78,7 @@ export default function habitacionesTable() {
 
   const adicional = (id) => {
     navigate(`/habitaciones-adicional/${id}`);
-    console.log("id del usuario para ver el historial del usuario: " + id)
+    // console.log("id del usuario para ver el historial del usuario: " + id)
   };
 
 
@@ -356,8 +356,8 @@ export default function habitacionesTable() {
     } else {
       formData.pagoPendiente = 0
     }
-    console.log("data 1: ", formData.pagoAnticipado)
-    console.log("data 2: ", formData.pagoPendiente)
+    // console.log("data 1: ", formData.pagoAnticipado)
+    // console.log("data 2: ", formData.pagoPendiente)
 
     let adjustedValue;
     if (value === '' && name !== "nombre") {
@@ -465,9 +465,9 @@ export default function habitacionesTable() {
       });
 
       if (response.status === 200) {
-        console.log('Cortesías guardadas correctamente:', response.data);
+        console.log('Cortesías guardadas correctamente');
       } else {
-        console.error('Error en la respuesta del servidor:', response.status);
+        console.error('Error en la respuesta del servidor');
       }
     } catch (error) {
       console.error('Error al enviar la petición:', error.message);
@@ -528,8 +528,8 @@ export default function habitacionesTable() {
       const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
       const numeroDebebidas = clienteResponse.data.cantidadDeBebidas.filter(bebida => bebida.mensaje === "Cortesía" && bebida.fechaDeMarca === "");
       const cantidadTotalCortesia = numeroDebebidas.reduce((total, bebida) => total + bebida.cantidad, 0);
-      console.log("numero de cortesias: " + cantidadTotalCortesia)
-      console.log("cantidad de bebidas del usuario" + JSON.stringify(numeroDebebidas, null, 2))
+      // console.log("numero de cortesias: " + cantidadTotalCortesia)
+      // console.log("cantidad de bebidas del usuario" + JSON.stringify(numeroDebebidas, null, 2))
       const totalPersonas = ninios + adultos;
 
       if (esCortesia) {
@@ -825,7 +825,7 @@ export default function habitacionesTable() {
   };
 
   const guardarCortesiaFoodInventory = async (foodId, cantidad) => {
-    console.log("datos de las cortesias que se guardaran: ", foodId, cantidad)
+    // console.log("datos de las cortesias que se guardaran: ", foodId, cantidad)
     try {
       const response = await AxiosInstance.post('/guardar-cortesias-inventario', {
         foodId,
@@ -833,9 +833,9 @@ export default function habitacionesTable() {
       });
 
       if (response.status === 200) {
-        console.log('Cortesías guardadas correctamente:', response.data);
+        console.log('Cortesías guardadas correctamente');
       } else {
-        console.error('Error en la respuesta del servidor:', response.status);
+        console.error('Error en la respuesta del servidor');
       }
     } catch (error) {
       console.error('Error al enviar la petición:', error.message);
@@ -871,7 +871,6 @@ export default function habitacionesTable() {
   };
 
   const handleGuardarFood = async () => {
-    console.log("**************")
     if (isSaving) return;
     setIsSaving(true);
 
@@ -896,8 +895,8 @@ export default function habitacionesTable() {
       const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
       const numeroDeFood = clienteResponse.data.cantidadDeFood.filter(food => food.mensaje === "Cortesía" && food.fechaDeMarca === "");
       const cantidadTotalCortesia = numeroDeFood.reduce((total, food) => total + food.cantidad, 0);
-      console.log("numero de cortesias: " + cantidadTotalCortesia)
-      console.log("cantidad de bebidas del usuario" + JSON.stringify(numeroDeFood, null, 2))
+      // console.log("numero de cortesias: " + cantidadTotalCortesia)
+      // console.log("cantidad de bebidas del usuario" + JSON.stringify(numeroDeFood, null, 2))
       const totalPersonas = ninios + adultos;
 
 
@@ -919,8 +918,8 @@ export default function habitacionesTable() {
 
         const nuevaCantidadTotalCortesia = cantidadTotalCortesia;
         const cantidadRestante = totalPersonas - cantidadTotalCortesia;
-        console.log("cantidad restante: " + cantidadRestante)
-        console.log("supuesta nueva cantidad: " + nuevaCantidadTotalCortesia)
+        // console.log("cantidad restante: " + cantidadRestante)
+        // console.log("supuesta nueva cantidad: " + nuevaCantidadTotalCortesia)
 
         if (cantidad > totalPersonas) {
           alert(`La cantidad de cortesias ${cantidad} no debe superar a la cantidad de personas ${totalPersonas} `)
@@ -1660,10 +1659,10 @@ export default function habitacionesTable() {
   });
 
   const seleccionarCliente = async (identificacion) => {
-    console.log("id: ", identificacion)
+    // console.log("id: ", identificacion)
     const response = await AxiosInstance.get(`/habitaciones-totalidad-pago/${identificacion}`)
     const { restaurante, bar, recepcion, descorche } = response.data
-    console.log("datos del restaurante: ", restaurante)
+    // console.log("datos del restaurante: ", restaurante)
     setResTotal(restaurante)
     setBarTotal(bar)
     setRecTotal(recepcion)
@@ -1689,7 +1688,7 @@ export default function habitacionesTable() {
   };
 
   const actualizarDatosCliente = async (data1, data2, estado, userId) => {
-    console.log("DATOS ENVIADOS: ", estado, userId)
+    // console.log("DATOS ENVIADOS: ", estado, userId)
     await handleStatus(estado, userId)
 
     if (selectedClienteId) {
@@ -1697,23 +1696,23 @@ export default function habitacionesTable() {
         const responseData = await AxiosInstance.get(`/habitaciones-totalidad-reserva-pago/${selectedClienteId}`);
         const { identificacion, restaurante, bar, recepcion, descorche, reserva, anticipado, posterior, pendiente } = responseData.data;
         if (reserva === "Si") {
-          console.log("ingresos al condicional")
+          // console.log("ingresos al condicional")
           const calculo1 = restaurante + bar + recepcion + descorche + anticipado + posterior + pendiente;
           const calculo2 = calculo1 - anticipado;
-          console.log("id del usuario: ", selectedClienteId)
+          // console.log("id del usuario: ", selectedClienteId)
           await AxiosInstance.put(`/habitaciones-actualizar-valor`, { id: selectedClienteId, valor: calculo2 })
-          console.log("success")
+          // console.log("success")
           toast.success("datos actualizados")
           const responses = await AxiosInstance.get(`/habitaciones-clientes?page=${paginaActual}`);
           setUsers(responses.data.clientes);
           setTotalPaginas(responses.data.totalPages);
           closeModal();
         } else {
-          console.log("ingresos al condicional")
+          // console.log("ingresos al condicional")
           const calculo1 = restaurante + bar + recepcion + descorche + anticipado + posterior + pendiente;
-          console.log("id del usuario: ", selectedClienteId)
+          // console.log("id del usuario: ", selectedClienteId)
           await AxiosInstance.put(`/habitaciones-actualizar-valor`, { id: selectedClienteId, valor: calculo1 })
-          console.log("success")
+          // console.log("success")
           toast.success("datos actualizados")
           const responses = await AxiosInstance.get(`/habitaciones-clientes?page=${paginaActual}`);
           setUsers(responses.data.clientes);
@@ -2024,7 +2023,7 @@ export default function habitacionesTable() {
   }
 
   const actualizarInventarioItem = async (foodId, subproductoId, cantidad) => {
-    console.log("peticion actualizar inventario item: " + foodId, subproductoId, cantidad)
+    // console.log("peticion actualizar inventario item: " + foodId, subproductoId, cantidad)
     try {
       const response = await AxiosInstance.post('/update-cantidad-inicial', {
         foodId,
@@ -2032,20 +2031,20 @@ export default function habitacionesTable() {
         cantidad
       });
 
-      console.log("Datos enviados al servidor - FoodID: " + foodId + ", SubProductoID: " + subproductoId);
+      // console.log("Datos enviados al servidor - FoodID: " + foodId + ", SubProductoID: " + subproductoId);
 
       if (response.status < 200 || response.status >= 300) {
         throw new Error(`Error al actualizar el inventario. Estado de la respuesta: ${response.status}`);
       }
     } catch (error) {
       console.error('Error al actualizar el inventario de comidas:', error.message);
-      console.log("ID predeterminado: " + foodId);
+      console.error("ID predeterminado");
       throw error;
     }
   };
 
   const guardarCortesiaItemInventory = async (foodId, subproductoId, cantidad) => {
-    console.log("datos de las cortesias que se guardaran: ", foodId, subproductoId, cantidad)
+    // console.log("datos de las cortesias que se guardaran: ", foodId, subproductoId, cantidad)
     try {
       const response = await AxiosInstance.post('/guardar-cortesia-inventario', {
         foodId,
@@ -2054,9 +2053,9 @@ export default function habitacionesTable() {
       });
 
       if (response.status === 200) {
-        console.log('Cortesías guardadas correctamente:', response.data);
+        console.log('Cortesías guardadas correctamente');
       } else {
-        console.error('Error en la respuesta del servidor:', response.status);
+        console.error('Error en la respuesta del servidor');
       }
     } catch (error) {
       console.error('Error al enviar la petición:', error.message);
@@ -2075,7 +2074,7 @@ export default function habitacionesTable() {
 
 
     const checkStockAndUpdateInventory = async (foodId, subProductoId, cantidad) => {
-      console.log("quiero ver quien pasa ese id y cantidad: ", foodId, cantidad)
+      // console.log("quiero ver quien pasa ese id y cantidad: ", foodId, cantidad)
       const response = await AxiosInstance.get(`/verificar-disponibilidad/${foodId}`);
 
       let fecha = new Date();
@@ -2090,10 +2089,10 @@ export default function habitacionesTable() {
       const { ninios, adultos } = clienteResponse.data.cantidadPersonas;
       const numeroDeFood = clienteResponse.data.cantidadDeFood.filter(food => food.mensaje === "Cortesía" && food.fechaDeMarca === "");
       const cantidadTotalCortesia = numeroDeFood.reduce((total, food) => total + food.cantidad, 0);
-      console.log("numero de cortesias: " + cantidadTotalCortesia)
-      console.log("cantidad de bebidas del usuario" + JSON.stringify(numeroDeFood, null, 2))
+      // console.log("numero de cortesias: " + cantidadTotalCortesia)
+      // console.log("cantidad de bebidas del usuario" + JSON.stringify(numeroDeFood, null, 2))
       const totalPersonas = ninios + adultos;
-      console.log("cantidad de personas en cortesias: ", totalPersonas)
+      // console.log("cantidad de personas en cortesias: ", totalPersonas)
 
       if (foodSeleccionada && disponibleInventario === 0) {
         toast.error('Algun producto esta agotado',
@@ -2113,8 +2112,8 @@ export default function habitacionesTable() {
 
         const nuevaCantidadTotalCortesia = cantidadTotalCortesia;
         const cantidadRestante = totalPersonas - cantidadTotalCortesia;
-        console.log("cantidad restante: " + cantidadRestante)
-        console.log("supuesta nueva cantidad: " + nuevaCantidadTotalCortesia)
+        // console.log("cantidad restante: " + cantidadRestante)
+        // console.log("supuesta nueva cantidad: " + nuevaCantidadTotalCortesia)
 
         if (cantidad > totalPersonas) {
           alert(`La cantidad de cortesias ${cantidad} no debe superar a la cantidad de personas ${totalPersonas} `)
@@ -2163,7 +2162,7 @@ export default function habitacionesTable() {
         setIsSaving(true);
         return;
       }
-      console.log("id de la comida seleccionada : " + foodSeleccionadaId)
+      // console.log("id de la comida seleccionada : " + foodSeleccionadaId)
 
       // let subproductoId = subItemSeleccionadoId;
       // console.log("..... muestra de datos", subproductoId)
@@ -2300,7 +2299,7 @@ export default function habitacionesTable() {
           fecha: obtenerFechaConAjuste()
         };
         let subproductoId = subItemSeleccionadoId;
-        console.log("depuracion dentro del checkInventory: ", itemSeleccionadoId, subproductoId, cantidadItem)
+        // console.log("depuracion dentro del checkInventory: ", itemSeleccionadoId, subproductoId, cantidadItem)
         if (await checkStockAndUpdateInventory(itemSeleccionadoId, subproductoId, cantidadItem)) {
           await guardarItem(item);
           isBebidaAdded = true;
@@ -2406,7 +2405,7 @@ export default function habitacionesTable() {
   };
 
   const handleStatus = async (nuevoEstado, userId) => {
-    console.log(userId, nuevoEstado)
+    // console.log(userId, nuevoEstado)
     try {
       const response = await AxiosInstance.put('/habitaciones-actualizar-estado', {
         userId: userId,
@@ -2415,7 +2414,7 @@ export default function habitacionesTable() {
       const responses = await AxiosInstance.get(`/habitaciones-clientes?page=${paginaActual}`);
       setUsers(responses.data.clientes);
       setTotalPaginas(responses.data.totalPages);
-      console.log('Estado actualizado con éxito:', response.data);
+      // console.log('Estado actualizado con éxito:', response.data);
     } catch (error) {
       console.error('Hubo un problema con la petición Axios:', error);
     }

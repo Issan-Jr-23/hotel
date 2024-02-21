@@ -45,8 +45,8 @@ function App() {
     <AuthProvider>
       <TaskProvider>
         <MenuProvider>
-          <BrowserRouter basename="/meqo-soft">
-            <AppWithAuth />
+          <BrowserRouter basename="/meqo-soft-v2">
+            <AppWithAuth/>
             <Routes>
               <Route path="/" element={<LoginPage />} />
               <Route path="/meqo-soft" element={<LoginPage />} />
