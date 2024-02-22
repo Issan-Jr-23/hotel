@@ -53,6 +53,7 @@ export default function cabaniaTable() {
     const [isModalOpen, setModalOpen] = useState(false);
     const [selectedClienteId, setSelectedClienteId] = useState(null);
     const [almacenamiento, setAlmacenamiento] = useState(null)
+    const [mpPendiente, setMpPendiente] = useState("")
 
 
     useEffect(() => {
@@ -1389,6 +1390,7 @@ export default function cabaniaTable() {
     const handleOpenModal = async (user) => {
         setSelectedUser(user);
         setOpenTd(true);
+        setMpPendiente("")
     };
 
     const closeModal = () => {
@@ -1552,9 +1554,8 @@ export default function cabaniaTable() {
         calcularPagoPendiente(identificacion);
     };
 
-    const handleInputChanges = (e) => {
-        const { name, value } = e.target;
-        setFormDatas({ ...formDatas, [name]: value });
+    const handleInputChanges = (event) => {
+        setMpPendiente(event.target.value);
     };
 
     const calcularPagoPendiente = (identificacion) => {
@@ -1569,9 +1570,9 @@ export default function cabaniaTable() {
         }
     };
 
-    const actualizarDatosCliente = async (data1, data2, estado, userId) => {
+    const actualizarDatosCliente = async (data1, data2, estado, userId, mpPendiente) => {
         // console.log("DATOS ENVIADOS: ", estado, userId)
-        await handleStatus(estado, userId)
+        await handleStatus(estado, userId, mpPendiente)
 
         if (selectedClienteId) {
             try {
@@ -1582,7 +1583,7 @@ export default function cabaniaTable() {
                     const calculo1 = restaurante + bar + recepcion + descorche + anticipado + posterior + pendiente;
                     const calculo2 = calculo1 - anticipado;
                     // console.log("id del usuario: ", selectedClienteId)
-                    await AxiosInstance.put(`/cabania-actualizar-valor`, { id: selectedClienteId, valor: calculo2 })
+                    await AxiosInstance.put(`/cabania-actualizar-valor`, { id: selectedClienteId, valor: calculo2, metodoPago: mpPendiente })
                     // console.log("success")
                     toast.success("datos actualizados")
                     const responses = await AxiosInstance.get(`/cabania-clientes?page=${paginaActual}`);
@@ -1592,7 +1593,7 @@ export default function cabaniaTable() {
                     // console.log("ingresos al condicional")
                     const calculo1 = restaurante + bar + recepcion + descorche + anticipado + posterior + pendiente;
                     // console.log("id del usuario: ", selectedClienteId)
-                    await AxiosInstance.put(`/cabania-actualizar-valor`, { id: selectedClienteId, valor: calculo1 })
+                    await AxiosInstance.put(`/cabania-actualizar-valor`, { id: selectedClienteId, valor: calculo1, metodoPago: mpPendiente })
                     // console.log("success")
                     toast.success("datos actualizados")
                     const responses = await AxiosInstance.get(`/cabania-clientes?page=${paginaActual}`);
@@ -1610,7 +1611,7 @@ export default function cabaniaTable() {
                     const response = await AxiosInstance.put(`/cabania-clientes/${selectedClienteId}/actualizar`, {
                         valorTotal: nuevoValorTotal,
                         pagoPendiente: formDatas.pagoPendiente,
-                        mediosDePagoPendiente: formDatas.mediosDePagoPendiente
+                        mediosDePagoPendiente: mpPendiente
                     });
 
                     setFormDatas({
@@ -1623,8 +1624,10 @@ export default function cabaniaTable() {
                     const responses = await AxiosInstance.get(`/cabania-clientes?page=${paginaActual}`);
                     setUsers(responses.data.clientes);
                     setTotalPaginas(responses.data.totalPages);
-
+                    handleCloseTd();
                 }
+
+                handleCloseTd();
 
 
 
@@ -2332,7 +2335,7 @@ export default function cabaniaTable() {
 
 
     return (
-        <div className="pt-20 flex justify-center items-center flex-col">
+        <div className="pt-20 flex justify-center items-center flex-col pb-20">
             <Toaster />
             <div className={`loading-overlay ${isLoading ? 'visible' : ''}`}>
                 <Lottie options={defaultOptionLoading} width={100} height={100} />
@@ -2653,234 +2656,10 @@ export default function cabaniaTable() {
                         {users.map((cliente) => (
                             <tr key={cliente._id}>
                                 <td className="text-left html-table-tbody flex flex-col">
-                                    {/* <Button className="bg-white" onClick={() => handleOpenModal(cliente)}>
-                                        <img className="w-4" src={chevron} alt="" />
-                                    </Button> */}
-                                    {selectedUser && (
-                                        <Modal open={openTd} onClose={handleCloseTd} className=""
-                                            BackdropProps={{
-                                                style: { backgroundColor: 'rgba(0, 0, 0, 0.3)' }
-                                            }}
-                                        >
-                                            <Box sx={styleAdd} style={{
-                                                maxHeight: "90vh",
-                                                minHeight: "min-content",
-                                                overflowY: "auto"
-                                            }} >
-                                                <Typography component="div" className="border-b-3 border-blue-500 text-3xl flex  justify-between">
-                                                    <div className="mb-0.5 text-2xl">History</div>
-                                                    <div className="uppercase text-lg"> {selectedUser.nombre} - {selectedUser.identificacion}</div>
-                                                </Typography>
-                                                <Typography component="div" className="uppercase flex">
-                                                    <div className="flex w-full">
-                                                        <section className="flex justify-between w-full flex-wrap">
 
-                                                            <div className="mx-5 my-1  w-full">
-                                                                <div className="mt-2 mb-2" style={{ fontWeight: "600" }}> Pago pendiente cabaña {selectedUser.tipo_cabania} : {selectedUser.nuevoTotal}</div>
-                                                                <h4 className="text-green-600">Productos (Bebidas y Comidas)</h4>
-
-                                                                {/* Combina ambos arrays (bebidas y comidas) y verifica si tiene elementos */}
-                                                                {selectedUser.bebidas && selectedUser.restaurante &&
-                                                                    Array.isArray(selectedUser.bebidas) && Array.isArray(selectedUser.restaurante) && Array.isArray(selectedUser.descorche) && Array.isArray(selectedUser.recepcion) &&
-                                                                    [...selectedUser.bebidas, ...selectedUser.restaurante, ...selectedUser.descorche, ...selectedUser.recepcion].length > 0 ? (
-                                                                    <table className="w-full text-center">
-                                                                        <thead>
-                                                                            <tr>
-                                                                                <th className=" text-left">Nombre</th>
-                                                                                <th style={{ width: "100px" }}>Cantidad</th>
-                                                                                <th>mensaje</th>
-                                                                                <th>Precio Unitario</th>
-                                                                                <th>Total</th>
-                                                                            </tr>
-                                                                        </thead>
-                                                                        <tbody>
-                                                                            {[...selectedUser.bebidas, ...selectedUser.restaurante, ...selectedUser.descorche, ...selectedUser.recepcion].map((producto, index) => (
-                                                                                <tr key={index}>
-                                                                                    <td className="text-left" style={{ width: "280px" }}>{producto.nombre}</td>
-                                                                                    <td>{producto.cantidad}</td>
-                                                                                    <td>{producto.adicional}</td>
-                                                                                    <td style={{ width: "280px" }} >{producto.precio}</td>
-                                                                                    <td>{producto.cantidad * producto.precio}</td>
-                                                                                </tr>
-                                                                            ))}
-                                                                        </tbody>
-                                                                        <tfoot className="border-t-3 border-green-500 pt-2">
-                                                                            <tr>
-                                                                                <td className="text-left"></td>
-                                                                                <td></td>
-                                                                                <td></td>
-                                                                                <td></td>
-                                                                                <td style={{ height: "60px", paddingRight: "20px", width: "150px" }} className="text-right">Total: {
-                                                                                    [...selectedUser.bebidas, ...selectedUser.restaurante, ...selectedUser.recepcion, ...selectedUser.descorche].reduce((acc, producto) =>
-                                                                                        acc + (producto.cantidad * producto.precio), 0
-                                                                                    )
-                                                                                }</td>
-                                                                            </tr>
-                                                                        </tfoot>
-                                                                    </table>
-                                                                ) : (
-                                                                    <p className=" w-full text-center">No hay productos que mostrar😔</p>
-                                                                )}
-                                                            </div>
-
-                                                        </section>
-                                                    </div>
-                                                </Typography>
-                                                <div className="flex flex-col">
-                                                    {/* <span className=" flex w-full  pr-20">¿El cliente realizo un pago anticipado para reservar? <Checkbox checked={esPagoAnticipado}
-                                                            onChange={handlePagoAnticipadoChange} className="ml-1"></Checkbox></span> */}
-                                                    <hr className="bg-gray-400 mb-2 mt-2" style={{ height: "4px" }} />
-                                                    {selectedUser.reserva === "Si" ? (
-                                                        <div>
-                                                            <span className=" flex w-full  pr-20">Pago pendiente cabania {selectedUser.tipo_cabania}: {selectedUser.nuevoTotal || 0}</span>
-                                                            <span className=" flex w-full  pr-20">Pago adelantado:<span className="text-red-500"> {selectedUser.pagoAnticipado || 0}</span></span>
-                                                            <span className=" flex w-full  pr-20">Pago posterior: {selectedUser.pagoPendiente || 0}</span>
-                                                            <span className=" flex w-full  pr-20">Bar: {barTotal || 0}</span>
-                                                            <span className=" flex w-full  pr-20">Adicional: {recTotal || 0}</span>
-                                                            <span className=" flex w-full  pr-20">Descorche: {desTotal || 0}</span>
-                                                            <span className=" flex w-full  pr-20">Restaurante: {resTotal || 0}</span>
-                                                            <hr className="bg-gray-400 mt-2 flex justify-between" style={{ height: "3px" }} />
-                                                            <span className=" flex w-full mt-2  pr-20">Tatal a pagar:
-                                                                {(
-                                                                    barTotal +
-                                                                    resTotal +
-                                                                    recTotal +
-                                                                    desTotal +
-                                                                    selectedUser.pagoPendiente +
-                                                                    selectedUser.nuevoTotal +
-                                                                    selectedUser.pagoAnticipado
-                                                                ) - (selectedUser.pagoAnticipado)}</span>
-                                                            <hr className="bg-gray-400 mt-2 mb-5" style={{ height: "3px" }} />
-                                                            <span>Cancelado: {selectedUser.pago}</span>
-
-                                                        </div>
-                                                    ) : (
-                                                        <div>
-                                                            <span className=" flex w-full  pr-20">Pago pendiente cabania {selectedUser.tipo_cabania}: {selectedUser.nuevoTotal || 0}</span>
-                                                            <span className=" flex w-full  pr-20">Pago adelantado:<span className="text-red-500"> {selectedUser.pagoAnticipado || 0}</span></span>
-                                                            <span className=" flex w-full  pr-20">Pago posterior: {selectedUser.pagoPendiente || 0}</span>
-                                                            <span className=" flex w-full  pr-20">Bar: {barTotal || 0}</span>
-                                                            <span className=" flex w-full  pr-20">Adicional: {recTotal || 0}</span>
-                                                            <span className=" flex w-full  pr-20">Descorche: {desTotal || 0}</span>
-                                                            <span className=" flex w-full  pr-20">Restaurante: {resTotal || 0}</span>
-                                                            <span className=" flex w-full  pr-20 mt-2">Tatal a pagar: {(
-                                                                barTotal +
-                                                                resTotal +
-                                                                recTotal +
-                                                                desTotal +
-                                                                selectedUser.pagoAnticipado +
-                                                                selectedUser.pagoPendiente +
-                                                                selectedUser.nuevoTotal)} </span>
-                                                            <hr className="bg-gray-400 mt-2 mb-5" style={{ height: "3px" }} />
-                                                            <span className="">Cancelado: {selectedUser.pago || 0}</span>
-                                                        </div>
-                                                    )}
-
-                                                </div>
-
-                                                <div className="flex justify-between mt-5">
-                                                    <Typography component="div" >
-                                                        <Button color="primary" onClick={() => {
-                                                            Swal.fire({
-                                                                title: '¿Estás seguro?',
-                                                                text: "¿Quieres guardar esto como PDF?",
-                                                                icon: 'warning',
-                                                                showCancelButton: true,
-                                                                confirmButtonColor: '#3085d6',
-                                                                cancelButtonColor: '#d33',
-                                                                confirmButtonText: 'Sí, guardar',
-                                                                cancelButtonText: 'No, cancelar'
-                                                            }).then((result) => {
-                                                                if (result.isConfirmed) {
-                                                                    generarPDF(selectedUser._id);
-                                                                    // Muestra un nuevo SweetAlert con el chulito de confirmación
-                                                                    Swal.fire({
-                                                                        title: '¡Guardado!',
-                                                                        text: 'El archivo PDF ha sido guardado exitosamente.',
-                                                                        icon: 'success',
-                                                                        confirmButtonColor: '#3085d6',
-                                                                        confirmButtonText: 'Ok'
-                                                                    });
-                                                                }
-                                                            })
-                                                        }}>
-                                                            Guardar como PDF
-                                                        </Button>
-                                                        <Button className="ml-2" color="danger" variant="shadow" onClick={closeModal}>
-                                                            Cerrar
-                                                        </Button>
-                                                    </Typography>
-
-                                                    <Typography>
-                                                        {/* {selectedUser.nuevoTotal > 0 && selectedUser.pago <= 0 ? ( */}
-                                                        <Button color="secondary" variant="shadow" onClick={() => actualizarDatosCliente(selectedUser.nuevoTotal, selectedUser.identificacion, "finalizado", selectedUser._id)}>
-                                                            Guardar
-                                                        </Button>
-                                                        {/* ) : (
-                                                             <Button color="secondary" variant="shadow" >
-                                                                 Inhabilitado
-                                                             </Button>
-                                                         )} */}
-                                                    </Typography>
-
-                                                </div>
-                                            </Box>
-                                        </Modal>
-                                    )}
                                 </td>
                                 <td className="html-table-tbody text-center uppercase border-r-2 border-red-500 pr-2 ">
-                                    <Popover placement="top">
-                                        <PopoverTrigger>
-                                            <p onClick={() => seleccionarCliente(cliente.identificacion)}>{cliente.identificacion}</p>
-                                        </PopoverTrigger>
-                                        <PopoverContent >
-                                            {(cliente.reserva === "Si" && cliente.tipo_cabania !== "Mayapo" && cliente.nuevoTotal !== 0) || (cliente.reserva === "No" && cliente.tipo_cabania !== "Mayapo" && cliente.nuevoTotal !== 0) ||
-                                                (cliente.reserva === "Si" && cliente.tipo_cabania === "Mayapo" && cliente.nuevoTotal !== 0) ||
-                                                (cliente.reserva === "No" && cliente.tipo_cabania === "Mayapo" && cliente.nuevoTotal !== 0) ?
-                                                <div className="px-1 py-2">
-                                                    <div className="text-small font-bold">Información</div>
-                                                    <div className="text-red-500">Datos del usuario</div>
-                                                    <div>Identificacion: {cliente.identificacion}</div>
-                                                    <div className="text-tiny">Nombre: {cliente.nombre}</div>
-                                                    <div className="text-red-500 text-small font-bold">Pago pendiente</div>
-                                                    <div>{cliente.tipo_cabania === "Mayapo" ? ((cliente.nuevoTotal))
-                                                        : ((cliente.nuevoTotal))}</div>
-                                                    <Input
-                                                        disabled
-                                                        type="number"
-                                                        name="pagoPendiente"
-                                                        placeholder="Ingrse la cantidad"
-                                                        className="border-2 border-blue-500 rounded-xl mt-2"
-                                                        value={formDatas.pagoPendiente}
-                                                        onChange={handleInputChanges}
-                                                    />
-
-                                                    <div>
-                                                        <select
-                                                            className="w-full h-10 mt-2 outline-none rounded-xl border-2 border-blue-400"
-                                                            id="mediosDePagoPendiente"
-                                                            name="mediosDePagoPendiente"
-                                                            value={formDatas.mediosDePagoPendiente}
-                                                            onChange={handleInputChanges}
-                                                        >
-                                                            <option value="">METODO DE PAGO</option>
-                                                            <option value="efectivo">Efectivo</option>
-                                                            <option value="nequi">Nequi</option>
-                                                            <option value="daviplata">Daviplata</option>
-                                                            <option value="pse">PSE</option>
-                                                            <option value="efecty">Efecty</option>
-                                                            <option value="transferencia">Transferencia</option>
-                                                        </select>
-                                                    </div>
-                                                    <div className=" flex justify-end mt-2">
-
-                                                        <Button color="danger" onClick={actualizarDatosCliente}>Guardar</Button>
-                                                    </div>
-                                                </div>
-                                                : "Pago completado🤩"
-                                            }
-                                        </PopoverContent>
-                                    </Popover>
+                                    {cliente.identificacion}
                                 </td>
                                 <td className="html-table-tbody uppercase cursor-pointer text-center border-r-2 border-blue-500 pr-2">
                                     <Popover placement="bottom" offset={20} showArrow>
@@ -3908,10 +3687,12 @@ export default function cabaniaTable() {
                                         <span className=" mr-2">
                                             <EstadoIcono estado={cliente.estado} />
                                         </span>
-                                        {cliente.estado === "activo" && (
+                                        {cliente.estado === "activo" ? (
                                             <div>
                                                 Alojamiento en Curso
                                             </div>
+                                        ) : (
+                                            cliente.estado
                                         )}
                                     </div>
                                 </td>
@@ -3965,6 +3746,217 @@ export default function cabaniaTable() {
                     </tbody>
                 </Table>
             </section>
+            {selectedUser && (
+                <Modal open={openTd} onClose={handleCloseTd} className=""
+                    BackdropProps={{
+                        style: { backgroundColor: 'rgba(0, 0, 0, 0.3)' }
+                    }}
+                >
+                    <Box sx={styleAdd} style={{
+                        maxHeight: "90vh",
+                        minHeight: "min-content",
+                        overflowY: "auto"
+                    }} >
+                        <Typography component="div" className="border-b-3 border-blue-500 text-3xl flex  justify-between">
+                            <div className="mb-0.5 text-2xl">History</div>
+                            <div className="uppercase text-lg"> {selectedUser.nombre} - {selectedUser.identificacion}</div>
+                        </Typography>
+                        <Typography component="div" className="uppercase flex">
+                            <div className="flex w-full">
+                                <section className="flex justify-between w-full flex-wrap">
+
+                                    <div className="mx-5 my-1  w-full">
+                                        <div className="mt-2 mb-2" style={{ fontWeight: "600" }}> Pago pendiente cabaña {selectedUser.tipo_cabania} : {selectedUser.nuevoTotal}</div>
+                                        <h4 className="text-green-600">Productos (Bebidas y Comidas)</h4>
+
+                                        {/* Combina ambos arrays (bebidas y comidas) y verifica si tiene elementos */}
+                                        {selectedUser.bebidas && selectedUser.restaurante &&
+                                            Array.isArray(selectedUser.bebidas) && Array.isArray(selectedUser.restaurante) && Array.isArray(selectedUser.descorche) && Array.isArray(selectedUser.recepcion) &&
+                                            [...selectedUser.bebidas, ...selectedUser.restaurante, ...selectedUser.descorche, ...selectedUser.recepcion].length > 0 ? (
+                                            <table className="w-full text-center">
+                                                <thead>
+                                                    <tr>
+                                                        <th className=" text-left">Nombre</th>
+                                                        <th style={{ width: "100px" }}>Cantidad</th>
+                                                        <th>mensaje</th>
+                                                        <th>Precio Unitario</th>
+                                                        <th>Total</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {[...selectedUser.bebidas, ...selectedUser.restaurante, ...selectedUser.descorche, ...selectedUser.recepcion].map((producto, index) => (
+                                                        <tr key={index}>
+                                                            <td className="text-left" style={{ width: "280px" }}>{producto.nombre}</td>
+                                                            <td>{producto.cantidad}</td>
+                                                            <td>{producto.adicional}</td>
+                                                            <td style={{ width: "280px" }} >{producto.precio}</td>
+                                                            <td>{producto.cantidad * producto.precio}</td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                                <tfoot className="border-t-3 border-green-500 pt-2">
+                                                    <tr>
+                                                        <td className="text-left"></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td style={{ height: "60px", paddingRight: "20px", width: "150px" }} className="text-right">Total: {
+                                                            [...selectedUser.bebidas, ...selectedUser.restaurante, ...selectedUser.recepcion, ...selectedUser.descorche].reduce((acc, producto) =>
+                                                                acc + (producto.cantidad * producto.precio), 0
+                                                            )
+                                                        }</td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        ) : (
+                                            <p className=" w-full text-center">No hay productos que mostrar😔</p>
+                                        )}
+                                    </div>
+
+                                </section>
+                            </div>
+                        </Typography>
+                        <div className="flex flex-col">
+                            <hr className="bg-gray-400 mb-2 mt-2" style={{ height: "4px" }} />
+                            {selectedUser.reserva === "Si" ? (
+                                <div>
+                                    <div className="flex">
+                                        <span className=" flex w-full  pr-20">Pago pendiente cabania {selectedUser.tipo_cabania}: {selectedUser.nuevoTotal || 0}</span>
+                                        {!selectedUser.mediosDePagoPendiente ? (
+                                            <div><select
+                                                className="w-full h-10 mt-2 outline-none rounded-xl border-2 border-blue-400"
+                                                id="mediosDePagoPendiente"
+                                                name="mediosDePagoPendiente"
+                                                value={mpPendiente}
+                                                onChange={handleInputChanges}
+                                            >
+                                                <option value="">METODO DE PAGO</option>
+                                                <option value="efectivo">Efectivo</option>
+                                                <option value="nequi">Nequi</option>
+                                                <option value="daviplata">Daviplata</option>
+                                                <option value="pse">PSE</option>
+                                                <option value="efecty">Efecty</option>
+                                                <option value="transferencia">Transferencia</option>
+                                            </select></div>
+                                        ) : (
+                                            selectedUser.mediosDePagoPendiente
+                                        )}
+                                    </div>
+                                    <span className=" flex w-full  pr-20">Pago adelantado:<span className="text-red-500"> {selectedUser.pagoAnticipado || 0}</span></span>
+                                    <span className=" flex w-full  pr-20">Pago posterior: {selectedUser.pagoPendiente || 0}</span>
+                                    <span className=" flex w-full  pr-20">Bar: {barTotal || 0}</span>
+                                    <span className=" flex w-full  pr-20">Adicional: {recTotal || 0}</span>
+                                    <span className=" flex w-full  pr-20">Descorche: {desTotal || 0}</span>
+                                    <span className=" flex w-full  pr-20">Restaurante: {resTotal || 0}</span>
+                                    <hr className="bg-gray-400 mt-2 flex justify-between" style={{ height: "3px" }} />
+                                    <span className=" flex w-full mt-2  pr-20">Tatal a pagar:
+                                        {(
+                                            barTotal +
+                                            resTotal +
+                                            recTotal +
+                                            desTotal +
+                                            selectedUser.pagoPendiente +
+                                            selectedUser.nuevoTotal +
+                                            selectedUser.pagoAnticipado
+                                        ) - (selectedUser.pagoAnticipado)}</span>
+                                    <hr className="bg-gray-400 mt-2 mb-5" style={{ height: "3px" }} />
+                                    <span>Cancelado: {selectedUser.pago}</span>
+
+                                </div>
+                            ) : (
+                                <div>
+                                    <div>
+                                        <span className=" flex w-full  pr-20">Pago pendiente cabania {selectedUser.tipo_cabania}: {selectedUser.nuevoTotal || 0}</span>
+                                        {!selectedUser.mediosDePagoPendiente ? (
+                                            <div><select
+                                                className="w-full h-10 mt-2 outline-none rounded-xl border-2 border-blue-400"
+                                                id="mediosDePagoPendiente"
+                                                name="mediosDePagoPendiente"
+                                                value={mpPendiente}
+                                                onChange={handleInputChanges}
+                                            >
+                                                <option value="">METODO DE PAGO</option>
+                                                <option value="efectivo">Efectivo</option>
+                                                <option value="nequi">Nequi</option>
+                                                <option value="daviplata">Daviplata</option>
+                                                <option value="pse">PSE</option>
+                                                <option value="efecty">Efecty</option>
+                                                <option value="transferencia">Transferencia</option>
+                                            </select></div>
+                                        ) : (
+                                            selectedUser.mediosDePagoPendiente
+                                        )}
+                                    </div>
+                                    <span className=" flex w-full  pr-20">Pago adelantado:<span className="text-red-500"> {selectedUser.pagoAnticipado || 0}</span></span>
+                                    <span className=" flex w-full  pr-20">Pago posterior: {selectedUser.pagoPendiente || 0}</span>
+                                    <span className=" flex w-full  pr-20">Bar: {barTotal || 0}</span>
+                                    <span className=" flex w-full  pr-20">Adicional: {recTotal || 0}</span>
+                                    <span className=" flex w-full  pr-20">Descorche: {desTotal || 0}</span>
+                                    <span className=" flex w-full  pr-20">Restaurante: {resTotal || 0}</span>
+                                    <span className=" flex w-full  pr-20 mt-2">Tatal a pagar: {(
+                                        barTotal +
+                                        resTotal +
+                                        recTotal +
+                                        desTotal +
+                                        selectedUser.pagoAnticipado +
+                                        selectedUser.pagoPendiente +
+                                        selectedUser.nuevoTotal)} </span>
+                                    <hr className="bg-gray-400 mt-2 mb-5" style={{ height: "3px" }} />
+                                    <span className="">Cancelado: {selectedUser.pago || 0}</span>
+                                </div>
+                            )}
+
+                        </div>
+
+                        <div className="flex justify-between mt-5">
+                            <Typography component="div" >
+                                <Button color="primary" onClick={() => {
+                                    Swal.fire({
+                                        title: '¿Estás seguro?',
+                                        text: "¿Quieres guardar esto como PDF?",
+                                        icon: 'warning',
+                                        showCancelButton: true,
+                                        confirmButtonColor: '#3085d6',
+                                        cancelButtonColor: '#d33',
+                                        confirmButtonText: 'Sí, guardar',
+                                        cancelButtonText: 'No, cancelar'
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            generarPDF(selectedUser._id);
+                                            // Muestra un nuevo SweetAlert con el chulito de confirmación
+                                            Swal.fire({
+                                                title: '¡Guardado!',
+                                                text: 'El archivo PDF ha sido guardado exitosamente.',
+                                                icon: 'success',
+                                                confirmButtonColor: '#3085d6',
+                                                confirmButtonText: 'Ok'
+                                            });
+                                        }
+                                    })
+                                }}>
+                                    Guardar como PDF
+                                </Button>
+                                <Button className="ml-2" color="danger" variant="shadow" onClick={closeModal}>
+                                    Cerrar
+                                </Button>
+                            </Typography>
+
+                            <Typography>
+                                {
+                                    ((mpPendiente && mpPendiente.trim() !== "") || (selectedUser.mediosDePagoPendiente && selectedUser.mediosDePagoPendiente.trim() !== "")) ? (
+                                        <div>
+                                            <Button color="secondary" variant="shadow" onClick={() => actualizarDatosCliente(selectedUser.nuevoTotal, selectedUser.identificacion, "finalizado", selectedUser._id, mpPendiente)}>
+                                                Guardar
+                                            </Button>
+                                        </div>
+                                    ) : null
+                                }
+                            </Typography>
+
+                        </div>
+                    </Box>
+                </Modal>
+            )}
         </div>
     )
 }

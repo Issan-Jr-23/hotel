@@ -150,7 +150,7 @@ export const postPago = async (req, res) => {
 
 export const actualizarValor = async (req, res) => {
   try {
-    const { id, valor } = req.body;
+    const { id, valor, metodoPago } = req.body;
     // console.log("id del usuario: ",id)
 
     const cliente = await Cabania.findOne({identificacion: id});
@@ -159,6 +159,10 @@ export const actualizarValor = async (req, res) => {
     }
 
     cliente.pago = valor;
+    
+    if (metodoPago !== "") {
+      cliente.mediosDePagoPendiente = metodoPago
+    }
 
     await cliente.save();
 

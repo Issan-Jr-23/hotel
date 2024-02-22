@@ -27,7 +27,7 @@ app.use(
     credentials: true,
     origin: ["https://www.hotelmeqo.com/","https://hotelmeqo.com/",
     "https://www.hotelmeqo.com/meqo/","https://hotelmeqo.com/meqo/"
-    ,"http://localhost:5174"],
+    ,"http://localhost:5173"],
   })
 );
 app.use(express.json());

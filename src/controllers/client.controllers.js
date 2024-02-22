@@ -1206,7 +1206,6 @@ export const actualizarValor = async (req, res) => {
   try {
     const { id, valor, metodoPago} = req.body;
     console.log("data: ", id, valor, metodoPago)
-    // console.log("id del usuario: ",id)
 
     const cliente = await Cliente.findOne({identificacion: id});
     if (!cliente) {
@@ -1214,15 +1213,14 @@ export const actualizarValor = async (req, res) => {
     }
 
     cliente.pago = valor;
-    if(!metodoPago) {
-      console.log("")
-    }else{
+    if (metodoPago !== "" ) {
     cliente.mediosDePagoPendiente = metodoPago
     }
 
     await cliente.save();
 
     res.json(cliente);
+    console.log("datos actualizados: ", cliente)
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error interno del servidor' });

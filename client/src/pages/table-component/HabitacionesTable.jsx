@@ -45,6 +45,7 @@ export default function habitacionesTable() {
   const [errorCabania, setErrorCabania] = useState(false);
   const [paginaActual, setPaginaActual] = useState(1);
   const [totalPaginas, setTotalPaginas] = useState(0);
+  const [mpPendiente, setMpPendiente] = useState('')
 
 
   useEffect(() => {
@@ -1493,6 +1494,7 @@ export default function habitacionesTable() {
   const handleOpenModal = (user) => {
     setSelectedUser(user);
     setOpenTd(true);
+    setMpPendiente("")
   };
 
   const closeModal = () => {
@@ -1671,9 +1673,8 @@ export default function habitacionesTable() {
     calcularPagoPendiente(identificacion);
   };
 
-  const handleInputChanges = (e) => {
-    const { name, value } = e.target;
-    setFormDatas({ ...formDatas, [name]: value });
+  const handleInputChanges = (event) => {
+    setMpPendiente(event.target.value);
   };
 
   const calcularPagoPendiente = (identificacion) => {
@@ -1687,9 +1688,9 @@ export default function habitacionesTable() {
     }
   };
 
-  const actualizarDatosCliente = async (data1, data2, estado, userId) => {
+  const actualizarDatosCliente = async (data1, data2, estado, userId, mpPendiente) => {
     // console.log("DATOS ENVIADOS: ", estado, userId)
-    await handleStatus(estado, userId)
+    await handleStatus(estado, userId, mpPendiente)
 
     if (selectedClienteId) {
       try {
@@ -1700,7 +1701,7 @@ export default function habitacionesTable() {
           const calculo1 = restaurante + bar + recepcion + descorche + anticipado + posterior + pendiente;
           const calculo2 = calculo1 - anticipado;
           // console.log("id del usuario: ", selectedClienteId)
-          await AxiosInstance.put(`/habitaciones-actualizar-valor`, { id: selectedClienteId, valor: calculo2 })
+          await AxiosInstance.put(`/habitaciones-actualizar-valor`, { id: selectedClienteId, valor: calculo2, metodoPago: mpPendiente })
           // console.log("success")
           toast.success("datos actualizados")
           const responses = await AxiosInstance.get(`/habitaciones-clientes?page=${paginaActual}`);
@@ -1711,7 +1712,7 @@ export default function habitacionesTable() {
           // console.log("ingresos al condicional")
           const calculo1 = restaurante + bar + recepcion + descorche + anticipado + posterior + pendiente;
           // console.log("id del usuario: ", selectedClienteId)
-          await AxiosInstance.put(`/habitaciones-actualizar-valor`, { id: selectedClienteId, valor: calculo1 })
+          await AxiosInstance.put(`/habitaciones-actualizar-valor`, { id: selectedClienteId, valor: calculo1, metodoPago: mpPendiente })
           // console.log("success")
           toast.success("datos actualizados")
           const responses = await AxiosInstance.get(`/habitaciones-clientes?page=${paginaActual}`);
@@ -1726,7 +1727,7 @@ export default function habitacionesTable() {
           const response = await AxiosInstance.put(`/habitaciones-clientes/${selectedClienteId}/actualizar`, {
             valorTotal: nuevoValorTotal,
             pagoPendiente: formDatas.pagoPendiente,
-            mediosDePagoPendiente: formDatas.mediosDePagoPendiente
+            mediosDePagoPendiente: mpPendiente
           });
           setFormDatas({
             pagoPendiente: '',
@@ -2482,7 +2483,7 @@ export default function habitacionesTable() {
 
 
   return (
-    <div className="pt-20 flex justify-center items-center flex-col">
+    <div className="pt-20 flex justify-center items-center flex-col pb-20">
       <Toaster />
       <div className={`loading-overlay ${isLoading ? 'visible' : ''}`}>
         <Lottie options={defaultOptionLoading} width={100} height={100} />
@@ -2801,59 +2802,10 @@ export default function habitacionesTable() {
             {users.map((cliente) => (
               <tr key={cliente._id}>
                 <td className="text-left html-table-tbody">
-                  {/* <Button className="bg-white" onClick={() => handleOpenModal(cliente)}>
-                    <img className="w-4" src={chevron} alt="" />
-                  </Button> */}
 
                 </td>
                 <td className="html-table-tbody text-center uppercase border-r-2 border-red-500 pr-2 ">
-                  <Popover placement="top">
-                    <PopoverTrigger>
-                      <p onClick={() => seleccionarCliente(cliente.identificacion)}>{cliente.identificacion}</p>
-                    </PopoverTrigger>
-                    <PopoverContent >
-                      {cliente.reserva === "Si" && ((valorHabitaciones) - (cliente.pagoAnticipado + cliente.pagoPendiente)) !== 0 || cliente.reserva === "No" && ((valorHabitaciones) - (cliente.pagoAnticipado + cliente.pagoPendiente)) !== 0 ?
-                        <div className="px-1 py-2">
-                          <div className="text-small font-bold">Información</div>
-                          <div className="text-red-500">Datos del usuario</div>
-                          <div>Identificacion: {cliente.identificacion}</div>
-                          <div className="text-tiny">Nombre: {cliente.nombre}</div>
-                          <div className="text-red-500 text-small font-bold">Pago pendiente</div>
-                          <div>{((valorHabitaciones) - (cliente.pagoAnticipado + cliente.pagoPendiente))}</div>
-                          <Input
-                            type="number"
-                            name="pagoPendiente"
-                            placeholder="Ingrse la cantidad"
-                            className="border-2 border-blue-500 rounded-xl mt-2"
-                            disabled
-                            value={formDatas.pagoPendiente}
-                            onChange={handleInputChanges}
-                          />
-
-                          <div><select
-                            className="w-full h-10 mt-2 outline-none rounded-xl border-2 border-blue-400"
-                            id="mediosDePagoPendiente"
-                            name="mediosDePagoPendiente"
-                            value={formDatas.mediosDePagoPendiente}
-                            onChange={handleInputChanges}
-                          >
-                            <option value="">METODO DE PAGO</option>
-                            <option value="efectivo">Efectivo</option>
-                            <option value="nequi">Nequi</option>
-                            <option value="daviplata">Daviplata</option>
-                            <option value="pse">PSE</option>
-                            <option value="efecty">Efecty</option>
-                            <option value="transferencia">Transferencia</option>
-                          </select></div>
-                          <div className=" flex justify-end mt-2">
-
-                            <Button color="danger" onClick={actualizarDatosCliente}>Guardar</Button>
-                          </div>
-                        </div>
-                        : "Pago completado🤩"
-                      }
-                    </PopoverContent>
-                  </Popover>
+                  {cliente.identificacion}
                 </td>
                 <td className="html-table-tbody uppercase cursor-pointer text-center border-r-2 border-blue-500 pr-2">
                   <Popover placement="bottom" offset={20} showArrow>
@@ -4008,12 +3960,31 @@ export default function habitacionesTable() {
               </div>
             </Typography>
             <div className="flex flex-col">
-              {/* <span className=" flex w-full  pr-20">¿El cliente realizo un pago anticipado para reservar? <Checkbox checked={esPagoAnticipado}
-                                                            onChange={handlePagoAnticipadoChange} className="ml-1"></Checkbox></span> */}
               <hr className="bg-gray-400 mb-2 mt-2" style={{ height: "4px" }} />
               {selectedUser.reserva === "Si" ? (
                 <div>
-                  <span className=" flex w-full  pr-20">Pago pendiente cabania {selectedUser.tipo_cabania}: {selectedUser.nuevoTotal || 0}</span>
+                  <div className="flex">
+                    <span className=" flex w-full  pr-20">Pago pendiente {selectedUser.nuevoTotal || 0}</span>
+                    {!selectedUser.mediosDePagoPendiente ? (
+                      <div><select
+                        className="w-full h-10 mt-2 outline-none rounded-xl border-2 border-blue-400"
+                        id="mediosDePagoPendiente"
+                        name="mediosDePagoPendiente"
+                        value={mpPendiente}
+                        onChange={handleInputChanges}
+                      >
+                        <option value="">METODO DE PAGO</option>
+                        <option value="efectivo">Efectivo</option>
+                        <option value="nequi">Nequi</option>
+                        <option value="daviplata">Daviplata</option>
+                        <option value="pse">PSE</option>
+                        <option value="efecty">Efecty</option>
+                        <option value="transferencia">Transferencia</option>
+                      </select></div>
+                    ) : (
+                      selectedUser.mediosDePagoPendiente
+                    )}
+                  </div>
                   <span className=" flex w-full  pr-20">Pago adelantado:<span className="text-red-500"> {selectedUser.pagoAnticipado || 0}</span></span>
                   <span className=" flex w-full  pr-20">Pago posterior: {selectedUser.pagoPendiente || 0}</span>
                   <span className=" flex w-full  pr-20">Bar: {barTotal || 0}</span>
@@ -4037,7 +4008,30 @@ export default function habitacionesTable() {
                 </div>
               ) : (
                 <div>
-                  <span className=" flex w-full  pr-20">Pago pendiente cabania {selectedUser.tipo_cabania}: {selectedUser.nuevoTotal || 0}</span>
+                  <div>
+                    <div className="flex">
+                      <span className=" flex w-full  pr-20">Pago pendiente {selectedUser.nuevoTotal || 0}</span>
+                      {!selectedUser.mediosDePagoPendiente ? (
+                        <div><select
+                          className="w-full h-10 mt-2 outline-none rounded-xl border-2 border-blue-400"
+                          id="mediosDePagoPendiente"
+                          name="mediosDePagoPendiente"
+                          value={mpPendiente}
+                          onChange={handleInputChanges}
+                        >
+                          <option value="">METODO DE PAGO</option>
+                          <option value="efectivo">Efectivo</option>
+                          <option value="nequi">Nequi</option>
+                          <option value="daviplata">Daviplata</option>
+                          <option value="pse">PSE</option>
+                          <option value="efecty">Efecty</option>
+                          <option value="transferencia">Transferencia</option>
+                        </select></div>
+                      ) : (
+                        selectedUser.mediosDePagoPendiente
+                      )}
+                    </div>
+                  </div>
                   <span className=" flex w-full  pr-20">Pago adelantado:<span className="text-red-500"> {selectedUser.pagoAnticipado || 0}</span></span>
                   <span className=" flex w-full  pr-20">Pago posterior: {selectedUser.pagoPendiente || 0}</span>
                   <span className=" flex w-full  pr-20">Bar: {barTotal || 0}</span>
@@ -4093,15 +4087,15 @@ export default function habitacionesTable() {
               </Typography>
 
               <Typography>
-                {/* {selectedUser.nuevoTotal > 0 && selectedUser.pago <= 0 ? ( */}
-                <Button color="secondary" variant="shadow" onClick={() => actualizarDatosCliente(selectedUser.nuevoTotal, selectedUser.identificacion, "finalizado", selectedUser._id)}>
-                  Guardar
-                </Button>
-                {/* ) : (
-                                                             <Button color="secondary" variant="shadow" >
-                                                                 Inhabilitado
-                                                             </Button>
-                                                         )} */}
+                {
+                  ((mpPendiente && mpPendiente.trim() !== "") || (selectedUser.mediosDePagoPendiente && selectedUser.mediosDePagoPendiente.trim() !== "")) ? (
+                    <div>
+                      <Button color="secondary" variant="shadow" onClick={() => actualizarDatosCliente(selectedUser.nuevoTotal, selectedUser.identificacion, "finalizado", selectedUser._id, mpPendiente)}>
+                        Guardar
+                      </Button>
+                    </div>
+                  ) : null
+                }
               </Typography>
 
             </div>

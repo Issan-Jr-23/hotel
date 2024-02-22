@@ -474,11 +474,6 @@ export default function review() {
     }, [errorMensajeIdentificacion]);
 
 
-
-
-
-
-
     //#region
     const handleReservaChange = (selectedSize) => {
         setFormData({
@@ -1550,6 +1545,7 @@ export default function review() {
     const handleOpenModal = (user) => {
         setSelectedUser(user);
         setOpenTd(true);
+        setMpPendiente("")
     };
 
     const closeModal = () => {
@@ -1744,7 +1740,7 @@ export default function review() {
                         setTotalPaginas(responses.data.totalPages);
                     } else {
                         const calculo1 = restaurante + bar + recepcion + descorche + anticipado + posterior + pendiente;
-                        await AxiosInstance.put(`/pasadia-actualizar-valor`, { id: selectedClienteId, valor: calculo1 })
+                        await AxiosInstance.put(`/pasadia-actualizar-valor`, { id: selectedClienteId, valor: calculo1, metodoPago: mpPendiente })
                         toast.success("datos actualizados")
                         const responses = await AxiosInstance.get(`/pasadia-clientes?page=${paginaActual}`);
                         setUsers(responses.data.clientes);
@@ -1761,7 +1757,7 @@ export default function review() {
                         const response = await AxiosInstance.put(`/pasadia-clientes/${selectedClienteId}/actualizar`, {
                             valorTotal: nuevoValorTotal,
                             pagoPendiente: formDatas.pagoPendiente,
-                            mediosDePagoPendiente: formDatas.mediosDePagoPendiente
+                            mediosDePagoPendiente: mpPendiente
                         });
 
                         setFormDatas({
@@ -1967,11 +1963,6 @@ export default function review() {
 
 
     // Ejemplo de llamada a generarPDF, asegúrate de definir o tener disponibles to
-
-
-
-
-
 
 
 
@@ -2543,7 +2534,7 @@ export default function review() {
 
 
     return (
-        <div className="pt-20 flex justify-center items-center flex-col">
+        <div className="pt-20 flex justify-center items-center flex-col pb-20">
             <Toaster />
 
             <div className={`loading-overlay ${isLoading ? 'visible' : ''}`}>
@@ -2841,53 +2832,7 @@ export default function review() {
 
                                 </td>
                                 <td className=" html-table-tbody border-r-2 pr-3 border-blue-500 text-center">
-                                    <Popover placement="top">
-                                        <PopoverTrigger>
-                                            <p onClick={() => seleccionarCliente(cliente.identificacion)}>{cliente.identificacion}</p>
-                                        </PopoverTrigger>
-                                        <PopoverContent >
-                                            {cliente.reserva === "Si" && (cliente.nuevoTotal) !== 0 || cliente.reserva === "No" && (cliente.nuevoTotal) !== 0 ?
-                                                <div className="px-1 py-2">
-                                                    <div className="text-small font-bold">Información</div>
-                                                    <div className="text-red-500">Datos del usuario</div>
-                                                    <div>Identificacion: {cliente.identificacion}</div>
-                                                    <div className="text-tiny">Nombre: {cliente.nombre}</div>
-                                                    <div className="text-red-500 text-small font-bold">Pago pendiente</div>
-                                                    <div>{cliente.nuevoTotal}</div>
-                                                    <Input
-                                                        disabled
-                                                        type="number"
-                                                        name="pagoPendiente"
-                                                        placeholder="Ingrse la cantidad"
-                                                        className="border-2 border-blue-500 rounded-xl mt-2"
-                                                        value={formDatas.pagoPendiente}
-                                                        onChange={handleInputChanges}
-                                                    />
-
-                                                    <div><select
-                                                        className="w-full h-10 mt-2 outline-none rounded-xl border-2 border-blue-400"
-                                                        id="mediosDePagoPendiente"
-                                                        name="mediosDePagoPendiente"
-                                                        value={formDatas.mediosDePagoPendiente}
-                                                        onChange={handleInputChanges}
-                                                    >
-                                                        <option value="">METODO DE PAGO</option>
-                                                        <option value="efectivo">Efectivo</option>
-                                                        <option value="nequi">Nequi</option>
-                                                        <option value="daviplata">Daviplata</option>
-                                                        <option value="pse">PSE</option>
-                                                        <option value="efecty">Efecty</option>
-                                                        <option value="transferencia">Transferencia</option>
-                                                    </select></div>
-                                                    <div className=" flex justify-end mt-2">
-
-                                                        <Button color="danger" onClick={actualizarDatosCliente}>Guardar</Button>
-                                                    </div>
-                                                </div>
-                                                : "Pago completado🤩"
-                                            }
-                                        </PopoverContent>
-                                    </Popover>
+                                    {cliente.identificacion}
                                 </td>
                                 <td className="text-center html-table-tbody border-r-2 pr-3 border-red-500 uppercase">
                                     <Popover placement="bottom" offset={20} showArrow>
@@ -4216,7 +4161,7 @@ export default function review() {
                                                 <option value="transferencia">Transferencia</option>
                                             </select></div>
                                         ) : (
-                                            mpPendiente
+                                            selectedUser.mediosDePagoPendiente
                                         )}
                                     </div>
                                     <span className=" flex w-full  pr-20">Pago adelantado:<span className="text-red-500"> {selectedUser.pagoAnticipado || 0}</span></span>
@@ -4262,7 +4207,7 @@ export default function review() {
                                                     <option value="transferencia">Transferencia</option>
                                                 </select></div>
                                             ) : (
-                                                mpPendiente
+                                                selectedUser.mediosDePagoPendiente
                                             )}
                                         </div>
                                     </div>
@@ -4331,13 +4276,6 @@ export default function review() {
                                         </div>
                                     ) : null
                                 }
-
-
-                                {/* ) : (
-                                                             <Button color="secondary" variant="shadow" >
-                                                                 Inhabilitado
-                                                             </Button>
-                                                         )} */}
                             </Typography>
 
                         </div>
