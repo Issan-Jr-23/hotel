@@ -3833,9 +3833,11 @@ export default function habitacionesTable() {
                       <EstadoIcono estado={cliente.estado} />
                     </span>
                     {cliente.estado === "activo" ? (
-                      <div className="uppercase"> Alojamiento en curso</div>
+                      <div>
+                        Alojamiento en Curso
+                      </div>
                     ) : (
-                      null
+                      cliente.estado
                     )}
                   </div>
                 </td>

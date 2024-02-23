@@ -787,8 +787,6 @@ export const updateSubproduct = async (req, res) => {
   const subproductId = req.body.idSubproducto;
   const { Descripcion, ValorUnitario, ProductosVendidos, Cortesias } = req.body;
 
-  // console.log("Detalles de la petición 200.OK", subproductId);
-
   try {
     const product = await Bebida.findById(productId);
     if (!product) {
@@ -810,7 +808,7 @@ export const updateSubproduct = async (req, res) => {
     await product.save();
     res.status(200).send("Subproducto actualizado con éxito");
   } catch (error) {
-    console.error(error);
+    console.log(error);
     res.status(500).send("Error al actualizar el subproducto");
   }
 };

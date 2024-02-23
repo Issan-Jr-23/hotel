@@ -241,7 +241,15 @@ function Row(props) {
 
     const handleSave = async (id, editedName, editedTipo, editedCaducidad, editedPrecio, editedCi, editedCv) => {
         try {
-            // Obtener el producto antes de la actualización para comparar
+
+            await AxiosInstance.put(`/update-producto/${id}`, {
+                Descripcion: editedName,
+                tipo: editedTipo,
+                Caducidad: editedCaducidad,
+                ValorUnitario: editedPrecio,
+                CantidadInicial: editedCi,
+                ProductosVendidos: editedCv,
+            })
             const productBeforeUpdate = await AxiosInstance.get(`/obtener-inventario/${id}`);
             const { Descripcion, tipo, Caducidad, CantidadInicial, ValorUnitario, ProductosVendidos } = productBeforeUpdate.data;
 
@@ -254,13 +262,8 @@ function Row(props) {
             if (ValorUnitario !== editedPrecio) changes.ValorUnitario = { old: ValorUnitario, new: editedPrecio };
             if (ProductosVendidos !== editedCv) changes.ProductosVendidos = { old: ProductosVendidos, new: editedCv };
 
-            // Mostrar los cambios
-            // console.log('Changes:', changes);
-
-            // Crear el mensaje con la información necesaria
             const message = createMessage(user.username, user.id, id, editedName, changes);
 
-            // Enviar el mensaje al servidor
             await AxiosInstance.post('/registrar-edicion', {
                 message: message
             });
@@ -300,6 +303,13 @@ function Row(props) {
 
     const hadleUpdateSubProducto = async (id, idSubproducto, editedName, editedValorUnitario, editedProductosVendidos, editedCortesias) => {
         try {
+            await AxiosInstance.put(`/update-prueba-subproducto/${id}` , {
+                idSubproducto: idSubproducto,
+                Descripcion: editedName,
+                ValorUnitario: editedValorUnitario,
+                ProductosVendidos: editedProductosVendidos,
+                Cortesias: editedCortesias,
+            });
             // Obtener el subproducto antes de la actualización para comparar
             const subproductoBeforeUpdate = await AxiosInstance.get(`/obtener/sub/productos/${id}/${idSubproducto}`);
             const { Descripcion, ValorUnitario, ProductosVendidos, Cortesias } = subproductoBeforeUpdate.data;
@@ -317,18 +327,14 @@ function Row(props) {
             const message = createMessage(user.username, user.id, id, idSubproducto, editedName, changes);
 
             // Enviar los datos al servidor, incluyendo el ID del producto y del subproducto
-            await AxiosInstance.put(`/update-prueba-subproducto/${id}`, {
-                idSubproducto: idSubproducto,
-                Descripcion: editedName,
-                ValorUnitario: editedValorUnitario,
-                ProductosVendidos: editedProductosVendidos,
-                Cortesias: editedCortesias,
-            });
+
 
             // Enviar el mensaje al servidor para registrarlo
             await AxiosInstance.post('/registrar-edicion', {
                 message: message
             });
+
+            fetchProducts();
 
             // console.log("successfully");
         } catch (error) {

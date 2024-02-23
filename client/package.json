@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "homepage": "https://www.hotelmeqo.com/meqo-soft-v2",
+  "proxy": "http://localhost:8081",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
